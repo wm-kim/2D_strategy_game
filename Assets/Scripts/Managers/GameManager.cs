@@ -8,7 +8,7 @@ namespace WMK
     {
         void Start()
         {
-            UINavigation.Push<MainUIView>();
+            UINavigation.Push<MainPageView>();
         }
     }
 }

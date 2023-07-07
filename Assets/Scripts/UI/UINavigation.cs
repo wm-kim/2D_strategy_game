@@ -7,18 +7,18 @@ namespace WMK
 {
     public class UINavigation : MonoBehaviour
     {
-        private static Stack<UIView> s_history = new Stack<UIView>();
+        private static Stack<PageView> s_history = new Stack<PageView>();
         
-        public static UIView Push<T>() where T : UIView => Push(UIView.Get<T>());
+        public static PageView Push<T>() where T : PageView => Push(PageView.Get<T>());
         
-        public static UIView Push(UIView view)
+        public static PageView Push(PageView view)
         {
             if (view != null)
             {
                 // Hide the currently active view (if any)
                 if (s_history.Count > 0)
                 {
-                    UIView currentView = s_history.Peek();
+                    PageView currentView = s_history.Peek();
                     currentView.Hide();
                 }
 
@@ -39,13 +39,13 @@ namespace WMK
             if (s_history.Count > 0)
             {
                 // Hide the current view
-                UIView currentView = s_history.Pop();
+                PageView currentView = s_history.Pop();
                 currentView.Hide();
 
                 // Show the previous view (if any)
                 if (s_history.Count > 0)
                 {
-                    UIView previousView = s_history.Peek();
+                    PageView previousView = s_history.Peek();
                     previousView.Show();
                 }
             }

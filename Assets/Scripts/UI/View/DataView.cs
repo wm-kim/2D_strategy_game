@@ -19,7 +19,6 @@ namespace WMK
             m_data.OnValueChanged -= UpdateView;
         }
         
-        protected abstract void InitData(T data);
         protected abstract void UpdateView(T s);
     }
 }

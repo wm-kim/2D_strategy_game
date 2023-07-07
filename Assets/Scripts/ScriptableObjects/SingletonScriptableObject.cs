@@ -4,18 +4,28 @@ using UnityEngine;
 
 namespace WMK
 {
-    public class SingletonScriptableObject : MonoBehaviour
+    public class SingletonScriptableObject<T> : ScriptableObject where T : ScriptableObject
     {
-        // Start is called before the first frame update
-        void Start()
+        private static T m_instance = null;
+        public static T Instance
         {
-        
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-        
+            get
+            {
+                if (m_instance == null)
+                {
+                    T[] assets = Resources.LoadAll<T>("");
+                    if (assets == null || assets.Length < 1)
+                    {
+                        throw new System.Exception("SingletonScriptableObject -> instance -> assets is null or length is less than 1 for type " + typeof(T).ToString() + ".");
+                    }
+                    else if (assets.Length > 1)
+                    {
+                        Debug.LogWarning("SingletonScriptableObject -> instance -> assets length is greater than 1 for type " + typeof(T).ToString() + ".");
+                    }
+                    m_instance = assets[0];
+                }
+                return m_instance;
+            }
         }
     }
 }

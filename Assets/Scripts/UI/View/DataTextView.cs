@@ -6,19 +6,19 @@ using UnityEngine;
 
 namespace WMK
 {
+    [DefaultExecutionOrder(-1)] // binding to a TMP_Text before data is set
     [RequireComponent(typeof(TMP_Text))]
     public abstract class DataTextView<T> : DataView<T> where T : IEquatable<T>
     {
         protected TMP_Text m_text;
 
-        protected void Bind()
+        protected void Awake()
         {
             m_text = GetComponent<TMP_Text>();
         }
         
         protected override void UpdateView(T data)
         {
-            if (m_text == null) Bind();
             m_text.text = data.ToString();
         }
     }

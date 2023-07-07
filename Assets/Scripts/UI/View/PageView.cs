@@ -7,7 +7,8 @@ using DG.Tweening;
 
 namespace WMK
 {
-    public abstract class UIView : MonoBehaviour
+    [RequireComponent(typeof(CanvasGroup))]
+    public abstract class PageView : MonoBehaviour
     {
         [System.Serializable]
         public enum VisibleState
@@ -19,20 +20,26 @@ namespace WMK
             Disappeared
         }
 
-        private static readonly IDictionary<Type, UIView> s_loadedViews = new Dictionary<Type, UIView>();
+        private static readonly IDictionary<Type, PageView> s_loadedViews = new Dictionary<Type, PageView>();
         private VisibleState m_currentState = VisibleState.Undefined;
         private CanvasGroup m_canvasGroup;
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void Init()
+        {
+            s_loadedViews.Clear();
+        }
+        
         private void Awake()
         {
             m_canvasGroup = GetComponent<CanvasGroup>();
             gameObject.transform.localPosition = Vector3.zero;
         }
         
-        public static T Get<T>() where T : UIView
+        public static T Get<T>() where T : PageView
         {
             Type viewType = typeof(T);
-            if (s_loadedViews.TryGetValue(viewType, out UIView view))
+            if (s_loadedViews.TryGetValue(viewType, out PageView view))
             {
                 return view as T;
             }
