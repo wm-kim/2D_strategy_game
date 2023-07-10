@@ -1,26 +1,21 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.Serialization;
 
 namespace WMK
 {
     public class ButtonGroupController : MonoBehaviour
     {
-        /// <summary>
-        /// 다중 선택 모드 여부
-        /// </summary>
-        public bool IsMultipleSelection = false;
+        [SerializeField, Tooltip("다중 선택 모드 여부")]    
+        private bool m_isMultipleSelection = false;
 
-        /// <summary>
-        /// 단일 선택 모드에서 모든 선택지를 선택 해제 가능한지 여부
-        /// </summary>
-        public bool IsDeselectable = false;
+        [SerializeField, Tooltip("단일 선택 모드에서 모든 선택지를 선택 해제 가능한지 여부")]
+        private bool m_isDeselectable = false;
 
-        /// <summary>
-        /// 최대 선택 가능한 버튼 수
-        /// </summary>
-        public int MaxSelectNum = 0;
+        [SerializeField, Tooltip("다중 선택 모드에서 최대 선택 가능한 버튼 수")]
+        private int m_maxSelectNum = 0;
         
         [SerializeField] private List<ButtonView> m_buttonList = new List<ButtonView>();
 
@@ -58,9 +53,10 @@ namespace WMK
 
         private void ToggleActiveState(int index)
         {
-            if (IsMultipleSelection)
+            if (m_isMultipleSelection)
             {
-                if (MaxSelectNum > 0 && m_activeIndices.Count >= MaxSelectNum && !m_activeIndices.Contains(index))
+                // 최대 선택 가능한 버튼 수가 0보다 크고, m_activeIndices 리스트에 index가 없으면
+                if (m_maxSelectNum > 0 && m_activeIndices.Count >= m_maxSelectNum && !m_activeIndices.Contains(index))
                 {
                     // 최대 선택 가능한 버튼 수를 초과하면 OnExceedMaxSelectNum 이벤트 호출
                     OnExceedMaxSelectNum?.Invoke();
@@ -72,9 +68,7 @@ namespace WMK
 
                 if (isActive)
                 {
-                    // 선택이 해제된 버튼의 인덱스를 m_activeIndices 리스트에서 제거
                     m_activeIndices.Remove(index);
-                    // 선택이 해제된 버튼의 인덱스를 인자로 OnButtonDeselected 이벤트 호출
                     OnButtonDeselected?.Invoke(index);
                 }
                 else
@@ -83,7 +77,7 @@ namespace WMK
                     m_activeIndices.Add(index); 
                 }
             }
-            else
+            else // 단일 선택 모드
             {
                 // 처음 버튼을 선택할 때
                 if (m_activeIndices.Count is 0)
@@ -91,6 +85,7 @@ namespace WMK
                     m_activeIndices.Add(index);
                     m_buttonList[index].SetVisualActive(true, true);
                 }
+                // 다른 버튼을 선택했을 때
                 else if (m_activeIndices[0] != index)
                 {
                     m_buttonList[m_activeIndices[0]].SetVisualActive(false);
@@ -98,9 +93,10 @@ namespace WMK
                     OnButtonDeselected?.Invoke(m_activeIndices[0]);
                     m_activeIndices[0] = index;
                 }
+                // 이미 선택된 버튼을 다시 선택했을 때
                 else
                 {
-                    if (IsDeselectable)
+                    if (m_isDeselectable)
                     {
                         m_buttonList[index].SetVisualActive(false);
                         OnButtonDeselected?.Invoke(index);
@@ -118,7 +114,7 @@ namespace WMK
         public void Reset()
         {
             m_activeIndices.Clear();
-            for (int i = 0; i < m_buttonList.Count; i++) m_buttonList[i].SetVisualActive(false);
+            for (int i = 0; i < m_buttonList.Count; i++) m_buttonList[i].SetVisualActive(false, true);
         }
 
         public void Clear()

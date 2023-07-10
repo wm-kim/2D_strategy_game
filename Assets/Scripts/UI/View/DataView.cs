@@ -1,20 +1,20 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 
 namespace WMK
 {
+    // View needs to be bind first before the view model is set or updated
+    [DefaultExecutionOrder(-1)]
     public abstract class DataView<T> : MonoBehaviour where T : IEquatable<T>
     {
         [SerializeField] protected Data<T> m_data;
-        void OnEnable()
+
+        private void OnEnable()
         {
             m_data.OnValueChanged += UpdateView;
             UpdateView(m_data.Value);
         }
-        void OnDisable()
+        private void OnDisable()
         {
             m_data.OnValueChanged -= UpdateView;
         }

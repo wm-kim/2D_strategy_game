@@ -12,7 +12,7 @@ namespace WMK
             get => m_value;
             set
             {
-                if (m_value.Equals(value)) return;
+                if (m_value != null && m_value.Equals(value)) return;
                 m_value = value;
                 OnValueChanged?.Invoke(value);
             }
