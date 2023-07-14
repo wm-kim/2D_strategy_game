@@ -24,17 +24,17 @@ namespace WMK
         /// <summary>
         /// 버튼이 선택되었을 때 발생하는 이벤트
         /// </summary>
-        public Action<int> OnButtonSelected;
+        public IntEventSO OnButtonSelected;
 
         /// <summary>
         /// 버튼 선택이 해제되었을 때 발생하는 이벤트
         /// </summary>
-        public Action<int> OnButtonDeselected;
+        public IntEventSO OnButtonDeselected;
 
         /// <summary>
         /// 최대 선택 가능한 버튼 수를 초과했을 때 발생하는 이벤트
         /// </summary>
-        public Action OnExceedMaxSelectNum;
+        public VoidEventSO OnExceedMaxSelectNum;
 
         public void Awake()
         {
@@ -59,7 +59,7 @@ namespace WMK
                 if (m_maxSelectNum > 0 && m_activeIndices.Count >= m_maxSelectNum && !m_activeIndices.Contains(index))
                 {
                     // 최대 선택 가능한 버튼 수를 초과하면 OnExceedMaxSelectNum 이벤트 호출
-                    OnExceedMaxSelectNum?.Invoke();
+                    OnExceedMaxSelectNum?.RaiseEvent();
                     return;
                 }
 
@@ -69,7 +69,7 @@ namespace WMK
                 if (isActive)
                 {
                     m_activeIndices.Remove(index);
-                    OnButtonDeselected?.Invoke(index);
+                    OnButtonDeselected?.RaiseEvent(index);
                 }
                 else
                 {
@@ -90,25 +90,25 @@ namespace WMK
                 {
                     m_buttonList[m_activeIndices[0]].SetVisualActive(false);
                     m_buttonList[index].SetVisualActive(true);
-                    OnButtonDeselected?.Invoke(m_activeIndices[0]);
+                    OnButtonDeselected?.RaiseEvent(m_activeIndices[0]);
                     m_activeIndices[0] = index;
                 }
                 // 이미 선택된 버튼을 다시 선택했을 때
                 else
                 {
+                    // 선택 해제가 가능하면 선택 해제 후 종료
                     if (m_isDeselectable)
                     {
                         m_buttonList[index].SetVisualActive(false);
-                        OnButtonDeselected?.Invoke(index);
+                        OnButtonDeselected?.RaiseEvent(index);
                         m_activeIndices.Clear();
                     }
-
                     return;
                 }
             }
 
             // 선택된 버튼의 인덱스를 인자로 OnButtonSelected
-            OnButtonSelected?.Invoke(index);
+            OnButtonSelected?.RaiseEvent(index);
         }
 
         public void Reset()

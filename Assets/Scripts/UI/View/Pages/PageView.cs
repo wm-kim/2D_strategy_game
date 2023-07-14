@@ -5,26 +5,28 @@ using DG.Tweening;
 
 namespace WMK
 {
+    public enum UIVisibleState
+    {
+        Undefined = -1,
+        Appearing,
+        Appeared,
+        Disappearing,
+        Disappeared
+    }
+    
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class PageView : MonoBehaviour
     {
-        [System.Serializable]
-        public enum VisibleState
-        {
-            Undefined = -1,
-            Appearing,
-            Appeared,
-            Disappearing,
-            Disappeared
-        }
-
         [SerializeField, ReadOnly] protected PageType m_pageType = PageType.Undefined;
         
         public PageType PageType => m_pageType;
-        private VisibleState m_currentState = VisibleState.Undefined;
+        [SerializeField, ReadOnly] private UIVisibleState m_currentState = UIVisibleState.Undefined;
         private CanvasGroup m_canvasGroup;
         private Tween m_tween;
 
+        /// <summary>
+        /// Init this page. This is called by the PageManager when the page is created.
+        /// </summary>
         public void Init()
         {
             SetTagIfNotSet();
@@ -58,12 +60,12 @@ namespace WMK
             m_canvasGroup = GetComponent<CanvasGroup>();
             gameObject.transform.localPosition = Vector3.zero;
         }
-        
+
         public void Show(float duration = 0.0f) 
         {
-            if (m_currentState == VisibleState.Appearing || m_currentState == VisibleState.Appeared) return;
+            if (m_currentState == UIVisibleState.Appearing || m_currentState == UIVisibleState.Appeared) return;
 
-            m_currentState = VisibleState.Appearing;
+            m_currentState = UIVisibleState.Appearing;
             gameObject.SetActive(true);
             
             // Ensure duration is not negative
@@ -74,7 +76,7 @@ namespace WMK
             {
                 m_canvasGroup.alpha = 1;
                 m_canvasGroup.blocksRaycasts = true;
-                m_currentState = VisibleState.Appeared; 
+                m_currentState = UIVisibleState.Appeared; 
             }
             else
             {
@@ -83,7 +85,7 @@ namespace WMK
                 if (m_tween != null) m_tween.Kill();
                 m_tween = m_canvasGroup.DOFade(1, duration).OnComplete(() =>
                 {
-                    m_currentState = VisibleState.Appeared; 
+                    m_currentState = UIVisibleState.Appeared; 
                     m_canvasGroup.blocksRaycasts = true;
                 });
             }
@@ -91,10 +93,10 @@ namespace WMK
 
         public void Hide(float duration = 0.0f)
         {
-            if (m_currentState == VisibleState.Disappearing || m_currentState == VisibleState.Disappeared)
+            if (m_currentState == UIVisibleState.Disappearing || m_currentState == UIVisibleState.Disappeared)
                 return;
 
-            m_currentState = VisibleState.Disappearing;
+            m_currentState = UIVisibleState.Disappearing;
             m_canvasGroup.blocksRaycasts = false;
             
             // Ensure duration is not negative
@@ -105,7 +107,7 @@ namespace WMK
             {
                 m_canvasGroup.alpha = 0;
                 gameObject.SetActive(false);
-                m_currentState = VisibleState.Disappeared;
+                m_currentState = UIVisibleState.Disappeared;
             }
             else
             {
@@ -113,7 +115,7 @@ namespace WMK
                 m_tween = m_canvasGroup.DOFade(0f, duration).OnComplete(() =>
                 {
                     gameObject.SetActive(false);
-                    m_currentState = VisibleState.Disappeared;
+                    m_currentState = UIVisibleState.Disappeared;
                 });
             }
         }

@@ -8,7 +8,6 @@ namespace WMK
     [CreateAssetMenu(menuName = "ScriptableObjects/GameSettings")]
     public class GameSettings : SingletonSO<GameSettings>
     {
-        public string GameTitle;
-        public string GameVersion;
+        
     }
 }

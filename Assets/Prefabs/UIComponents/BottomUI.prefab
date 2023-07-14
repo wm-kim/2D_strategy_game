@@ -122,7 +122,7 @@ RectTransform:
   m_Children:
   - {fileID: 3322237163330461359}
   - {fileID: 3115383640508175437}
-  - {fileID: 3207824154805746835}
+  - {fileID: 908802454068833863}
   - {fileID: 4505429308611616673}
   m_Father: {fileID: 1858641233563066353}
   m_RootOrder: -1
@@ -172,13 +172,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_isMultipleSelection: 0
   m_isDeselectable: 0
-  m_maxSelectNum: 0
+  m_maxSelectNum: 1
   m_buttonList:
   - {fileID: 6974136754657204724}
-  - {fileID: 3207824154805746836}
   - {fileID: 7345363976952402710}
+  - {fileID: 4778141568189720860}
   - {fileID: 8094491771738953978}
   m_activeIndices: 
+  OnButtonSelected: {fileID: 11400000, guid: bca736771c1d7bf43b9d59fb695f83be, type: 2}
+  OnButtonDeselected: {fileID: 11400000, guid: b26885f93b1dc6e459b2ddfd779ec58b, type: 2}
+  OnExceedMaxSelectNum: {fileID: 11400000, guid: 06949d100e530b54fb0508279428cdf3, type: 2}
 --- !u!1001 &803009612148508312
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -189,7 +192,9 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 433164294263159316, guid: 58493be0480fcf942b922f762d94236e, type: 3}
       propertyPath: m_text
-      value: Decks
+      value: 'Deck
+
+'
       objectReference: {fileID: 0}
     - target: {fileID: 2312822807355691733, guid: 58493be0480fcf942b922f762d94236e, type: 3}
       propertyPath: m_Pivot.x
@@ -277,7 +282,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4047249119750820397, guid: 58493be0480fcf942b922f762d94236e, type: 3}
       propertyPath: m_Name
-      value: BottomButtonUI(Decks)
+      value: BottomButtonUI(Deck)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7983515869351564686, guid: 58493be0480fcf942b922f762d94236e, type: 3}
+      propertyPath: m_duration
+      value: 0.15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -400,6 +409,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BottomButtonUI(Play)
       objectReference: {fileID: 0}
+    - target: {fileID: 7983515869351564686, guid: 58493be0480fcf942b922f762d94236e, type: 3}
+      propertyPath: m_duration
+      value: 0.15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -520,6 +533,10 @@ PrefabInstance:
     - target: {fileID: 4047249119750820397, guid: 58493be0480fcf942b922f762d94236e, type: 3}
       propertyPath: m_Name
       value: BottomButtonUI(Profile)
+      objectReference: {fileID: 0}
+    - target: {fileID: 7983515869351564686, guid: 58493be0480fcf942b922f762d94236e, type: 3}
+      propertyPath: m_duration
+      value: 0.15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -642,17 +659,21 @@ PrefabInstance:
       propertyPath: m_Name
       value: BottomButtonUI(Store)
       objectReference: {fileID: 0}
+    - target: {fileID: 7983515869351564686, guid: 58493be0480fcf942b922f762d94236e, type: 3}
+      propertyPath: m_duration
+      value: 0.15
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 58493be0480fcf942b922f762d94236e, type: 3}
---- !u!224 &3207824154805746835 stripped
+--- !u!224 &908802454068833863 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2312822807355691733, guid: 58493be0480fcf942b922f762d94236e, type: 3}
   m_PrefabInstance: {fileID: 3207824154805746834}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3207824154805746836 stripped
+--- !u!114 &4778141568189720860 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 7983515869351564686, guid: 58493be0480fcf942b922f762d94236e, type: 3}
   m_PrefabInstance: {fileID: 3207824154805746834}

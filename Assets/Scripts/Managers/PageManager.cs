@@ -5,7 +5,7 @@ using System;
 namespace WMK
 {
     // PageManager needs to be executed before any other script in the scene.
-    [DefaultExecutionOrder(-1)] 
+    [DefaultExecutionOrder(-1)]
     public class PageManager : MonoBehaviour
     {
         [SerializeField, ReadOnly]

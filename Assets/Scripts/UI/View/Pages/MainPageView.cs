@@ -6,23 +6,17 @@ namespace WMK
 {
     public class MainPageView : PageView
     {
-        [SerializeField] private DataString m_gameTitle;
-        [SerializeField] private DataString m_gameVersion;
-
+        [SerializeField] private MenuPageSO m_model;
+        
         protected override void SetPageType()
         {
             m_pageType = PageType.MainPage;
         }
 
-        private void Start()
+        private void Awake()
         {
-            SetupData();
-        }
-
-        public void SetupData()
-        {
-            m_gameTitle.Value = GameSettings.Instance.GameTitle;
-            m_gameVersion.Value = GameSettings.Instance.GameVersion;
+            m_model.GameTitle.Value = "Game Title : " + m_model.GameTitle.Value;
+            m_model.GameVersion.Value = "Version : " + m_model.GameVersion.Value;
         }
     }
 }
