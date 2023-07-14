@@ -6,5 +6,6 @@ namespace WMK
         MenuScene,
         GameScene,
         PersistentScene,
+        DeckBuildingScene,
     }
 }
