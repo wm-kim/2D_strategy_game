@@ -47,12 +47,12 @@ namespace WMK
             if (m_isLoading) return;
             m_sceneToLoad = sceneToLoad;
             
-            UnloadPreviousScene();
+            UnloadPreviousScene().Forget();
         }
         
         #if UNITY_EDITOR
         private void ColdStartup(SceneSO sceneToLoad) => m_currentlyLoadedScene = sceneToLoad;
-        #endif
+        #endif 
         
         private async UniTaskVoid UnloadPreviousScene()
         {
@@ -65,13 +65,13 @@ namespace WMK
                 if (m_currentlyLoadedScene.SceneReference.OperationHandle.IsValid())
                 {
                     // Unload the scene through its AssetReference, i.e. through the Addressable system
-                    m_currentlyLoadedScene.SceneReference.UnLoadScene();
+                    await m_currentlyLoadedScene.SceneReference.UnLoadScene();
                 }
                 #if UNITY_EDITOR
                 else
                 {
                     // In the editor, since the operation handle has not been used, we need to unload the scene by its name.
-                    SceneManager.UnloadSceneAsync(m_currentlyLoadedScene.SceneReference.editorAsset.name);
+                    await SceneManager.UnloadSceneAsync(m_currentlyLoadedScene.SceneReference.editorAsset.name);
                 }
                 #endif
             }

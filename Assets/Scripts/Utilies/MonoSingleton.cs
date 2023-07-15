@@ -16,7 +16,7 @@ namespace WMK
                         s_instance = objs[0];
                     if (objs.Length > 1)
                     {
-                        Debug.LogError("There is more than one " + typeof(T).Name + " in the scene.");
+                        DebugStatic.LogError("There is more than one " + typeof(T).Name + " in the scene.");
                     }
                     if (s_instance == null)
                     {

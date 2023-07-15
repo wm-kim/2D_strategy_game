@@ -43,9 +43,7 @@ namespace WMK
         private void SetTagIfNotSet()
         {
             if (gameObject.CompareTag("Page")) return;
-#if UNITY_EDITOR
-            Debug.LogWarning($"gameObject {gameObject.name} does not have tag Page, setting it now.");
-#endif
+            DebugStatic.LogWarning($"gameObject {gameObject.name} does not have tag Page, setting it now.");
             gameObject.tag = "Page";
         }
         

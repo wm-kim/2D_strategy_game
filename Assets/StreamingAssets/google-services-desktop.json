@@ -2,7 +2,8 @@
   "project_info": {
     "project_number": "457684959322",
     "project_id": "cardwars-14769",
-    "storage_bucket": "cardwars-14769.appspot.com"
+    "storage_bucket": "cardwars-14769.appspot.com",
+    "firebase_url": "https://cardwars-14769-default-rtdb.asia-southeast1.firebasedatabase.app/"
   },
   "client": [
     {

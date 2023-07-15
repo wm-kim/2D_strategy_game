@@ -4,7 +4,7 @@ namespace WMK
     { 
         MainScene,
         MenuScene,
-        GameScene,
+        GamePlayScene,
         PersistentScene,
         DeckBuildingScene,
     }

@@ -35,9 +35,7 @@ namespace WMK
         private void SetTagIfNotSet()
         {
             if (gameObject.CompareTag("PageNavigation")) return;
-#if UNITY_EDITOR
-            Debug.LogWarning("PageNavigation object does not have the \"PageNavigation\" tag. Setting it now.");
-#endif
+            DebugStatic.LogWarning("PageNavigation object does not have the \"PageNavigation\" tag. Setting it now.");
             gameObject.tag = "PageNavigation";
         }
         

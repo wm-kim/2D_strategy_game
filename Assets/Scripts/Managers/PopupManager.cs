@@ -84,9 +84,7 @@ namespace WMK
         {
             if (m_popupQueue.Count == 0)
             {
-                #if UNITY_EDITOR
-                Debug.LogWarning("Popup queue is empty");
-                #endif
+                DebugStatic.LogWarning("Popup queue is empty");
                 return;
             }
             

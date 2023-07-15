@@ -1314,7 +1314,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6917429555038195167, guid: 17ac89c3b78dfff418e732da339fd57b, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 2913
       objectReference: {fileID: 0}
     - target: {fileID: 6917429555038195167, guid: 17ac89c3b78dfff418e732da339fd57b, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1787,7 +1787,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5463715060287274386, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 1576
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5463715060287274386, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -1808,6 +1808,38 @@ PrefabInstance:
     - target: {fileID: 5662705939228390982, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
       propertyPath: m_Name
       value: PlayPage
+      objectReference: {fileID: 0}
+    - target: {fileID: 8722490700010709225, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8722490700010709225, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8722490700010709225, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 11400000, guid: 82184ca721492e748b0933d714756021, type: 2}
+    - target: {fileID: 8722490700010709225, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8722490700010709225, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: RaiseEvent
+      objectReference: {fileID: 0}
+    - target: {fileID: 8722490700010709225, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: WMK.LoadEventSO, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 8722490700010709225, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
+      value: 
+      objectReference: {fileID: 11400000, guid: b0a0bc693d98d984bb1ef5fb71d3f90c, type: 2}
+    - target: {fileID: 8722490700010709225, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: WMK.SceneSO, Assembly-CSharp
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

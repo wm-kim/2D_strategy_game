@@ -20,7 +20,7 @@ namespace WMK
                 OnShowPopupRequested.Invoke(popupType);
             else
             {
-                Debug.LogWarning("A Popup was requested, but nobody picked it up.");
+                DebugStatic.LogWarning("A Popup was requested, but nobody picked it up.");
             }
         }
         
@@ -30,7 +30,7 @@ namespace WMK
                 OnHidePopupRequested.Invoke();
             else
             {
-                Debug.LogWarning("A Popup was requested, but nobody picked it up.");
+                DebugStatic.LogWarning("A Popup was requested, but nobody picked it up.");
             }
         }
     }

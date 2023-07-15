@@ -20,7 +20,7 @@ namespace WMK
                 OnLoadRequested.Invoke(sceneToLoad);
             else
             {
-                Debug.LogWarning("A Scene loading was requested, but nobody picked it up.");
+                DebugStatic.LogWarning("A Scene loading was requested, but nobody picked it up.");
             }
         }
     }
