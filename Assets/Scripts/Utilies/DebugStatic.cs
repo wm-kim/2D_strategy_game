@@ -21,5 +21,11 @@ namespace WMK
         {
             UnityEngine.Debug.LogError(message);
         }
+        
+        [Conditional("UNITY_EDITOR")]
+        public static void LogException(System.Exception exception)
+        {
+            UnityEngine.Debug.LogException(exception);
+        }
     }
 }
