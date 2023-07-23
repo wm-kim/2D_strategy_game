@@ -17,8 +17,6 @@ namespace Minimax
         [SerializeField] private LoadEventSO m_loadSceneEvent;
         [SerializeField] private LoadEventSO m_coldStartupEvent;
         
-        [Header("Broadcasting on")]
-        
         // 아래 두 개의 변수는 로딩 화면 애니메이션을 담당하는 컨트롤러입니다.
         [SerializeField] private AnimationSequencerController m_showLoadingScreenAnimation;
         [SerializeField] private AnimationSequencerController m_hideLoadingScreenAnimation;
