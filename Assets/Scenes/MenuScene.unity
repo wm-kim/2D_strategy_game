@@ -201,37 +201,6 @@ MonoBehaviour:
   m_pageManager: {fileID: 154984947}
   <NavigationType>k__BackingField: 2
   <InitialPage>k__BackingField: 3
---- !u!1 &44589962
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 44589963}
-  m_Layer: 0
-  m_Name: GameManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &44589963
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 44589962}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 101455951}
-  m_RootOrder: -1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &72430655
 GameObject:
   m_ObjectHideFlags: 0
@@ -296,7 +265,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 44589963}
   - {fileID: 154984946}
   - {fileID: 535481400}
   m_Father: {fileID: 0}
@@ -489,7 +457,7 @@ MonoBehaviour:
   m_currentNavigation: {fileID: 0}
   m_pageNavigations:
     _serializedList: []
-  m_transitionDuration: 0
+  m_pageTransitionDuration: 0
   m_mobileBackButtonEvent: {fileID: 11400000, guid: f46d412f32b2e104db475787811eae60, type: 2}
   m_switchNavigationEvent: {fileID: 11400000, guid: bca736771c1d7bf43b9d59fb695f83be, type: 2}
   m_quitAppPopupEventSO: {fileID: 11400000, guid: fcb12f856a470ed44950b1b999d8a7e5, type: 2}
@@ -1234,7 +1202,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1833132761987672394, guid: 17ac89c3b78dfff418e732da339fd57b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: WMK.LoadEventSO, Assembly-CSharp
+      value: Minimax.LoadEventSO, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 1833132761987672394, guid: 17ac89c3b78dfff418e732da339fd57b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
@@ -1242,7 +1210,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 72b9a05b967d38e4d9ceeb52d9588da2, type: 2}
     - target: {fileID: 1833132761987672394, guid: 17ac89c3b78dfff418e732da339fd57b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: WMK.SceneSO, Assembly-CSharp
+      value: Minimax.SceneSO, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 2736507356310899246, guid: 17ac89c3b78dfff418e732da339fd57b, type: 3}
       propertyPath: m_Name
@@ -1473,6 +1441,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1031239217047134236, guid: b0ea57401e764fa4a9e98273609d96e2, type: 3}
       propertyPath: OnButtonDeselected
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1031239217047134236, guid: b0ea57401e764fa4a9e98273609d96e2, type: 3}
+      propertyPath: OnExceedMaxSelectNum
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1858641233563066353, guid: b0ea57401e764fa4a9e98273609d96e2, type: 3}
@@ -1831,7 +1803,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8722490700010709225, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: WMK.LoadEventSO, Assembly-CSharp
+      value: Minimax.LoadEventSO, Assembly-CSharp
       objectReference: {fileID: 0}
     - target: {fileID: 8722490700010709225, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
@@ -1839,7 +1811,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: b0a0bc693d98d984bb1ef5fb71d3f90c, type: 2}
     - target: {fileID: 8722490700010709225, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: WMK.SceneSO, Assembly-CSharp
+      value: Minimax.SceneSO, Assembly-CSharp
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

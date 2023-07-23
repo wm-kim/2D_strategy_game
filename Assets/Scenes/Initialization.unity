@@ -169,8 +169,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_persistentScene: {fileID: 11400000, guid: 61f01dfadcf109e498cdcc1abb9aaf50, type: 2}
   m_mainScene: {fileID: 11400000, guid: c3efebd4bd7367b46a9c17af488e0b21, type: 2}
+  m_gamePlayScene: {fileID: 11400000, guid: b0a0bc693d98d984bb1ef5fb71d3f90c, type: 2}
   m_loadSceneEventChannel:
     m_AssetGUID: 82184ca721492e748b0933d714756021
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
+  m_startServerEvent: {fileID: 11400000, guid: 8f8a104487d26d54c83c390260359489, type: 2}

@@ -1,8 +1,8 @@
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
-using DG.Tweening;
 
-namespace WMK
+namespace Minimax.UI.View
 {
     [RequireComponent(typeof(Button))]
     public class BottomButtonView : ButtonView

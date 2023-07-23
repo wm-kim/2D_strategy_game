@@ -16,48 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: 8344ea4d79e42f0488ecbae243d2b0d8
-  m_SerializeEntries:
-  - m_GUID: d971bfb46eb6979469e89d6935b143f3
-    m_Address: Assets/Prefabs/UIPopups
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Popup
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: a361bcad2cbe52646bbe350df1962040
-    m_Address: Assets/Scenes/MainScene.unity
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 8c9cfa26abfee488c85f1582747f6a02
-    m_Address: Assets/Scenes/MenuScene.unity
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 40f624af327a20c4e9204fc9006fa7bd
-    m_Address: Assets/Scenes/PersistentManager.unity
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 44bdfef14482da94a889828e6b6c295f
-    m_Address: Assets/ScriptableObjects/EventChannels/ColdStartup_Channel.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 82184ca721492e748b0933d714756021
-    m_Address: Assets/ScriptableObjects/EventChannels/LoadSceneEvent_Channel.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 2c1a11a34795adc4fb0986f37a96c55e
-    m_Address: Assets/Scenes/DeckBuildingScene.unity
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: dfc4d72db676bd046bb7fefaacdd3542
-    m_Address: Assets/Scenes/GamePlayScene.unity
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 6abb7b901d7418040a2790f0eae3d6f1, type: 2}
   m_SchemaSet:

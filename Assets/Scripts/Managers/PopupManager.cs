@@ -1,12 +1,11 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
+using Minimax.ScriptableObjects.Events;
+using Minimax.UI.View.Popups;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.Serialization;
 
-namespace WMK
+namespace Minimax.Managers
 {
     public class PopupManager : MonoBehaviour
     {
@@ -84,7 +83,7 @@ namespace WMK
         {
             if (m_popupQueue.Count == 0)
             {
-                DebugStatic.LogWarning("Popup queue is empty");
+                DebugWrapper.Instance.LogWarning("Popup queue is empty");
                 return;
             }
             

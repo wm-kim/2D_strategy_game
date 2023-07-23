@@ -12,3 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2703a209c9342668c043064046e8fd6, type: 3}
   m_Name: PopupEvent
   m_EditorClassIdentifier: 
+  OnShowPopupRequested:
+    m_PersistentCalls:
+      m_Calls: []
+  OnHidePopupRequested:
+    m_PersistentCalls:
+      m_Calls: []

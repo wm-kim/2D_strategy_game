@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-namespace WMK
+namespace Minimax.UI.View.Popups
 {
     public class QuitApplicationPopup : PopupView
     {

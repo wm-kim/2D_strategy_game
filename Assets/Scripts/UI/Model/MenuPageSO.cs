@@ -1,7 +1,7 @@
+using Minimax.ScriptableObjects.Events.Primitives;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace WMK
+namespace Minimax.UI.Model
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/PageModels/MenuPageSO")]
     public class MenuPageSO : ScriptableObject

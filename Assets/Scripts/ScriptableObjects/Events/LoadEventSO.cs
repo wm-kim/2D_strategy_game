@@ -1,10 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace WMK
+namespace Minimax
 {
     /// <summary>
     /// This class is used for scene-loading events.
@@ -20,7 +17,7 @@ namespace WMK
                 OnLoadRequested.Invoke(sceneToLoad);
             else
             {
-                DebugStatic.LogWarning("A Scene loading was requested, but nobody picked it up.");
+                DebugWrapper.Instance.LogWarning("A Scene loading was requested, but nobody picked it up.");
             }
         }
     }

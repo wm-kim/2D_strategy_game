@@ -1,10 +1,10 @@
-using System;
+using Minimax.ScriptableObjects.Events;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 
-namespace WMK
+namespace Minimax.Managers
 {
     public class InputManager : MonoBehaviour
     {

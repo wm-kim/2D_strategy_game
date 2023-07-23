@@ -1,7 +1,8 @@
 using System;
+using Minimax.ScriptableObjects.Events.Primitives;
 using UnityEngine;
 
-namespace WMK
+namespace Minimax.UI.View.DataViews
 {
     /// <summary>
     /// Base class for all DataViews.

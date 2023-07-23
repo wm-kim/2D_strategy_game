@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace WMK
+namespace Minimax
 {
     public class MonoSingleton<T> : MonoBehaviour where T : Component
     {
@@ -16,7 +16,7 @@ namespace WMK
                         s_instance = objs[0];
                     if (objs.Length > 1)
                     {
-                        DebugStatic.LogError("There is more than one " + typeof(T).Name + " in the scene.");
+                        DebugWrapper.Instance.LogError("There is more than one " + typeof(T).Name + " in the scene.");
                     }
                     if (s_instance == null)
                     {

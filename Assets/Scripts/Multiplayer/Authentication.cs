@@ -2,23 +2,38 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using QFSW.QC;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 
-namespace WMK
+#if UNITY_EDITOR
+using ParrelSync;
+#endif
+
+namespace Minimax
 {
     public class Authentication : MonoBehaviour
     {
         private async void Start()
         {
-            await UnityServices.InitializeAsync();
-            DebugStatic.Log(UnityServices.State.ToString());
-            
+            InitializeUnityAuthentication();
             SetupEvents();
-            
             await SignInAnonymouslyAsync();
+        }
+
+        private async void InitializeUnityAuthentication()
+        {
+            if (UnityServices.State != ServicesInitializationState.Initialized)
+            {
+                var options = new InitializationOptions();
+
+#if !DEDICATED_SERVER
+            // Set the profile to a random number to separate players
+            options.SetProfile(UnityEngine.Random.Range(0, 10000).ToString());
+#endif
+            await UnityServices.InitializeAsync(options);
+            DebugWrapper.Instance.Log(UnityServices.State.ToString());
+            }
         }
 
         private void SetupEvents()
@@ -26,40 +41,42 @@ namespace WMK
             AuthenticationService.Instance.SignedIn += () =>
             {
                 // Shows how to get the player ID
-                DebugStatic.Log($"Player ID: {AuthenticationService.Instance.PlayerId}");
+                DebugWrapper.Instance.Log($"Player ID: {AuthenticationService.Instance.PlayerId}");
 
                 // Shows how to get the access token
-                DebugStatic.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
+                DebugWrapper.Instance.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
             };
             
             AuthenticationService.Instance.SignInFailed += (exception) =>
             {
-                DebugStatic.LogError($"Sign in failed: {exception.Message}");
+                DebugWrapper.Instance.LogError($"Sign in failed: {exception.Message}");
             };
         }
         
         private async UniTask SignInAnonymouslyAsync()
         {
+            if (AuthenticationService.Instance.IsSignedIn)
+            {
+                DebugWrapper.Instance.Log("Already signed in!");
+                return;
+            }
+            
             try
             {
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                Debug.Log("Sign in anonymously succeeded!");
-        
-                // Shows how to get the playerID
-                Debug.Log($"PlayerID: {AuthenticationService.Instance.PlayerId}"); 
-
+                DebugWrapper.Instance.Log("Sign in anonymously succeeded!");
             }
             catch (AuthenticationException ex)
             {
                 // Compare error code to AuthenticationErrorCodes
                 // Notify the player with the proper error message
-                DebugStatic.LogException(ex);
+                DebugWrapper.Instance.LogException(ex);
             }
             catch (RequestFailedException ex)
             {
                 // Compare error code to CommonErrorCodes
                 // Notify the player with the proper error message
-                Debug.LogException(ex);
+                DebugWrapper.Instance.LogException(ex);
             }
         }
     }

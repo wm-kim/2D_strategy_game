@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace WMK
+namespace Minimax
 {
     /// <summary>
     /// Base class for all scene scriptable objects

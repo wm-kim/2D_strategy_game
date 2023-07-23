@@ -1,4 +1,4 @@
-namespace WMK
+namespace Minimax
 {
     public enum SceneType
     { 

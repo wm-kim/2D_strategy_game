@@ -1,9 +1,7 @@
-using System;
-using Cysharp.Threading.Tasks;
-using UnityEngine;
 using DG.Tweening;
+using UnityEngine;
 
-namespace WMK
+namespace Minimax.UI.View.Pages
 {
     public enum UIVisibleState
     {
@@ -43,7 +41,7 @@ namespace WMK
         private void SetTagIfNotSet()
         {
             if (gameObject.CompareTag("Page")) return;
-            DebugStatic.LogWarning($"gameObject {gameObject.name} does not have tag Page, setting it now.");
+            DebugWrapper.Instance.LogWarning($"gameObject {gameObject.name} does not have tag Page, setting it now.");
             gameObject.tag = "Page";
         }
         

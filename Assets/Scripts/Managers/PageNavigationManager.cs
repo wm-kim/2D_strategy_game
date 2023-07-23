@@ -1,16 +1,18 @@
-using System;
 using AYellowpaper.SerializedCollections;
+using Minimax.ScriptableObjects.Events;
+using Minimax.ScriptableObjects.Events.Primitives;
+using Minimax.UI.View.Pages;
+using Minimax.UI.View.Popups;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace WMK
+namespace Minimax.Managers
 {
     public class PageNavigationManager : MonoBehaviour
     {
         [SerializeField, ReadOnly] private PageNavigation m_currentNavigation;
         [SerializeField, ReadOnly] private SerializedDictionary<PageNavigationType, PageNavigation> m_pageNavigations = 
             new SerializedDictionary<PageNavigationType, PageNavigation>();
-        [SerializeField, Range(0, 1)] private float m_transitionDuration = 0.15f;
+        [SerializeField, Range(0, 1)] private float m_pageTransitionDuration = 0.15f;
         
         [Header("Listening to")]
         [SerializeField] private VoidEventSO m_mobileBackButtonEvent;
@@ -58,9 +60,9 @@ namespace WMK
             var navType = (PageNavigationType) index;
             if (m_currentNavigation != null && m_currentNavigation.NavigationType == navType) return;
             UnityEngine.Assertions.Assert.IsTrue(m_pageNavigations.ContainsKey(navType), $"PageNavigation {navType} not found in the scene.");
-            if (m_currentNavigation != null) m_currentNavigation.Hide(m_transitionDuration);
+            if (m_currentNavigation != null) m_currentNavigation.Hide(m_pageTransitionDuration);
             m_currentNavigation = m_pageNavigations[navType];
-            m_currentNavigation.Show(m_transitionDuration);
+            m_currentNavigation.Show(m_pageTransitionDuration);
         }
         
         public PageView PushPage(PageType page) => m_currentNavigation.Push(page);

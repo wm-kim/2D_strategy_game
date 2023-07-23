@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using UnityEngine;
 
-namespace WMK
+namespace Minimax
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/Cards/CardBaseData")]
     public class CardBaseData : ScriptableObject

@@ -1,12 +1,12 @@
 using BrunoMikoski.AnimationSequencer;
 using Cysharp.Threading.Tasks;
+using Minimax.ScriptableObjects.Events;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
-namespace WMK
+namespace Minimax
 {
     public class SceneLoader : MonoBehaviour
     {
@@ -17,6 +17,9 @@ namespace WMK
         [SerializeField] private LoadEventSO m_loadSceneEvent;
         [SerializeField] private LoadEventSO m_coldStartupEvent;
         
+        [Header("Broadcasting on")]
+        
+        // 아래 두 개의 변수는 로딩 화면 애니메이션을 담당하는 컨트롤러입니다.
         [SerializeField] private AnimationSequencerController m_showLoadingScreenAnimation;
         [SerializeField] private AnimationSequencerController m_hideLoadingScreenAnimation;
 
@@ -47,6 +50,7 @@ namespace WMK
             if (m_isLoading) return;
             m_sceneToLoad = sceneToLoad;
             
+            // 이전 씬을 언로드하는 작업을 시작합니다.
             UnloadPreviousScene().Forget();
         }
         
@@ -56,6 +60,7 @@ namespace WMK
         
         private async UniTaskVoid UnloadPreviousScene()
         {
+            // 로딩 화면 애니메이션을 재생하며, 애니메이션이 끝날 때까지 대기합니다.
             m_showLoadingScreenAnimation.Play();
             await UniTask.WaitUntil(() => m_showLoadingScreenAnimation.IsPlaying == false);
 
@@ -93,7 +98,6 @@ namespace WMK
             SceneManager.SetActiveScene(s);
 
             m_isLoading = false;
-            
             m_hideLoadingScreenAnimation.Play();
         }
     }

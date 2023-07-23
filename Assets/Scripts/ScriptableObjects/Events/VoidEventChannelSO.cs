@@ -1,8 +1,7 @@
-using System;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace WMK
+namespace Minimax
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/Events/VoidEvent")]
     public class VoidEventSO : ScriptableObject

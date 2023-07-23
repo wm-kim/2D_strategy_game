@@ -2,7 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 
-namespace WMK
+namespace Minimax.UI.View.DataViews
 {
     // Setting initial value of data by text component
     // before any other component tries to access it

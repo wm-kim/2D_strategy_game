@@ -8,7 +8,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace WMK
+namespace Minimax
 {
     public class CardEditorWindow : EditorWindow
     {

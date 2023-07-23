@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace WMK
+namespace Minimax.ScriptableObjects.Events.Primitives
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/Events/Primitives/BoolEvent")]
     public class BoolEventSO : DataEventSO<bool>

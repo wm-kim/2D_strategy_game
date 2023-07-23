@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace WMK
+namespace Minimax
 {
     /// <summary>
     /// This class contains Settings specific to Menu scenes only

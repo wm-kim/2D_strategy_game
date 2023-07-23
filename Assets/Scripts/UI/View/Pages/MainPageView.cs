@@ -1,8 +1,7 @@
-using System;
-using System.Threading.Tasks;
+using Minimax.UI.Model;
 using UnityEngine;
 
-namespace WMK
+namespace Minimax.UI.View.Pages
 {
     public class MainPageView : PageView
     {

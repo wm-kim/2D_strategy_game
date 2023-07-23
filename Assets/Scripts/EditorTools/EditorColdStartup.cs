@@ -1,3 +1,4 @@
+using Minimax.ScriptableObjects.Events;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -5,7 +6,7 @@ using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
-namespace WMK
+namespace Minimax
 {
     public class EditorColdStartup : MonoBehaviour
     {

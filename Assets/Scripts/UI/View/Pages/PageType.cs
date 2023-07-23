@@ -1,4 +1,4 @@
-namespace WMK
+namespace Minimax.UI.View.Pages
 {
     public enum PageType
     {

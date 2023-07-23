@@ -12,3 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 085b7b1d278d0c24a8b76cb622a8bad6, type: 3}
   m_Name: LoadSceneEvent
   m_EditorClassIdentifier: 
+  OnLoadRequested:
+    m_PersistentCalls:
+      m_Calls: []

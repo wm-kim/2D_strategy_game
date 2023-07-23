@@ -1,10 +1,10 @@
-using System;
 using System.Collections.Generic;
+using Minimax.ScriptableObjects.Events;
+using Minimax.ScriptableObjects.Events.Primitives;
+using Minimax.UI.View;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.Serialization;
 
-namespace WMK
+namespace Minimax.UI.Controller
 {
     public class ButtonGroupController : MonoBehaviour
     {
@@ -24,7 +24,7 @@ namespace WMK
         /// <summary>
         /// 버튼이 선택되었을 때 발생하는 이벤트
         /// </summary>
-        public IntEventSO OnButtonSelected;
+        public IntEventSO OnButtonSelected; 
 
         /// <summary>
         /// 버튼 선택이 해제되었을 때 발생하는 이벤트

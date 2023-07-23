@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace WMK
+namespace Minimax
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/GameSettings")]
     public class GameSettings : SingletonSO<GameSettings>

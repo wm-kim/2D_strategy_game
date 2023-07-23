@@ -1,11 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using BrunoMikoski.AnimationSequencer;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace WMK
+namespace Minimax.UI.View.Popups
 {
     public abstract class PopupView : MonoBehaviour
     {
@@ -26,7 +22,7 @@ namespace WMK
         }
         
         /// <summary>
-        /// Popup의 종류를 설정합니다.
+        /// Popup의 종류를 설정합니다. PopupType은 PopupManager에서 Popup pool을 관리하는데 사용됩니다.
         /// </summary>
         protected abstract void SetPopupType();
         

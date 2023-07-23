@@ -1,13 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using Firebase;
 using Firebase.Database;
-using UnityEngine;
 using Newtonsoft.Json;
+using UnityEngine;
 
-namespace WMK
+namespace Minimax.Managers
 {
     public class DBManager : MonoBehaviour
     {
@@ -31,12 +29,12 @@ namespace WMK
 
             if (dataSnapshot.Exists)
             {
-                DebugStatic.Log($"Data read successfully from {path}");
+                DebugWrapper.Instance.Log($"Data read successfully from {path}");
                 return dataSnapshot;
             }
             else
             {
-                DebugStatic.LogError($"No data exists at {path}");
+                DebugWrapper.Instance.LogError($"No data exists at {path}");
                 return null;
             }
         }
@@ -56,7 +54,7 @@ namespace WMK
                 .GetReference(path)
                 .SetRawJsonValueAsync(JsonConvert.SerializeObject(cardData));
 
-            DebugStatic.Log($"Card data written successfully to {path}");
+            DebugWrapper.Instance.Log($"Card data written successfully to {path}");
         }
     }
 }

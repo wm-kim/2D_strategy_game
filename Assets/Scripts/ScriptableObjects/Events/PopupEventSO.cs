@@ -1,9 +1,8 @@
-using System;
+using Minimax.UI.View.Popups;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
-namespace WMK
+namespace Minimax
 {
     /// <summary>
     /// This is a ScriptableObject that can be used to raise PopupEvents.
@@ -20,8 +19,15 @@ namespace WMK
                 OnShowPopupRequested.Invoke(popupType);
             else
             {
-                DebugStatic.LogWarning("A Popup was requested, but nobody picked it up.");
+                DebugWrapper.Instance.LogWarning("A Popup was requested, but nobody picked it up.");
             }
+        }
+
+        // This is a workaround for the fact that UnityEvents cannot take enums as parameters.
+        public void ShowPopup(PopupEventSelector popupEventSelector)
+        {
+            var popupType = popupEventSelector.PopupType;
+            ShowPopup(popupType);
         }
         
         public void HidePopup()
@@ -30,7 +36,7 @@ namespace WMK
                 OnHidePopupRequested.Invoke();
             else
             {
-                DebugStatic.LogWarning("A Popup was requested, but nobody picked it up.");
+                DebugWrapper.Instance.LogWarning("A Popup was requested, but nobody picked it up.");
             }
         }
     }

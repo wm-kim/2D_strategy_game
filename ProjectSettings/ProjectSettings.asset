@@ -77,7 +77,7 @@ PlayerSettings:
   androidFullscreenMode: 3
   defaultIsNativeResolution: 1
   macRetinaSupport: 1
-  runInBackground: 0
+  runInBackground: 1
   captureSingleScreen: 0
   muteOtherAudioSources: 0
   Prepare IOS For Recording: 0
@@ -742,7 +742,7 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Android: DOTWEEN_ENABLED
+    Android: DOTWEEN_ENABLED;DEDICATED_SERVER_NO
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend: {}

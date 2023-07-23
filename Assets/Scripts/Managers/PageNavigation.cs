@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
+using Minimax.UI.View.Pages;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace WMK
+namespace Minimax.Managers
 {
     public enum PageNavigationType
     {
@@ -35,7 +33,7 @@ namespace WMK
         private void SetTagIfNotSet()
         {
             if (gameObject.CompareTag("PageNavigation")) return;
-            DebugStatic.LogWarning("PageNavigation object does not have the \"PageNavigation\" tag. Setting it now.");
+            DebugWrapper.Instance.LogWarning("PageNavigation object does not have the \"PageNavigation\" tag. Setting it now.");
             gameObject.tag = "PageNavigation";
         }
         

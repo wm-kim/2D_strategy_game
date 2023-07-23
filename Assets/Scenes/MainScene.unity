@@ -215,6 +215,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2626747228773271231, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Minimax.LoadEventSO, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 2626747228773271231, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: Minimax.SceneSO, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 6870916478966035978, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
       propertyPath: m_Name
       value: MainPage

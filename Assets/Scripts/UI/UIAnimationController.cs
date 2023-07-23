@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using DG.Tweening;
+using Minimax.ScriptableObjects.Events;
 using UnityEngine;
 
-namespace WMK
+namespace Minimax.UI
 {
     public enum AnimationType
     {

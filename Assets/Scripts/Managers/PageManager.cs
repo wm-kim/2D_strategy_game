@@ -1,8 +1,8 @@
 using AYellowpaper.SerializedCollections;
+using Minimax.UI.View.Pages;
 using UnityEngine;
-using System;
 
-namespace WMK
+namespace Minimax.Managers
 {
     // PageManager needs to be executed before any other script in the scene.
     [DefaultExecutionOrder(-1)]

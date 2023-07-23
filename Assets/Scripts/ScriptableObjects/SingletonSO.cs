@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace WMK
+namespace Minimax
 {
     public class SingletonSO<T> : ScriptableObject where T : ScriptableObject
     {
@@ -18,7 +18,7 @@ namespace WMK
                     }
                     else if (assets.Length > 1)
                     {
-                        DebugStatic.LogWarning("SingletonSO -> instance -> assets length is greater than 1 for type " + typeof(T).ToString() + ".");
+                        DebugWrapper.Instance.LogWarning("SingletonSO -> instance -> assets length is greater than 1 for type " + typeof(T).ToString() + ".");
                     }
                     m_instance = assets[0];
                 }
