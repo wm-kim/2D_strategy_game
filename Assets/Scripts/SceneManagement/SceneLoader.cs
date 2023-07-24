@@ -1,10 +1,12 @@
 using BrunoMikoski.AnimationSequencer;
 using Cysharp.Threading.Tasks;
 using Minimax.ScriptableObjects.Events;
+using Minimax.ScriptableObjects.SceneDatas;
 using UnityEngine;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace Minimax
 {
@@ -13,36 +15,35 @@ namespace Minimax
         // To prevent a new loading request while already loading a new scene
         private bool m_isLoading = false;
         
+        [FormerlySerializedAs("m_loadSceneEvent")]
         [Header("Listening to")]
-        [SerializeField] private LoadEventSO m_loadSceneEvent;
-        [SerializeField] private LoadEventSO m_coldStartupEvent;
+        [SerializeField] private LoadSceneEventSO mLoadSceneSceneEvent;
+        [FormerlySerializedAs("m_coldStartupEvent")] [SerializeField] private LoadSceneEventSO mColdStartupSceneEvent;
         
         // 아래 두 개의 변수는 로딩 화면 애니메이션을 담당하는 컨트롤러입니다.
         [SerializeField] private AnimationSequencerController m_showLoadingScreenAnimation;
         [SerializeField] private AnimationSequencerController m_hideLoadingScreenAnimation;
 
-        [SerializeField, ReadOnly] private SceneSO m_sceneToLoad;
-        [SerializeField, ReadOnly] private SceneSO m_currentlyLoadedScene;
-        
-        private AsyncOperationHandle<SceneInstance> m_loadingOperationHandle;
+        [SerializeField, ReadOnly] private SceneType m_sceneToLoad = SceneType.Undefined;
+        [SerializeField, ReadOnly] private SceneType m_currentlyLoadedScene = SceneType.Undefined;
         
         private void OnEnable()
         {
-            m_loadSceneEvent.OnLoadRequested.AddListener(LoadScene);
+            mLoadSceneSceneEvent.OnLoadRequested.AddListener(LoadScene);
             #if UNITY_EDITOR
-            m_coldStartupEvent.OnLoadRequested.AddListener(ColdStartup);
+            mColdStartupSceneEvent.OnLoadRequested.AddListener(ColdStartup);
             #endif
         }
         
         private void OnDisable()
         {
-            m_loadSceneEvent.OnLoadRequested.RemoveListener(LoadScene);
+            mLoadSceneSceneEvent.OnLoadRequested.RemoveListener(LoadScene);
             #if UNITY_EDITOR
-            m_coldStartupEvent.OnLoadRequested.RemoveListener(ColdStartup);
+            mColdStartupSceneEvent.OnLoadRequested.RemoveListener(ColdStartup);
             #endif
         }
         
-        private void LoadScene(SceneSO sceneToLoad)
+        private void LoadScene(SceneType sceneToLoad)
         {
             // Prevent a double loading request
             if (m_isLoading) return;
@@ -53,7 +54,7 @@ namespace Minimax
         }
         
         #if UNITY_EDITOR
-        private void ColdStartup(SceneSO sceneToLoad) => m_currentlyLoadedScene = sceneToLoad;
+        private void ColdStartup(SceneType sceneToLoad) => m_currentlyLoadedScene = sceneToLoad;
         #endif 
         
         private async UniTaskVoid UnloadPreviousScene()
@@ -63,20 +64,9 @@ namespace Minimax
             await UniTask.WaitUntil(() => m_showLoadingScreenAnimation.IsPlaying == false);
 
             // Would be null if the game was started in Initialisation
-            if (m_currentlyLoadedScene != null)
+            if (m_currentlyLoadedScene != SceneType.Undefined)
             {
-                if (m_currentlyLoadedScene.SceneReference.OperationHandle.IsValid())
-                {
-                    // Unload the scene through its AssetReference, i.e. through the Addressable system
-                    await m_currentlyLoadedScene.SceneReference.UnLoadScene();
-                }
-                #if UNITY_EDITOR
-                else
-                {
-                    // In the editor, since the operation handle has not been used, we need to unload the scene by its name.
-                    await SceneManager.UnloadSceneAsync(m_currentlyLoadedScene.SceneReference.editorAsset.name);
-                }
-                #endif
+                await SceneManager.UnloadSceneAsync(m_currentlyLoadedScene.ToString());
             }
             
             LoadNewScene();
@@ -84,17 +74,15 @@ namespace Minimax
         
         private void LoadNewScene()
         {
-            m_loadingOperationHandle = m_sceneToLoad.SceneReference.LoadSceneAsync(LoadSceneMode.Additive, true, 0);
-            m_loadingOperationHandle.Completed += OnNewSceneLoaded;
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(m_sceneToLoad.ToString(), LoadSceneMode.Additive);
+            asyncLoad.completed += OnNewSceneLoaded;
         }
         
-        private void OnNewSceneLoaded(AsyncOperationHandle<SceneInstance> obj)
+        private void OnNewSceneLoaded(AsyncOperation obj)
         {
             m_currentlyLoadedScene = m_sceneToLoad;
-            
-            Scene s = obj.Result.Scene;
-            SceneManager.SetActiveScene(s);
-
+            var activeScene = SceneManager.GetSceneByName(m_currentlyLoadedScene.ToString());
+            SceneManager.SetActiveScene(activeScene);
             m_isLoading = false;
             m_hideLoadingScreenAnimation.Play();
         }

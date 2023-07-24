@@ -2,7 +2,7 @@ using Minimax.UI.View.Popups;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Minimax
+namespace Minimax.ScriptableObjects.Events
 {
     /// <summary>
     /// This is a ScriptableObject that can be used to raise PopupEvents.

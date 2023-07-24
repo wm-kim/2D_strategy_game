@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.ScriptableObjects
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/GameSettings")]
     public class GameSettings : SingletonSO<GameSettings>

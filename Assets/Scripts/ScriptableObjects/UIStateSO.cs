@@ -1,10 +1,9 @@
-using System.Collections;
 using System.Collections.Generic;
 using Minimax.Managers;
 using Minimax.UI.View.Pages;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.ScriptableObjects
 {
     [CreateAssetMenu(fileName = "UIStateSO", menuName = "ScriptableObjects/UIStateSO")]
     public class UIStateSO : ScriptableObject

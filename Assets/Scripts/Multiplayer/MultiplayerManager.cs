@@ -14,7 +14,7 @@ namespace Minimax
     {
         public static MultiplayerManager Instance { get; private set; }
         
-        // light protection against DOS attacks 
+        // light protection against DOS attacks
         private const int MAX_CONNECTION_PAYLOAD = 1024;
         private const int MAX_PLAYER_AMOUNT = 2;
         private string m_playerName;

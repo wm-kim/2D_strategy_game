@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.ScriptableObjects.CardDatas
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/Cards/CardBaseData")]
     public class CardBaseData : ScriptableObject

@@ -1,4 +1,5 @@
 using Minimax.ScriptableObjects.Events;
+using Minimax.ScriptableObjects.SceneDatas;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -10,18 +11,17 @@ namespace Minimax
 {
     public class EditorColdStartup : MonoBehaviour
     {
-        #if UNITY_EDITOR
+#if UNITY_EDITOR
         
         [SerializeField, ReadOnly] private bool m_isColdStart = false;
-        [SerializeField] private SceneSO m_thisSceneSO;
-        [SerializeField] private SceneSO m_persistentManagerSO;
+        [SerializeField] private SceneType m_thisSceneSO;
         
         [Header("Broadcasting on")]
         [SerializeField] private AssetReference m_coldStartupEventChannel;
         
         private void Awake()
         {
-            if (!SceneManager.GetSceneByName(m_persistentManagerSO.SceneReference.editorAsset.name).isLoaded)
+            if (!SceneManager.GetSceneByName(SceneType.PersistentScene.ToString()).isLoaded)
             {
                 m_isColdStart = true;
             }
@@ -30,17 +30,20 @@ namespace Minimax
         private void Start()
         {
             if (m_isColdStart)
-                m_persistentManagerSO.SceneReference.LoadSceneAsync(LoadSceneMode.Additive, true).Completed += LoadEventChannel;
+            {
+                AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneType.PersistentScene.ToString(), LoadSceneMode.Additive);
+                asyncLoad.completed += LoadEventChannel;
+            }
         }
         
-        private void LoadEventChannel(AsyncOperationHandle<SceneInstance> obj)
+        private void LoadEventChannel(AsyncOperation obj)
         {
-            m_coldStartupEventChannel.LoadAssetAsync<LoadEventSO>().Completed += OnNotifyChannelLoaded;
+            m_coldStartupEventChannel.LoadAssetAsync<LoadSceneEventSO>().Completed += OnNotifyChannelLoaded;
         }
         
-        private void OnNotifyChannelLoaded(AsyncOperationHandle<LoadEventSO> obj)
+        private void OnNotifyChannelLoaded(AsyncOperationHandle<LoadSceneEventSO> obj)
         {
-            UnityEngine.Assertions.Assert.IsNotNull(m_thisSceneSO, "You need to set the current scene SO in the EditorColdStartup script");
+            UnityEngine.Assertions.Assert.IsTrue(m_thisSceneSO != SceneType.Undefined);
             obj.Result.RaiseEvent(m_thisSceneSO);
         }
 #endif

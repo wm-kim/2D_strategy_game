@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.ScriptableObjects
 {
     public class SingletonSO<T> : ScriptableObject where T : ScriptableObject
     {

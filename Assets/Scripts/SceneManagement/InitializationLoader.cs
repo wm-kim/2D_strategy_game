@@ -1,4 +1,5 @@
 using Minimax.ScriptableObjects.Events;
+using Minimax.ScriptableObjects.SceneDatas;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -9,39 +10,38 @@ namespace Minimax
 {
     public class InitializationLoader : MonoBehaviour
     {
-        [SerializeField] private SceneSO m_persistentScene = default;
-        
         [Header("Client Start Scene")]
-        [SerializeField] private SceneSO m_mainScene = default;
+        [SerializeField] private SceneType m_mainScene = default;
         
         [Header("Server Start Scene")]
-        [SerializeField] private SceneSO m_gamePlayScene = default;
+        [SerializeField] private SceneType m_gamePlayScene = default;
         
         [Header("Broadcasting on")]
         [SerializeField] private AssetReference m_loadSceneEventChannel = default;
 
         private void Start()
         {
-            m_persistentScene.SceneReference.LoadSceneAsync(LoadSceneMode.Additive, true).Completed += LoadEventChannel;
+            AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneType.PersistentScene.ToString(), LoadSceneMode.Additive);
+            asyncLoad.completed += LoadInitalScene;
         }
         
-        private void LoadEventChannel(AsyncOperationHandle<SceneInstance> obj)
+        private void LoadInitalScene(AsyncOperation obj)
         {
 #if !DEDICATED_SERVER
-            m_loadSceneEventChannel.LoadAssetAsync<LoadEventSO>().Completed += LoadMainMenu;
+            m_loadSceneEventChannel.LoadAssetAsync<LoadSceneEventSO>().Completed += LoadMainMenu;
 #else
             m_loadSceneEventChannel.LoadAssetAsync<LoadEventSO>().Completed += LoadGamePlay;
 #endif
         }
         
-        private void LoadMainMenu(AsyncOperationHandle<LoadEventSO> obj)
+        private void LoadMainMenu(AsyncOperationHandle<LoadSceneEventSO> obj)
         {
             obj.Result.RaiseEvent(m_mainScene);
             // Initialization is the only scene in BuildSettings, thus it has index 0
             SceneManager.UnloadSceneAsync(0);
         }
         
-        private void LoadGamePlay(AsyncOperationHandle<LoadEventSO> obj)
+        private void LoadGamePlay(AsyncOperationHandle<LoadSceneEventSO> obj)
         {
             obj.Result.RaiseEvent(m_gamePlayScene);
             SceneManager.UnloadSceneAsync(0);
