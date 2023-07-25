@@ -41,7 +41,7 @@ namespace Minimax.UI.View.Pages
         private void SetTagIfNotSet()
         {
             if (gameObject.CompareTag("Page")) return;
-            DebugWrapper.Instance.LogWarning($"gameObject {gameObject.name} does not have tag Page, setting it now.");
+            DebugWrapper.LogWarning($"gameObject {gameObject.name} does not have tag Page, setting it now.");
             gameObject.tag = "Page";
         }
         

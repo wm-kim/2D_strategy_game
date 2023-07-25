@@ -83,7 +83,7 @@ namespace Minimax.Managers
         {
             if (m_popupQueue.Count == 0)
             {
-                DebugWrapper.Instance.LogWarning("Popup queue is empty");
+                DebugWrapper.LogWarning("Popup queue is empty");
                 return;
             }
             

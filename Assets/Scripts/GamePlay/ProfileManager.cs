@@ -27,9 +27,9 @@ namespace Minimax
         [ClientRpc]
         private void SetPlayerProfileClientRpc()
         {
-            if (MultiplayerManager.Instance.IsConnected())
+            if (ConnectionManager.Instance.IsConnected())
             {
-                foreach (var playerData in MultiplayerManager.Instance.GetPlayerDataNetworkList())
+                foreach (var playerData in ConnectionManager.Instance.GetPlayerDataNetworkList())
                 {
                     if (playerData.ClientId == NetworkManager.Singleton.LocalClientId)
                     {

@@ -19,7 +19,7 @@ namespace Minimax.ScriptableObjects.Events
                 OnShowPopupRequested.Invoke(popupType);
             else
             {
-                DebugWrapper.Instance.LogWarning("A Popup was requested, but nobody picked it up.");
+                DebugWrapper.LogWarning("A Popup was requested, but nobody picked it up.");
             }
         }
 
@@ -36,7 +36,7 @@ namespace Minimax.ScriptableObjects.Events
                 OnHidePopupRequested.Invoke();
             else
             {
-                DebugWrapper.Instance.LogWarning("A Popup was requested, but nobody picked it up.");
+                DebugWrapper.LogWarning("A Popup was requested, but nobody picked it up.");
             }
         }
     }

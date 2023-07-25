@@ -1,4 +1,3 @@
-using Minimax.ScriptableObjects.SceneDatas;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -10,24 +9,15 @@ namespace Minimax.ScriptableObjects.Events
     [CreateAssetMenu(menuName = "ScriptableObjects/Events/LoadSceneEvent")]
     public class LoadSceneEventSO : ScriptableObject
     {
-        public UnityEvent<SceneType> OnLoadRequested;
+        public UnityEvent<UnityEditor.SceneAsset> OnLoadRequested;
         
-        /// <summary>
-        /// This is a workaround for the fact that UnityEvents cannot take enums as parameters.
-        /// </summary>
-        public void RaiseEvent(SceneTypeSelector sceneTypeSelector)
-        {
-            var sceneToLoad = sceneTypeSelector.SceneType;
-            RaiseEvent(sceneToLoad);
-        }
-        
-        public void RaiseEvent(SceneType sceneToLoad)
+        public void RaiseEvent(UnityEditor.SceneAsset sceneToLoad)
         {
             if (OnLoadRequested != null)
                 OnLoadRequested.Invoke(sceneToLoad);
             else
             {
-                DebugWrapper.Instance.LogWarning("A Scene loading was requested, but nobody picked it up.");
+                DebugWrapper.LogWarning("A Scene loading was requested, but nobody picked it up.");
             }
         }
     }

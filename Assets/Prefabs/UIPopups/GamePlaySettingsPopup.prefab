@@ -222,7 +222,6 @@ GameObject:
   - component: {fileID: 8446356477299350246}
   - component: {fileID: 2444035653677039321}
   - component: {fileID: 5774166558062849474}
-  - component: {fileID: 2755114019615420663}
   m_Layer: 0
   m_Name: YesBtn
   m_TagString: Untagged
@@ -338,9 +337,8 @@ MonoBehaviour:
         m_MethodName: RaiseEvent
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 2755114019615420663}
-          m_ObjectArgumentAssemblyTypeName: Minimax.ScriptableObjects.SceneDatas.SceneTypeSelector,
-            Assembly-CSharp
+          m_ObjectArgument: {fileID: 102900000, guid: 8c9cfa26abfee488c85f1582747f6a02, type: 3}
+          m_ObjectArgumentAssemblyTypeName: UnityEditor.SceneAsset, UnityEditor.CoreModule
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -358,19 +356,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!114 &2755114019615420663
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 947748320236029279}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5b1d02e959c94fa4834d471e12740116, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SceneType: 1
 --- !u!1 &1777967143577111917
 GameObject:
   m_ObjectHideFlags: 0

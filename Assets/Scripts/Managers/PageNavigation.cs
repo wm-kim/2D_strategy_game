@@ -33,7 +33,7 @@ namespace Minimax.Managers
         private void SetTagIfNotSet()
         {
             if (gameObject.CompareTag("PageNavigation")) return;
-            DebugWrapper.Instance.LogWarning("PageNavigation object does not have the \"PageNavigation\" tag. Setting it now.");
+            DebugWrapper.LogWarning("PageNavigation object does not have the \"PageNavigation\" tag. Setting it now.");
             gameObject.tag = "PageNavigation";
         }
         

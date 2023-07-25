@@ -1,5 +1,4 @@
 using Minimax.ScriptableObjects.Events;
-using Minimax.ScriptableObjects.SceneDatas;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
@@ -12,39 +11,16 @@ namespace Minimax
     public class EditorColdStartup : MonoBehaviour
     {
 #if UNITY_EDITOR
+        [SerializeField] private UnityEditor.SceneAsset m_thisScene;
+        [SerializeField] private PersistentRoot m_persistentRootPrefab;
         
-        [SerializeField, ReadOnly] private bool m_isColdStart = false;
-        [SerializeField] private SceneType m_thisSceneSO;
-        
-        [Header("Broadcasting on")]
-        [SerializeField] private AssetReference m_coldStartupEventChannel;
-        
-        private void Awake()
+        private void Awake()    
         {
-            if (!SceneManager.GetSceneByName(SceneType.PersistentScene.ToString()).isLoaded)
+            // first check if the persistentRoot is already in the scene
+            if (FindObjectOfType<PersistentRoot>() == null)
             {
-                m_isColdStart = true;
+                Instantiate(m_persistentRootPrefab);
             }
-        }
-        
-        private void Start()
-        {
-            if (m_isColdStart)
-            {
-                AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(SceneType.PersistentScene.ToString(), LoadSceneMode.Additive);
-                asyncLoad.completed += LoadEventChannel;
-            }
-        }
-        
-        private void LoadEventChannel(AsyncOperation obj)
-        {
-            m_coldStartupEventChannel.LoadAssetAsync<LoadSceneEventSO>().Completed += OnNotifyChannelLoaded;
-        }
-        
-        private void OnNotifyChannelLoaded(AsyncOperationHandle<LoadSceneEventSO> obj)
-        {
-            UnityEngine.Assertions.Assert.IsTrue(m_thisSceneSO != SceneType.Undefined);
-            obj.Result.RaiseEvent(m_thisSceneSO);
         }
 #endif
     }

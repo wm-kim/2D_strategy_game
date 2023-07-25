@@ -16,7 +16,7 @@ namespace Minimax
                         s_instance = objs[0];
                     if (objs.Length > 1)
                     {
-                        DebugWrapper.Instance.LogError("There is more than one " + typeof(T).Name + " in the scene.");
+                        DebugWrapper.LogError("There is more than one " + typeof(T).Name + " in the scene.");
                     }
                     if (s_instance == null)
                     {

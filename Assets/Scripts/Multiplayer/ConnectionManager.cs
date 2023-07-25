@@ -10,9 +10,9 @@ using UnityEngine;
 
 namespace Minimax
 {
-    public class MultiplayerManager : NetworkBehaviour
+    public class ConnectionManager : NetworkBehaviour
     {
-        public static MultiplayerManager Instance { get; private set; }
+        public static ConnectionManager Instance { get; private set; }
         
         // light protection against DOS attacks
         private const int MAX_CONNECTION_PAYLOAD = 1024;
@@ -107,7 +107,7 @@ namespace Minimax
             SetPlayerNameServerRpc(m_playerName);
             SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
             
-            DebugWrapper.Instance.LogClientRpc($"Client {clientId} connected");
+            DebugWrapper.Log($"Client {clientId} connected");
         }
         
         private void NetworkManager_Server_OnClientDisconnectCallback(ulong clientId) 
@@ -118,7 +118,7 @@ namespace Minimax
                     playerDataNetworkList.RemoveAt(i);
                 }
             }
-            DebugWrapper.Instance.LogClientRpc($"Client {clientId} disconnected");
+            DebugWrapper.Log($"Client {clientId} disconnected");
             
             #if DEDICATED_SERVER
             Debug.Log("playerDataNetworkList.Count " + playerDataNetworkList.Count);

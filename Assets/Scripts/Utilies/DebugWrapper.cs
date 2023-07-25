@@ -4,44 +4,30 @@ using Unity.Netcode;
 
 namespace Minimax
 {
-    public class DebugWrapper : NetworkBehaviour
+    public static class DebugWrapper
     {
-        public static DebugWrapper Instance;
-
-        private void Awake()
-        {
-            if (Instance == null) Instance = this;
-        }
-
         [Conditional("UNITY_EDITOR")]
-        public void Log(string message)
+        public static void Log(string message)
         {
             UnityEngine.Debug.Log(message);
         }
         
         [Conditional("UNITY_EDITOR")]
-        public void LogWarning(string message)
+        public static void LogWarning(string message)
         {
             UnityEngine.Debug.LogWarning(message);
         }
         
         [Conditional("UNITY_EDITOR")]
-        public void LogError(string message)
+        public static void LogError(string message)
         {
             UnityEngine.Debug.LogError(message);
         }
         
         [Conditional("UNITY_EDITOR")]
-        public void LogException(System.Exception exception)
+        public static void LogException(Exception exception)
         {
             UnityEngine.Debug.LogException(exception);
-        }
-        
-        [Conditional("UNITY_EDITOR")]
-        [ClientRpc]
-        public void LogClientRpc(string message)
-        {
-            UnityEngine.Debug.Log($"[ClientRpc] {message}");
         }
     }
 }

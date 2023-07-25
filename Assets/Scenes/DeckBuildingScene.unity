@@ -579,9 +579,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7856918576682954095, guid: 17c90cef662a4bb40b94a5f6e559a38a, type: 3}
+      propertyPath: m_thisScene
+      value: 
+      objectReference: {fileID: 102900000, guid: 2c1a11a34795adc4fb0986f37a96c55e, type: 3}
+    - target: {fileID: 7856918576682954095, guid: 17c90cef662a4bb40b94a5f6e559a38a, type: 3}
       propertyPath: m_thisSceneSO
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 7856918576682954095, guid: 17c90cef662a4bb40b94a5f6e559a38a, type: 3}
+      propertyPath: m_persistentScene
+      value: 
+      objectReference: {fileID: 102900000, guid: 40f624af327a20c4e9204fc9006fa7bd, type: 3}
     - target: {fileID: 7856918576682954095, guid: 17c90cef662a4bb40b94a5f6e559a38a, type: 3}
       propertyPath: m_persistentManagerSO
       value: 
@@ -1113,9 +1121,8 @@ MonoBehaviour:
         m_MethodName: RaiseEvent
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 837056832}
-          m_ObjectArgumentAssemblyTypeName: Minimax.ScriptableObjects.SceneDatas.SceneTypeSelector,
-            Assembly-CSharp
+          m_ObjectArgument: {fileID: 102900000, guid: 8c9cfa26abfee488c85f1582747f6a02, type: 3}
+          m_ObjectArgumentAssemblyTypeName: UnityEditor.SceneAsset, UnityEditor.CoreModule
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 

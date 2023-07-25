@@ -16,12 +16,7 @@ MonoBehaviour:
   m_Data:
     m_SerializedData: []
   m_GUID: b499717fe664c8245a37e0024eb50681
-  m_SerializeEntries:
-  - m_GUID: 44bdfef14482da94a889828e6b6c295f
-    m_Address: Assets/ScriptableObjects/EventChannels/ColdStartup_Channel.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
+  m_SerializeEntries: []
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 6abb7b901d7418040a2790f0eae3d6f1, type: 2}
   m_SchemaSet:
