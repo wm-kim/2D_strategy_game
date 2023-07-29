@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameTitle: {fileID: 11400000, guid: e1708f03350a2d64d970f6ee56c8e383, type: 2}
   GameVersion: {fileID: 11400000, guid: 17702d6723ad01d4d92938feb6884f04, type: 2}
+  OnStartRankedMatchRequested: {fileID: 11400000, guid: e6ac17d670f3d31419307f3d2b6a31e8, type: 2}

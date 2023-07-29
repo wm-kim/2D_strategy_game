@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -9,9 +10,11 @@ namespace Minimax.ScriptableObjects.Events
     [CreateAssetMenu(menuName = "ScriptableObjects/Events/LoadSceneEvent")]
     public class LoadSceneEventSO : ScriptableObject
     {
-        public UnityEvent<UnityEditor.SceneAsset> OnLoadRequested;
+        public UnityEvent<string> OnLoadRequested;
         
-        public void RaiseEvent(UnityEditor.SceneAsset sceneToLoad)
+        public void RaiseEvent(SceneAsset sceneToLoad) => RaiseEvent(sceneToLoad.name);
+        
+        public void RaiseEvent(string sceneToLoad)
         {
             if (OnLoadRequested != null)
                 OnLoadRequested.Invoke(sceneToLoad);

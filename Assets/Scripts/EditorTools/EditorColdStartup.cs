@@ -1,26 +1,40 @@
 using Minimax.ScriptableObjects.Events;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Assertions;
 using UnityEngine.ResourceManagement.AsyncOperations;
 using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 namespace Minimax
 {
+    [DefaultExecutionOrder(-1)]
     public class EditorColdStartup : MonoBehaviour
     {
 #if UNITY_EDITOR
-        [SerializeField] private UnityEditor.SceneAsset m_thisScene;
-        [SerializeField] private PersistentRoot m_persistentRootPrefab;
+        [SerializeField] private UnityEditor.SceneAsset m_thisScene = default;
         
-        private void Awake()    
+        [Header("Broadcasting on")]
+        [SerializeField] private AssetReference m_coldStartupEvent;
+        
+        private void Awake()
         {
-            // first check if the persistentRoot is already in the scene
-            if (FindObjectOfType<PersistentRoot>() == null)
+            if (!SceneManager.GetSceneByName(SceneType.PersistentScene).isLoaded)
             {
-                Instantiate(m_persistentRootPrefab);
+                SceneManager.LoadSceneAsync(SceneType.PersistentScene, LoadSceneMode.Additive).completed += LoadEventChannel;
             }
+        }
+        
+        private void LoadEventChannel(AsyncOperation obj)
+        {
+            m_coldStartupEvent.LoadAssetAsync<LoadSceneEventSO>().Completed += OnNotifyChannelLoaded;
+        }
+        
+        private void OnNotifyChannelLoaded(AsyncOperationHandle<LoadSceneEventSO> obj)
+        {
+            Assert.IsNotNull(m_thisScene, "This scene is not set in the EditorColdStartup component.");
+            obj.Result.RaiseEvent(m_thisScene);
         }
 #endif
     }

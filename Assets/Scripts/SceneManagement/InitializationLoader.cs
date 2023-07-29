@@ -15,30 +15,28 @@ namespace Minimax
         [SerializeField] private UnityEditor.SceneAsset m_gamePlayScene = default;
         
         [Header("Broadcasting on")]
-        [SerializeField] private AssetReference m_loadSceneEventChannel = default;
-
+        [SerializeField] private AssetReference  m_loadSceneEvent = default;
+        
         private void Start()
-        {
-            LoadInitialScene();
+        {   
+            SceneManager.LoadSceneAsync(SceneType.PersistentScene, LoadSceneMode.Additive).completed += LoadInitialScene;
         }
         
-        private void LoadInitialScene()
+        private void LoadInitialScene(AsyncOperation obj)
         {
 #if !DEDICATED_SERVER
-            m_loadSceneEventChannel.LoadAssetAsync<LoadSceneEventSO>().Completed += LoadClientStartupScene;
+            m_loadSceneEvent.LoadAssetAsync<LoadSceneEventSO>().Completed += (operation) =>
+            {
+                operation.Result.RaiseEvent(m_mainScene);
+                SceneManager.UnloadSceneAsync(0);
+            };
 #else
-            m_loadSceneEventChannel.LoadAssetAsync<LoadEventSO>().Completed += LoadDedicatedServerStartupScene;
+            m_loadSceneEvent.LoadAssetAsync<LoadSceneEventSO>().Completed += (operation) =>
+            {
+                operation.Result.RaiseEvent(m_gamePlayScene);
+                SceneManager.UnloadSceneAsync(0);
+            };
 #endif
-        }
-        
-        private void LoadClientStartupScene(AsyncOperationHandle<LoadSceneEventSO> obj)
-        {
-            obj.Result.RaiseEvent(m_mainScene);
-        }
-        
-        private void LoadDedicatedServerStartupScene(AsyncOperationHandle<LoadSceneEventSO> obj)
-        {
-            obj.Result.RaiseEvent(m_gamePlayScene);
         }
     }
 }

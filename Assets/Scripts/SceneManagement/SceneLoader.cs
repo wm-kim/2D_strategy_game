@@ -1,57 +1,160 @@
+using System;
 using BrunoMikoski.AnimationSequencer;
 using Cysharp.Threading.Tasks;
 using Minimax.ScriptableObjects.Events;
+using Minimax.ScriptableObjects.Events.Primitives;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 namespace Minimax
 {
-    public class SceneLoader : MonoBehaviour
+    /// <summary>
+    /// Wrapper class for loading scenes, shows a loading screen while loading.
+    /// </summary>
+    public class SceneLoader : NetworkBehaviour
     {
         // To prevent a new loading request while already loading a new scene
         private bool m_isLoading = false;
 
         [Header("Listening to")] 
         [SerializeField] private LoadSceneEventSO m_loadSceneSceneEvent;
-
+        [SerializeField] private LoadSceneEventSO m_coldStartupEvent;
+        
         // 아래 두 개의 변수는 로딩 화면 애니메이션을 담당하는 컨트롤러입니다.
         [SerializeField] private AnimationSequencerController m_showLoadingScreenAnimation;
         [SerializeField] private AnimationSequencerController m_hideLoadingScreenAnimation;
 
-        [SerializeField, ReadOnly] private UnityEditor.SceneAsset m_sceneToLoad = default;
+        [SerializeField, ReadOnly] string m_sceneToLoad;
+        [SerializeField, ReadOnly] string m_currentlyLoadedScene;
+        
+        private NetworkManager m_netManager => NetworkManager.Singleton;
+        private bool m_isInitialized;
+        
+        bool IsNetworkSceneManagementEnabled =>
+            m_netManager != null &&
+            m_netManager.SceneManager != null &&
+            m_netManager.NetworkConfig.EnableSceneManagement;
 
-        private void OnEnable()
+        private void Start()
         {
             m_loadSceneSceneEvent.OnLoadRequested.AddListener(LoadScene);
+            #if UNITY_EDITOR
+            m_coldStartupEvent.OnLoadRequested.AddListener(ColdStartup);
+            #endif
+            NetworkManager.OnServerStarted += OnNetworkingSessionStarted;
+            NetworkManager.OnClientStarted += OnNetworkingSessionStarted;
+            NetworkManager.OnServerStopped += OnNetworkingSessionEnded;
+            NetworkManager.OnClientStopped += OnNetworkingSessionEnded;
         }
-
-        private void OnDisable()
+        
+        public override void OnDestroy()
         {
-            m_loadSceneSceneEvent.OnLoadRequested.RemoveListener(LoadScene);
+            #if UNITY_EDITOR
+            m_coldStartupEvent.OnLoadRequested.RemoveListener(ColdStartup);
+            #endif
+            if (NetworkManager != null)
+            {
+                NetworkManager.OnServerStarted -= OnNetworkingSessionStarted;
+                NetworkManager.OnClientStarted -= OnNetworkingSessionStarted;
+                NetworkManager.OnServerStopped -= OnNetworkingSessionEnded;
+                NetworkManager.OnClientStopped -= OnNetworkingSessionEnded;
+            }
+            base.OnDestroy();
+        }
+        
+        void OnNetworkingSessionStarted()
+        {
+            // This prevents this to be called twice on a host, which receives both OnServerStarted and OnClientStarted callbacks
+            if (!m_isInitialized)
+            {
+                if (IsNetworkSceneManagementEnabled)
+                {
+                    NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
+                }
+
+                m_isInitialized = true;
+            }
+        }
+        
+        void OnNetworkingSessionEnded(bool unused)
+        {
+            if (m_isInitialized)
+            {
+                if (IsNetworkSceneManagementEnabled)
+                {
+                    NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
+                }
+
+                m_isInitialized = false;
+            }
         }
 
-        private async void LoadScene(UnityEditor.SceneAsset sceneToLoad)
+#if UNITY_EDITOR
+        private void ColdStartup(string sceneToLoad) => m_currentlyLoadedScene = sceneToLoad;
+#endif 
+        private bool IsInitialLoading => string.IsNullOrEmpty(m_currentlyLoadedScene);
+
+        private async void LoadScene(string sceneToLoad)
         {
             // Prevent a double loading request
             if (m_isLoading) return;
+            m_isLoading = true;
             m_sceneToLoad = sceneToLoad;
 
-            // 로딩 화면 애니메이션을 재생하며, 애니메이션이 끝날 때까지 대기합니다.
-            m_showLoadingScreenAnimation.Play();
-            await UniTask.WaitUntil(() => m_showLoadingScreenAnimation.IsPlaying == false);
+            if (!IsInitialLoading)
+            {   
+                // 로딩 화면 애니메이션을 재생하며, 애니메이션이 끝날 때까지 대기합니다.
+                m_showLoadingScreenAnimation.Play();
+                await UniTask.WaitUntil(() => m_showLoadingScreenAnimation.IsPlaying == false);
 
-            SceneManager.LoadScene(m_sceneToLoad.name, LoadSceneMode.Single);
-            DebugWrapper.Log($"Loading scene {m_sceneToLoad.ToString()}");
-
-            m_isLoading = false;
-            m_hideLoadingScreenAnimation.Play();
+                // 이전에 로드된 씬을 언로드합니다.
+                await SceneManager.UnloadSceneAsync(m_currentlyLoadedScene);
+                DebugWrapper.Log($"Unloaded the {m_currentlyLoadedScene} scene.");
+            }
+            
+            SceneManager.LoadSceneAsync(m_sceneToLoad, LoadSceneMode.Additive).completed += OnNewSceneLoaded;
         }
         
+        private void OnNewSceneLoaded(AsyncOperation operation)
+        {
+            DebugWrapper.Log($"Loaded the {m_sceneToLoad} scene.");
+            
+            m_currentlyLoadedScene = m_sceneToLoad;
+            var activeScene = SceneManager.GetSceneByName(m_currentlyLoadedScene);
+            // Set the loaded scene as the active scene
+            SceneManager.SetActiveScene(activeScene);
+            
+            m_isLoading = false;
+            if (!IsInitialLoading) m_hideLoadingScreenAnimation.Play();
+        }
         
+         void OnSceneEvent(SceneEvent sceneEvent)
+        {
+            var clientOrServer = sceneEvent.ClientId == NetworkManager.ServerClientId ? "server" : "client";
+            switch (sceneEvent.SceneEventType)
+            {
+                case SceneEventType.LoadComplete:
+                {
+                    DebugWrapper.Log($"Loaded the {sceneEvent.SceneName} scene on " +
+                                              $"{clientOrServer}-({sceneEvent.ClientId}).");
+                    break;
+                }
+                case SceneEventType.LoadEventCompleted:
+                {
+                    var load = sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted ? "Load" : "Unload";
+                    DebugWrapper.Log($"{load} event completed for the following client " +
+                                     $"identifiers : ({string.Join(",", sceneEvent.ClientsThatCompleted)})");
+                    
+                    if (sceneEvent.ClientsThatTimedOut.Count > 0)
+                    {
+                        DebugWrapper.LogError($"{load} event timed out for the following client " +
+                                              $"identifiers : ({string.Join(",", sceneEvent.ClientsThatTimedOut)})");
+                    }
+                    break;
+                }
+            }
+        }
     }
 }
     

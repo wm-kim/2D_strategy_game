@@ -1,26 +1,48 @@
+using System;
+using Minimax.ScriptableObjects.Events;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Core;
 using Unity.Services.Multiplay;
 using UnityEngine;
-using UnityEngine.ResourceManagement.AsyncOperations;
+using UnityEngine.Serialization;
 
 namespace Minimax
 {
     public class DedicatedServerInitializer : MonoBehaviour
     {
 #if DEDICATED_SERVER
-        private float autoAllocateTimer = 9999999f;
-        private IServerQueryHandler serverQueryHandler;
+        [Header("Listening To")]
+        [SerializeField] private VoidEventSO m_onPlayerDataNetworkListChanged = default;
+        
+        private float m_autoAllocateTimer = 9999999f;
+        private IServerQueryHandler m_serverQueryHandler;
+        private PayloadAllocation m_payloadAllocation;
+        private string m_backfillTicketId;
+        private float m_acceptBackfillTicketsTimer;
+        private float m_acceptBackfillTicketsTimerMax = 1.1f;
+        
         bool m_alreadyAllocated = false;
 
-        private async void Start()
+        private void Start()
         {
+            m_onPlayerDataNetworkListChanged.OnEventRaised.AddListener(DedicatedServerInitializer_OnPlayerDataNetworkListChanged);
             StartDedicatedServer();
-            Debug.Log("ReadyServerForPlayersAsync");
-            await MultiplayService.Instance.ReadyServerForPlayersAsync();
-
             Camera.main.enabled = false;
+        }
+        
+        private async void DedicatedServerInitializer_OnPlayerDataNetworkListChanged()
+        {
+            if (ConnectionManager.Instance.HasAvailablePlayerSlots())
+            {
+                Debug.Log("ReadyServerForPlayersAsync");
+                await MultiplayService.Instance.ReadyServerForPlayersAsync();
+            }
+            else
+            {
+                Debug.Log("UnreadyServerAsync");
+                await MultiplayService.Instance.UnreadyServerAsync();
+            }
         }
 
         private async void StartDedicatedServer()
@@ -38,7 +60,7 @@ namespace Minimax
                 multiplayEventCallbacks.Error += MultiplayEventCallbacks_Error;
                 multiplayEventCallbacks.SubscriptionStateChanged += MultiplayEventCallbacks_SubscriptionStateChanged;
                 IServerEvents serverEvents = await MultiplayService.Instance.SubscribeToServerEventsAsync(multiplayEventCallbacks);
-                serverQueryHandler = await MultiplayService.Instance.StartServerQueryHandlerAsync(2, "MyServerName", "CardWars", "1.0", "Default");
+                m_serverQueryHandler = await MultiplayService.Instance.StartServerQueryHandlerAsync(2, "MyServerName", "CardWars", "1.0", "Default");
 
                 var serverConfig = MultiplayService.Instance.ServerConfig;
                 if (serverConfig.AllocationId != "") {
@@ -67,6 +89,8 @@ namespace Minimax
                 return;
             }
             
+            SetupBackfillTickets();
+            
             m_alreadyAllocated = true;
 
             var serverConfig = MultiplayService.Instance.ServerConfig;
@@ -79,6 +103,19 @@ namespace Minimax
             string ipv4address = "0.0.0.0";
             ushort port = serverConfig.Port;
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4address, port, "0.0.0.0");
+            
+            ConnectionManager.Instance.StartServer();
+            
+        }
+        
+        private async void SetupBackfillTickets() {
+            Debug.Log("SetupBackfillTickets");
+            m_payloadAllocation = await MultiplayService.Instance.GetPayloadAllocationFromJsonAs<PayloadAllocation>();
+
+            m_backfillTicketId = m_payloadAllocation.BackfillTicketId;
+            Debug.Log("backfillTicketId: " + m_backfillTicketId);
+
+            m_acceptBackfillTicketsTimer = m_acceptBackfillTicketsTimerMax;
         }
         
         private void MultiplayEventCallbacks_Deallocate(MultiplayDeallocation obj) {
@@ -97,18 +134,30 @@ namespace Minimax
 
         private void Update()
         {
-            autoAllocateTimer -= Time.deltaTime;
-            if (autoAllocateTimer <= 0f) {
-                autoAllocateTimer = 999f;
+            m_autoAllocateTimer -= Time.deltaTime;
+            if (m_autoAllocateTimer <= 0f) {
+                m_autoAllocateTimer = 999f;
                 MultiplayEventCallbacks_Allocate(null);
             }
 
-            if (serverQueryHandler != null) {
+            if (m_serverQueryHandler != null) {
                 if (NetworkManager.Singleton.IsServer) {
-                    serverQueryHandler.CurrentPlayers = (ushort)NetworkManager.Singleton.ConnectedClientsIds.Count;
+                    m_serverQueryHandler.CurrentPlayers = (ushort)NetworkManager.Singleton.ConnectedClientsIds.Count;
                 }
-                serverQueryHandler.UpdateServerCheck();
+                m_serverQueryHandler.UpdateServerCheck();
             }
+        }
+        
+        [Serializable]
+        public class PayloadAllocation {
+            public Unity.Services.Matchmaker.Models.MatchProperties MatchProperties;
+            public string GeneratorName;
+            public string QueueName;
+            public string PoolName;
+            public string EnvironmentId;
+            public string BackfillTicketId;
+            public string MatchId;
+            public string PoolId;
         }
 #endif
     }

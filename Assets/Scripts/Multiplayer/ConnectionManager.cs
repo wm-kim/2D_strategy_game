@@ -2,11 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Minimax.ScriptableObjects.Events;
-using Mono.CSharp;
-using QFSW.QC;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Minimax
 {
@@ -19,7 +18,7 @@ namespace Minimax
         private const int MAX_PLAYER_AMOUNT = 2;
         private string m_playerName;
         
-        private NetworkList<SessionPlayerData> playerDataNetworkList;
+        private NetworkList<SessionPlayerData> m_playerDataNetworkList;
         
         [Header("Listening To")]
         [SerializeField] private VoidEventSO m_startHostEvent = default;
@@ -46,13 +45,12 @@ namespace Minimax
         private void Awake()
         {
             Instance = this;
-            UnityEngine.Random.InitState((int)DateTime.Now.Ticks);
             m_playerName = "PlayerName" + UnityEngine.Random.Range(0, 1000);
-            playerDataNetworkList = new NetworkList<SessionPlayerData>();
-            playerDataNetworkList.OnListChanged += PlayerDataNetworkList_OnListChanged;
+            m_playerDataNetworkList = new NetworkList<SessionPlayerData>();
+            m_playerDataNetworkList.OnListChanged += MPlayerDataNetworkListOnListChanged;
         }
         
-        private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<SessionPlayerData> changeEvent) {
+        private void MPlayerDataNetworkListOnListChanged(NetworkListEvent<SessionPlayerData> changeEvent) {
             OnPlayerDataNetworkListChanged.RaiseEvent();
         }
 
@@ -62,6 +60,7 @@ namespace Minimax
             NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_OnClientConnectedCallback;
             NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Server_OnClientDisconnectCallback;
             NetworkManager.Singleton.StartHost();
+            NetworkManager.Singleton.SceneManager.SetClientSynchronizationMode(LoadSceneMode.Additive);
         }
         
         public void StartServer()
@@ -70,6 +69,7 @@ namespace Minimax
             NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_OnClientConnectedCallback;
             NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Server_OnClientDisconnectCallback;
             NetworkManager.Singleton.StartServer();
+            NetworkManager.Singleton.SceneManager.SetClientSynchronizationMode(LoadSceneMode.Additive);
         }
 
         public void StartClient()
@@ -101,7 +101,7 @@ namespace Minimax
         
         private void NetworkManager_OnClientConnectedCallback(ulong clientId)
         {
-            playerDataNetworkList.Add(new SessionPlayerData {
+            m_playerDataNetworkList.Add(new SessionPlayerData {
                 ClientId = clientId,
             });
             SetPlayerNameServerRpc(m_playerName);
@@ -112,10 +112,10 @@ namespace Minimax
         
         private void NetworkManager_Server_OnClientDisconnectCallback(ulong clientId) 
         {
-            for (int i = 0; i < playerDataNetworkList.Count; i++) {
-                SessionPlayerData sessionPlayerData = playerDataNetworkList[i];
+            for (int i = 0; i < m_playerDataNetworkList.Count; i++) {
+                SessionPlayerData sessionPlayerData = m_playerDataNetworkList[i];
                 if (sessionPlayerData.ClientId == clientId) {
-                    playerDataNetworkList.RemoveAt(i);
+                    m_playerDataNetworkList.RemoveAt(i);
                 }
             }
             DebugWrapper.Log($"Client {clientId} disconnected");
@@ -146,23 +146,27 @@ namespace Minimax
         private void SetPlayerNameServerRpc(string playerName, ServerRpcParams serverRpcParams = default)
         {
             int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
-            SessionPlayerData sessionPlayerData = playerDataNetworkList[playerDataIndex];
+            SessionPlayerData sessionPlayerData = m_playerDataNetworkList[playerDataIndex];
             sessionPlayerData.PlayerName = playerName;
-            playerDataNetworkList[playerDataIndex] = sessionPlayerData;
+            m_playerDataNetworkList[playerDataIndex] = sessionPlayerData;
         }
         
         [ServerRpc(RequireOwnership = false)]
         private void SetPlayerIdServerRpc(string playerId, ServerRpcParams serverRpcParams = default)
         {
             int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
-            SessionPlayerData sessionPlayerData = playerDataNetworkList[playerDataIndex];
+            SessionPlayerData sessionPlayerData = m_playerDataNetworkList[playerDataIndex];
             sessionPlayerData.PlayerId = playerId;
-            playerDataNetworkList[playerDataIndex] = sessionPlayerData;
+            m_playerDataNetworkList[playerDataIndex] = sessionPlayerData;
+        }
+        
+        public bool HasAvailablePlayerSlots() {
+            return NetworkManager.Singleton.ConnectedClientsIds.Count < MAX_PLAYER_AMOUNT;
         }
         
         public bool IsClientConnected(ulong clientId) 
         {
-            foreach (SessionPlayerData playerData in playerDataNetworkList) {
+            foreach (SessionPlayerData playerData in m_playerDataNetworkList) {
                 if (playerData.ClientId == clientId) {
                     return true;
                 }
@@ -174,9 +178,9 @@ namespace Minimax
 
         private int GetPlayerDataIndexFromClientId(ulong clientId) 
         {
-            for (int i = 0; i< playerDataNetworkList.Count; i++) 
+            for (int i = 0; i< m_playerDataNetworkList.Count; i++) 
             {
-                if (playerDataNetworkList[i].ClientId == clientId) 
+                if (m_playerDataNetworkList[i].ClientId == clientId) 
                 {
                     return i;
                 }
@@ -185,11 +189,11 @@ namespace Minimax
         }
         
         public NetworkList<SessionPlayerData> GetPlayerDataNetworkList() {
-            return playerDataNetworkList;
+            return m_playerDataNetworkList;
         }
         
         public SessionPlayerData GetPlayerDataFromClientId(ulong clientId) {
-            foreach (SessionPlayerData playerData in playerDataNetworkList) {
+            foreach (SessionPlayerData playerData in m_playerDataNetworkList) {
                 if (playerData.ClientId == clientId) {
                     return playerData;
                 }

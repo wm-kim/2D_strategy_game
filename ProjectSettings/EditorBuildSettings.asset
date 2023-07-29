@@ -9,6 +9,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Initialization.unity
     guid: f8e771445e1312243bd91fb48586f620
   - enabled: 1
+    path: Assets/Scenes/PersistentScene.unity
+    guid: cd064e956816a294191685c6c22a9cbb
+  - enabled: 1
     path: Assets/Scenes/MainScene.unity
     guid: a361bcad2cbe52646bbe350df1962040
   - enabled: 1
@@ -20,8 +23,5 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DeckBuildingScene.unity
     guid: 2c1a11a34795adc4fb0986f37a96c55e
-  - enabled: 1
-    path: Assets/Scenes/PersistentScene.unity
-    guid: 40f624af327a20c4e9204fc9006fa7bd
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: d58c592e6b941024da507285ce2b11e4, type: 2}

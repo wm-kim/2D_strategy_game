@@ -11,7 +11,6 @@ namespace Minimax
         public FixedString64Bytes PlayerName;
         public FixedString64Bytes PlayerId;
 
-
         public bool Equals(SessionPlayerData other) {
             return 
                 ClientId == other.ClientId && 

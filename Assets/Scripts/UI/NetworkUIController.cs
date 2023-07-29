@@ -3,21 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Minimax
 {
     public class NetworkUIController : MonoBehaviour
     {
-        [SerializeField] private Button serverBtn;
-        [SerializeField] private Button hostBtn;
-        [SerializeField] private Button clientBtn;
+        [SerializeField] private Button m_serverBtn;
+        [SerializeField] private Button m_hostBtn;
+        [SerializeField] private Button m_clientBtn;
 
         private void Awake()
         {
-            serverBtn.onClick.AddListener(() => NetworkManager.Singleton.StartServer());
-            hostBtn.onClick.AddListener(() => NetworkManager.Singleton.StartHost());
-            clientBtn.onClick.AddListener(() => NetworkManager.Singleton.StartClient());
+            m_serverBtn.onClick.AddListener(() => NetworkManager.Singleton.StartServer());
+            m_hostBtn.onClick.AddListener(() => NetworkManager.Singleton.StartHost());
+            m_clientBtn.onClick.AddListener(() => NetworkManager.Singleton.StartClient());
         }
     }
 }
