@@ -5,7 +5,7 @@ using Minimax.UI.View.Pages;
 using Minimax.UI.View.Popups;
 using UnityEngine;
 
-namespace Minimax.Managers
+namespace Minimax.CoreSystems
 {
     public class PageNavigationManager : MonoBehaviour
     {

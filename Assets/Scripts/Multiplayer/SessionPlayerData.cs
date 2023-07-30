@@ -1,27 +1,24 @@
 using System;
 using Unity.Collections;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
-using UnityEngine;
 
-namespace Minimax
+namespace Minimax.Multiplayer
 {
-    public struct SessionPlayerData : IEquatable<SessionPlayerData>, INetworkSerializable
+    public struct SessionPlayerData : ISessionPlayerData
     {
-        public ulong ClientId;
-        public FixedString64Bytes PlayerName;
-        public FixedString64Bytes PlayerId;
-
-        public bool Equals(SessionPlayerData other) {
-            return 
-                ClientId == other.ClientId && 
-                PlayerName == other.PlayerName &&
-                PlayerId == other.PlayerId;
+        public string PlayerName;
+        
+        public SessionPlayerData(ulong clientId, string name, bool isConnected = false)
+        {
+            ClientID = clientId;
+            PlayerName = name;
+            IsConnected = isConnected;
         }
+        
+        public void Reinitialize() { }
 
-        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter {
-            serializer.SerializeValue(ref ClientId);
-            serializer.SerializeValue(ref PlayerName);
-            serializer.SerializeValue(ref PlayerId);
-        }
+        public bool IsConnected { get; set; }
+        public ulong ClientID { get; set; }
     }
 }

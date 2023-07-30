@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Minimax.UI.View.Pages;
 using UnityEngine;
 
-namespace Minimax.Managers
+namespace Minimax.CoreSystems
 {
     public enum PageNavigationType
     {

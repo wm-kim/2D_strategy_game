@@ -5,7 +5,7 @@ using Minimax.UI.View.Popups;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace Minimax.Managers
+namespace Minimax.CoreSystems
 {
     public class PopupManager : MonoBehaviour
     {

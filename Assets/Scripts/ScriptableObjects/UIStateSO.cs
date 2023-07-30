@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Minimax.Managers;
+using Minimax.CoreSystems;
 using Minimax.UI.View.Pages;
 using UnityEngine;
 

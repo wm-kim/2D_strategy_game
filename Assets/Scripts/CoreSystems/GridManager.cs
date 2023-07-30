@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace Minimax.Managers
+namespace Minimax.CoreSystems
 {
-    public class HandManager : MonoBehaviour
+    public class GridManager : MonoBehaviour
     {
         // Start is called before the first frame update
         void Start()

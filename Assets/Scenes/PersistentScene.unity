@@ -559,21 +559,6 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 300
   m_TargetDisplay: 0
---- !u!114 &1198301596262579208
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2593997124947314411}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bb14cf561749ad4f90f361a1c95454f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_showLoadingScreenAnimation: {fileID: 475458570072715381}
-  m_hideLoadingScreenAnimation: {fileID: 6685313914744221825}
-  m_toggleLoadingScreenEvent: {fileID: 11400000, guid: 188199595a30394478e562cdb1f494d0, type: 2}
 --- !u!1 &1487473567659348898
 GameObject:
   m_ObjectHideFlags: 0
@@ -723,7 +708,6 @@ GameObject:
   - component: {fileID: 2950020386240959985}
   - component: {fileID: 4995421693208885095}
   - component: {fileID: 4479685555254957661}
-  - component: {fileID: 1198301596262579208}
   m_Layer: 0
   m_Name: LoadingScreen
   m_TagString: Untagged
@@ -4528,7 +4512,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 8294463037909126894}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.96266145
+  m_Size: 0.96266156
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -5103,7 +5087,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000030517578}
+  m_AnchoredPosition: {x: 0, y: 0.000076293945}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &8294627573717370934

@@ -1,13 +1,6 @@
-using System;
-using Minimax.ScriptableObjects.Events;
-using Unity.Netcode;
-using Unity.Netcode.Transports.UTP;
-using Unity.Services.Core;
-using Unity.Services.Multiplay;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Minimax
+namespace Minimax.Multiplayer
 {
     public class DedicatedServerInitializer : MonoBehaviour
     {

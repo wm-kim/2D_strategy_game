@@ -6,7 +6,7 @@ using Minimax.ScriptableObjects.CardDatas;
 using Newtonsoft.Json;
 using UnityEngine;
 
-namespace Minimax.Managers
+namespace Minimax.CoreSystems
 {
     public class DBManager : MonoBehaviour
     {

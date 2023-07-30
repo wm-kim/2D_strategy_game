@@ -1,16 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 
-#if UNITY_EDITOR
-using ParrelSync;
-#endif
-
-namespace Minimax
+namespace Minimax.Multiplayer
 {
     public class Authentication : MonoBehaviour
     {

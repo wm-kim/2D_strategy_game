@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 
-namespace Minimax.Managers
+namespace Minimax.CoreSystems
 {
     public class InputManager : MonoBehaviour
     {
