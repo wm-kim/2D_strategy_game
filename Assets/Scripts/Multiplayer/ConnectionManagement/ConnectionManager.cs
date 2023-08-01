@@ -1,4 +1,5 @@
 using System;
+using Minimax.ScriptableObjects.Events;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -23,6 +24,10 @@ namespace Minimax.Multiplayer.ConnectionManagement
     {
         private ConnectionState m_currentState;
         public NetworkManager NetworkManager => NetworkManager.Singleton;
+        
+        [Header("Listening To")]
+        [SerializeField] private VoidEventSO m_startHostEvent = default;
+        [SerializeField] private VoidEventSO m_startClientEvent = default;
 
         public int MaxConnectedPlayers { get; private set; } = 2;
 
@@ -43,6 +48,11 @@ namespace Minimax.Multiplayer.ConnectionManagement
 
         private void Start()
         {
+            m_currentState = Offline;
+            
+            m_startHostEvent.OnEventRaised.AddListener(StartHost);
+            m_startClientEvent.OnEventRaised.AddListener(StartClient);
+            
             NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
             NetworkManager.OnClientDisconnectCallback += OnClientDisconnectCallback;
             NetworkManager.OnServerStarted += OnServerStarted;
@@ -51,6 +61,9 @@ namespace Minimax.Multiplayer.ConnectionManagement
 
         private void OnDestroy()
         {
+            m_startHostEvent.OnEventRaised.RemoveListener(StartHost);
+            m_startClientEvent.OnEventRaised.RemoveListener(StartClient);
+            
             if (NetworkManager != null)
             {
                 NetworkManager.OnClientConnectedCallback -= OnClientConnectedCallback;

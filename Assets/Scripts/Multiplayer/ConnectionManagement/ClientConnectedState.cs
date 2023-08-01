@@ -10,6 +10,8 @@ namespace Minimax.Multiplayer.ConnectionManagement
         
         public override void OnClientDisconnect(ulong clientId)
         {
+            var disconnectReason = m_connectionManager.NetworkManager.DisconnectReason;
+            DebugWrapper.Log("Client disconnected: " + disconnectReason);
             m_connectionManager.ChangeState(m_connectionManager.Offline);
         }
     }

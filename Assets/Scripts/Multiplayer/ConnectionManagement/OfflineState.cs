@@ -15,5 +15,10 @@ namespace Minimax.Multiplayer.ConnectionManagement
         {
             m_connectionManager.ChangeState(m_connectionManager.ClientConnecting);
         }
+        
+        public override void StartHost()
+        {
+            m_connectionManager.ChangeState(m_connectionManager.StartingHost);
+        }
     }
 }

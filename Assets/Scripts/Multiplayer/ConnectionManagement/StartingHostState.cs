@@ -3,6 +3,7 @@ using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Minimax.Multiplayer.ConnectionManagement
 {
@@ -43,7 +44,7 @@ namespace Minimax.Multiplayer.ConnectionManagement
             }
         }
         
-        private void StartHost()
+        public override void StartHost()
         {
             // Need to set connection payload for host as well, as host is a client too
             var payload = JsonUtility.ToJson(new ConnectionPayload()

@@ -10,14 +10,16 @@ namespace Minimax.ScriptableObjects.Events
     [CreateAssetMenu(menuName = "ScriptableObjects/Events/LoadSceneEvent")]
     public class LoadSceneEventSO : ScriptableObject
     {
-        public UnityEvent<string> OnLoadRequested;
+        public UnityEvent<string, bool> OnLoadRequested;
         
-        public void RaiseEvent(SceneAsset sceneToLoad) => RaiseEvent(sceneToLoad.name);
+        public void LoadScene(SceneAsset sceneToLoad) => RaiseEvent(sceneToLoad.name, false);
         
-        public void RaiseEvent(string sceneToLoad)
+        public void LoadSceneNetwork(SceneAsset sceneToLoad) => RaiseEvent(sceneToLoad.name, true);
+        
+        public void RaiseEvent(string sceneToLoad, bool useNetwork = false)
         {
             if (OnLoadRequested != null)
-                OnLoadRequested.Invoke(sceneToLoad);
+                OnLoadRequested.Invoke(sceneToLoad, useNetwork);
             else
             {
                 DebugWrapper.LogWarning("A Scene loading was requested, but nobody picked it up.");

@@ -27,7 +27,7 @@ namespace Minimax
 #if !DEDICATED_SERVER
             m_loadSceneEvent.LoadAssetAsync<LoadSceneEventSO>().Completed += (operation) =>
             {
-                operation.Result.RaiseEvent(m_mainScene);
+                operation.Result.LoadScene(m_mainScene);
                 SceneManager.UnloadSceneAsync(0);
             };
 #else

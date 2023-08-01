@@ -2,6 +2,7 @@ using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Minimax.Multiplayer.ConnectionManagement
 {
@@ -10,15 +11,20 @@ namespace Minimax.Multiplayer.ConnectionManagement
         public HostingState(ConnectionManager connectionManager) : base(connectionManager) { }
         
         private const int k_maxConnectPayload = 1024;
-        
-        public override void Enter() { }
+
+        public override void Enter()
+        {
+            
+        }
 
         public override void Exit()
         {
-            SessionManager<SessionPlayerData>.Instance.OnServerEnded();
         }
-        
-        public override void OnClientConnected(ulong clientId) { }
+
+        public override void OnClientConnected(ulong clientId)
+        {
+            m_connectionManager.NetworkManager.SceneManager.PostSynchronizationSceneUnloading = true;
+        }
         
         public override void OnClientDisconnect(ulong clientId)
         {
@@ -55,6 +61,7 @@ namespace Minimax.Multiplayer.ConnectionManagement
                     new SessionPlayerData(clientId, connectionPayload.playerName, true));
                 
                 response.Approved = true;
+                return;
             }
             
             response.Approved = false;

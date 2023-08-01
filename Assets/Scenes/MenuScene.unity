@@ -1214,6 +1214,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1981843812}
     m_Modifications:
     - target: {fileID: 1833132761987672394, guid: 17ac89c3b78dfff418e732da339fd57b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LoadScene
+      objectReference: {fileID: 0}
+    - target: {fileID: 1833132761987672394, guid: 17ac89c3b78dfff418e732da339fd57b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
       value: 
       objectReference: {fileID: 102900000, guid: 2c1a11a34795adc4fb0986f37a96c55e, type: 3}
@@ -1793,7 +1797,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 82184ca721492e748b0933d714756021, type: 2}
     - target: {fileID: 8722490700010709225, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: RaiseEvent
+      value: LoadSceneNetwork
       objectReference: {fileID: 0}
     - target: {fileID: 8722490700010709225, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName

@@ -363,7 +363,7 @@ MonoBehaviour:
       - m_Target: {fileID: 11400000, guid: 82184ca721492e748b0933d714756021, type: 2}
         m_TargetAssemblyTypeName: Minimax.ScriptableObjects.Events.LoadSceneEventSO,
           Assembly-CSharp
-        m_MethodName: RaiseEvent
+        m_MethodName: LoadScene
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 102900000, guid: 2c1a11a34795adc4fb0986f37a96c55e, type: 3}

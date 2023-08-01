@@ -225,7 +225,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 82184ca721492e748b0933d714756021, type: 2}
     - target: {fileID: 2626747228773271231, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: RaiseEvent
+      value: LoadScene
       objectReference: {fileID: 0}
     - target: {fileID: 2626747228773271231, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName

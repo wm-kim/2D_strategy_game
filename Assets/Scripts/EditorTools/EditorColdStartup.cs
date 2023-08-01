@@ -34,7 +34,7 @@ namespace Minimax
         private void OnNotifyChannelLoaded(AsyncOperationHandle<LoadSceneEventSO> obj)
         {
             Assert.IsNotNull(m_thisScene, "This scene is not set in the EditorColdStartup component.");
-            obj.Result.RaiseEvent(m_thisScene);
+            obj.Result.LoadScene(m_thisScene);
         }
 #endif
     }
