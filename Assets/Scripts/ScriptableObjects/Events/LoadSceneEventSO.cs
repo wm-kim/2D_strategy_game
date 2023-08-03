@@ -1,4 +1,3 @@
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,14 +11,14 @@ namespace Minimax.ScriptableObjects.Events
     {
         public UnityEvent<string, bool> OnLoadRequested;
         
-        public void LoadScene(SceneAsset sceneToLoad) => RaiseEvent(sceneToLoad.name, false);
+        public void LoadScene(SceneTypeSelector sceneToLoad) => RaiseEvent(sceneToLoad.SceneType, false);
         
-        public void LoadSceneNetwork(SceneAsset sceneToLoad) => RaiseEvent(sceneToLoad.name, true);
+        public void LoadSceneNetwork(SceneTypeSelector sceneToLoad) => RaiseEvent(sceneToLoad.SceneType, true);
         
-        public void RaiseEvent(string sceneToLoad, bool useNetwork = false)
+        public void RaiseEvent(SceneType sceneToLoad, bool useNetwork = false)
         {
             if (OnLoadRequested != null)
-                OnLoadRequested.Invoke(sceneToLoad, useNetwork);
+                OnLoadRequested.Invoke(sceneToLoad.ToString(), useNetwork);
             else
             {
                 DebugWrapper.LogWarning("A Scene loading was requested, but nobody picked it up.");

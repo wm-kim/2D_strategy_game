@@ -205,7 +205,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 636557131}
   m_HandleRect: {fileID: 636557130}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 1.0000002
   m_Size: 0.7772277
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -1051,6 +1051,7 @@ GameObject:
   - component: {fileID: 837056831}
   - component: {fileID: 837056830}
   - component: {fileID: 837056829}
+  - component: {fileID: 837056832}
   m_Layer: 0
   m_Name: Back
   m_TagString: Untagged
@@ -1128,8 +1129,8 @@ MonoBehaviour:
         m_MethodName: LoadScene
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 102900000, guid: 8c9cfa26abfee488c85f1582747f6a02, type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEditor.SceneAsset, UnityEditor.CoreModule
+          m_ObjectArgument: {fileID: 837056832}
+          m_ObjectArgumentAssemblyTypeName: Minimax.SceneTypeSelector, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -1173,6 +1174,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 837056827}
   m_CullTransparentMesh: 1
+--- !u!114 &837056832
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 837056827}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5dd812b2258744a3915b76dda051aef7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SceneType: 3
 --- !u!1 &847141842
 GameObject:
   m_ObjectHideFlags: 0

@@ -110,7 +110,7 @@ namespace Minimax
         
         private bool ServerSideUnLoadSceneValidation(Scene scene)
         {
-            bool isPersistentScene = scene.name == SceneType.PersistentScene;
+            bool isPersistentScene = scene.name == SceneType.PersistentScene.ToString();
             bool isCurrentScene = scene.name == m_currentlyLoadedScene;
             return !isPersistentScene || isCurrentScene;
         }

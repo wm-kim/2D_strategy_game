@@ -13,16 +13,16 @@ namespace Minimax
     public class EditorColdStartup : MonoBehaviour
     {
 #if UNITY_EDITOR
-        [SerializeField] private UnityEditor.SceneAsset m_thisScene = default;
+        [SerializeField] private SceneType m_thisScene = default;
         
         [Header("Broadcasting on")]
         [SerializeField] private AssetReference m_coldStartupEvent;
         
         private void Awake()
         {
-            if (!SceneManager.GetSceneByName(SceneType.PersistentScene).isLoaded)
+            if (!SceneManager.GetSceneByName(SceneType.PersistentScene.ToString()).isLoaded)
             {
-                SceneManager.LoadSceneAsync(SceneType.PersistentScene, LoadSceneMode.Additive).completed += LoadEventChannel;
+                SceneManager.LoadSceneAsync(SceneType.PersistentScene.ToString(), LoadSceneMode.Additive).completed += LoadEventChannel;
             }
         }
         
@@ -33,8 +33,8 @@ namespace Minimax
         
         private void OnNotifyChannelLoaded(AsyncOperationHandle<LoadSceneEventSO> obj)
         {
-            Assert.IsNotNull(m_thisScene, "This scene is not set in the EditorColdStartup component.");
-            obj.Result.LoadScene(m_thisScene);
+            Assert.IsTrue(m_thisScene != SceneType.Undefined, "This scene is not defined in the SceneType enum!");
+            obj.Result.RaiseEvent(m_thisScene);
         }
 #endif
     }

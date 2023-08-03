@@ -1,3 +1,4 @@
+#if DEDICATED_SERVER
 using System;
 using Minimax.Multiplayer.ConnectionManagement;
 using Minimax.ScriptableObjects.Events;
@@ -11,7 +12,7 @@ namespace Minimax.Multiplayer
 {
     public class DedicatedServerInitializer : MonoBehaviour
     {
-#if DEDICATED_SERVER
+
         [Header("Listening To")]
         [SerializeField] private VoidEventSO m_onPlayerDataNetworkListChanged = default;
         
@@ -159,6 +160,6 @@ namespace Minimax.Multiplayer
             public string MatchId;
             public string PoolId;
         }
-#endif
     }
 }
+#endif

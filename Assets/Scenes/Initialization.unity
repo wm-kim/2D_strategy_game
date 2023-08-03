@@ -167,13 +167,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b816df63aa7402a9f46f00538f866da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_mainScene: {fileID: 102900000, guid: a361bcad2cbe52646bbe350df1962040, type: 3}
-  m_gamePlayScene: {fileID: 102900000, guid: dfc4d72db676bd046bb7fefaacdd3542, type: 3}
-  m_loadSceneEvent:
-    m_AssetGUID: 82184ca721492e748b0933d714756021
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_EditorAssetChanged: 0
+  m_mainScene: 2
+  m_gamePlayScene: 4
+  m_loadSceneEvent: {fileID: 11400000, guid: 82184ca721492e748b0933d714756021, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

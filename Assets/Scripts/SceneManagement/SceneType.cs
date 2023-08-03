@@ -1,11 +1,12 @@
 namespace Minimax
 {
-    public static class SceneType
+    public enum SceneType
     {
-        public const string PersistentScene = "PersistentScene";
-        public const string MainScene = "MainScene";
-        public const string MenuScene = "MenuScene";
-        public const string GamePlayScene = "GamePlayScene";
-        public const string DeckBuildingScene = "DeckBuildingScene";
+        Undefined,
+        PersistentScene,
+        MainScene,
+        MenuScene,
+        GamePlayScene,
+        DeckBuildingScene
     }
 }
