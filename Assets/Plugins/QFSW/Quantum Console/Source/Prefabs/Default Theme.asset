@@ -22,6 +22,7 @@ MonoBehaviour:
   WarningColor: {r: 1, g: 0.5, b: 0, a: 1}
   SuccessColor: {r: 0, g: 1, b: 0, a: 1}
   TimestampFormat: '[{0:00}:{1:00}:{2:00}]'
+  CommandLogFormat: '> {0}'
   DefaultReturnValueColor: {r: 1, g: 0.7372549, b: 0.54901963, a: 1}
   TypeFormatters:
   - _type: System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089
@@ -29,8 +30,8 @@ MonoBehaviour:
   - _type: System.Collections.IEnumerable, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089
     Color: {r: 0.99215686, g: 0.9490196, b: 0.4117647, a: 1}
-  - _type: System.Collections.Generic.KeyValuePair`2, mscorlib, Version=4.0.0.0, Culture=neutral,
-      PublicKeyToken=b77a5c561934e089
+  - _type: System.Collections.Generic.KeyValuePair`2, mscorlib, Version=4.0.0.0,
+      Culture=neutral, PublicKeyToken=b77a5c561934e089
     Color: {r: 0.7311321, g: 1, b: 0.9315609, a: 1}
   - _type: System.Collections.DictionaryEntry, mscorlib, Version=4.0.0.0, Culture=neutral,
       PublicKeyToken=b77a5c561934e089

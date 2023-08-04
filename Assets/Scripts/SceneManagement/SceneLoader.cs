@@ -165,8 +165,9 @@ namespace Minimax
                 }
                 
                 // 네트워크를 통하지 않고 씬을 로드합니다.
-                SceneManager.LoadSceneAsync(m_sceneToLoad, LoadSceneMode.Additive).completed += 
-                    (op) => SceneLoadCompleted(m_sceneToLoad);
+                AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(m_sceneToLoad, LoadSceneMode.Additive);
+                await UniTask.WaitUntil(() => asyncOperation.isDone); 
+                SceneLoadCompleted(m_sceneToLoad);
             }
         }
         

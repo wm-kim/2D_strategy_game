@@ -17,6 +17,7 @@
     "com.unity.remote-config": "3.3.2",
     "com.unity.render-pipelines.universal": "14.0.8",
     "com.unity.services.authentication": "2.6.1",
+    "com.unity.services.cloudcode": "2.4.0",
     "com.unity.services.cloudsave": "2.0.1",
     "com.unity.services.matchmaker": "1.0.0",
     "com.unity.services.multiplay": "1.0.5",
