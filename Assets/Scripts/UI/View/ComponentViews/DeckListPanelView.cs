@@ -1,5 +1,6 @@
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Minimax.UI.View.ComponentViews
 {
@@ -36,8 +37,13 @@ namespace Minimax.UI.View.ComponentViews
             
             m_deckListBackground.gameObject.SetActive(true);
             m_deckListBackgroundTween = m_deckListBackground.DOFade(1f, m_animationDuration);
-            m_deckListPanelTween = m_deckListPanel.DOAnchorPosX(m_panelStartPosition.x - m_slideOffset, m_animationDuration)
-                .OnComplete(() => m_currentState = UIVisibleState.Appeared);
+            m_deckListPanelTween = m_deckListPanel
+                .DOAnchorPosX(m_panelStartPosition.x - m_slideOffset, m_animationDuration)
+                .OnComplete(() =>
+                {
+                    m_currentState = UIVisibleState.Appeared;
+                    AddBackgroundClickToHideEvent();
+                });
         }
         
         public void HideDeckList()
@@ -53,13 +59,29 @@ namespace Minimax.UI.View.ComponentViews
             
             var panelPosition = m_deckListPanel.anchoredPosition;
             m_deckListPanelTween = m_deckListPanel.DOAnchorPosX(m_panelStartPosition.x, m_animationDuration)
-                .OnComplete(() => m_currentState = UIVisibleState.Disappeared);
+                .OnComplete(() =>
+                {
+                    m_currentState = UIVisibleState.Disappeared;
+                    RemoveBackgroundClickToHideEvent();
+                });
         }
         
         private void KillTweens()
         {
             if (m_deckListBackgroundTween != null) m_deckListBackgroundTween.Kill();
             if (m_deckListPanelTween != null) m_deckListPanelTween.Kill();
+        }
+
+        private void AddBackgroundClickToHideEvent()
+        {
+            var button = m_deckListBackground.GetComponent<Button>();
+            button.onClick.AddListener(HideDeckList);
+        }
+        
+        private void RemoveBackgroundClickToHideEvent()
+        {
+            var button = m_deckListBackground.GetComponent<Button>();
+            button.onClick.RemoveListener(HideDeckList);
         }
     }
 }

@@ -134,6 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31b7fd00148047147ae4c52b5011034b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_button: {fileID: 1311816205928940748}
   m_cardDataText: {fileID: 901793072746745782}
 --- !u!1 &2832002107404830237
 GameObject:

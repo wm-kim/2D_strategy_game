@@ -6,14 +6,14 @@ namespace Minimax.UI.View.Popups
 {
     public abstract class PopupView : MonoBehaviour
     {
-        [field : SerializeField] public PopupType Type { get; protected set; } = PopupType.Undefined;
+        [field : SerializeField, ReadOnly] public PopupType Type { get; protected set; } = PopupType.Undefined;
         
         [Header("Animations")]
         [Space(10f)]
         [SerializeField] private AnimationSequencerController m_showAnimationSequencer;
         [SerializeField] private AnimationSequencerController m_hideAnimationSequencer;
         
-        private void Awake()
+        public void Init()
         {
             SetPopupType();
             CheckIfTypeIsSet();

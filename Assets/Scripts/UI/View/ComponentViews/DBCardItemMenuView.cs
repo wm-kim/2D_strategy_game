@@ -1,14 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Minimax.CoreSystems;
-using Minimax.ScriptableObjects.CardDatas;
-using Minimax.ScriptableObjects.Events;
-using Minimax.ScriptableObjects.Events.Primitives;
 using Minimax.Utilities;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
@@ -16,60 +9,46 @@ namespace Minimax.UI.View.ComponentViews
 {
     public class DBCardItemMenuView : MonoBehaviour
     {
-        [Header("References")]
+        [SerializeField] private DeckBuildingViewManager m_deckBuildingViewManager;
+        
+        [Header("Inner References")]
         [SerializeField] private RectTransform m_dbCardItemMenu = default;
         [SerializeField] private TextMeshProUGUI m_cardNameText = default;
         [SerializeField] private Button m_addToDeckButton = default;
         
-        [Header("Boundary Rect")]
-        [SerializeField] private RectTransform m_boundaryRect = default;
-        
-        [Header("Listening To")]
-        [SerializeField] private DBCardItemMenuEventSO m_dbCardItemMenuEvent = default;
-        
-        [Header("Broadcasting On")]
-        [SerializeField] private IntEventSO m_addToDeckButtonClickedEvent = default;
-
         [SerializeField, ReadOnly] private UIVisibleState m_visibleState = UIVisibleState.Undefined;
         
         [SerializeField] private float m_xOffset = 30f;
-        private DBCardItemView m_dbCardItem; 
+        private DBCardItemView m_dbCardItem;
         
         private void Start()
         {
             m_dbCardItemMenu.gameObject.SetActive(false);
             GlobalManagers.Instance.Input.OnTouch += OnTouchOutside;
-            
-            m_dbCardItemMenuEvent.OnEventRaised.AddListener(OnDBCardItemMenuEventRaised);
             m_addToDeckButton.onClick.AddListener(OnAddToDeckButtonClicked);
-        }
-        
-        private void OnDBCardItemMenuEventRaised(DBCardItemView dbCardItem, bool isShow)
-        {
-            if (isShow) Show(dbCardItem);
-            else Hide();
         }
         
         private void OnAddToDeckButtonClicked()
         {
-            m_addToDeckButtonClickedEvent.RaiseEvent(m_dbCardItem.CardData.CardId);
-            m_dbCardItem.Button.interactable = false;
+            m_deckBuildingViewManager.DeckListView.AddCardToDeckList(m_dbCardItem.CardData);
+            m_dbCardItem.SetButtonInteractable(false);
             Hide();
         }
 
         public void Show(DBCardItemView dbCardItem)
         {
+            // Cache DBCardItem to be used later for disable interactable when added to deck list
             m_dbCardItem = dbCardItem;
             
             // Set Menu Position
-            var dbCardItemTransform = dbCardItem.GetComponent<RectTransform>();
-            
-            var boundaryPos = m_boundaryRect.position;
-            var boundaryRect = m_boundaryRect.rect;
+            var dbCardItemTransform = m_dbCardItem.GetComponent<RectTransform>();
+
+            var boundaryRect = m_deckBuildingViewManager.DBCardScrollView.GetComponent<RectTransform>().GetWorldRect();
+            var boundaryPos = m_deckBuildingViewManager.DBCardScrollView.transform.position;
             
             var dbCardItemPos = dbCardItemTransform.position;
-            var dbCardItemRect = dbCardItemTransform.rect;
-            var dbCardItemMenuRect = m_dbCardItemMenu.rect;
+            var dbCardItemRect = dbCardItemTransform.GetWorldRect();
+            var dbCardItemMenuRect = m_dbCardItemMenu.GetWorldRect();
             
             var dbCardItemMenuPosY = dbCardItemPos.y + (dbCardItemRect.height - dbCardItemMenuRect.height) / 2f;
             var dbCardItemMenuPosXRight = dbCardItemPos.x + (dbCardItemRect.width + dbCardItemMenuRect.width) / 2f + m_xOffset;
@@ -94,7 +73,7 @@ namespace Minimax.UI.View.ComponentViews
             m_cardNameText.text = $"{m_dbCardItem.CardData.CardName}";
         }
         
-        public void Hide()
+        private void Hide()
         {
             m_dbCardItemMenu.gameObject.SetActive(false);
             m_visibleState = UIVisibleState.Disappeared;

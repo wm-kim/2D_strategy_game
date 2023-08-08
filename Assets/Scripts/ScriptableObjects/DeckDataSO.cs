@@ -11,6 +11,11 @@ namespace Minimax.ScriptableObjects
     {
         private Dictionary<int, CardBaseData> m_deckList  = new Dictionary<int, CardBaseData>();
 
+        public void Init()
+        {
+            m_deckList.Clear();
+        }
+        
         public bool ContainsCard(int cardId)
         {
             return m_deckList.ContainsKey(cardId);

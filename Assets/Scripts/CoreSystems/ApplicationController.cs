@@ -1,0 +1,23 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace Minimax
+{
+    public class ApplicationController : MonoBehaviour
+    {
+        [Header("Frame Rate Settings")]
+        public int targetFrameRate = 60;
+
+        private void Start()
+        {
+            // Set the target frame rate for the application
+            Application.targetFrameRate = targetFrameRate;
+
+            // Optional: If using vSync, make sure it's disabled to make this effective
+            QualitySettings.vSyncCount = 0;
+        }
+
+        // Any other global logic can be added here as needed.
+    }
+}

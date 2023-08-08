@@ -586,7 +586,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfc01446a5d743a47b1fd3d2239c07b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Type>k__BackingField: 0
+  <Type>k__BackingField: 1
   m_showAnimationSequencer: {fileID: 6983883628895090968}
   m_hideAnimationSequencer: {fileID: 2857034774254473840}
   m_cancelButton: {fileID: 2367072052355954363}

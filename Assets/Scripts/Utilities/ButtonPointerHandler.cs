@@ -30,7 +30,6 @@ namespace Minimax.Utilities
         public void OnPointerUp(PointerEventData eventData)
         {
             onPointerUp?.Invoke();
-            DebugWrapper.Log($"{gameObject.name} button up");
         }
     }
 }

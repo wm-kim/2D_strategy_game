@@ -1,43 +1,45 @@
+using System;
 using System.Collections.Generic;
 using Minimax.ScriptableObjects;
 using Minimax.ScriptableObjects.CardDatas;
-using Minimax.ScriptableObjects.Events.Primitives;
 using UnityEngine;
 
 namespace Minimax
 {
     public class DeckListView : MonoBehaviour
     {
-        [SerializeField] private CardDBManager m_cardDBManager;
+        [SerializeField] private DeckBuildingViewManager m_deckBuildingViewManager;
         [SerializeField] private DeckDataSO m_deckDataSO;
         
-        public GameObject m_deckListItemPrefab;
+        [SerializeField] private DeckListItemView m_deckListItemPrefab;
         public Transform m_deckListItemParent;
         
-        [Header("Listening To")]
-        [SerializeField] private IntEventSO m_onCardAddedToDeckEvent;
-
-        private SortedDictionary<int, CardBaseData> m_deckList = new SortedDictionary<int, CardBaseData>();
+        private Dictionary<int, DeckListItemView> m_deckListItemViews = new Dictionary<int, DeckListItemView>();
 
         private void Start()
         {
-            m_onCardAddedToDeckEvent.OnEventRaised.AddListener(AddCardToDeckList);
+            m_deckDataSO.Init();
         }
 
-        private void AddCardToDeckList(int cardID)
+        public void AddCardToDeckList(CardBaseData cardData)
         {
-            var cardData = m_cardDBManager.GetCardData(cardID);
-            if (m_deckList.ContainsKey(cardData.CardId)) return;
+            if (m_deckDataSO.ContainsCard(cardData.CardId)) return;
             m_deckDataSO.AddCard(cardData);
-            var deckListItem = Instantiate(m_deckListItemPrefab, m_deckListItemParent).GetComponent<DeckListItemView>();
-            deckListItem.SetData(cardData);
+            
+            // Instantiate DeckListItemView
+            var deckListItemView = Instantiate(m_deckListItemPrefab, m_deckListItemParent);
+            deckListItemView.Init(cardData, m_deckBuildingViewManager.DeckListItemMenuView);
+            m_deckListItemViews.Add(cardData.CardId, deckListItemView);
         }
         
-        private void RemoveCardFromDeckList(CardBaseData cardData)
+        public void RemoveCardFromDeckList(int cardId)
         {
-            if (!m_deckList.ContainsKey(cardData.CardId)) return;
-            m_deckList.Remove(cardData.CardId);
+            if (!m_deckDataSO.ContainsCard(cardId)) return;
+            m_deckDataSO.RemoveCard(cardId);
             
+            // Destroy DeckListItemView
+            Destroy(m_deckListItemViews[cardId].gameObject);
+            m_deckListItemViews.Remove(cardId);
         }
         
         private void UpdateListView()

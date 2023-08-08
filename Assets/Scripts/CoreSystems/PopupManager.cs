@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
-using Minimax.ScriptableObjects.Events;
 using Minimax.UI.View.Popups;
 using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
-using UnityEngine.Serialization;
 
 namespace Minimax.CoreSystems
 {
@@ -50,6 +48,7 @@ namespace Minimax.CoreSystems
                 foreach (var popup in handle.Result)
                 {
                     var popupView = popup.GetComponent<PopupView>();
+                    popupView.Init();
                     m_loadedPopups.Add(popupView.Type, popupView);
                 }
             };
