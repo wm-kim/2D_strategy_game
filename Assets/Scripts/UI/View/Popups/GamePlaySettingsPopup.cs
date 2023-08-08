@@ -13,7 +13,7 @@ namespace Minimax.UI.View.Popups
         [SerializeField] private Button m_confirmButton;
         [SerializeField] private Button m_cancelButton;
 
-        protected override void SetPopupType() => Type = PopupType.GamePlaySettings;
+        protected override void SetPopupType() => Type = PopupType.GamePlaySettingsPopup;
         
         private void Start()
         {
@@ -23,13 +23,13 @@ namespace Minimax.UI.View.Popups
         
         private void OnConfirmButtonClicked()
         {
-            GlobalManagers.Instance.Popup.RequestHidePopup();
+            GlobalManagers.Instance.Popup.HideCurrentPopup();
             GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.MenuScene);
         }
         
         private void OnCancelButtonClicked()
         {
-            GlobalManagers.Instance.Popup.RequestHidePopup();
+            GlobalManagers.Instance.Popup.HideCurrentPopup();
         }
     }
 }

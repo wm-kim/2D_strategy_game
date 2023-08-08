@@ -547,7 +547,7 @@ GameObject:
   - component: {fileID: 6788986238626747125}
   - component: {fileID: 6381571875967078615}
   m_Layer: 0
-  m_Name: QuitApplicationPopup
+  m_Name: QuitAppPopup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

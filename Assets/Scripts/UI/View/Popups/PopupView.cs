@@ -13,7 +13,7 @@ namespace Minimax.UI.View.Popups
         [SerializeField] private AnimationSequencerController m_showAnimationSequencer;
         [SerializeField] private AnimationSequencerController m_hideAnimationSequencer;
         
-        public void Init()
+        public void SetPopupTypeAndCheck()
         {
             SetPopupType();
             CheckIfTypeIsSet();

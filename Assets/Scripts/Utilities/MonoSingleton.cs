@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Minimax.Utilities
@@ -11,7 +12,7 @@ namespace Minimax.Utilities
         {
             get
             {
-                if (s_instance == null)
+                if (s_instance == null && Time.timeScale != 0)
                 {
                     CreateInstance();
                 }
@@ -53,5 +54,10 @@ namespace Minimax.Utilities
         }
         
         public static bool IsInitialized => s_instance != null;
+
+        private void OnApplicationQuit()
+        {
+            Time.timeScale = 0;
+        }
     }
 }

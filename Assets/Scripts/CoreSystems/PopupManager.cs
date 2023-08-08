@@ -16,14 +16,9 @@ namespace Minimax.CoreSystems
         
         [SerializeField] private Canvas m_popupCanvas;
         // popup의 대기열을 관리하는 Queue, First come first serve로 popup을 표시한다.
-        private Queue<PopupView> m_popupQueue = new Queue<PopupView>();
+        private Queue<IPopupCommand> m_popupQueue = new Queue<IPopupCommand>();
         // 현재 표시되고 있는 popup
         [SerializeField, ReadOnly] private PopupView m_currentPopupView = null;
-        
-        // Define actions for show, hide, and back button
-        private Action<PopupType> m_onShowPopupRequested;
-        private Action m_onHidePopupRequested;
-        private Action<PopupType> m_onMobileBackButtonPressed;
         
         [Space(10f)]
         // Popup pool
@@ -32,15 +27,8 @@ namespace Minimax.CoreSystems
         private void Awake()
         {
             PreLoadPopup();
-            m_onShowPopupRequested += RegisterToQueue;
-            m_onHidePopupRequested += HideCurrentPopup;
-            m_onMobileBackButtonPressed += MobileBackButtonPressed;
         }
         
-        public void RequestShowPopup(PopupType popupType) => m_onShowPopupRequested?.Invoke(popupType);
-        public void RequestHidePopup() => m_onHidePopupRequested?.Invoke();
-        public void RequestMobileBackButton(PopupType popupType) => m_onMobileBackButtonPressed?.Invoke(popupType);
-
         private void PreLoadPopup()
         {
             Addressables.LoadAssetsAsync<GameObject>(m_popupAssetLabelReference, null).Completed += handle =>
@@ -48,20 +36,22 @@ namespace Minimax.CoreSystems
                 foreach (var popup in handle.Result)
                 {
                     var popupView = popup.GetComponent<PopupView>();
-                    popupView.Init();
+                    popupView.SetPopupTypeAndCheck();
                     m_loadedPopups.Add(popupView.Type, popupView);
                 }
             };
         }
         
-        public bool IsPopupShowing => m_currentPopupView != null;
+        private bool IsPopupShowing => m_currentPopupView != null;
+
+        public void RegisterDefaultPopupToQueue(PopupType popupType) => RegisterCommandToQueue(new DefaultPopupCommand(popupType));
         
         /// <summary>
-        /// Popup을 대기열에 등록합니다. 만약 현재 표시되고 있는 popup이 없다면 바로 표시합니다.
+        /// Popup Command를 대기열에 등록합니다. 만약 현재 표시되고 있는 popup이 없다면 바로 표시합니다.
         /// </summary>
-        private void RegisterToQueue(PopupType popupType)
+        private void RegisterCommandToQueue(IPopupCommand command)
         {
-            m_popupQueue.Enqueue(m_loadedPopups[popupType]);
+            m_popupQueue.Enqueue(command);
             if (m_currentPopupView == null)
             {
                 ShowNextPopup();
@@ -71,7 +61,7 @@ namespace Minimax.CoreSystems
         /// <summary>
         /// 현재 표시되고 있는 popup을 숨기고 파괴합니다. 이후 대기열에서 다음 popup을 표시합니다.
         /// </summary>
-        private void HideCurrentPopup()
+        public void HideCurrentPopup()
         {
             if (m_currentPopupView == null) return;
             m_currentPopupView.Hide();
@@ -94,14 +84,16 @@ namespace Minimax.CoreSystems
             m_popupQueue.Dequeue();
         }
         
+        public void MobileBackButtonDefaultPopup(PopupType popupType) => MobileBackButtonCommand(new DefaultPopupCommand(popupType));
+        
         /// <summary>
         /// 모바일에서 뒤로가기 버튼을 누르면 호출됩니다.
         /// 이미 표시되고 있는 popup이 있다면 숨기고, 없다면 대기열에 인자로 받은 popup을 등록합니다.
         /// </summary>
-        private void MobileBackButtonPressed(PopupType popupType)
+        private void MobileBackButtonCommand(IPopupCommand command)
         {
             if (IsPopupShowing) HideCurrentPopup();
-            else RegisterToQueue(popupType);
+            else RegisterCommandToQueue(command);
         }
 
         /// <summary>
@@ -114,15 +106,26 @@ namespace Minimax.CoreSystems
                 m_currentPopupView = null;
                 return;
             }
-            m_currentPopupView = m_popupQueue.Dequeue();
+
+            var command = m_popupQueue.Dequeue();
             // Instantiate popup
-            var instantiateHandle = Addressables.InstantiateAsync(m_path + m_currentPopupView.name + ".prefab", m_popupCanvas.transform);
-            instantiateHandle.Completed += handle =>
+            var instantiateHandle = Addressables.InstantiateAsync(m_path + command.Type + ".prefab", m_popupCanvas.transform);
+            
+            // Execute different actions according to the type of popup command
+            switch (command)
             {
-                var popup = handle.Result.GetComponent<PopupView>();
-                m_currentPopupView = popup;
-                popup.Show();
-            };
+                case DefaultPopupCommand defaultPopupCommand:
+                    instantiateHandle.Completed += handle =>
+                    {
+                        var popup = handle.Result.GetComponent<PopupView>();
+                        popup.Show();
+                        m_currentPopupView = popup;
+                    };
+                    break;
+               
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(command), command, "Unknown popup command");
+            }
         }
     }
 }

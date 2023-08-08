@@ -9,7 +9,7 @@ namespace Minimax.UI.View.Popups
     {
         [SerializeField] private Button m_cancelButton;
         
-        protected override void SetPopupType() => Type = PopupType.QuitApp;
+        protected override void SetPopupType() => Type = PopupType.QuitAppPopup;
         
         private void Awake()
         {
@@ -18,7 +18,7 @@ namespace Minimax.UI.View.Popups
 
         private void OnCancelButtonClicked()
         {
-            GlobalManagers.Instance.Popup.RequestHidePopup();
+            GlobalManagers.Instance.Popup.HideCurrentPopup();
         }
     }
 }
