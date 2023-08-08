@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Minimax.UI.View.Pages;
+using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.CoreSystems

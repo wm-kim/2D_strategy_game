@@ -1,9 +1,13 @@
+using System;
 using AYellowpaper.SerializedCollections;
+using Cysharp.Threading.Tasks;
 using Minimax.ScriptableObjects.Events;
 using Minimax.ScriptableObjects.Events.Primitives;
 using Minimax.UI.View.Pages;
 using Minimax.UI.View.Popups;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 
 namespace Minimax.CoreSystems
 {
@@ -15,26 +19,22 @@ namespace Minimax.CoreSystems
         [SerializeField, Range(0, 1)] private float m_pageTransitionDuration = 0.15f;
         
         [Header("Listening to")]
-        [SerializeField] private VoidEventSO m_mobileBackButtonEvent;
         [SerializeField] private IntEventSO m_switchNavigationEvent;
-            
-        [Header("Broadcasting on")]
-        [SerializeField] private PopupEventSO m_quitAppPopupEventSO;
 
         private void Awake()
         {
             ResetNavigationCache();
         }
-        
+
         private void OnEnable()
         {
-            m_mobileBackButtonEvent.OnEventRaised.AddListener(PopPage);
+            GlobalManagers.Instance.Input.OnBackButton += PopPage;
             m_switchNavigationEvent.OnEventRaised.AddListener(SwitchNavigation);
         }
         
         private void OnDisable()
         {
-            m_mobileBackButtonEvent.OnEventRaised.RemoveListener(PopPage);
+            GlobalManagers.Instance.Input.OnBackButton -= PopPage;
             m_switchNavigationEvent.OnEventRaised.RemoveListener(SwitchNavigation);
         }
         
@@ -50,7 +50,7 @@ namespace Minimax.CoreSystems
                 var pageNav = pageNavigation.GetComponent<PageNavigation>();
                 if (pageNav != null && pageNav.NavigationType != PageNavigationType.Undefined)
                 {
-                    m_pageNavigations.Add(pageNav.NavigationType, pageNav);
+                    m_pageNavigations.Add(pageNav.NavigationType, pageNav);  
                 }
             }
         }
@@ -67,11 +67,11 @@ namespace Minimax.CoreSystems
         
         public PageView PushPage(PageType page) => m_currentNavigation.Push(page);
 
-        public void PopPage()
+        private void PopPage()
         {
             if (!m_currentNavigation.Pop())
             {
-                m_quitAppPopupEventSO.ShowPopup(PopupType.QuitApp);
+                GlobalManagers.Instance.Popup.RequestMobileBackButton(PopupType.QuitApp);
             }
         }
     }

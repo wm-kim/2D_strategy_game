@@ -1,17 +1,22 @@
 using Cysharp.Threading.Tasks;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
+using Minimax.Utilities;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
+using Unity.Services.Core.Environments;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Minimax.UnityGamingService.Multiplayer
 {
     public class GooglePlayAuthentication : MonoBehaviour
     {
-        public string GooglePlayToken;
-        public string GooglePlayError;
+        [SerializeField, ReadOnly] private string m_googlePlayToken;
+        [SerializeField, ReadOnly] private  string m_googlePlayError;
 
+        [SerializeField] private EnvironmentType m_environment = EnvironmentType.undefined;
+        
         private async void Start()
         {
             await InitializeAuthentication();
@@ -28,7 +33,20 @@ namespace Minimax.UnityGamingService.Multiplayer
 
             if (UnityServices.State != ServicesInitializationState.Initialized)
             {
-                await UnityServices.InitializeAsync();
+                var options = new InitializationOptions();
+                
+                // Set the environment
+                switch (m_environment)
+                {
+                    case EnvironmentType.development:
+                        options.SetEnvironmentName(EnvironmentType.development.ToString());
+                        break;
+                    case EnvironmentType.production:
+                        options.SetEnvironmentName(EnvironmentType.production.ToString());
+                        break;
+                }
+                
+                await UnityServices.InitializeAsync(options);
                 DebugWrapper.Log(UnityServices.State.ToString());
             }
         }
@@ -68,13 +86,13 @@ namespace Minimax.UnityGamingService.Multiplayer
                     {
                         DebugWrapper.Log("Authorization code: " + code);
                         // This token serves as an example to be used for SignInWithGooglePlayGames
-                        GooglePlayToken = code;
+                        m_googlePlayToken = code;
                         AuthenticateWithUnity(code).Forget();
                     });
                 }
                 else
                 {
-                    GooglePlayError = "Failed to retrieve Google play games authorization code";
+                    m_googlePlayError = "Failed to retrieve Google play games authorization code";
                     DebugWrapper.Log("Login Unsuccessful");
                 }
             });

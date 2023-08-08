@@ -127,19 +127,21 @@ namespace SingularityGroup.HotReload.Editor {
                 HotReloadPrefs.LicenseEmail = null;
                 HotReloadPrefs.ExposeServerToLocalNetwork = true;
                 HotReloadPrefs.LicensePassword = null;
-                HotReloadPrefs.RenderAuthLogin = false;
-                HotReloadPrefs.FirstLogin = true;
                 HotReloadPrefs.LoggedBurstHint = false;
                 HotReloadPrefs.DontShowPromptForDownload = false;
                 HotReloadPrefs.RateAppShown = false;
                 HotReloadPrefs.ActiveDays = string.Empty;
                 HotReloadPrefs.LaunchOnEditorStart = false;
                 HotReloadPrefs.ShowUnsupportedChanges = true;
+                HotReloadPrefs.RedeemLicenseEmail = null;
+                HotReloadPrefs.RedeemLicenseInvoice = null;
                 OnEnable();
                 File.Delete(EditorCodePatcher.serverDownloader.GetExecutablePath(HotReloadCli.controller));
                 InstallUtility.DebugClearInstallState();
                 InstallUtility.CheckForNewInstall();
                 EditorPrefs.DeleteKey(Attribution.LastLoginKey);
+                File.Delete(RedeemLicenseHelper.registerOutcomePath);
+                AssetDatabase.Refresh();
             }
         }
 

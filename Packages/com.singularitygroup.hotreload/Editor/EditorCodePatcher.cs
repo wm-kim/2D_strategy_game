@@ -30,7 +30,7 @@ namespace SingularityGroup.HotReload.Editor {
         static Timer timer; 
         static bool init;
 
-        static UnityLicenseType licenseType;
+        internal static UnityLicenseType licenseType { get; private set; }
         internal static bool LoginNotRequired => PackageConst.IsAssetStoreBuild && licenseType != UnityLicenseType.UnityPro;
         internal static IReadOnlyList<string> Failures { get; set; } = new List<string>();
         internal static bool compileError => _compileError;
@@ -60,9 +60,11 @@ namespace SingularityGroup.HotReload.Editor {
             EditorApplication.delayCall += InstallUtility.CheckForNewInstall;
             AddEditorFocusChangedHandler(OnEditorFocusChanged);
             // When domain reloads, this is a good time to ensure server has up-to-date project information
-            EditorApplication.delayCall += TryPrepareBuildInfo;
+            if (ServerHealthCheck.I.IsServerHealthy) {
+                EditorApplication.delayCall += TryPrepareBuildInfo;
+            }
             DetectEditorStart();
-            serverDownloader.CheckIfDownloaded(HotReloadCli.controller);
+            DetectVersionUpdate();
             SingularityGroup.HotReload.Demo.Demo.I = new EditorDemo();
             RecordActiveDaysForRateApp();
             if(EditorApplication.isPlayingOrWillChangePlaymode) {
@@ -72,8 +74,8 @@ namespace SingularityGroup.HotReload.Editor {
 
         public static bool autoRecompileUnsupportedChangesSupported;
         static void AddEditorFocusChangedHandler(Action<bool> handler) {
-            var eventInfo = typeof(EditorApplication).GetEvent("focusChanged", BindingFlags.Static | BindingFlags.NonPublic);
-            var addMethod = eventInfo?.GetAddMethod(true);
+            var eventInfo = typeof(EditorApplication).GetEvent("focusChanged", BindingFlags.Static | BindingFlags.NonPublic | BindingFlags.Public);
+            var addMethod = eventInfo?.GetAddMethod(true) ?? eventInfo?.GetAddMethod(false);
             if (addMethod != null) {
                 addMethod.Invoke(null, new object[]{ handler });
             }
@@ -181,6 +183,23 @@ namespace SingularityGroup.HotReload.Editor {
                 }
             });
         }
+        
+        private static void DetectVersionUpdate() {
+            if (serverDownloader.CheckIfDownloaded(HotReloadCli.controller)) {
+                return;
+            }
+            ServerHealthCheck.instance.CheckHealth();
+            if (!ServerHealthCheck.I.IsServerHealthy) {
+                return;
+            }
+            var restartServer = EditorUtility.DisplayDialog("Hot Reload",
+                $"When updating Hot Reload, the server must be restarted for the update to take effect." +
+                "\nDo you want to restart it now?",
+                "Restart server", "Don't restart");
+            if (restartServer) {
+                EditorCodePatcher.RestartCodePatcher().Forget();
+            }
+        }
 
         private static void UpdateHost() {
             string host;
@@ -204,8 +223,8 @@ namespace SingularityGroup.HotReload.Editor {
         
         internal static bool firstPatchAttempted;
         static void OnIntervalMainThread() {
-            TryPrepareBuildInfo();
             if(ServerHealthCheck.I.IsServerHealthy) {
+                TryPrepareBuildInfo();
                 RequestHelper.PollMethodPatches(resp => HandleResponseReceived(resp));
                 RequestHelper.PollPatchStatus(resp => {
                     patchStatus = resp.patchStatus;
@@ -404,10 +423,8 @@ namespace SingularityGroup.HotReload.Editor {
         internal static bool Started => ServerHealthCheck.I.IsServerHealthy && DownloadProgress == 1 && StartupProgress?.Item1 == 1;
         internal static bool Starting => (StartedServerRecently() || ServerHealthCheck.I.IsServerHealthy) && !Started && starting;
         internal static bool Stopping => stopping && Running;
-        internal static bool RenderFirstLogin => HotReloadPrefs.FirstLogin && !Running && !Starting && !LoginNotRequired && !RequestingDownloadAndRun;
         internal static bool Compiling => DateTime.UtcNow - startWaitingForCompile < TimeSpan.FromSeconds(5) || patchStatus == PatchStatus.Compiling;
         internal static Tuple<float, string> StartupProgress => startupProgress;
-        internal static bool CreatedAccount { get; private set; }
         
         
         /// <summary>
@@ -430,7 +447,7 @@ namespace SingularityGroup.HotReload.Editor {
         }
 
         private static bool requestingStart;
-        private static async Task StartCodePatcher() {
+        private static async Task StartCodePatcher(LoginData loginData = null) {
             if (requestingStart || StartedServerRecently())  {
                 return;
             }
@@ -444,7 +461,7 @@ namespace SingularityGroup.HotReload.Editor {
                 requestingStart = true;
                 startupProgress = Tuple.Create(0f, "Starting Hot Reload");
                 serverStartedAt = DateTime.UtcNow;
-                await HotReloadCli.StartAsync(exposeToNetwork, allAssetChanges, disableConsoleWindow).ConfigureAwait(false);
+                await HotReloadCli.StartAsync(exposeToNetwork, allAssetChanges, disableConsoleWindow, loginData).ConfigureAwait(false);
                 firstPatchAttempted = false;
             }
             catch (Exception ex) {
@@ -500,7 +517,7 @@ namespace SingularityGroup.HotReload.Editor {
         internal static bool DownloadRequired => DownloadProgress < 1f;
         internal static bool DownloadStarted => serverDownloader.Started;
         internal static bool RequestingDownloadAndRun => requestingDownloadAndRun;
-        internal static async Task<bool> DownloadAndRun() {
+        internal static async Task<bool> DownloadAndRun(LoginData loginData = null) {
             if (requestingDownloadAndRun) {
                 return false;
             }
@@ -513,7 +530,7 @@ namespace SingularityGroup.HotReload.Editor {
                         return false;
                     }
                 }
-                await StartCodePatcher();
+                await StartCodePatcher(loginData);
                 return true;
             } finally {
                 requestingDownloadAndRun = false;
@@ -572,6 +589,7 @@ namespace SingularityGroup.HotReload.Editor {
         }
         
         internal static  async Task RequestLogin(string email, string password) {
+            EditorCodePatcher.RequestingLoginInfo = true;
             try {
                 int i = 0;
                 while (!Running && i < 100) {
@@ -586,15 +604,7 @@ namespace SingularityGroup.HotReload.Editor {
                 if (Status?.isLicensed == true) {
                     HotReloadPrefs.LicenseEmail = email;
                     HotReloadPrefs.LicensePassword = Status.initialPassword ?? password;
-                    CreatedAccount = Status.initialPassword != null;
-
-                } else if (Status != null && Status.lastLicenseError == "MissingParametersException") {
-                    HotReloadPrefs.RenderAuthLogin = true;
-                } else if (Status != null && Status.lastLicenseError == "LicenseNotFoundException") {
-                    HotReloadPrefs.RenderAuthLogin = false;
                 }
-                
-                HotReloadPrefs.FirstLogin = false;
             } finally {
                 RequestingLoginInfo = false;
             }

@@ -1,5 +1,6 @@
 using System;
 using Minimax.UnityGamingService.Multiplayer;
+using Minimax.Utilities;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;

@@ -1,6 +1,5 @@
 #if UNITY_2021_2_OR_NEWER
 using System.Collections.Generic;
-using System.Threading;
 using UnityEditor.Overlays;
 using UnityEngine.UIElements;
 using UnityEditor;
@@ -46,16 +45,16 @@ namespace SingularityGroup.HotReload.Editor {
             } else {
                 var iconPath = EditorIndicationState.IndicationIconPath;
                 if (!iconTextures.TryGetValue(iconPath, out latestIcon)) {
-                    latestIcon = (Texture2D)EditorGUIUtility.IconContent(iconPath).image;
+                    latestIcon = Resources.Load<Texture2D>(iconPath);
                     iconTextures[iconPath] = latestIcon;
                 }
             }
             return latestIcon;
         }
-        
+
         private static Image indicationIcon;
         private static Label indicationText;
-        
+
         /// <summary>
         /// Create Hot Reload overlay panel.
         /// </summary>
@@ -63,7 +62,7 @@ namespace SingularityGroup.HotReload.Editor {
             var root = new VisualElement() { name = "Hot Reload Indication" };
             root.style.flexDirection = FlexDirection.Row;
             
-            indicationIcon = new Image() { image = EditorGUIUtility.IconContent("d_winbtn_mac_close@2x").image };
+            indicationIcon = new Image() { image = Resources.Load<Texture2D>(EditorIndicationState.greyIconPath) };
             indicationIcon.style.height = 30;
             indicationIcon.style.width = 30;
             indicationIcon.style.marginLeft = 2;

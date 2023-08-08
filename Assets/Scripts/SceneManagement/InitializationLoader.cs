@@ -1,4 +1,5 @@
 using Cysharp.Threading.Tasks;
+using Minimax.CoreSystems;
 using Minimax.ScriptableObjects.Events;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -15,9 +16,6 @@ namespace Minimax
         [Header("Server Start Scene")]
         [SerializeField] private SceneType m_gamePlayScene = default;
         
-        [Header("Broadcasting on")]
-        [SerializeField] private LoadSceneEventSO  m_loadSceneEvent = default;
-        
         private async void Start()
         {
             AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(SceneType.PersistentScene.ToString(), LoadSceneMode.Additive); 
@@ -28,10 +26,10 @@ namespace Minimax
         private void LoadInitialScene()
         {
 #if !DEDICATED_SERVER
-            m_loadSceneEvent.RaiseEvent(m_mainScene);
+            GlobalManagers.Instance.Scene.RequestLoadScene(m_mainScene);
             SceneManager.UnloadSceneAsync(0);
 #else
-            m_loadSceneEvent.RaiseEvent(m_gamePlayScene);
+            GlobalManagers.Instance.Scene.RequestLoadScene(m_gamePlayScene);
             SceneManager.UnloadSceneAsync(0);
 #endif
         }

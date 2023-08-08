@@ -77,7 +77,7 @@ namespace SingularityGroup.HotReload.Editor {
                 );
             }
 
-            if (!EditorCodePatcher.LoginNotRequired) {
+            if (!EditorCodePatcher.LoginNotRequired && !RedeemLicenseHelper.I.RegistrationRequired) {
                 using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.DynamicSectionOuterBoxCompact)) {
                     using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.DynamicSectionInnerBoxWide)) {
                         using (new EditorGUILayout.VerticalScope()) {
@@ -90,8 +90,8 @@ namespace SingularityGroup.HotReload.Editor {
             using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.DynamicSectionOuterBoxCompact)) {
                 using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.DynamicSectionInnerBoxWide)) {
                     using (new EditorGUILayout.VerticalScope()) {
-                        HotReloadPrefs.Configuration = EditorGUILayout.Foldout(HotReloadPrefs.Configuration, "Configuration", true, HotReloadWindowStyles.FoldoutStyle);
-                        if (HotReloadPrefs.Configuration) {
+                        HotReloadPrefs.ShowConfiguration = EditorGUILayout.Foldout(HotReloadPrefs.ShowConfiguration, "Configuration", true, HotReloadWindowStyles.FoldoutStyle);
+                        if (HotReloadPrefs.ShowConfiguration) {
                             EditorGUILayout.Space();
                             RenderUnityAutoRefresh();
                             RenderAssetRefresh();
@@ -374,7 +374,6 @@ namespace SingularityGroup.HotReload.Editor {
                 currentState.loginStatus,
                 verbose: true,
                 allowHide: false,
-                overrideRenderFreeTrial: false,
                 overrideActionButton: "Activate License",
                 showConsumptions: true
             );

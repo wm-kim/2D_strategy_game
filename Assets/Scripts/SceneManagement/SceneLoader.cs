@@ -3,6 +3,7 @@ using BrunoMikoski.AnimationSequencer;
 using Cysharp.Threading.Tasks;
 using Minimax.ScriptableObjects.Events;
 using Minimax.ScriptableObjects.Events.Primitives;
+using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,10 +18,6 @@ namespace Minimax
         // To prevent a new loading request while already loading a new scene
         private bool m_isLoading = false;
 
-        [Header("Listening to")] 
-        [SerializeField] private LoadSceneEventSO m_loadSceneSceneEvent;
-        [SerializeField] private LoadSceneEventSO m_coldStartupEvent;
-        
         // 아래 두 개의 변수는 로딩 화면 애니메이션을 담당하는 컨트롤러입니다.
         [SerializeField] private AnimationSequencerController m_showLoadingScreenAnimation;
         [SerializeField] private AnimationSequencerController m_hideLoadingScreenAnimation;
@@ -39,10 +36,6 @@ namespace Minimax
 
         private void Start()
         {
-            m_loadSceneSceneEvent.OnLoadRequested.AddListener(LoadScene);
-            #if UNITY_EDITOR
-            m_coldStartupEvent.OnLoadRequested.AddListener(ColdStartup);
-            #endif
             NetworkManager.OnServerStarted += OnNetworkingSessionStarted;
             NetworkManager.OnClientStarted += OnNetworkingSessionStarted;
             NetworkManager.OnServerStopped += OnNetworkingSessionEnded;
@@ -51,9 +44,7 @@ namespace Minimax
         
         public override void OnDestroy()
         {
-            #if UNITY_EDITOR
-            m_coldStartupEvent.OnLoadRequested.RemoveListener(ColdStartup);
-            #endif
+
             if (NetworkManager != null)
             {
                 NetworkManager.OnServerStarted -= OnNetworkingSessionStarted;
@@ -63,6 +54,11 @@ namespace Minimax
             }
             base.OnDestroy();
         }
+        
+        public void RequestLoadScene(SceneType sceneToLoad, bool useNetwork = false) => LoadScene(sceneToLoad.ToString(), useNetwork);
+#if UNITY_EDITOR
+        public void RequestColdStartup(SceneType sceneToLoad) => ColdStartup(sceneToLoad.ToString());
+#endif
         
         void OnNetworkingSessionStarted()
         {
@@ -116,7 +112,7 @@ namespace Minimax
         }
 
 #if UNITY_EDITOR
-        private void ColdStartup(string sceneToLoad, bool _) => m_currentlyLoadedScene = sceneToLoad;
+        private void ColdStartup(string sceneToLoad) => m_currentlyLoadedScene = sceneToLoad;
 #endif 
         private bool IsInitialLoading => string.IsNullOrEmpty(m_currentlyLoadedScene);
 

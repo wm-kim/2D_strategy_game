@@ -247,7 +247,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: 200, y: 80}
+  m_AnchoredPosition: {x: -200, y: 80}
   m_SizeDelta: {x: 200, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8446356477299350246
@@ -486,7 +486,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
-  m_AnchoredPosition: {x: -200, y: 80}
+  m_AnchoredPosition: {x: 200, y: 80}
   m_SizeDelta: {x: 200, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6621585363655394954
@@ -572,7 +572,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 11400000, guid: fcb12f856a470ed44950b1b999d8a7e5, type: 2}
-        m_TargetAssemblyTypeName: WMK.PopupEventSO, Assembly-CSharp
+        m_TargetAssemblyTypeName: Minimax.ScriptableObjects.Events.PopupEventSO,
+          Assembly-CSharp
         m_MethodName: HidePopup
         m_Mode: 1
         m_Arguments:
@@ -615,8 +616,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7826757665417966981}
-  - {fileID: 1846388245793311595}
   - {fileID: 7980801317671214939}
+  - {fileID: 1846388245793311595}
   m_Father: {fileID: 818856780081259272}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
@@ -877,8 +878,8 @@ MonoBehaviour:
   <Type>k__BackingField: 1
   m_showAnimationSequencer: {fileID: 71003312615959057}
   m_hideAnimationSequencer: {fileID: 3969330501232585886}
-  m_confirmSurrenderButton: {fileID: 5774166558062849474}
-  m_loadSceneEventChannel: {fileID: 11400000, guid: 82184ca721492e748b0933d714756021, type: 2}
+  m_confirmButton: {fileID: 5774166558062849474}
+  m_cancelButton: {fileID: 3322672225002290391}
 --- !u!1 &5993816037505117947
 GameObject:
   m_ObjectHideFlags: 0

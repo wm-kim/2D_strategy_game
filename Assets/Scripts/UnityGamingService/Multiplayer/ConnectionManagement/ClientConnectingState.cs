@@ -1,3 +1,4 @@
+using Minimax.Utilities;
 using Unity.Services.Authentication;
 using UnityEngine;
 

@@ -13,10 +13,8 @@ namespace Minimax.CoreSystems
     {
         [SerializeField] private Image m_touchImage;
         
-        [Header("Broadcasting on")] 
-        [SerializeField] private TouchPhaseEventSO m_touchPhaseEvent;
-        [SerializeField] private Vector2EventSO m_touchPositionEvent;
-        [SerializeField] private VoidEventSO m_mobileBackButtonEvent;
+        public Action<Vector2, TouchPhase> OnTouch { get; set; }
+        public Action OnBackButton { get; set; }
 
         private void OnEnable()
         {
@@ -30,14 +28,7 @@ namespace Minimax.CoreSystems
         
         private bool IsTouching()
         {
-            return EnhancedTouch.Touch.activeTouches.Count > 0;
-        }
-        
-        private Vector2 GetTouchPosition(EnhancedTouch.Touch activeTouch)
-        {
-            // Raise touch position event
-            m_touchPositionEvent.RaiseEvent(activeTouch.screenPosition);
-            return activeTouch.screenPosition;
+            return EnhancedTouch.Touch.activeFingers.Count > 0;
         }
         
         private void SetTouchImagePosition(Vector2 position)
@@ -49,18 +40,13 @@ namespace Minimax.CoreSystems
         {
             if (IsTouching())
             {
-                
                 var activeTouch = EnhancedTouch.Touch.activeFingers[0].currentTouch;
-                SetTouchImagePosition(GetTouchPosition(activeTouch));
-                
-                // Raise touch phase event
-                m_touchPhaseEvent.RaiseEvent(activeTouch.phase);
+                SetTouchImagePosition(activeTouch.screenPosition);
+                OnTouch?.Invoke(activeTouch.screenPosition, activeTouch.phase);
             }
             
             // mobile back button
-            if (Keyboard.current.escapeKey.wasPressedThisFrame) m_mobileBackButtonEvent.RaiseEvent();
-            
-            
+            if (Keyboard.current.escapeKey.wasPressedThisFrame) OnBackButton?.Invoke();
         }
     }
 }

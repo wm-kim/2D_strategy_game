@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using SingularityGroup.HotReload.DTO;
 using SingularityGroup.HotReload.Editor.Cli;
+using SingularityGroup.HotReload.EditorDependencies;
 using UnityEditor;
 using UnityEngine;
 #if UNITY_2019_4_OR_NEWER
@@ -42,6 +43,9 @@ namespace SingularityGroup.HotReload.Editor {
         }
         
         static void HandleNewInstall() {
+            if (EditorCodePatcher.licenseType == UnityLicenseType.UnityPro) {
+                RedeemLicenseHelper.I.StartRegistration();
+            }
             HotReloadWindow.Open();
             HotReloadPrefs.AllowDisableUnityAutoRefresh = true;
             HotReloadPrefs.AllAssetChanges = true;

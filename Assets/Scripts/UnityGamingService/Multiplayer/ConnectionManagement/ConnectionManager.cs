@@ -1,5 +1,6 @@
 using System;
 using Minimax.ScriptableObjects.Events;
+using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 

@@ -1,10 +1,7 @@
-using Minimax.ScriptableObjects.Events;
-using Unity.Netcode;
+using Cysharp.Threading.Tasks;
+using Minimax.CoreSystems;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.Assertions;
-using UnityEngine.ResourceManagement.AsyncOperations;
-using UnityEngine.ResourceManagement.ResourceProviders;
 using UnityEngine.SceneManagement;
 
 namespace Minimax
@@ -13,28 +10,32 @@ namespace Minimax
     public class EditorColdStartup : MonoBehaviour
     {
 #if UNITY_EDITOR
+        [Tooltip("The name of the persistent scene.")]
         [SerializeField] private SceneType m_thisScene = default;
         
-        [Header("Broadcasting on")]
-        [SerializeField] private AssetReference m_coldStartupEvent;
-        
-        private void Awake()
+        private async void Awake()
         {
-            if (!SceneManager.GetSceneByName(SceneType.PersistentScene.ToString()).isLoaded)
+            if (!IsSceneLoaded(SceneType.PersistentScene))
             {
-                SceneManager.LoadSceneAsync(SceneType.PersistentScene.ToString(), LoadSceneMode.Additive).completed += LoadEventChannel;
+               AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(SceneType.PersistentScene.ToString(), LoadSceneMode.Additive); 
+               await UniTask.WaitUntil(() => asyncOperation.isDone);
+               LoadEventChannel();
+            }
+            else
+            {
+                Debug.Log("Persistent scene is already loaded.");
             }
         }
         
-        private void LoadEventChannel(AsyncOperation obj)
+        private bool IsSceneLoaded(SceneType sceneType)
         {
-            m_coldStartupEvent.LoadAssetAsync<LoadSceneEventSO>().Completed += OnNotifyChannelLoaded;
+            return SceneManager.GetSceneByName(sceneType.ToString()).isLoaded;
         }
         
-        private void OnNotifyChannelLoaded(AsyncOperationHandle<LoadSceneEventSO> obj)
+        private void LoadEventChannel()
         {
             Assert.IsTrue(m_thisScene != SceneType.Undefined, "This scene is not defined in the SceneType enum!");
-            obj.Result.RaiseEvent(m_thisScene);
+            GlobalManagers.Instance.Scene.RequestColdStartup(m_thisScene);
         }
 #endif
     }

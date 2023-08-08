@@ -30,7 +30,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8382754041924130929}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -50,6 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationSteps:
+  - rid: 8064151591343882445
   - rid: 2306430468611375104
   updateType: 0
   timeScaleIndependent: 0
@@ -114,6 +114,13 @@ MonoBehaviour:
             m_RotationOrder: 4
         isRelative: 1
         alpha: -1
+    - rid: 8064151591343882445
+      type: {class: SetGameObjectActiveStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      data:
+        delay: 0
+        flowType: 0
+        targetGameObject: {fileID: 3123463552154521942}
+        active: 1
 --- !u!1 &1729684359286306825
 GameObject:
   m_ObjectHideFlags: 0
@@ -144,7 +151,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8382754041924130929}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -212,7 +218,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1639723151564585153
 RectTransform:
   m_ObjectHideFlags: 0
@@ -228,7 +234,6 @@ RectTransform:
   - {fileID: 8659648718145665297}
   - {fileID: 4483062457111462815}
   m_Father: {fileID: 6080021073165643115}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -317,12 +322,11 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1639723151564585153}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -20, y: -20}
-  m_SizeDelta: {x: 70, y: 70}
+  m_AnchoredPosition: {x: -30, y: -30}
+  m_SizeDelta: {x: 90, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2375967707032206505
 CanvasRenderer:
@@ -407,7 +411,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 11400000, guid: fcb12f856a470ed44950b1b999d8a7e5, type: 2}
-        m_TargetAssemblyTypeName: WMK.PopupEventSO, Assembly-CSharp
+        m_TargetAssemblyTypeName: Minimax.ScriptableObjects.Events.PopupEventSO,
+          Assembly-CSharp
         m_MethodName: HidePopup
         m_Mode: 1
         m_Arguments:
@@ -450,7 +455,6 @@ RectTransform:
   m_Children:
   - {fileID: 1639723151564585153}
   m_Father: {fileID: 6788986238626747125}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -526,7 +530,6 @@ RectTransform:
   - {fileID: 3752045275541607886}
   - {fileID: 3525740213292870345}
   m_Father: {fileID: 6788986238626747125}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -565,7 +568,6 @@ RectTransform:
   - {fileID: 6080021073165643115}
   - {fileID: 8382754041924130929}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -587,6 +589,7 @@ MonoBehaviour:
   <Type>k__BackingField: 0
   m_showAnimationSequencer: {fileID: 6983883628895090968}
   m_hideAnimationSequencer: {fileID: 2857034774254473840}
+  m_cancelButton: {fileID: 2367072052355954363}
 --- !u!1 &7947118951810148784
 GameObject:
   m_ObjectHideFlags: 0
@@ -618,7 +621,6 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1639723151564585153}
-  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}

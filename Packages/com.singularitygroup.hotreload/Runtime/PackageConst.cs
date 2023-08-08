@@ -1,6 +1,6 @@
+#if ENABLE_MONO && (DEVELOPMENT_BUILD || UNITY_EDITOR)
 using UnityEngine;
 
-#if ENABLE_MONO && (DEVELOPMENT_BUILD || UNITY_EDITOR)
 namespace SingularityGroup.HotReload {
     internal static class PackageConst {
         //CI changes this property to 'true' for asset store builds.
@@ -8,10 +8,10 @@ namespace SingularityGroup.HotReload {
         public static bool IsAssetStoreBuild => true;
 
         
-        public const string Version = "1.12.2";
+        public const string Version = "1.12.3";
         // Never higher than Version
         // Used for the download
-        public const string ServerVersion = "1.12.2";
+        public const string ServerVersion = "1.12.3";
         public const string PackageName = "com.singularitygroup.hotreload";
         public const string LibraryCachePath = "Library/" + PackageName;
         public const string ConfigFileName = "hot-reload-config.json";

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using SingularityGroup.HotReload.DTO;
+using SingularityGroup.HotReload.EditorDependencies;
 using UnityEditor;
 using UnityEngine;
 using Color = UnityEngine.Color;
@@ -12,7 +13,6 @@ using Unity.CodeEditor;
 
 namespace SingularityGroup.HotReload.Editor {
     internal struct HotReloadRunTabState {
-        public readonly bool firstLogin;
         public readonly bool spinnerActive;
         public readonly string indicationIconPath;
         public readonly bool requestingDownloadAndRun;
@@ -20,17 +20,15 @@ namespace SingularityGroup.HotReload.Editor {
         public readonly bool stopping;
         public readonly bool running;
         public readonly Tuple<float, string> startupProgress;
-        public readonly bool renderFirstLogin;
         public readonly string indicationStatusText;
         public readonly IReadOnlyList<string> failures;
         public readonly LoginStatusResponse loginStatus;
         public readonly bool downloadRequired;
         public readonly bool downloadStarted;
         public readonly bool requestingLoginInfo;
-        public readonly bool createdAccount;
+        public readonly RedeemStage redeemStage;
         
         public HotReloadRunTabState(
-            bool firstLogin, 
             bool spinnerActive, 
             string indicationIconPath,
             bool requestingDownloadAndRun,
@@ -38,16 +36,14 @@ namespace SingularityGroup.HotReload.Editor {
             bool stopping,
             bool running,
             Tuple<float, string> startupProgress,
-            bool renderFirstLogin,
             string indicationStatusText,
             IReadOnlyList<string> failures,
             LoginStatusResponse loginStatus,
             bool downloadRequired,
             bool downloadStarted,
             bool requestingLoginInfo,
-            bool createdAccount
+            RedeemStage redeemStage
         ) {
-            this.firstLogin = firstLogin;
             this.spinnerActive = spinnerActive;
             this.indicationIconPath = indicationIconPath;
             this.requestingDownloadAndRun = requestingDownloadAndRun;
@@ -55,18 +51,16 @@ namespace SingularityGroup.HotReload.Editor {
             this.stopping = stopping;
             this.running = running;
             this.startupProgress = startupProgress;
-            this.renderFirstLogin = renderFirstLogin;
             this.indicationStatusText = indicationStatusText;
             this.failures = failures;
             this.loginStatus = loginStatus;
             this.downloadRequired = downloadRequired;
             this.downloadStarted = downloadStarted;
             this.requestingLoginInfo = requestingLoginInfo;
-            this.createdAccount = createdAccount;
+            this.redeemStage = redeemStage;
         }
 
         public static HotReloadRunTabState Current => new HotReloadRunTabState(
-            firstLogin: HotReloadPrefs.FirstLogin,
             spinnerActive: EditorIndicationState.SpinnerActive,
             indicationIconPath: EditorIndicationState.IndicationIconPath,
             requestingDownloadAndRun: EditorCodePatcher.RequestingDownloadAndRun,
@@ -74,14 +68,13 @@ namespace SingularityGroup.HotReload.Editor {
             stopping: EditorCodePatcher.Stopping,
             running: EditorCodePatcher.Running,
             startupProgress: EditorCodePatcher.StartupProgress,
-            renderFirstLogin: EditorCodePatcher.RenderFirstLogin,
             indicationStatusText: EditorIndicationState.IndicationStatusText,
             failures: EditorCodePatcher.Failures,
             loginStatus: EditorCodePatcher.Status,
             downloadRequired: EditorCodePatcher.DownloadRequired,
             downloadStarted: EditorCodePatcher.DownloadStarted,
             requestingLoginInfo: EditorCodePatcher.RequestingLoginInfo,
-            createdAccount: EditorCodePatcher.CreatedAccount
+            redeemStage: RedeemLicenseHelper.I.RedeemStage
         );
     }
 
@@ -121,8 +114,6 @@ namespace SingularityGroup.HotReload.Editor {
 
         private Tuple<string, MessageType> _activateInfoMessage;
         
-        public bool TrialExpired => currentState.loginStatus?.lastLicenseError == "TrialLicenseExpiredException";
-        
         // Has Indie or Pro license (even if not currenctly active)
         public bool HasPayedLicense => currentState.loginStatus != null && (currentState.loginStatus.isIndieLicense || currentState.loginStatus.isBusinessLicense);
         public bool TrialLicense => currentState.loginStatus != null && (currentState.loginStatus?.isTrial == true);
@@ -138,10 +129,6 @@ namespace SingularityGroup.HotReload.Editor {
 
         HotReloadRunTabState currentState;
         public override void OnGUI() {
-            // Migration for new versions
-            if (TrialLicense || HasPayedLicense) {
-                HotReloadPrefs.FirstLogin = false;
-            }
             // HotReloadRunTabState ensures rendering is consistent between Layout and Repaint calls
             // Without it errors like this happen:
             // ArgumentException: Getting control 2's position in a group with only 2 controls when doing repaint
@@ -159,12 +146,29 @@ namespace SingularityGroup.HotReload.Editor {
         private bool ShouldRenderUnsupportedChanges => currentState.running && !currentState.starting && currentState.failures.Count > 0;
         
         void OnGUICore() {
-            if (!EditorCodePatcher.LoginNotRequired && currentState.createdAccount && currentState.loginStatus?.isLicensed == true) {
-                RenderCreatedAccountInfo();
-            }
             using (var scope = new EditorGUILayout.ScrollViewScope(_runTabScrollPos, GUI.skin.horizontalScrollbar, GUI.skin.verticalScrollbar, GUILayout.MaxHeight(Math.Max(Screen.height, 800)), GUILayout.MaxWidth(Math.Max(Screen.width, 800)))) {
                 _runTabScrollPos.x = scope.scrollPosition.x;
                 _runTabScrollPos.y = scope.scrollPosition.y;
+
+                var isIndie = RedeemLicenseHelper.I.RegistrationOutcome == RegistrationOutcome.Indie
+                    || EditorCodePatcher.licenseType == UnityLicenseType.UnityPersonalPlus;
+                
+                if (RedeemLicenseHelper.I.RegistrationOutcome == RegistrationOutcome.Business
+                    && currentState.loginStatus?.isBusinessLicense != true
+                    && (PackageConst.IsAssetStoreBuild || HotReloadPrefs.RateAppShown)
+                ) {
+                    // Warn asset store users they need to buy a business license
+                    // Website users get reminded after using Hot Reload for 5+ days
+                    RenderBusinessLicenseInfo();
+                } else if (isIndie
+                    && HotReloadPrefs.RateAppShown
+                    && !PackageConst.IsAssetStoreBuild
+                    && currentState.loginStatus?.isBusinessLicense != true
+                    && currentState.loginStatus?.isIndieLicense != true
+                ) {
+                    // Reminder users they need to buy an indie license
+                    RenderIndieLicenseInfo();
+                }
                 
                 RenderIndicationPanel();
                 if (ShouldRenderUnsupportedChanges) {
@@ -173,7 +177,7 @@ namespace SingularityGroup.HotReload.Editor {
             }
 
             // At the end to not fuck up rendering https://answers.unity.com/questions/400454/argumentexception-getting-control-0s-position-in-a-1.html
-            var renderStart = !EditorCodePatcher.Running && !EditorCodePatcher.Starting && !EditorCodePatcher.RenderFirstLogin && !currentState.requestingDownloadAndRun;
+            var renderStart = !EditorCodePatcher.Running && !EditorCodePatcher.Starting && !currentState.requestingDownloadAndRun && currentState.redeemStage == RedeemStage.None;
             var e = Event.current;
             if (renderStart && e.type == EventType.KeyUp
                 && (e.keyCode == KeyCode.Return
@@ -187,23 +191,25 @@ namespace SingularityGroup.HotReload.Editor {
             if (loginStatus == null) {
                 return;
             }
-            EditorGUILayout.LabelField($"Using Free license", HotReloadWindowStyles.H3CenteredTitleStyle);
+            EditorGUILayout.Space();
+            
+            EditorGUILayout.LabelField($"Hot Reload Limited", HotReloadWindowStyles.H3CenteredTitleStyle);
             EditorGUILayout.Space();
             if (loginStatus.consumptionsUnavailableReason == ConsumptionsUnavailableReason.NetworkUnreachable) {
-                HotReloadGUIHelper.HelpBox("Free charges unavailabe. Please check your internet connection.", MessageType.Warning, fontSize: 11);
+                EditorGUILayout.HelpBox("Something went wrong. Please check your internet connection.", MessageType.Warning);
             } else if (loginStatus.consumptionsUnavailableReason == ConsumptionsUnavailableReason.UnrecoverableError) {
-                HotReloadGUIHelper.HelpBox("Free charges unavailabe. Please contact support if the issue persists.", MessageType.Error, fontSize: 11);
+                EditorGUILayout.HelpBox("Something went wrong. Please contact support if the issue persists.", MessageType.Error);
             } else if (loginStatus.freeSessionFinished) {
                 var now = DateTime.UtcNow;
                 var sessionRefreshesAt = (now.AddDays(1).Date - now).Add(TimeSpan.FromMinutes(5));
-                var sessionRefreshString = $"Next Free Session: {(sessionRefreshesAt.Hours > 0 ? $"{sessionRefreshesAt.Hours}h " : "")}{sessionRefreshesAt.Minutes}min";
+                var sessionRefreshString = $"Next Session: {(sessionRefreshesAt.Hours > 0 ? $"{sessionRefreshesAt.Hours}h " : "")}{sessionRefreshesAt.Minutes}min";
                 HotReloadGUIHelper.HelpBox(sessionRefreshString, MessageType.Warning, fontSize: 11);
             } else if (loginStatus.freeSessionRunning && loginStatus.freeSessionEndTime != null) {
                 var sessionEndsAt = loginStatus.freeSessionEndTime.Value - DateTime.Now;
-                var sessionString = $"Daily Free Session: {(sessionEndsAt.Hours > 0 ? $"{sessionEndsAt.Hours}h " : "")}{sessionEndsAt.Minutes}min Left";
+                var sessionString = $"Daily Session: {(sessionEndsAt.Hours > 0 ? $"{sessionEndsAt.Hours}h " : "")}{sessionEndsAt.Minutes}min Left";
                 HotReloadGUIHelper.HelpBox(sessionString, MessageType.Info, fontSize: 11);
             } else if (loginStatus.freeSessionEndTime == null) {
-                HotReloadGUIHelper.HelpBox("Daily Free Session: Make code changes to start", MessageType.Info, fontSize: 11);
+                HotReloadGUIHelper.HelpBox("Daily Session: Make code changes to start", MessageType.Info, fontSize: 11);
             }
         }
 
@@ -239,6 +245,7 @@ namespace SingularityGroup.HotReload.Editor {
                 Repaint();
                 _instantRepaint = false;
                 _repaint = false;
+                _lastRepaint = DateTime.UtcNow;
             }
         }
         
@@ -250,7 +257,7 @@ namespace SingularityGroup.HotReload.Editor {
             using (new EditorGUILayout.HorizontalScope()) {
                 if (currentState.requestingDownloadAndRun || currentState.starting || currentState.stopping) {
                     RenderProgressBar();
-                } else if (!currentState.running && (currentState.startupProgress?.Item1 ?? 0) == 0 && !currentState.renderFirstLogin) {
+                } else if (!currentState.running && (currentState.startupProgress?.Item1 ?? 0) == 0) {
                     GUILayout.FlexibleSpace();
                     if (GUILayout.Button(new GUIContent(" Start", EditorGUIUtility.IconContent("PlayButton@2x").image), HotReloadWindowStyles.StartButton)) {
                         EditorCodePatcher.DownloadAndRun().Forget();
@@ -273,30 +280,23 @@ namespace SingularityGroup.HotReload.Editor {
                 using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.SectionInnerBox)) {
                     using (new EditorGUILayout.VerticalScope()) {
                         RenderIndication();
-                        RenderIndicationButtons();
-                
-                        if (currentState.renderFirstLogin) {
-                            RenderLicenseInnerPanel(currentState.loginStatus, renderLogout: false);
-                        } else if (ShouldRenderConsumption) {
-                            RenderConsumption(currentState.loginStatus);
-                            RenderLicenseInfo(currentState.loginStatus);
-                            RenderLicenseButtons();
-                        } 
+
+                        if (currentState.redeemStage != RedeemStage.None) {
+                            RedeemLicenseHelper.I.RenderStage(currentState.redeemStage);
+                        } else {
+                            RenderIndicationButtons();
+                    
+                            if (ShouldRenderConsumption) {
+                                RenderConsumption(currentState.loginStatus);
+                                RenderLicenseInfo(currentState.loginStatus);
+                                RenderLicenseButtons();
+                            }
+                        }
                     }
                 } 
             } 
         }
         
-        static void RenderCreatedAccountInfo() {
-            var cachedColor = GUI.backgroundColor;
-            try {
-                GUI.backgroundColor = new Color(0, 0, 0, 0.1f);
-                EditorGUILayout.LabelField($"Account Created successfully. You should receive an email with your password shortly.", HotReloadWindowStyles.AccountCreatedStyle);
-            } finally {
-                GUI.backgroundColor = cachedColor;
-            }
-        }
-
         private Spinner _spinner = new Spinner(85);
         private void RenderIndication() {
             using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.IndicationBox)) {
@@ -305,7 +305,7 @@ namespace SingularityGroup.HotReload.Editor {
                     if (currentState.indicationIconPath == Spinner.SpinnerIconPath) {
                         GUILayout.Label(image: _spinner.GetIcon(), style: HotReloadWindowStyles.SpinnerIcon);
                     } else if (currentState.indicationIconPath != null) {
-                        GUILayout.Label(EditorGUIUtility.IconContent(currentState.indicationIconPath), HotReloadWindowStyles.IndicationIcon);
+                        GUILayout.Label(Resources.Load<Texture2D>(currentState.indicationIconPath), HotReloadWindowStyles.IndicationIcon);
                     }
                 } 
                 // text box
@@ -334,7 +334,8 @@ namespace SingularityGroup.HotReload.Editor {
                 return _unsupportedChangesInnerBoxMinStyle;
             }
         }
-        
+
+        private string _warningIconPath = "warning";
         private void RenderUnsupportedChanges() {
             using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.SectionOuterBox)) {
                 using (new EditorGUILayout.HorizontalScope(UnsupportedChangesInnerBoxMin)) {
@@ -343,7 +344,7 @@ namespace SingularityGroup.HotReload.Editor {
                         // header
                         using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.UnsupportedChangesHeader)) {
                             HotReloadPrefs.ShowUnsupportedChanges = EditorGUILayout.Foldout(HotReloadPrefs.ShowUnsupportedChanges, "", true, HotReloadWindowStyles.FoldoutStyle);
-                            GUILayout.Label(EditorGUIUtility.IconContent("Warning@2x"), HotReloadWindowStyles.UnsupportedChangesIcon);
+                            GUILayout.Label(Resources.Load<Texture2D>(_warningIconPath), HotReloadWindowStyles.UnsupportedChangesIcon);
                             GUILayout.Space(-35);
                             if (GUILayout.Button("Unsupported changes detected!", HotReloadWindowStyles.UnsupportedChangesText)) {
                                 HotReloadPrefs.ShowUnsupportedChanges = !HotReloadPrefs.ShowUnsupportedChanges;
@@ -366,6 +367,7 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
+        private string _closeIconPath = "close";
         private string[] supportedPaths = new[] { Path.GetFullPath("Assets"), Path.GetFullPath("Plugins") };
         private List<string> _expandedLogs = new List<string>();
         private void RenderUnsupportedChangesList() {
@@ -517,7 +519,7 @@ namespace SingularityGroup.HotReload.Editor {
                         }
                         
                         // remove button
-                        if (GUILayout.Button(EditorGUIUtility.IconContent("d_winbtn_mac_close_h"), HotReloadWindowStyles.RemoveUnsupportedChangeIcon)) {
+                        if (GUILayout.Button(Resources.Load<Texture2D>(_closeIconPath), HotReloadWindowStyles.RemoveUnsupportedChangeIcon)) {
                             var newFailures = new List<string>(EditorCodePatcher.Failures);
                             newFailures.RemoveAt(i);
                             EditorCodePatcher.Failures = newFailures;
@@ -574,7 +576,7 @@ namespace SingularityGroup.HotReload.Editor {
         });
         
         static GUILayoutOption[] _bigButtonHeight;
-        static GUILayoutOption[] bigButtonHeight => _bigButtonHeight ?? (_bigButtonHeight = new [] {GUILayout.Height(25)});
+        public static GUILayoutOption[] bigButtonHeight => _bigButtonHeight ?? (_bigButtonHeight = new [] {GUILayout.Height(25)});
         
         private static GUIContent indieLicenseContent;
         private static GUIContent businessLicenseContent;
@@ -590,7 +592,7 @@ namespace SingularityGroup.HotReload.Editor {
             } else if (loginStatus.lastLicenseError != null) {
                 messageType = !loginStatus.freeSessionFinished ? MessageType.Warning : MessageType.Error;
                 message = GetMessageFromError(loginStatus.lastLicenseError);
-            } else if (loginStatus.isTrial) {
+            } else if (loginStatus.isTrial && !PackageConst.IsAssetStoreBuild) {
                 message = $"Using Trial license, valid until {loginStatus.licenseExpiresAt.ToShortDateString()}";
                 messageType = MessageType.Info;
             } else if (loginStatus.isIndieLicense) {
@@ -618,13 +620,6 @@ namespace SingularityGroup.HotReload.Editor {
                     content = businessLicenseContent;
                 }
             }
-            if (loginStatus != null 
-                && (loginStatus.lastLicenseError == null || TrialExpired)
-                && !loginStatus.isBusinessLicense 
-                && PackageConst.IsAssetStoreBuild
-            ) {
-                RenderAssetStoreProInfo(loginStatus.isLicensed ? MessageType.Info : MessageType.Warning);
-            }
 
             if (messageType != MessageType.Info && HotReloadPrefs.ErrorHidden && allowHide) {
                 return;
@@ -632,7 +627,7 @@ namespace SingularityGroup.HotReload.Editor {
             if (message != null) {
                 if (messageType != MessageType.Info) {
                     using(new EditorGUILayout.HorizontalScope()) {
-                        HotReloadGUIHelper.HelpBox(message, messageType, fontSize: 11);
+                        EditorGUILayout.HelpBox(message, messageType);
                         // lastRectHeigh is not accurate during Layout event
                         if (Event.current.type == EventType.Repaint) {
                             lastRectHeigh = GUILayoutUtility.GetLastRect().height;
@@ -655,23 +650,42 @@ namespace SingularityGroup.HotReload.Editor {
         }
 
         float lastInfoRectHeigh;
-        public void RenderAssetStoreProInfo(MessageType messageType) {
+        const string assetStoreProInfo = "Unity Pro/Enterprise users from company with your number of employees require a Business license. Please upgrade your license on our website.";
+        public void RenderBusinessLicenseInfo() {
             using (new EditorGUILayout.HorizontalScope()) {
-                EditorGUILayout.HelpBox("It seems you're using Unity Pro/Enterprise after getting Hot Reload from the Asset Store. Unity Pro/Enterprise users require a Business license. Please upgrade your license on our website.", messageType);
+                EditorGUILayout.HelpBox(assetStoreProInfo, MessageType.Info);
                 // lastRectHeigh is not accurate during Layout event
                 if (Event.current.type == EventType.Repaint) {
                     lastInfoRectHeigh = GUILayoutUtility.GetLastRect().height;
                 }
-                EditorGUILayout.Space();
-                if (GUILayout.Button("More Info", GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(true), GUILayout.MaxHeight(lastInfoRectHeigh))) {
+                if (GUILayout.Button(" Upgrade ", GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(true), GUILayout.MaxHeight(lastInfoRectHeigh))) {
+                    Application.OpenURL(Constants.ProductPurchaseBusinessURL);
+                }
+            }
+        }
+        
+        public void RenderIndieLicenseInfo() {
+            string message;
+            if (EditorCodePatcher.licenseType == UnityLicenseType.UnityPersonalPlus) {
+                message = "Unity Plus users require an Indie license. Please upgrade your license on our website.";
+            } else if (EditorCodePatcher.licenseType == UnityLicenseType.UnityPro) {
+                message = "Unity Pro/Enterprise users from company with your number of employees require an Indie license. Please upgrade your license on our website.";
+            } else {
+                return;
+            }
+            using (new EditorGUILayout.HorizontalScope()) {
+                EditorGUILayout.HelpBox(message, MessageType.Info);
+                // lastRectHeigh is not accurate during Layout event
+                if (Event.current.type == EventType.Repaint) {
+                    lastInfoRectHeigh = GUILayoutUtility.GetLastRect().height;
+                }
+                if (GUILayout.Button(" Upgrade ", GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(true), GUILayout.MaxHeight(lastInfoRectHeigh))) {
                     Application.OpenURL(Constants.ProductPurchaseURL);
                 }
             }
-            EditorGUILayout.Space();
         }
 
         const string GetLicense = "Get License";
-        const string CreateAccount = "Create Account";
         const string ContactSupport = "Contact Support";
         const string UpgradeLicense = "Upgrade License";
         const string ManageLicense = "Manage License";
@@ -687,18 +701,20 @@ namespace SingularityGroup.HotReload.Editor {
             { "LicenseExpiredException", new LicenseErrorData(description: $"Your license has expired. Please renew your license subscription using the 'Upgrade License' button below and login with your email/password to activate your license.", showBuyButton: true, buyButtonText: UpgradeLicense, showManageLicenseButton: true, manageLicenseButtonText: ManageLicense) },
             { "LicenseInactiveException", new LicenseErrorData(description: $"Your license is currenty inactive. Please login with your email/password to activate your license.") },
             { "LocalLicenseException", new LicenseErrorData(description: $"Your license file was damaged or corrupted. Please login with your email/password to refresh your license file.") },
+            // Note: obsolete
             { "MissingParametersException", new LicenseErrorData(description: "An account already exists for this device. Please login with your existing email/password.", showBuyButton: true, buyButtonText: GetLicense) },
             { "NetworkException", new LicenseErrorData(description: "There is an issue connecting to our servers. Please check your internet connection or contact customer support if the issue persists.", showSupportButton: true, supportButtonText: ContactSupport) },
-            { "TrialLicenseExpiredException", new LicenseErrorData(description: $"Your license trial has expired. Activate a license with unlimited usage or continue using the Free version. View available plans on our website.", showBuyButton: true, buyButtonText: UpgradeLicense) },
+            { "TrialLicenseExpiredException", new LicenseErrorData(description: $"Your trial has expired. Activate a license with unlimited usage or continue using the Free version. View available plans on our website.", showBuyButton: true, buyButtonText: UpgradeLicense) },
             { "InvalidCredentialException", new LicenseErrorData(description: "Incorrect email/password. You can find your initial password in the sign-up email.") },
-            { "LicenseNotFoundException", new LicenseErrorData(description: "The account you're trying to access doesn't seem to exist yet. Please enter your email address to create a new account and receive a trial license.", showLoginButton: true, loginButtonText: CreateAccount) },
+            // Note: activating free trial with email is not supported anymore. This error shouldn't happen which is why we should rather user the fallback
+            // { "LicenseNotFoundException", new LicenseErrorData(description: "The account you're trying to access doesn't seem to exist yet. Please enter your email address to create a new account and receive a trial license.", showLoginButton: true, loginButtonText: CreateAccount) },
             { "LicenseIncompatibleException", new LicenseErrorData(description: "Please upgrade your license to continue using hotreload with Unity Pro.", showManageLicenseButton: true, manageLicenseButtonText: ManageLicense) },
         });
         internal LicenseErrorData defaultLicenseErrorData = new LicenseErrorData(description: "We apologize, an error happened while verifying your license. Please reach out to customer support for assistance.", showSupportButton: true, supportButtonText: ContactSupport);
 
         internal string GetMessageFromError(string error) {
             if (PackageConst.IsAssetStoreBuild && error == "TrialLicenseExpiredException") {
-                return null;
+                return assetStoreProInfo;
             }
             return GetLicenseErrorDataOrDefault(error).description;
         }
@@ -708,7 +724,7 @@ namespace SingularityGroup.HotReload.Editor {
                 return default(LicenseErrorData);
             }
             if (currentState.loginStatus == null || string.IsNullOrEmpty(error) && (!currentState.loginStatus.isLicensed || currentState.loginStatus.isTrial)) {
-                return new LicenseErrorData(null, showBuyButton: true, buyButtonText: UpgradeLicense);
+                return new LicenseErrorData(null, showBuyButton: true, buyButtonText: GetLicense);
             }
             if (string.IsNullOrEmpty(error)) {
                 return default(LicenseErrorData);
@@ -747,7 +763,7 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
-        internal void RenderLicenseInfo(LoginStatusResponse loginStatus, bool verbose = false, bool allowHide = true, bool? overrideRenderFreeTrial = null, string overrideActionButton = null, bool showConsumptions = false) {
+        internal void RenderLicenseInfo(LoginStatusResponse loginStatus, bool verbose = false, bool allowHide = true, string overrideActionButton = null, bool showConsumptions = false) {
             HotReloadPrefs.ShowLogin = EditorGUILayout.Foldout(HotReloadPrefs.ShowLogin, "License", true, HotReloadWindowStyles.FoldoutStyle);
             if (HotReloadPrefs.ShowLogin) {
                 EditorGUILayout.Space();
@@ -756,7 +772,7 @@ namespace SingularityGroup.HotReload.Editor {
                 }
                 RenderLicenseStatusInfo(loginStatus: loginStatus, allowHide: allowHide, verbose: verbose);
 
-                RenderLicenseInnerPanel(loginStatus: loginStatus, overrideRenderFreeTrial: overrideRenderFreeTrial, overrideActionButton: overrideActionButton);
+                RenderLicenseInnerPanel(overrideActionButton: overrideActionButton);
                 
                 EditorGUILayout.Space();
                 EditorGUILayout.Space();
@@ -769,10 +785,10 @@ namespace SingularityGroup.HotReload.Editor {
                 return;
             }
             if (promoCodeActivatedThisSession) {
-                HotReloadGUIHelper.HelpBox($"Your promo code has been successfully activated. Free trial has been extended by 3 months.", MessageType.Info, 11);
+                EditorGUILayout.HelpBox($"Your promo code has been successfully activated. Free trial has been extended by 3 months.", MessageType.Info);
             } else {
                 if (promoCodeError != null && promoCodeErrorType != MessageType.None) {
-                    HotReloadGUIHelper.HelpBox(promoCodeError, promoCodeErrorType, 11);
+                    EditorGUILayout.HelpBox(promoCodeError, promoCodeErrorType);
                 }
                 EditorGUILayout.LabelField("Promo code");
                 _pendingPromoCode = EditorGUILayout.TextField(_pendingPromoCode);
@@ -876,30 +892,23 @@ namespace SingularityGroup.HotReload.Editor {
             RenderLicenseActionButtons(errInfo);
         }
 
-        private void RenderLicenseInnerPanel(LoginStatusResponse loginStatus, bool? overrideRenderFreeTrial = null, string overrideActionButton = null, bool renderLogout = true) {
-            var renderFreeTrial = !HotReloadPrefs.RenderAuthLogin;
-            if (overrideRenderFreeTrial != null) {
-                renderFreeTrial = overrideRenderFreeTrial.Value;
-            }
-
+        internal void RenderLicenseInnerPanel(string overrideActionButton = null, bool renderLogout = true) {
             EditorGUILayout.LabelField("Email");
             GUI.SetNextControlName("email");
             _pendingEmail = EditorGUILayout.TextField(string.IsNullOrEmpty(_pendingEmail) ? HotReloadPrefs.LicenseEmail : _pendingEmail);
             _pendingEmail = _pendingEmail.Trim();
 
-            if (!renderFreeTrial) {
-                EditorGUILayout.LabelField("Password");
-                GUI.SetNextControlName("password");
-                _pendingPassword = EditorGUILayout.PasswordField(string.IsNullOrEmpty(_pendingPassword) ? HotReloadPrefs.LicensePassword : _pendingPassword);
-            }
+            EditorGUILayout.LabelField("Password");
+            GUI.SetNextControlName("password");
+            _pendingPassword = EditorGUILayout.PasswordField(string.IsNullOrEmpty(_pendingPassword) ? HotReloadPrefs.LicensePassword : _pendingPassword);
             
-            RenderSwitchAuthMode(allowSwitch: overrideRenderFreeTrial == null);
+            RenderSwitchAuthMode();
             
             var e = Event.current;
             using(new EditorGUI.DisabledScope(currentState.requestingLoginInfo)) {
                 var btnLabel = overrideActionButton;
                 if (String.IsNullOrEmpty(overrideActionButton)) {
-                    btnLabel = renderFreeTrial ? "Activate Free Trial" : "Login";
+                    btnLabel = "Login";
                 }
                 using (new EditorGUILayout.HorizontalScope()) {
                     var focusedControl = GUI.GetNameOfFocusedControl();
@@ -910,36 +919,22 @@ namespace SingularityGroup.HotReload.Editor {
                         && (e.keyCode == KeyCode.Return 
                             || e.keyCode == KeyCode.KeypadEnter)
                     ) {
-                        if (string.IsNullOrEmpty(_pendingEmail)) {
-                            _activateInfoMessage = new Tuple<string, MessageType>("Please enter your email address.", MessageType.Warning);
-                        } else if (!EditorWindowHelper.IsValidEmailAddress(_pendingEmail)) {
-                            _activateInfoMessage = new Tuple<string, MessageType>("Please enter a valid email address.", MessageType.Warning);
-                        } else if (_pendingEmail.Contains("+")) {
-                            _activateInfoMessage = new Tuple<string, MessageType>("Mail extensions (in a form of 'username+suffix@example.com') are not supported yet. Please provide your original email address (such as 'username@example.com' without '+suffix' part) as we're working on resolving this issue.", MessageType.Warning);
-                        } else if (string.IsNullOrEmpty(_pendingPassword) && !renderFreeTrial) {
+                        var error = ValidateEmail(_pendingEmail);
+                        if (!string.IsNullOrEmpty(error)) {
+                            _activateInfoMessage = new Tuple<string, MessageType>(error, MessageType.Warning);
+                        } else if (string.IsNullOrEmpty(_pendingPassword)) {
                             _activateInfoMessage = new Tuple<string, MessageType>("Please enter your password.", MessageType.Warning);
                         } else {
-                            if (loginStatus?.lastLicenseError != null && !loginStatus.isFree) {
-                                if (loginStatus.lastLicenseError == "MissingParametersException") {
-                                    _activateInfoMessage = new Tuple<string, MessageType>("An account already exists for this device. Please login with your existing email/password.", MessageType.Info);
-                                } else if (loginStatus.lastLicenseError.Contains("InvalidCredentialException")) {
-                                    _activateInfoMessage = new Tuple<string, MessageType>("Invalid email/password. You can find your initial password in the sign-up email.", MessageType.Error);
-                                } else {
-                                    _activateInfoMessage = new Tuple<string, MessageType>("Invalid license. Please get a valid license key and activate it to start using Hot Reload for Unity.", MessageType.Error);
-                                }
-                                HotReloadPrefs.RenderAuthLogin = true;
-                            }
-                            
                             _window.SelectTab(typeof(HotReloadRunTab));
 
                             _activateInfoMessage = null;
-                            EditorCodePatcher.RequestingLoginInfo = true;
-                            var pass = renderFreeTrial ? null : _pendingPassword;
+                            if (RedeemLicenseHelper.I.RedeemStage == RedeemStage.Login) {
+                                RedeemLicenseHelper.I.FinishRegistration(RegistrationOutcome.Indie);
+                            }
                             if (!EditorCodePatcher.RequestingDownloadAndRun && !EditorCodePatcher.Running) {
-                                // when activating free trial, password is not required and must be null 
-                                LoginOnDownloadAndRun(_pendingEmail, pass).Forget();
+                                LoginOnDownloadAndRun(new LoginData(email: _pendingEmail, password: _pendingPassword)).Forget();
                             } else {
-                                EditorCodePatcher.RequestLogin(_pendingEmail, pass).Forget();
+                                EditorCodePatcher.RequestLogin(_pendingEmail, _pendingPassword).Forget();
                             }
                         }
                     }
@@ -953,11 +948,23 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
+        public static string ValidateEmail(string email) {
+            if (string.IsNullOrEmpty(email)) {
+                return "Please enter your email address.";
+            } else if (!EditorWindowHelper.IsValidEmailAddress(email)) {
+                return "Please enter a valid email address.";
+            } else if (email.Contains("+")) {
+                return "Mail extensions (in a form of 'username+suffix@example.com') are not supported yet. Please provide your original email address (such as 'username@example.com' without '+suffix' part) as we're working on resolving this issue.";
+            }
+            return null;
+        }
+
         public void RenderLogout() {
             if (currentState.loginStatus?.isLicensed != true) {
                 return;
             }
             if (GUILayout.Button("Logout", bigButtonHeight)) {
+                _window.SelectTab(typeof(HotReloadRunTab));
                 if (!EditorCodePatcher.RequestingDownloadAndRun && !EditorCodePatcher.Running) {
                     LogoutOnDownloadAndRun().Forget();
                 } else {
@@ -966,13 +973,13 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
         
-        async Task LoginOnDownloadAndRun(string email, string password) {
-            var ok = await EditorCodePatcher.DownloadAndRun();
-            if (!ok) {
-                EditorCodePatcher.RequestingLoginInfo = false;
-                return;
+        async Task LoginOnDownloadAndRun(LoginData loginData = null) {
+            var ok = await EditorCodePatcher.DownloadAndRun(loginData);
+            if (ok && loginData != null) {
+                HotReloadPrefs.ErrorHidden = false;
+                HotReloadPrefs.LicenseEmail = loginData.email;
+                HotReloadPrefs.LicensePassword = loginData.password;
             }
-            await EditorCodePatcher.RequestLogin(email, password);
         }
 
         async Task LogoutOnDownloadAndRun() {
@@ -995,19 +1002,11 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
-        private static void RenderSwitchAuthMode(bool allowSwitch = true) {
-            using(new EditorGUILayout.HorizontalScope()) {
-                var color = EditorGUIUtility.isProSkin ? new Color32(0x3F, 0x9F, 0xFF, 0xFF) : new Color32(0x0F, 0x52, 0xD7, 0xFF); 
-                if (HotReloadPrefs.RenderAuthLogin && HotReloadGUIHelper.LinkLabel("Forgot password?", 12, FontStyle.Normal, TextAnchor.MiddleLeft, color)) {
-                    if (EditorUtility.DisplayDialog("Recover password", "Use company code 'naughtycult' and the email you signed up with in order to recover your account.", "Open in browser", "Cancel")) {
-                        Application.OpenURL(Constants.ForgotPasswordURL);
-                    }
-                }
-                if (allowSwitch) {
-                    GUILayout.FlexibleSpace();
-                    if (HotReloadGUIHelper.LinkLabel(HotReloadPrefs.RenderAuthLogin ? "Start Free Trial" : "Sign in", 12, FontStyle.Normal, TextAnchor.MiddleRight, color)) {
-                        HotReloadPrefs.RenderAuthLogin = !HotReloadPrefs.RenderAuthLogin;
-                    }
+        private static void RenderSwitchAuthMode() {
+            var color = EditorGUIUtility.isProSkin ? new Color32(0x3F, 0x9F, 0xFF, 0xFF) : new Color32(0x0F, 0x52, 0xD7, 0xFF); 
+            if (HotReloadGUIHelper.LinkLabel("Forgot password?", 12, FontStyle.Normal, TextAnchor.MiddleLeft, color)) {
+                if (EditorUtility.DisplayDialog("Recover password", "Use company code 'naughtycult' and the email you signed up with in order to recover your account.", "Open in browser", "Cancel")) {
+                    Application.OpenURL(Constants.ForgotPasswordURL);
                 }
             }
         }
@@ -1148,6 +1147,16 @@ namespace SingularityGroup.HotReload.Editor {
         CONDITIONAL_CHECK_FAILED,
         UNKNOWN_EXCEPTION,
         UNSUPPORTED_PATH,
+    }
+
+    internal class LoginData {
+        public readonly string email;
+        public readonly string password;
+
+        public LoginData(string email, string password) {
+            this.email = email;
+            this.password = password;
+        }
     }
 }
 

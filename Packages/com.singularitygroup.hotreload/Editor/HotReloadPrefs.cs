@@ -38,6 +38,8 @@ namespace SingularityGroup.HotReload.Editor {
         private const string AppliedScriptCompilationKey = "HotReloadWindow.AppliedScriptCompilation";
         private const string AllAssetChangesKey = "HotReloadWindow.AllAssetChanges";
         private const string DisableConsoleWindowKey = "HotReloadWindow.DisableConsoleWindow";
+        private const string RedeemLicenseEmailKey = "HotReloadWindow.RedeemLicenseEmail";
+        private const string RedeemLicenseInvoiceKey = "HotReloadWindow.RedeemLicenseInvoice";
 
         public const string DontShowPromptForDownloadKey = "ServerDownloader.DontShowPromptForDownload";
 
@@ -82,11 +84,13 @@ namespace SingularityGroup.HotReload.Editor {
             set { EditorPrefs.SetString(PasswordCachedKey, value); }
         }
         
+        [Obsolete]
         public static bool RenderAuthLogin { // false = render free trial
             get { return EditorPrefs.GetBool(RenderAuthLoginKey); }
             set { EditorPrefs.SetBool(RenderAuthLoginKey, value); }
         }
         
+        [Obsolete]
         public static bool FirstLogin {
             get { return EditorPrefs.GetBool(FirstLoginCachedKey, true); }
             set { EditorPrefs.SetBool(FirstLoginCachedKey, value); }
@@ -108,7 +112,7 @@ namespace SingularityGroup.HotReload.Editor {
             set { EditorPrefs.SetBool(ShowLoginCachedKey, value); }
         }
 
-        public static bool Configuration {
+        public static bool ShowConfiguration {
             get { return EditorPrefs.GetBool(ConfigurationKey, true); }
             set { EditorPrefs.SetBool(ConfigurationKey, value); }
         }
@@ -245,34 +249,15 @@ namespace SingularityGroup.HotReload.Editor {
             get { return EditorPrefs.GetBool(DisableConsoleWindowKey, false); }
             set { EditorPrefs.SetBool(DisableConsoleWindowKey, value); }
         }
-
-        /// <summary>
-        /// Prefs for storing temporary UI state of the Hot Reload EditorWindow.
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// Use this for things like the state of EditorGUILayout.Foldout to keep it collapsed or expanded.
-        /// When Unity refreshes (compiles code), the EditorWindow is recreated, and C# field values are lost.<br/>
-        /// </para>
-        /// <para>
-        /// Do not use this class for persistant options, like a checkbox thatthe user can click.<br/>
-        /// We may later decide to clear these prefs when a project is closed.
-        /// </para>
-        /// </remarks>
-        internal static class SessionPrefs {
-            private const string FoldoutCheckBuildSupportKey = "HotReloadWindow.SessionPrefs.FoldoutCheckBuildSupportKey";
-            private const string FoldoutQrCodeKey = "HotReloadWindow.SessionPrefs.FoldoutQrCodeKey";
-
-            public static bool FoldoutCheckBuildSupport {
-                get { return EditorPrefs.GetBool(FoldoutCheckBuildSupportKey, true); }
-                set { EditorPrefs.SetBool(FoldoutCheckBuildSupportKey, value); }
-            }
-            
-            public static bool FoldoutQrCode {
-                // by default collapsed
-                get { return EditorPrefs.GetBool(FoldoutQrCodeKey, false); }
-                set { EditorPrefs.SetBool(FoldoutQrCodeKey, value); }
-            }
+        
+        public static string RedeemLicenseEmail {
+            get { return EditorPrefs.GetString(RedeemLicenseEmailKey); }
+            set { EditorPrefs.SetString(RedeemLicenseEmailKey, value); }
+        }
+        
+        public static string RedeemLicenseInvoice {
+            get { return EditorPrefs.GetString(RedeemLicenseInvoiceKey); }
+            set { EditorPrefs.SetString(RedeemLicenseInvoiceKey, value); }
         }
     }
 }

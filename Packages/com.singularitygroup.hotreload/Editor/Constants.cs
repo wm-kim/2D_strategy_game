@@ -4,6 +4,7 @@ namespace SingularityGroup.HotReload.Editor {
         public const string WebsiteURL = "https://hotreload.net";
 
         public const string ProductPurchaseURL = WebsiteURL + "/pricing";
+        public const string ProductPurchaseBusinessURL = ProductPurchaseURL + "?tab=business";
         public const string DocumentationURL = WebsiteURL + "/documentation";
         public const string AdditionalContentURL = DocumentationURL + "/getting-started#downloading-additional-content";
         public const string DownloadUrl = WebsiteURL + "/download";

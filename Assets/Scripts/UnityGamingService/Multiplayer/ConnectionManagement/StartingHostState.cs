@@ -1,3 +1,4 @@
+using Minimax.Utilities;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using Unity.Services.Authentication;

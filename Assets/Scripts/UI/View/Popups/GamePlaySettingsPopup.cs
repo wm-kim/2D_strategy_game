@@ -1,4 +1,5 @@
 using System;
+using Minimax.CoreSystems;
 using Minimax.ScriptableObjects.Events;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,20 +10,26 @@ namespace Minimax.UI.View.Popups
     {
         protected override void SetPopupType() => Type = PopupType.GamePlaySettings;
         
-        [Header("Buttons")]
-        [SerializeField] private Button m_confirmSurrenderButton = default;
-        
-        [Header("Broadcasting on")]
-        [SerializeField] private LoadSceneEventSO m_loadSceneEventChannel = default;
+        [Header("References")]
+        [Space(10f)]
+        [SerializeField] private Button m_confirmButton;
+        [SerializeField] private Button m_cancelButton;
 
         private void Start()
         {
-            m_confirmSurrenderButton.onClick.AddListener(ConfirmSurrender);
+            m_confirmButton.onClick.AddListener(OnConfirmButtonClicked);
+            m_cancelButton.onClick.AddListener(OnCancelButtonClicked);
         }
-
-        private void ConfirmSurrender()
+        
+        private void OnConfirmButtonClicked()
         {
-            m_loadSceneEventChannel.RaiseEvent(SceneType.MenuScene);
+            GlobalManagers.Instance.Popup.RequestHidePopup();
+            GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.MenuScene);
+        }
+        
+        private void OnCancelButtonClicked()
+        {
+            GlobalManagers.Instance.Popup.RequestHidePopup();
         }
     }
 }

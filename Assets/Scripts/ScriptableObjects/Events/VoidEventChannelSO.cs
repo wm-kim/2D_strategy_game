@@ -1,3 +1,4 @@
+using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -11,7 +12,10 @@ namespace Minimax.ScriptableObjects.Events
         public void RaiseEvent()
         {
             if (OnEventRaised != null)
+            {
+                DebugWrapper.Log("VoidEventSO: " + name + " was raised.");
                 OnEventRaised.Invoke();
+            }
         }
     }
 }

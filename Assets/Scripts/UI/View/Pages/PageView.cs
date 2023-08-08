@@ -1,17 +1,9 @@
 using DG.Tweening;
+using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.UI.View.Pages
 {
-    public enum UIVisibleState
-    {
-        Undefined = -1,
-        Appearing,
-        Appeared,
-        Disappearing,
-        Disappeared
-    }
-    
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class PageView : MonoBehaviour
     {

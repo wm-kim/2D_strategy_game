@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using SingularityGroup.HotReload.DTO;
+using UnityEngine;
 
 namespace SingularityGroup.HotReload.Editor {
     internal static class EditorIndicationState {
@@ -17,17 +18,23 @@ namespace SingularityGroup.HotReload.Editor {
             Loading,
             Compiling,
             CompileErrors,
-            ActivationFailed
+            ActivationFailed,
+            FinishRegistration
         }
-        
+
+        internal static readonly string greyIconPath = "grey";
+        internal static readonly string greenIconPath = "green";
+        internal static readonly string yellowIconPath = "yellow";
+        internal static readonly string redIconPath = "red";
         private static readonly Dictionary<IndicationStatus, string> IndicationIcon = new Dictionary<IndicationStatus, string> {
             // grey icon:
-            { IndicationStatus.Stopped, "winbtn_mac_inact@2x" },
-            { IndicationStatus.Login, "winbtn_mac_inact@2x" },
+            { IndicationStatus.FinishRegistration, greyIconPath },
+            { IndicationStatus.Stopped, greyIconPath },
+            { IndicationStatus.Login, greyIconPath },
             // green icon:
-            { IndicationStatus.Idle, "winbtn_mac_max@2x" },
+            { IndicationStatus.Idle, greenIconPath },
             // orange icon:
-            { IndicationStatus.Unsupported, "d_winbtn_mac_min@2x" },
+            { IndicationStatus.Unsupported, yellowIconPath },
             // spinner:
             { IndicationStatus.Stopping, Spinner.SpinnerIconPath },
             { IndicationStatus.Starting, Spinner.SpinnerIconPath },
@@ -36,8 +43,8 @@ namespace SingularityGroup.HotReload.Editor {
             { IndicationStatus.Compiling, Spinner.SpinnerIconPath },
             { IndicationStatus.Installing, Spinner.SpinnerIconPath },
             // red icon:
-            { IndicationStatus.CompileErrors, "d_winbtn_mac_close@2x" },
-            { IndicationStatus.ActivationFailed, "d_winbtn_mac_close@2x" },
+            { IndicationStatus.CompileErrors, redIconPath },
+            { IndicationStatus.ActivationFailed, redIconPath },
         };
         
         private static readonly IndicationStatus[] SpinnerIndications = IndicationIcon
@@ -46,6 +53,7 @@ namespace SingularityGroup.HotReload.Editor {
             .ToArray();
         
         private static readonly Dictionary<IndicationStatus, string> IndicationText = new Dictionary<IndicationStatus, string> {
+            { IndicationStatus.FinishRegistration, "Finish Registration" },
             { IndicationStatus.Stopping, "Stopping Hot Reload" },
             { IndicationStatus.Stopped, "Run Hot Reload" },
             { IndicationStatus.Installing, "Installing" },
@@ -58,7 +66,7 @@ namespace SingularityGroup.HotReload.Editor {
             { IndicationStatus.ActivationFailed, "Activation failed" },
             { IndicationStatus.Loading, "Loading" },
         };
-        
+
         private const int MinSpinnerDuration = 200;
         private static DateTime spinnerStartedAt;
         private static IndicationStatus latestStatus;
@@ -90,8 +98,8 @@ namespace SingularityGroup.HotReload.Editor {
         }
         
         private static IndicationStatus GetIndicationStatusCore() {
-            if (EditorCodePatcher.RenderFirstLogin)
-                return IndicationStatus.Login;
+            if (RedeemLicenseHelper.I.RegistrationRequired)
+                return IndicationStatus.FinishRegistration;
             if (EditorCodePatcher.DownloadRequired && EditorCodePatcher.DownloadStarted || EditorCodePatcher.RequestingDownloadAndRun && !EditorCodePatcher.Starting && !EditorCodePatcher.Stopping)
                 return IndicationStatus.Installing;
             if (EditorCodePatcher.Stopping)
@@ -121,7 +129,7 @@ namespace SingularityGroup.HotReload.Editor {
             // default
             return IndicationStatus.Stopped;
         }
-        
+
         internal static IndicationStatus CurrentIndicationStatus => GetIndicationStatus();
         internal static bool SpinnerActive => SpinnerIndications.Contains(CurrentIndicationStatus);
         internal static string IndicationIconPath => IndicationIcon[CurrentIndicationStatus];
@@ -129,9 +137,7 @@ namespace SingularityGroup.HotReload.Editor {
             get {
                 var indicationStatus = CurrentIndicationStatus;
                 string txt;
-                if (EditorCodePatcher.RenderFirstLogin) {
-                    txt = HotReloadPrefs.RenderAuthLogin ? "Login" : "Start Free Trial";
-                } else if (indicationStatus == IndicationStatus.Starting && EditorCodePatcher.StartupProgress != null) {
+                if (indicationStatus == IndicationStatus.Starting && EditorCodePatcher.StartupProgress != null) {
                     txt = EditorCodePatcher.StartupProgress.Item2;
                 } else if (EditorCodePatcher.Failures.Count > 0 && indicationStatus == IndicationStatus.Idle) {
                     txt = "Latest patch applied";

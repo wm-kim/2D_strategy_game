@@ -538,13 +538,14 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 480681832}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 892c01e3c3c65e245bb7a3c6a448b5d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GooglePlayToken: 
-  GooglePlayError: 
+  m_googlePlayToken: 
+  m_googlePlayError: 
+  m_environment: 1
 --- !u!114 &480681835
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -552,11 +553,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 480681832}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 69d903f39d48f954f925aed1bb30029f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_environment: 1
 --- !u!1001 &588870029
 PrefabInstance:
   m_ObjectHideFlags: 0

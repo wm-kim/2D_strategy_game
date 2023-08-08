@@ -1,3 +1,5 @@
+using Minimax.Utilities;
+
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
     public class ClientConnectedState : ConnectionState

@@ -1,4 +1,4 @@
-#if ENABLE_MONO
+#if ENABLE_MONO && (DEVELOPMENT_BUILD || UNITY_EDITOR)
 using System;
 using System.Runtime.InteropServices;
 

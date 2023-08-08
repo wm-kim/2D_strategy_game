@@ -147,6 +147,7 @@ GameObject:
   - component: {fileID: 5148746494135896619}
   - component: {fileID: 3339622858855206362}
   - component: {fileID: 1115547025392265312}
+  - component: {fileID: 4040792268512482236}
   m_Layer: 0
   m_Name: DecksPage
   m_TagString: Page
@@ -239,6 +240,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_pageType: -1
   m_currentState: -1
+--- !u!114 &4040792268512482236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2736507356310899246}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dab88199ccba844186f593157d6e358, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_buildNewDeckButton: {fileID: 1833132761987672394}
 --- !u!1 &6463239526719813398
 GameObject:
   m_ObjectHideFlags: 0
@@ -251,6 +265,7 @@ GameObject:
   - component: {fileID: 2803370910819359856}
   - component: {fileID: 658341737619161724}
   - component: {fileID: 1833132761987672394}
+  - component: {fileID: 1073618444466353511}
   m_Layer: 0
   m_Name: BuildNewDeck
   m_TagString: Untagged
@@ -366,13 +381,26 @@ MonoBehaviour:
         m_MethodName: LoadScene
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 102900000, guid: 2c1a11a34795adc4fb0986f37a96c55e, type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEditor.SceneAsset, UnityEditor.CoreModule
+          m_ObjectArgument: {fileID: 1073618444466353511}
+          m_ObjectArgumentAssemblyTypeName: Minimax.SceneTypeSelector, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1073618444466353511
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6463239526719813398}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5dd812b2258744a3915b76dda051aef7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SceneType: 5
 --- !u!1 &9145002568160081825
 GameObject:
   m_ObjectHideFlags: 0

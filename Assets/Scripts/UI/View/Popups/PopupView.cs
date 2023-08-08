@@ -1,3 +1,4 @@
+using System;
 using BrunoMikoski.AnimationSequencer;
 using UnityEngine;
 
@@ -6,6 +7,9 @@ namespace Minimax.UI.View.Popups
     public abstract class PopupView : MonoBehaviour
     {
         [field : SerializeField] public PopupType Type { get; protected set; } = PopupType.Undefined;
+        
+        [Header("Animations")]
+        [Space(10f)]
         [SerializeField] private AnimationSequencerController m_showAnimationSequencer;
         [SerializeField] private AnimationSequencerController m_hideAnimationSequencer;
         
@@ -14,7 +18,7 @@ namespace Minimax.UI.View.Popups
             SetPopupType();
             CheckIfTypeIsSet();
         }
-        
+
         private void CheckIfTypeIsSet()
         {
             UnityEngine.Assertions.Assert.IsTrue(Type != PopupType.Undefined, 

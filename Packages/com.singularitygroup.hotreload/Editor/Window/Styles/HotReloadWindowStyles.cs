@@ -59,8 +59,8 @@ namespace SingularityGroup.HotReload.Editor {
         private static GUIStyle downloadInfoButtonStyle;
         
         public static bool IsDarkMode => EditorGUIUtility.isProSkin;
-        public static int windowScreenWidth => (int)HotReloadWindow.Current.position.width;
-        public static int windowScreenHeight => (int)HotReloadWindow.Current.position.height;
+        public static int windowScreenWidth => HotReloadWindow.Current ? (int)HotReloadWindow.Current.position.width : Screen.width;
+        public static int windowScreenHeight => HotReloadWindow.Current ? (int)HotReloadWindow.Current.position.height : Screen.height;
         public static GUIStyle H1TitleStyle {
             get {
                 if (h1TitleStyle == null) {

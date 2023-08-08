@@ -1,3 +1,4 @@
+using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.ScriptableObjects
