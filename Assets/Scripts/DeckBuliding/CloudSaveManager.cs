@@ -1,37 +1,53 @@
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
+using Minimax.CoreSystems;
 using Minimax.ScriptableObjects;
 using Minimax.Utilities;
-using Unity.Services.CloudSave;
+using Unity.Services.CloudCode;
 using UnityEngine;
 
 namespace Minimax
 {
     public class CloudSaveManager : MonoBehaviour
     {
-        [SerializeField] private DeckDataSO _deckDataSO;
+        [SerializeField] private DeckDataSO m_deckDataSO;
+
+        private const int k_requiredDeckSize = 5;
 
         public async void SaveDeckToCloud()
         {
-            var deckList = _deckDataSO.GetDeckList();
-            var deckListJson = Newtonsoft.Json.JsonConvert.SerializeObject(deckList);
-            var data = new Dictionary<string, object>{{"deckList", deckListJson}};
+            var deckDTO = m_deckDataSO.GetDeckDTO();
+            
+            // Validate the deck in the client side before sending it to the cloud
+            if (!ClientSideDeckValidation(deckDTO))
+            {
+                GlobalManagers.Instance.Popup.RegisterOneButtonPopupToQueue($"Deck must contain {k_requiredDeckSize} cards.", "OK",
+                    () => GlobalManagers.Instance.Popup.HideCurrentPopup());
+                return;
+            }
+            
+            // Serialize the deck to JSON
+            var deckJson = Newtonsoft.Json.JsonConvert.SerializeObject(deckDTO);
+            DebugWrapper.Log(deckJson);
+            
             try
             {
-                await CloudSaveService.Instance.Data.ForceSaveAsync(data);
-                DebugWrapper.Log("Deck Saved to Cloud");
+                GlobalManagers.Instance.Popup.RegisterLoadingPopupToQueue("Saving Deck to Cloud");
+                
+                // Call the function within the module and provide the parameters we defined in there
+                string result = await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "SaveDeckData",
+                    new Dictionary<string, object> { { "key", "decks" }, { "value", deckJson } });
+                DebugWrapper.Log(result);
+                
+                GlobalManagers.Instance.Popup.HideCurrentPopup();
+                GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.MenuScene);
             }
-            catch (CloudSaveValidationException e)
+            catch (CloudCodeException exception)
             {
-                DebugWrapper.LogException(e);
-            }
-            catch (CloudSaveRateLimitedException e)
-            {
-                DebugWrapper.LogException(e);
-            }
-            catch (CloudSaveException e)
-            {
-                DebugWrapper.LogException(e);
+                DebugWrapper.LogError(exception.Message);
             }
         }
+        
+        private bool ClientSideDeckValidation(DeckDTO deckDto) => deckDto.CardIds.Count == k_requiredDeckSize;
     }
 }

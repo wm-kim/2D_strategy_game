@@ -1,23 +1,23 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Minimax.UI.View.Popups;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Minimax
+namespace Minimax.UI.View.Popups
 {
-    public class CommonTwoButtonPopup : PopupView
+    public class TwoButtonPopup : PopupView
     {
         [Header("References")]
         [SerializeField] TextMeshProUGUI m_messageText;
         [SerializeField] Button m_leftButton;
         [SerializeField] Button m_rightButton;
 
-        protected override void SetPopupType() => Type = PopupType.CommonTwoButtonPopup;
+        protected override void SetPopupType() => Type = PopupType.TwoButtonPopup;
         
-        public void Init(string message, string leftButtonText, string rightButtonText, Action leftButtonCallback, Action rightButtonCallback)
+        public void ConfigureWithCommand(TwoButtonPopupCommand command) => 
+            SetUp(command.Message, command.LeftButtonText, command.RightButtonText, command.LeftButtonAction, command.RightButtonAction);
+        
+        private void SetUp(string message, string leftButtonText, string rightButtonText, Action leftButtonCallback, Action rightButtonCallback)
         {
             m_messageText.text = message;
             m_leftButton.GetComponentInChildren<TextMeshProUGUI>().text = leftButtonText;

@@ -5,6 +5,8 @@ namespace Minimax.UI.View.Popups
         Undefined = -1,
         QuitAppPopup,
         GamePlaySettingsPopup,
-        CommonTwoButtonPopup,
+        TwoButtonPopup,
+        LoadingPopup,
+        OneButtonPopup,
     }
 }

@@ -1255,7 +1255,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cloudSaveManager: {fileID: 0}
-  m_exitWithoutSaveButton: {fileID: 3289962724591119266}
+  m_exitAndSaveButton: {fileID: 3289962724591119266}
+  m_exitWithoutSaveButton: {fileID: 7545832008186728413}
 --- !u!1 &5585413678976168233
 GameObject:
   m_ObjectHideFlags: 0
@@ -1290,10 +1291,10 @@ RectTransform:
   - {fileID: 5315144209688133979}
   m_Father: {fileID: 6027344101759686591}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 323, y: -900}
-  m_SizeDelta: {x: 280, y: 360}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: 323, y: 60}
+  m_SizeDelta: {x: -800, y: 360}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5343508190134142579
 CanvasRenderer:
@@ -2402,6 +2403,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DeckListItemMenu
       objectReference: {fileID: 0}
+    - target: {fileID: 5075608128691152604, guid: ed460f574ab13c84281dcc5ac4c1dc37, type: 3}
+      propertyPath: m_xOffset
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2422,7 +2427,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 7704945028938976893, guid: 6bbb84811650b144aaaecff9e9709fad, type: 3}
       propertyPath: m_xOffset
-      value: 15
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 7704945028938976893, guid: 6bbb84811650b144aaaecff9e9709fad, type: 3}
       propertyPath: m_boundaryRect

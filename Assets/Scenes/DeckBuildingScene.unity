@@ -395,7 +395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60968061f6f94be4592c3e2c10c633fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _deckDataSO: {fileID: 11400000, guid: 9f5f5045942c25241837f0c171551a3d, type: 2}
+  m_deckDataSO: {fileID: 11400000, guid: 9f5f5045942c25241837f0c171551a3d, type: 2}
 --- !u!1001 &467938561
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -970,10 +970,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 847141843}
     m_Modifications:
     - target: {fileID: 1676462830787558258, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
-      propertyPath: m_xOffset
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 1676462830787558258, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
       propertyPath: m_deckBuildingViewManager
       value: 
       objectReference: {fileID: 1128017439}
@@ -982,37 +978,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3787212450148988866, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
-      propertyPath: m_xOffset
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 3787212450148988866, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
       propertyPath: m_deckBuildingViewManager
       value: 
       objectReference: {fileID: 1128017439}
-    - target: {fileID: 3934449702844905141, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3934449702844905141, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3934449702844905141, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3934449702844905141, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3934449702844905141, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: -800
-      objectReference: {fileID: 0}
-    - target: {fileID: 3934449702844905141, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 60
-      objectReference: {fileID: 0}
     - target: {fileID: 5323672796575200554, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
       propertyPath: m_SizeDelta.y
       value: 0

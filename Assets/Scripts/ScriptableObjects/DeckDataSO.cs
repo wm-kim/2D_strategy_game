@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using Minimax.ScriptableObjects.CardDatas;
 using Minimax.Utilities;
@@ -32,8 +31,14 @@ namespace Minimax.ScriptableObjects
         {
             m_deckList.Remove(cardId);
         }
-
-        public Dictionary<int, CardBaseData> GetDeckList() => m_deckList;
         
+        public DeckDTO GetDeckDTO()
+        {
+            var deckDTO = new DeckDTO();
+            deckDTO.Name = "Default Deck Name";
+            foreach (var cardData in m_deckList.Values)
+                deckDTO.CardIds.Add(cardData.CardId);
+            return deckDTO;
+        }
     }
 }

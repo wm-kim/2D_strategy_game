@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3036045852933007155}
   - component: {fileID: 889080130752546485}
   m_Layer: 0
-  m_Name: CommonTwoButtonPopup
+  m_Name: TwoButtonPopup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -105,13 +105,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationSteps:
+  - rid: 8064151640226136064
   - rid: 2306430468611375108
   updateType: 0
   timeScaleIndependent: 0
   autoplayMode: 2
   startPaused: 0
   playbackSpeed: 1
-  playType: 1
+  playType: 0
   loops: 0
   loopType: 0
   autoKill: 1
@@ -135,6 +136,47 @@ MonoBehaviour:
         flowType: 0
         targetGameObject: {fileID: 7215578678154979563}
         active: 0
+    - rid: 8064151640226136064
+      type: {class: DOTweenAnimationStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      data:
+        delay: 0
+        flowType: 1
+        target: {fileID: 7215578678154979563}
+        duration: 0.2
+        loopCount: 0
+        loopType: 0
+        actions:
+        - rid: 8064151640226136068
+        - rid: 8064151640226136069
+    - rid: 8064151640226136068
+      type: {class: RectTransformSizeDOTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      data:
+        direction: 0
+        ease:
+          ease: 7
+          curve:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+        isRelative: 1
+        sizeDelta: {x: 0, y: -30}
+        axisConstraint: 0
+    - rid: 8064151640226136069
+      type: {class: FadeCanvasGroupDOTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      data:
+        direction: 0
+        ease:
+          ease: 7
+          curve:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+        isRelative: 0
+        alpha: 0
 --- !u!1 &1334079301932575671
 GameObject:
   m_ObjectHideFlags: 0

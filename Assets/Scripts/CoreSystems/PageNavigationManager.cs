@@ -28,13 +28,13 @@ namespace Minimax.CoreSystems
 
         private void OnEnable()
         {
-            GlobalManagers.Instance.Input.OnBackButton += PopPage;
+            GlobalManagers.Instance.Input.OnBackButton += OnMobileBackButton;
             m_switchNavigationEvent.OnEventRaised.AddListener(SwitchNavigation);
         }
         
         private void OnDisable()
         {
-            GlobalManagers.Instance.Input.OnBackButton -= PopPage;
+            GlobalManagers.Instance.Input.OnBackButton -= OnMobileBackButton;
             m_switchNavigationEvent.OnEventRaised.RemoveListener(SwitchNavigation);
         }
         
@@ -67,7 +67,7 @@ namespace Minimax.CoreSystems
         
         public PageView PushPage(PageType page) => m_currentNavigation.Push(page);
 
-        private void PopPage()
+        private void OnMobileBackButton()
         {
             if (!m_currentNavigation.Pop())
             {

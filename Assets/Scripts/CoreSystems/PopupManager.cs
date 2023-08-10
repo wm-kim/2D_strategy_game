@@ -46,6 +46,28 @@ namespace Minimax.CoreSystems
 
         public void RegisterDefaultPopupToQueue(PopupType popupType) => RegisterCommandToQueue(new DefaultPopupCommand(popupType));
         
+        public void RegisterTwoButtonPopupToQueue(string message, string leftButtonText, string rightButtonText, Action leftButtonAction, Action rightButtonAction)
+            => RegisterCommandToQueue(new TwoButtonPopupCommand(message, leftButtonText, rightButtonText, leftButtonAction, rightButtonAction));
+        
+        public void RegisterOneButtonPopupToQueue(string message, string buttonText, Action buttonAction)
+            => RegisterCommandToQueue(new OneButtonPopupCommand(message, buttonText, buttonAction));
+        
+        public void MobileBackButtonTwoButtonPopup(string message, string leftButtonText, string rightButtonText, Action leftButtonAction, Action rightButtonAction)
+            => MobileBackButtonCommand(new TwoButtonPopupCommand(message, leftButtonText, rightButtonText, leftButtonAction, rightButtonAction));        
+        public void MobileBackButtonDefaultPopup(PopupType popupType) => MobileBackButtonCommand(new DefaultPopupCommand(popupType));
+        
+        public void RegisterLoadingPopupToQueue(string message) => RegisterCommandToQueue(new LoadingPopupCommand(message));
+        
+        /// <summary>
+        /// 모바일에서 뒤로가기 버튼을 누르면 호출됩니다.
+        /// 이미 표시되고 있는 popup이 있다면 숨기고, 없다면 대기열에 인자로 받은 popup을 등록합니다.
+        /// </summary>
+        private void MobileBackButtonCommand(IPopupCommand command)
+        {
+            if (IsPopupShowing) HideCurrentPopup();
+            else RegisterCommandToQueue(command);
+        }
+        
         /// <summary>
         /// Popup Command를 대기열에 등록합니다. 만약 현재 표시되고 있는 popup이 없다면 바로 표시합니다.
         /// </summary>
@@ -66,7 +88,7 @@ namespace Minimax.CoreSystems
             if (m_currentPopupView == null) return;
             m_currentPopupView.Hide();
             // Destroy popup
-            Addressables.ReleaseInstance(m_currentPopupView.gameObject);
+            Destroy(m_currentPopupView.gameObject);
             ShowNextPopup();
         }
         
@@ -83,18 +105,6 @@ namespace Minimax.CoreSystems
             
             m_popupQueue.Dequeue();
         }
-        
-        public void MobileBackButtonDefaultPopup(PopupType popupType) => MobileBackButtonCommand(new DefaultPopupCommand(popupType));
-        
-        /// <summary>
-        /// 모바일에서 뒤로가기 버튼을 누르면 호출됩니다.
-        /// 이미 표시되고 있는 popup이 있다면 숨기고, 없다면 대기열에 인자로 받은 popup을 등록합니다.
-        /// </summary>
-        private void MobileBackButtonCommand(IPopupCommand command)
-        {
-            if (IsPopupShowing) HideCurrentPopup();
-            else RegisterCommandToQueue(command);
-        }
 
         /// <summary>
         /// 대기열에서 다음 popup을 인스턴스화하고 표시합니다. 표시되는 popup은 대기열에서 제거됩니다.
@@ -109,23 +119,35 @@ namespace Minimax.CoreSystems
 
             var command = m_popupQueue.Dequeue();
             // Instantiate popup
-            var instantiateHandle = Addressables.InstantiateAsync(m_path + command.Type + ".prefab", m_popupCanvas.transform);
+            var popup = GameObject.Instantiate(m_loadedPopups[command.Type], m_popupCanvas.transform);
             
             // Execute different actions according to the type of popup command
             switch (command)
             {
                 case DefaultPopupCommand defaultPopupCommand:
-                    instantiateHandle.Completed += handle =>
-                    {
-                        var popup = handle.Result.GetComponent<PopupView>();
-                        popup.Show();
-                        m_currentPopupView = popup;
-                    };
+                    m_currentPopupView = popup;
                     break;
                
+                case TwoButtonPopupCommand twoButtonPopupCommand:
+                    var twoButtonPopup = popup.GetComponent<TwoButtonPopup>();
+                    twoButtonPopup.ConfigureWithCommand(twoButtonPopupCommand);
+                    m_currentPopupView = popup;
+                    break;
+                case LoadingPopupCommand loadingPopupCommand:
+                    var loadingPopup = popup.GetComponent<LoadingPopup>();
+                    loadingPopup.ConfigureWithCommand(loadingPopupCommand);
+                    m_currentPopupView = popup;
+                    break;
+                case OneButtonPopupCommand oneButtonPopupCommand:
+                    var oneButtonPopup = popup.GetComponent<OneButtonPopup>();
+                    oneButtonPopup.ConfigureWithCommand(oneButtonPopupCommand);
+                    m_currentPopupView = popup;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(command), command, "Unknown popup command");
             }
+            
+            m_currentPopupView.Show();
         }
     }
 }
