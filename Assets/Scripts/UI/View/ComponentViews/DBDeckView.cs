@@ -13,20 +13,24 @@ namespace Minimax
         [SerializeField] private DBDeckItemView m_dbDeckItemViewPrefab;
         [SerializeField] private Transform m_contentTransform;
         [SerializeField] private ButtonGroupController m_deckButtonGroupController;
+        
+        // Caching 
+        private List<DeckDTO> m_decks;
 
         private async void Start()
         {
-            List<DeckDTO> decks = await CloudService.Load<List<DeckDTO>>(CloudSaveManager.DeckSaveKey);
-            if (decks == null)
+            m_decks = await CloudService.Load<List<DeckDTO>>(CloudSaveManager.DeckSaveKey);
+            if (m_decks == null)
             {
                 DebugWrapper.LogWarning("No deck data found.");
             }
             else
             {
-                foreach (var deck in decks)
+                foreach (var deck in m_decks)
                 {
-                    var deckItemView = Instantiate(m_dbDeckItemViewPrefab, m_contentTransform);
+                    DBDeckItemView deckItemView = Instantiate(m_dbDeckItemViewPrefab, m_contentTransform);
                     deckItemView.Init(deck.Name);
+                    m_deckButtonGroupController.AddButton(deckItemView);
                 }
             }
         }

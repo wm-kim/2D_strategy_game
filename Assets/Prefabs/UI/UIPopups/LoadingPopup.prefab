@@ -365,6 +365,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 17e5c078b2df4cbcb2bb13eb0a5f93d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_currentState: -1
   <Type>k__BackingField: -1
   m_showAnimationSequencer: {fileID: 1386243445621738560}
   m_hideAnimationSequencer: {fileID: 8562961648534010825}
@@ -552,13 +553,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationSteps:
+  - rid: 8064151683739156486
   - rid: 2306430468611375108
   updateType: 0
   timeScaleIndependent: 0
   autoplayMode: 2
   startPaused: 0
   playbackSpeed: 1
-  playType: 1
+  playType: 0
   loops: 0
   loopType: 0
   autoKill: 1
@@ -582,3 +584,44 @@ MonoBehaviour:
         flowType: 0
         targetGameObject: {fileID: 272758330839938674}
         active: 0
+    - rid: 8064151683739156486
+      type: {class: DOTweenAnimationStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      data:
+        delay: 0
+        flowType: 1
+        target: {fileID: 272758330839938674}
+        duration: 0.2
+        loopCount: 0
+        loopType: 0
+        actions:
+        - rid: 8064151683739156487
+        - rid: 8064151683739156488
+    - rid: 8064151683739156487
+      type: {class: RectTransformSizeDOTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      data:
+        direction: 0
+        ease:
+          ease: 7
+          curve:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+        isRelative: 0
+        sizeDelta: {x: 600, y: 270}
+        axisConstraint: 0
+    - rid: 8064151683739156488
+      type: {class: FadeCanvasGroupDOTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      data:
+        direction: 0
+        ease:
+          ease: 7
+          curve:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+        isRelative: 0
+        alpha: 0

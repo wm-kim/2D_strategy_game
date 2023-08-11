@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.CoreSystems
 {
     public class ApplicationController : MonoBehaviour
     {

@@ -155,7 +155,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_button: {fileID: 2847007008067608481}
   m_cardDataText: {fileID: 4472659688823597039}
-  m_dbCardItemMenuEvent: {fileID: 11400000, guid: 778de74eab42b8f44900e947607537bf, type: 2}
 --- !u!1 &7898048840751494093
 GameObject:
   m_ObjectHideFlags: 0
@@ -188,10 +187,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6676553637985577629}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: -60, y: -60}
+  m_AnchoredPosition: {x: 0, y: -180}
+  m_SizeDelta: {x: -60, y: 300}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5920827988593013756
 CanvasRenderer:
