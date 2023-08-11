@@ -20,6 +20,10 @@ namespace Minimax.CoreSystems
         // 현재 표시되고 있는 popup
         [SerializeField, ReadOnly] private PopupView m_currentPopupView = null;
         
+        [Header("Settings")]
+        [SerializeField, Range(0.0f, 1f)] private float m_popupFadeDuration = 0.2f;
+        [SerializeField, Range(0.0f, 1f)] private float m_hidePopupFadeDuration = 0.2f;
+        
         [Space(10f)]
         // Popup pool
         [SerializeField, ReadOnly] private SerializedDictionary<PopupType, PopupView> m_loadedPopups = new SerializedDictionary<PopupType, PopupView>();
@@ -86,9 +90,7 @@ namespace Minimax.CoreSystems
         public void HideCurrentPopup()
         {
             if (m_currentPopupView == null) return;
-            m_currentPopupView.Hide();
-            // Destroy popup
-            Destroy(m_currentPopupView.gameObject);
+            m_currentPopupView.StartHide(m_hidePopupFadeDuration);
             ShowNextPopup();
         }
         
@@ -147,7 +149,7 @@ namespace Minimax.CoreSystems
                     throw new ArgumentOutOfRangeException(nameof(command), command, "Unknown popup command");
             }
             
-            m_currentPopupView.Show();
+            m_currentPopupView.StartShow(m_popupFadeDuration);
         }
     }
 }

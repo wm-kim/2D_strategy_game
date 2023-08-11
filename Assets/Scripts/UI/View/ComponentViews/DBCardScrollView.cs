@@ -33,7 +33,7 @@ namespace Minimax
             {
                 var cardData = m_cardDBManager.CardDB[i];
                 var dbCardItem = Instantiate(m_dbCardItemPrefab, m_dbCardItemParent).GetComponent<DBCardItemView>();
-                dbCardItem.Init(cardData, m_deckBuildingViewManager.DBCardItemMenuView);
+                dbCardItem.Init(cardData, m_deckBuildingViewManager);
                 m_dbCardItems.Add(cardData.CardId, dbCardItem);
             }
         }

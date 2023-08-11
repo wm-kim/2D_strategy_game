@@ -33,7 +33,7 @@ namespace Minimax.CoreSystems
         {
             foreach (var page in m_pages)
             {
-                page.Value.gameObject.GetComponent<PageView>().Hide();
+                page.Value.gameObject.GetComponent<PageView>().StartHide();
             }
         }
         

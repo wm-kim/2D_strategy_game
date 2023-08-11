@@ -1379,9 +1379,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4436715937976224792}
-        m_TargetAssemblyTypeName: Minimax.UI.View.ComponentViews.DeckListView, Assembly-CSharp
-        m_MethodName: ShowDeckList
-        m_Mode: 1
+        m_TargetAssemblyTypeName: Minimax.UI.View.StatefulUIView, Assembly-CSharp
+        m_MethodName: StartShow
+        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1512,9 +1512,9 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4436715937976224792}
-        m_TargetAssemblyTypeName: Minimax.UI.View.ComponentViews.DeckListView, Assembly-CSharp
-        m_MethodName: HideDeckList
-        m_Mode: 1
+        m_TargetAssemblyTypeName: Minimax.UI.View.StatefulUIView, Assembly-CSharp
+        m_MethodName: StartHide
+        m_Mode: 4
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1796,11 +1796,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a544f2de4ea95b94c8f2a2f3ae55133d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_currentState: -1
   m_deckListBackground: {fileID: 775972716375053620}
   m_deckListPanel: {fileID: 6829959559420879271}
   m_animationDuration: 0.5
   m_slideOffset: 630
-  m_currentState: -1
 --- !u!1 &6398991336704567047
 GameObject:
   m_ObjectHideFlags: 0

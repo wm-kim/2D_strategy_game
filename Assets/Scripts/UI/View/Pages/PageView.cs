@@ -5,12 +5,11 @@ using UnityEngine;
 namespace Minimax.UI.View.Pages
 {
     [RequireComponent(typeof(CanvasGroup))]
-    public abstract class PageView : MonoBehaviour
+    public abstract class PageView : StatefulUIView
     {
         [SerializeField, ReadOnly] protected PageType m_pageType = PageType.Undefined;
         
         public PageType PageType => m_pageType;
-        [SerializeField, ReadOnly] private UIVisibleState m_currentState = UIVisibleState.Undefined;
         private CanvasGroup m_canvasGroup;
         private Tween m_tween;
 
@@ -49,61 +48,54 @@ namespace Minimax.UI.View.Pages
             gameObject.transform.localPosition = Vector3.zero;
         }
 
-        public void Show(float duration = 0.0f) 
+        protected override void Show(float transitionDuration = 0.0f)
         {
-            if (m_currentState == UIVisibleState.Appearing || m_currentState == UIVisibleState.Appeared) return;
-
-            m_currentState = UIVisibleState.Appearing;
             gameObject.SetActive(true);
             
             // Ensure duration is not negative
-            duration = Mathf.Max(duration, 0.0f);
+            transitionDuration = Mathf.Max(transitionDuration, 0.0f);
             
             // reducing DoTween call overhead
-            if (duration == 0)
+            if (transitionDuration == 0)
             {
                 m_canvasGroup.alpha = 1;
                 m_canvasGroup.blocksRaycasts = true;
-                m_currentState = UIVisibleState.Appeared; 
+                SetAppearedState();
             }
             else
             {
                 m_canvasGroup.alpha = 0;
                 m_canvasGroup.blocksRaycasts = false;
                 if (m_tween != null) m_tween.Kill();
-                m_tween = m_canvasGroup.DOFade(1, duration).OnComplete(() =>
+                m_tween = m_canvasGroup.DOFade(1, transitionDuration).OnComplete(() =>
                 {
-                    m_currentState = UIVisibleState.Appeared; 
+                    SetAppearedState();
                     m_canvasGroup.blocksRaycasts = true;
                 });
             }
         }
 
-        public void Hide(float duration = 0.0f)
+        protected override void Hide(float transitionDuration = 0.0f)
         {
-            if (m_currentState == UIVisibleState.Disappearing || m_currentState == UIVisibleState.Disappeared)
-                return;
-
-            m_currentState = UIVisibleState.Disappearing;
             m_canvasGroup.blocksRaycasts = false;
             
             // Ensure duration is not negative
-            duration = Mathf.Max(duration, 0.0f);
+            transitionDuration = Mathf.Max(transitionDuration, 0.0f);
 
             // reducing DoTween call overhead
-            if (duration == 0)
+            if (transitionDuration == 0)
             {
                 m_canvasGroup.alpha = 0;
                 gameObject.SetActive(false);
-                m_currentState = UIVisibleState.Disappeared;
+                SetDisappearedState();
             }
             else
             {
                 if (m_tween != null) m_tween.Kill();
-                m_tween = m_canvasGroup.DOFade(0f, duration).OnComplete(() =>
+                m_tween = m_canvasGroup.DOFade(0f, transitionDuration).OnComplete(() =>
                 {
                     gameObject.SetActive(false);
-                    m_currentState = UIVisibleState.Disappeared;
+                    SetDisappearedState();
                 });
             }
         }

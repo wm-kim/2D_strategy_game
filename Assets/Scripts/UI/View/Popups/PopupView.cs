@@ -1,10 +1,11 @@
 using System;
 using BrunoMikoski.AnimationSequencer;
+using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.UI.View.Popups
 {
-    public abstract class PopupView : MonoBehaviour
+    public abstract class PopupView : StatefulUIView
     {
         [field : SerializeField, ReadOnly] public PopupType Type { get; protected set; } = PopupType.Undefined;
         
@@ -29,19 +30,28 @@ namespace Minimax.UI.View.Popups
         /// Popup의 종류를 설정합니다. PopupType은 PopupManager에서 Popup pool을 관리하는데 사용됩니다.
         /// </summary>
         protected abstract void SetPopupType();
-        
-        public void Show()
+
+        // transitionDuration is not used in PopupView, you need to set manually in inspector using AnimationSequencerController
+        protected override void Show(float transitionDuration = 0.0f)
         {
             if (m_showAnimationSequencer.IsPlaying) return;
             if (m_hideAnimationSequencer.IsPlaying) m_hideAnimationSequencer.Kill();
-            m_showAnimationSequencer.Play();
+            
+            m_showAnimationSequencer.Play(SetAppearedState);
         }
-        
-        public void Hide()
+
+        // transitionDuration is not used in PopupView, you need to set manually in inspector using AnimationSequencerController
+        protected override void Hide(float transitionDuration = 0.0f)
         {
+            DebugWrapper.Log($"Hide {gameObject.name}");
             if (m_hideAnimationSequencer.IsPlaying) return;
             if (m_showAnimationSequencer.IsPlaying) m_showAnimationSequencer.Kill();
-            m_hideAnimationSequencer.Play();
+
+            m_hideAnimationSequencer.Play(() =>
+            {
+                SetDisappearedState();
+                Destroy(gameObject);
+            });
         }
     }
 }

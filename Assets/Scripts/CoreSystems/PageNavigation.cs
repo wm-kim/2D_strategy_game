@@ -60,10 +60,10 @@ namespace Minimax.CoreSystems
             if (m_history.Count > 0)
             {
                 PageView currentView =  m_pageManager.GetPageView(m_history.Peek());
-                currentView.Hide();
+                currentView.StartHide();
             }
             // Show the new view
-            view.Show();
+            view.StartShow();
             m_history.Push(page);
             return view;
         }
@@ -75,9 +75,9 @@ namespace Minimax.CoreSystems
             {
                 // Hide the current view
                 PageView currentView =  m_pageManager.GetPageView(m_history.Pop());
-                currentView.Hide();
+                currentView.StartHide();
                 PageView previousView =  m_pageManager.GetPageView(m_history.Peek());
-                previousView.Show();
+                previousView.StartShow();
                 return true;
             }
             return false;
@@ -86,13 +86,13 @@ namespace Minimax.CoreSystems
         public void Hide(float duration = 0.0f)
         {
             PageView currentView = m_pageManager.GetPageView(m_history.Peek());
-            currentView.Hide(duration);
+            currentView.StartHide(duration);
         }
         
         public void Show(float duration = 0.0f)
         {
             PageView currentView = m_pageManager.GetPageView(m_history.Peek());
-            currentView.Show(duration);
+            currentView.StartShow(duration);
         }
     }
 }

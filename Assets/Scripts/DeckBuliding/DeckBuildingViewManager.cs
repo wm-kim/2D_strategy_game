@@ -20,5 +20,8 @@ namespace Minimax
         public DBCardScrollView DBCardScrollView => m_dbCardScrollView;
         public DBCardItemMenuView DBCardItemMenuView => m_dbCardItemMenuView;
         public DeckListItemMenuView DeckListItemMenuView => m_deckListItemMenuView;
+        
+        public DBCardItemView SelectedDBCardItemView { get; set; }
+        public DeckListItemView SelectedDeckListItemView { get; set; }
     }
 }

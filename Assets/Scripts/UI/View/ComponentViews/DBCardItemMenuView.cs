@@ -7,7 +7,7 @@ using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Minimax.UI.View.ComponentViews
 {
-    public class DBCardItemMenuView : MonoBehaviour
+    public class DBCardItemMenuView : StatefulUIView
     {
         [SerializeField] private DeckBuildingViewManager m_deckBuildingViewManager;
         
@@ -15,8 +15,6 @@ namespace Minimax.UI.View.ComponentViews
         [SerializeField] private RectTransform m_dbCardItemMenu = default;
         [SerializeField] private TextMeshProUGUI m_cardNameText = default;
         [SerializeField] private Button m_addToDeckButton = default;
-        
-        [SerializeField, ReadOnly] private UIVisibleState m_visibleState = UIVisibleState.Undefined;
         
         [SerializeField] private float m_xOffset = 30f;
         private DBCardItemView m_dbCardItem;
@@ -32,13 +30,12 @@ namespace Minimax.UI.View.ComponentViews
         {
             m_deckBuildingViewManager.DeckListView.AddCardToDeckList(m_dbCardItem.CardData);
             m_dbCardItem.SetButtonInteractable(false);
-            Hide();
+            StartHide();
         }
 
-        public void Show(DBCardItemView dbCardItem)
+        protected override void Show(float transitionDuration = 0)
         {
-            // Cache DBCardItem to be used later for disable interactable when added to deck list
-            m_dbCardItem = dbCardItem;
+            m_dbCardItem = m_deckBuildingViewManager.SelectedDBCardItemView;
             
             // Set Menu Position
             var dbCardItemTransform = m_dbCardItem.GetComponent<RectTransform>();
@@ -63,31 +60,31 @@ namespace Minimax.UI.View.ComponentViews
             
             m_dbCardItemMenu.position = new Vector3(
                 dbCardItemMenuPosX,
-                 clampPosY,
+                clampPosY,
                 0f);
       
             m_dbCardItemMenu.gameObject.SetActive(true);
-            m_visibleState = UIVisibleState.Appeared;
+            SetAppearedState();
             
             // Set Card Name Text
             m_cardNameText.text = $"{m_dbCardItem.CardData.CardName}";
         }
         
-        private void Hide()
+        protected override void Hide(float transitionDuration = 0)
         {
             m_dbCardItemMenu.gameObject.SetActive(false);
-            m_visibleState = UIVisibleState.Disappeared;
+            SetDisappearedState();
         }
         
         private void OnTouchOutside(Vector2 touchPosition, TouchPhase touchPhase)
         {
-            if (m_visibleState == UIVisibleState.Appeared)
+            if (m_currentState == UIVisibleState.Appeared)
             {
                 bool isBeginOrMovedTouch = touchPhase == TouchPhase.Began || touchPhase == TouchPhase.Moved;
                 bool isOutsideCardDisplayMenu = !RectTransformUtility.RectangleContainsScreenPoint(m_dbCardItemMenu, touchPosition);
                 if (isBeginOrMovedTouch && isOutsideCardDisplayMenu)
                 {
-                    Hide();
+                    StartHide();
                 }
             }
         }

@@ -170,13 +170,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationSteps:
+  - rid: 8064151683739156482
   - rid: 2306430468611375108
   updateType: 0
   timeScaleIndependent: 0
   autoplayMode: 2
   startPaused: 0
   playbackSpeed: 1
-  playType: 1
+  playType: 0
   loops: 0
   loopType: 0
   autoKill: 1
@@ -200,6 +201,47 @@ MonoBehaviour:
         flowType: 0
         targetGameObject: {fileID: 3123463552154521942}
         active: 0
+    - rid: 8064151683739156482
+      type: {class: DOTweenAnimationStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      data:
+        delay: 0
+        flowType: 1
+        target: {fileID: 3123463552154521942}
+        duration: 0.2
+        loopCount: 0
+        loopType: 0
+        actions:
+        - rid: 8064151683739156483
+        - rid: 8064151683739156484
+    - rid: 8064151683739156483
+      type: {class: RectTransformSizeDOTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      data:
+        direction: 0
+        ease:
+          ease: 7
+          curve:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+        isRelative: 0
+        sizeDelta: {x: 670, y: 470}
+        axisConstraint: 0
+    - rid: 8064151683739156484
+      type: {class: FadeCanvasGroupDOTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      data:
+        direction: 0
+        ease:
+          ease: 7
+          curve:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+        isRelative: 0
+        alpha: 0
 --- !u!1 &3123463552154521942
 GameObject:
   m_ObjectHideFlags: 0
@@ -218,7 +260,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1639723151564585153
 RectTransform:
   m_ObjectHideFlags: 0
@@ -409,20 +451,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 74650980273685806}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: fcb12f856a470ed44950b1b999d8a7e5, type: 2}
-        m_TargetAssemblyTypeName: Minimax.ScriptableObjects.Events.PopupEventSO,
-          Assembly-CSharp
-        m_MethodName: HidePopup
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &4619298418757057824
 GameObject:
   m_ObjectHideFlags: 0
@@ -586,6 +615,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfc01446a5d743a47b1fd3d2239c07b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_currentState: -1
   <Type>k__BackingField: 1
   m_showAnimationSequencer: {fileID: 6983883628895090968}
   m_hideAnimationSequencer: {fileID: 2857034774254473840}

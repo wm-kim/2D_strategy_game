@@ -13,31 +13,25 @@ namespace Minimax
     public class DBCardItemView : MonoBehaviour
     {
         [Header("Inner References")]
+        [Space(10f)]
         [SerializeField] private Button m_button;
         [SerializeField] private TextMeshProUGUI m_cardDataText;
 
+        private DeckBuildingViewManager m_deckBuildingViewManager;
         private CardBaseData m_cardData;
-        private DBCardItemMenuView m_dbCardItemMenuView;
         
         public CardBaseData CardData => m_cardData;
         
-        public void Init(CardBaseData cardData, DBCardItemMenuView dbCardItemMenuView)
-        
+        public void Init(CardBaseData cardData, DeckBuildingViewManager deckBuildingViewManager)
         {
+            m_deckBuildingViewManager = deckBuildingViewManager;
             m_cardData = cardData;
             SetView(cardData.CardId);
-            SetMenuReference(dbCardItemMenuView);
         }
         
         private void SetView(int cardId)
         {
             m_cardDataText.text = $"Card ID : {cardId.ToString()}";
-        }
-        
-        // store a reference to the menu view so we can show it when the button is clicked
-        private void SetMenuReference(DBCardItemMenuView dbCardItemMenuView)
-        {
-            m_dbCardItemMenuView = dbCardItemMenuView;
         }
         
         public void SetButtonInteractable(bool interactable) => m_button.interactable = interactable;
@@ -49,7 +43,8 @@ namespace Minimax
         
         private void OnButtonClicked()
         {
-            m_dbCardItemMenuView.Show(this);
+            m_deckBuildingViewManager.SelectedDBCardItemView = this;
+            m_deckBuildingViewManager.DBCardItemMenuView.StartShow();
         }
     }
 }

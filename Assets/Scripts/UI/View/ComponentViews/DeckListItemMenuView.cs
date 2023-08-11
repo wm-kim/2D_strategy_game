@@ -8,15 +8,13 @@ using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Minimax.UI.View.ComponentViews
 {
-    public class DeckListItemMenuView : MonoBehaviour
+    public class DeckListItemMenuView : StatefulUIView
     {
         [SerializeField] private DeckBuildingViewManager m_deckBuildingViewManager;
         
         [Header("Inner References")]
         [SerializeField] private RectTransform m_deckListItemMenu;
         [SerializeField] private Button m_deleteFromDeckButton;
-        
-        [SerializeField, ReadOnly] private UIVisibleState m_visibleState = UIVisibleState.Undefined;
         
         [SerializeField] private float m_xOffset = 30f;
         private DeckListItemView m_deckListItemView;
@@ -30,24 +28,24 @@ namespace Minimax.UI.View.ComponentViews
 
         private void OnTouchOutside(Vector2 touchPosition, TouchPhase touchPhase)
         {
-            if (m_visibleState == UIVisibleState.Appeared)
+            if (m_currentState == UIVisibleState.Appeared)
             {
                 bool isBeginOrMovedTouch = touchPhase == TouchPhase.Began || touchPhase == TouchPhase.Moved;
                 bool isOutsideCardDisplayMenu = !RectTransformUtility.RectangleContainsScreenPoint(m_deckListItemMenu, touchPosition);
                 if (isBeginOrMovedTouch && isOutsideCardDisplayMenu)
                 {
-                    Hide();
+                    StartHide();
                 }
             }
         }
-        
-        public void Show(DeckListItemView deckListItemView)
+
+        protected override void Show(float transitionDuration = 0.0f)
         {
             // Cache deckListItemView to be used later for removing from deck list
-            m_deckListItemView = deckListItemView;
+            m_deckListItemView = m_deckBuildingViewManager.SelectedDeckListItemView;
             
             // Set Menu Position
-            var deckListItemTransform = deckListItemView.GetComponent<RectTransform>();
+            var deckListItemTransform = m_deckListItemView.GetComponent<RectTransform>();
 
             var boundaryRect = m_deckBuildingViewManager.DeckListView.GetComponent<RectTransform>().GetWorldRect();
             var boundaryPos = m_deckBuildingViewManager.DeckListView.transform.position;
@@ -70,20 +68,20 @@ namespace Minimax.UI.View.ComponentViews
                 0f);
             
             m_deckListItemMenu.gameObject.SetActive(true);
-            m_visibleState = UIVisibleState.Appeared;
+            SetAppearedState();
         }
-
-        private void Hide()
+        
+        protected override void Hide(float transitionDuration = 0.0f)
         {
             m_deckListItemMenu.gameObject.SetActive(false);
-            m_visibleState = UIVisibleState.Disappeared;
+            SetDisappearedState();
         }
 
         private void OnDeleteFromDeckButtonClicked()
         {
             var cardId = m_deckListItemView.CardData.CardId;
             m_deckBuildingViewManager.DeckListView.RemoveCardFromDeckList(cardId);
-            Hide();
+            StartHide();
          
             m_deckBuildingViewManager.DBCardScrollView.SetDBCardItemViewInteractable(cardId, true);
         }

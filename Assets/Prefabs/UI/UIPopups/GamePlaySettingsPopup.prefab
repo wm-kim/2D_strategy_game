@@ -420,13 +420,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animationSteps:
+  - rid: 8064151683739156480
   - rid: 2306430468611375108
   updateType: 0
   timeScaleIndependent: 0
   autoplayMode: 2
   startPaused: 0
   playbackSpeed: 1
-  playType: 1
+  playType: 0
   loops: 0
   loopType: 0
   autoKill: 1
@@ -450,6 +451,47 @@ MonoBehaviour:
         flowType: 0
         targetGameObject: {fileID: 1946383870777748467}
         active: 0
+    - rid: 8064151683739156480
+      type: {class: DOTweenAnimationStep, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      data:
+        delay: 0
+        flowType: 1
+        target: {fileID: 1946383870777748467}
+        duration: 0.2
+        loopCount: 0
+        loopType: 0
+        actions:
+        - rid: 8064151683739156481
+        - rid: 8064151683739156485
+    - rid: 8064151683739156481
+      type: {class: RectTransformSizeDOTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      data:
+        direction: 0
+        ease:
+          ease: 7
+          curve:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+        isRelative: 0
+        sizeDelta: {x: 800, y: 270}
+        axisConstraint: 0
+    - rid: 8064151683739156485
+      type: {class: FadeCanvasGroupDOTweenAction, ns: BrunoMikoski.AnimationSequencer, asm: BrunoMikoski.AnimationSequencer}
+      data:
+        direction: 0
+        ease:
+          ease: 7
+          curve:
+            serializedVersion: 2
+            m_Curve: []
+            m_PreInfinity: 2
+            m_PostInfinity: 2
+            m_RotationOrder: 4
+        isRelative: 0
+        alpha: 0
 --- !u!1 &1931576560507618083
 GameObject:
   m_ObjectHideFlags: 0
@@ -875,6 +917,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d818607fc3f1fa46903803a93d44b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_currentState: -1
   <Type>k__BackingField: 1
   m_showAnimationSequencer: {fileID: 71003312615959057}
   m_hideAnimationSequencer: {fileID: 3969330501232585886}

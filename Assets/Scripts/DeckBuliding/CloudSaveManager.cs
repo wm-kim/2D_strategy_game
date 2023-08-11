@@ -10,6 +10,8 @@ namespace Minimax
 {
     public class CloudSaveManager : MonoBehaviour
     {
+        public static readonly string DeckSaveKey = "decks";
+        
         [SerializeField] private DeckDataSO m_deckDataSO;
 
         private const int k_requiredDeckSize = 5;
@@ -36,7 +38,7 @@ namespace Minimax
                 
                 // Call the function within the module and provide the parameters we defined in there
                 string result = await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "SaveDeckData",
-                    new Dictionary<string, object> { { "key", "decks" }, { "value", deckJson } });
+                    new Dictionary<string, object> { { "key", DeckSaveKey }, { "value", deckJson } });
                 DebugWrapper.Log(result);
                 
                 GlobalManagers.Instance.Popup.HideCurrentPopup();

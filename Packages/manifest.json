@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.brunomikoski.animationsequencer": "0.5.1",
+    "com.brunomikoski.animationsequencer": "0.5.2",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.unity.addressables": "1.21.14",
     "com.unity.collab-proxy": "2.0.5",

@@ -3,6 +3,7 @@ using Minimax.ScriptableObjects.Events;
 using Minimax.ScriptableObjects.Events.Primitives;
 using Minimax.UI.View;
 using Minimax.UI.View.ComponentViews;
+using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.UI.Controller
@@ -49,7 +50,7 @@ namespace Minimax.UI.Controller
         private void Start()
         {
             Reset();
-            m_buttonList[0].Button.onClick.Invoke();
+            if (m_buttonList.Count > 0) m_buttonList[0].Button.onClick.Invoke();
         }
 
         private void ToggleActiveState(int index)
@@ -111,7 +112,60 @@ namespace Minimax.UI.Controller
             // 선택된 버튼의 인덱스를 인자로 OnButtonSelected
             OnButtonSelected?.RaiseEvent(index);
         }
+        
+        /// <summary>
+        /// 그룹에 새로운 버튼을 동적으로 추가합니다.
+        /// </summary>
+        /// <param name="newButton">추가할 새 버튼입니다</param>
+        public void AddButton(ButtonView newButton)
+        {
+            // 버튼을 목록에 추가합니다.
+            m_buttonList.Add(newButton);
 
+            // 새 버튼에 대한 인덱스를 할당합니다.
+            int newIndex = m_buttonList.Count - 1;
+
+            // 새 버튼에 onClick 리스너를 추가합니다.
+            newButton.Button.onClick.AddListener(() => ToggleActiveState(newIndex));
+        }
+        
+        /// <summary>
+        /// 그룹에서 버튼을 동적으로 제거합니다.
+        /// </summary>
+        /// <param name="buttonToRemove">제거할 버튼입니다.</param>
+        public void RemoveButton(ButtonView buttonToRemove)
+        {
+            if (!m_buttonList.Contains(buttonToRemove))
+            {
+                DebugWrapper.LogWarning("해당 버튼은 이 그룹에 포함되어 있지 않습니다.");
+                return;
+            }
+
+            // 버튼에서 onClick 리스너를 제거합니다.
+            buttonToRemove.Button.onClick.RemoveAllListeners();
+
+            // 목록에서 버튼을 제거합니다.
+            int removedIndex = m_buttonList.IndexOf(buttonToRemove);
+            m_buttonList.Remove(buttonToRemove);
+
+            // 제거된 버튼 이후의 버튼들에게 올바른 인덱스를 반영하기 위해 리스너를 다시 할당합니다.
+            for (int i = removedIndex; i < m_buttonList.Count; i++)
+            {
+                // 먼저 이전 리스너를 제거합니다.
+                m_buttonList[i].Button.onClick.RemoveAllListeners();
+
+                // 그 후, 새 인덱스로 리스너를 다시 추가합니다.
+                int newIndex = i; // 중요: 클로저 동작을 올바르게 하기 위해 루프 내에서 지역 변수를 생성합니다.
+                m_buttonList[i].Button.onClick.AddListener(() => ToggleActiveState(newIndex));
+            }
+
+            // 필요한 경우 활성 인덱스 목록을 업데이트합니다.
+            if (m_activeIndices.Contains(removedIndex))
+            {
+                m_activeIndices.Remove(removedIndex);
+            }
+        }
+        
         public void Reset()
         {
             m_activeIndices.Clear();

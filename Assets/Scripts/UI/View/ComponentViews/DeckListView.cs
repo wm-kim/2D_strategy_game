@@ -28,7 +28,7 @@ namespace Minimax
             
             // Instantiate DeckListItemView
             var deckListItemView = Instantiate(m_deckListItemPrefab, m_deckListItemParent);
-            deckListItemView.Init(cardData, m_deckBuildingViewManager.DeckListItemMenuView);
+            deckListItemView.Init(cardData, m_deckBuildingViewManager);
             m_deckListItemViews.Add(cardData.CardId, deckListItemView);
         }
         

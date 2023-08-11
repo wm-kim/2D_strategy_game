@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Minimax.Utilities;
+using ParrelSync;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Core.Environments;
@@ -42,6 +43,10 @@ namespace Minimax.UnityGamingService.Multiplayer
                         options.SetEnvironmentName(EnvironmentType.production.ToString());
                         break;
                 }
+                
+#if UNITY_EDITOR
+                if (ClonesManager.IsClone()) options.SetProfile("clone");
+#endif
 
 #if !DEDICATED_SERVER
                 // Set the profile to a random number to separate players
