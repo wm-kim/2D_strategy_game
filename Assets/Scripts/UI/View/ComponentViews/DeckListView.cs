@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using Minimax.ScriptableObjects;
 using Minimax.ScriptableObjects.CardDatas;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Minimax
 {
     public class DeckListView : MonoBehaviour
     {
-        [SerializeField] private DeckBuildingViewManager m_deckBuildingViewManager;
-        [SerializeField] private DeckDataSO m_deckDataSO;
+        [SerializeField] private DeckBuildingManager m_deckBuildingManager;
+        private DeckDataSO m_deckDataSO;
         
         [SerializeField] private DeckListItemView m_deckListItemPrefab;
         public Transform m_deckListItemParent;
@@ -18,6 +19,7 @@ namespace Minimax
 
         private void Start()
         {
+            m_deckDataSO = m_deckBuildingManager.DeckDataSO;
             m_deckDataSO.Init();
         }
 
@@ -28,7 +30,7 @@ namespace Minimax
             
             // Instantiate DeckListItemView
             var deckListItemView = Instantiate(m_deckListItemPrefab, m_deckListItemParent);
-            deckListItemView.Init(cardData, m_deckBuildingViewManager);
+            deckListItemView.Init(cardData, m_deckBuildingManager);
             m_deckListItemViews.Add(cardData.CardId, deckListItemView);
         }
         

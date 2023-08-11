@@ -351,51 +351,6 @@ MonoBehaviour:
   m_dbCardAssetsLabel:
     m_LabelString: Card
   m_onDBCardsLoadedEvent: {fileID: 11400000, guid: 61499e9197c615746819a05c32767b00, type: 2}
---- !u!1 &456166073
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 456166074}
-  - component: {fileID: 456166075}
-  m_Layer: 0
-  m_Name: CloudSaveManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &456166074
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 456166073}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1188867592}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &456166075
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 456166073}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 60968061f6f94be4592c3e2c10c633fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_deckDataSO: {fileID: 11400000, guid: 9f5f5045942c25241837f0c171551a3d, type: 2}
 --- !u!1001 &467938561
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -676,7 +631,7 @@ GameObject:
   - component: {fileID: 1128017438}
   - component: {fileID: 1128017439}
   m_Layer: 0
-  m_Name: DeckBuildingViewManager
+  m_Name: DeckBuildingManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -709,6 +664,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c4c15544a0612b4ca2146b39e977459, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_deckDataSO: {fileID: 11400000, guid: 9f5f5045942c25241837f0c171551a3d, type: 2}
   m_deckListView: {fileID: 1992409422}
   m_dbCardScrollView: {fileID: 1373307365}
   m_dbCardItemMenuView: {fileID: 1773104395}
@@ -776,7 +732,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 245802811}
-  - {fileID: 456166074}
   - {fileID: 1128017438}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -970,7 +925,7 @@ PrefabInstance:
     m_TransformParent: {fileID: 847141843}
     m_Modifications:
     - target: {fileID: 1676462830787558258, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
-      propertyPath: m_deckBuildingViewManager
+      propertyPath: m_deckBuildingManager
       value: 
       objectReference: {fileID: 1128017439}
     - target: {fileID: 3011675029708183018, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
@@ -978,7 +933,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3787212450148988866, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
-      propertyPath: m_deckBuildingViewManager
+      propertyPath: m_deckBuildingManager
       value: 
       objectReference: {fileID: 1128017439}
     - target: {fileID: 5323672796575200554, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
@@ -1074,17 +1029,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 245802812}
     - target: {fileID: 7498413572535272491, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
-      propertyPath: m_deckBuildingViewManager
+      propertyPath: m_deckBuildingManager
       value: 
       objectReference: {fileID: 1128017439}
     - target: {fileID: 8819720358616518818, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
-      propertyPath: m_deckBuildingViewManager
+      propertyPath: m_deckBuildingManager
       value: 
       objectReference: {fileID: 1128017439}
     - target: {fileID: 8923748656390131624, guid: 492faefea27f50d458bcfa9bc857e6e8, type: 3}
-      propertyPath: m_cloudSaveManager
+      propertyPath: m_deckBuildingManager
       value: 
-      objectReference: {fileID: 456166075}
+      objectReference: {fileID: 1128017439}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

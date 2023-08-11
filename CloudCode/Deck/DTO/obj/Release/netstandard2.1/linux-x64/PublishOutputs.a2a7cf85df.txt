@@ -1,0 +1,3 @@
+C:\Users\user\Desktop\Git\Builds\DTO\DTO.dll
+C:\Users\user\Desktop\Git\Builds\DTO\DTO.deps.json
+C:\Users\user\Desktop\Git\Builds\DTO\DTO.pdb

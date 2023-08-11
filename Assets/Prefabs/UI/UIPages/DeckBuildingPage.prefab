@@ -120,8 +120,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09c0011ac57a9e14a80b1a2232ce22f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_deckBuildingViewManager: {fileID: 0}
-  m_deckDataSO: {fileID: 11400000, guid: 9f5f5045942c25241837f0c171551a3d, type: 2}
+  m_deckBuildingManager: {fileID: 0}
   m_deckListItemPrefab: {fileID: 8307413881084571809, guid: 31a3f15f8c20d1248b9295261cc840c3, type: 3}
   m_deckListItemParent: {fileID: 5323672796575200554}
 --- !u!1 &1993976029530839820
@@ -1254,7 +1253,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7eb4e35942a1b114b8430a5f7ede7d19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_cloudSaveManager: {fileID: 0}
+  m_deckBuildingManager: {fileID: 0}
   m_exitAndSaveButton: {fileID: 3289962724591119266}
   m_exitWithoutSaveButton: {fileID: 7545832008186728413}
 --- !u!1 &5585413678976168233

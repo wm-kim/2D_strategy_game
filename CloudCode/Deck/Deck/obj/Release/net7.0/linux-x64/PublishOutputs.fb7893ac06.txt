@@ -1,0 +1,15 @@
+C:\Users\user\Desktop\Git\Builds\CloudCode\Deck.deps.json
+C:\Users\user\Desktop\Git\Builds\CloudCode\Deck.pdb
+C:\Users\user\Desktop\Git\Builds\CloudCode\DTO.pdb
+C:\Users\user\Desktop\Git\Builds\CloudCode\Unity.Services.CloudCode.Apis.dll
+C:\Users\user\Desktop\Git\Builds\CloudCode\Unity.Services.CloudCode.Core.dll
+C:\Users\user\Desktop\Git\Builds\CloudCode\Google.Protobuf.dll
+C:\Users\user\Desktop\Git\Builds\CloudCode\Grpc.Core.Api.dll
+C:\Users\user\Desktop\Git\Builds\CloudCode\Grpc.Net.Client.dll
+C:\Users\user\Desktop\Git\Builds\CloudCode\Grpc.Net.Common.dll
+C:\Users\user\Desktop\Git\Builds\CloudCode\JsonSubTypes.dll
+C:\Users\user\Desktop\Git\Builds\CloudCode\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\user\Desktop\Git\Builds\CloudCode\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\user\Desktop\Git\Builds\CloudCode\Newtonsoft.Json.dll
+C:\Users\user\Desktop\Git\Builds\CloudCode\DTO.dll
+C:\Users\user\Desktop\Git\Builds\CloudCode\Deck.dll

@@ -5,12 +5,13 @@ using Minimax.UI.View.ComponentViews;
 using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Serialization;
 
 namespace Minimax
 {
     public class DBCardScrollView : MonoBehaviour
     {
-        [SerializeField] private DeckBuildingViewManager m_deckBuildingViewManager;
+        [SerializeField] private DeckBuildingManager m_deckBuildingManager;
         [SerializeField] private CardDBManager m_cardDBManager;
         
         [Header("Card Prefab")]
@@ -33,7 +34,7 @@ namespace Minimax
             {
                 var cardData = m_cardDBManager.CardDB[i];
                 var dbCardItem = Instantiate(m_dbCardItemPrefab, m_dbCardItemParent).GetComponent<DBCardItemView>();
-                dbCardItem.Init(cardData, m_deckBuildingViewManager);
+                dbCardItem.Init(cardData, m_deckBuildingManager);
                 m_dbCardItems.Add(cardData.CardId, dbCardItem);
             }
         }

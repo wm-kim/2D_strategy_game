@@ -2,6 +2,7 @@ using Minimax.CoreSystems;
 using Minimax.Utilities;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
@@ -9,7 +10,7 @@ namespace Minimax.UI.View.ComponentViews
 {
     public class DBCardItemMenuView : StatefulUIView
     {
-        [SerializeField] private DeckBuildingViewManager m_deckBuildingViewManager;
+        [SerializeField] private DeckBuildingManager m_deckBuildingManager;
         
         [Header("Inner References")]
         [SerializeField] private RectTransform m_dbCardItemMenu = default;
@@ -28,20 +29,20 @@ namespace Minimax.UI.View.ComponentViews
         
         private void OnAddToDeckButtonClicked()
         {
-            m_deckBuildingViewManager.DeckListView.AddCardToDeckList(m_dbCardItem.CardData);
+            m_deckBuildingManager.DeckListView.AddCardToDeckList(m_dbCardItem.CardData);
             m_dbCardItem.SetButtonInteractable(false);
             StartHide();
         }
 
         protected override void Show(float transitionDuration = 0)
         {
-            m_dbCardItem = m_deckBuildingViewManager.SelectedDBCardItemView;
+            m_dbCardItem = m_deckBuildingManager.SelectedDBCardItemView;
             
             // Set Menu Position
             var dbCardItemTransform = m_dbCardItem.GetComponent<RectTransform>();
 
-            var boundaryRect = m_deckBuildingViewManager.DBCardScrollView.GetComponent<RectTransform>().GetWorldRect();
-            var boundaryPos = m_deckBuildingViewManager.DBCardScrollView.transform.position;
+            var boundaryRect = m_deckBuildingManager.DBCardScrollView.GetComponent<RectTransform>().GetWorldRect();
+            var boundaryPos = m_deckBuildingManager.DBCardScrollView.transform.position;
             
             var dbCardItemPos = dbCardItemTransform.position;
             var dbCardItemRect = dbCardItemTransform.GetWorldRect();

@@ -1,0 +1,15 @@
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\Deck.deps.json
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\Deck.pdb
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\DTO.pdb
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\Unity.Services.CloudCode.Apis.dll
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\Unity.Services.CloudCode.Core.dll
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\Google.Protobuf.dll
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\Grpc.Core.Api.dll
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\Grpc.Net.Client.dll
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\Grpc.Net.Common.dll
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\JsonSubTypes.dll
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\Newtonsoft.Json.dll
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\DTO.dll
+C:\Users\user\RiderProjects\Deck\Deck\bin\Release\net7.0\linux-x64\publish\Deck.dll

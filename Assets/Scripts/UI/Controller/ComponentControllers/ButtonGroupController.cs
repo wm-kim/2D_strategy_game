@@ -52,7 +52,7 @@ namespace Minimax.UI.Controller
             Reset();
             if (m_buttonList.Count > 0) m_buttonList[0].Button.onClick.Invoke();
         }
-
+        
         private void ToggleActiveState(int index)
         {
             if (m_isMultipleSelection)
@@ -117,7 +117,7 @@ namespace Minimax.UI.Controller
         /// 그룹에 새로운 버튼을 동적으로 추가합니다.
         /// </summary>
         /// <param name="newButton">추가할 새 버튼입니다</param>
-        public void AddButton(ButtonView newButton)
+        public void AddButtonView(ButtonView newButton)
         {
             // 버튼을 목록에 추가합니다.
             m_buttonList.Add(newButton);
@@ -133,7 +133,7 @@ namespace Minimax.UI.Controller
         /// 그룹에서 버튼을 동적으로 제거합니다.
         /// </summary>
         /// <param name="buttonToRemove">제거할 버튼입니다.</param>
-        public void RemoveButton(ButtonView buttonToRemove)
+        public void RemoveButtonView(ButtonView buttonToRemove)
         {
             if (!m_buttonList.Contains(buttonToRemove))
             {

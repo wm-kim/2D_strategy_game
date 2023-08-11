@@ -9,8 +9,6 @@ namespace Minimax.UnityGamingService.CloudSave
 {
     public static class CloudService
     {
-        
-        
         // 지정된 키로 데이터를 비동기적으로 로드하고 역직렬화합니다.
         public static async UniTask<T> Load<T>(string key)
         {

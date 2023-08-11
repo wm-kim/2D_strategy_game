@@ -1,13 +1,14 @@
 using Minimax.CoreSystems;
 using Minimax.UI.View.Popups;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Minimax.UI.Controller.PageControllers
 {
     public class DeckBuildingPageController : MonoBehaviour
     {
-        [SerializeField] private CloudSaveManager m_cloudSaveManager;
+        [SerializeField] private DeckBuildingManager m_deckBuildingManager;
         
         [Header("References")]
         [Space(10f)]
@@ -51,7 +52,7 @@ namespace Minimax.UI.Controller.PageControllers
         
         private void OnExitAndSavePressed()
         {
-            m_cloudSaveManager.SaveDeckToCloud();
+            m_deckBuildingManager.SaveDeckToCloud();
         }
     }
 }

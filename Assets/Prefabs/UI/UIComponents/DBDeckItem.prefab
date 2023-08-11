@@ -562,7 +562,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 0
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -602,6 +602,8 @@ MonoBehaviour:
   m_duration: 0
   m_deckNameText: {fileID: 5011489098173417662}
   m_menuCanvasGroup: {fileID: 3250292626107900281}
+  m_selectButton: {fileID: 1858804556024376578}
+  m_deleteButton: {fileID: 2233299448602929552}
   m_showAnimationSequencer: {fileID: 519933072652478219}
   m_hideAnimationSequencer: {fileID: 6646260650528611839}
 --- !u!1 &4390061762216848202

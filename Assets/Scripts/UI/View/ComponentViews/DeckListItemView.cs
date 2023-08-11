@@ -13,7 +13,7 @@ namespace Minimax
         [SerializeField] private Button m_button;
         [SerializeField] private TextMeshProUGUI m_cardDataText;
         
-        private DeckBuildingViewManager m_deckBuildingViewManager;
+        private DeckBuildingManager m_deckBuildingManager;
         private CardBaseData m_cardData;
         
         public CardBaseData CardData => m_cardData;
@@ -23,9 +23,9 @@ namespace Minimax
             m_button.onClick.AddListener(OnButtonClicked);
         }
 
-        public void Init(CardBaseData cardData, DeckBuildingViewManager deckBuildingViewManager)
+        public void Init(CardBaseData cardData, DeckBuildingManager deckBuildingManager)
         {
-            m_deckBuildingViewManager = deckBuildingViewManager;
+            m_deckBuildingManager = deckBuildingManager;
             m_cardData = cardData;
             SetView(cardData.CardId);
         }
@@ -37,8 +37,8 @@ namespace Minimax
 
         private void OnButtonClicked()
         {
-            m_deckBuildingViewManager.SelectedDeckListItemView = this;
-            m_deckBuildingViewManager.DeckListItemMenuView.StartShow();
+            m_deckBuildingManager.SelectedDeckListItemView = this;
+            m_deckBuildingManager.DeckListItemMenuView.StartShow();
         }
     }
 }

@@ -4,13 +4,14 @@ using Minimax.UI;
 using UnityEngine;
 using UnityEngine.UI;
 using Minimax.Utilities;
+using UnityEngine.Serialization;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Minimax.UI.View.ComponentViews
 {
     public class DeckListItemMenuView : StatefulUIView
     {
-        [SerializeField] private DeckBuildingViewManager m_deckBuildingViewManager;
+        [SerializeField] private DeckBuildingManager m_deckBuildingManager;
         
         [Header("Inner References")]
         [SerializeField] private RectTransform m_deckListItemMenu;
@@ -42,13 +43,13 @@ namespace Minimax.UI.View.ComponentViews
         protected override void Show(float transitionDuration = 0.0f)
         {
             // Cache deckListItemView to be used later for removing from deck list
-            m_deckListItemView = m_deckBuildingViewManager.SelectedDeckListItemView;
+            m_deckListItemView = m_deckBuildingManager.SelectedDeckListItemView;
             
             // Set Menu Position
             var deckListItemTransform = m_deckListItemView.GetComponent<RectTransform>();
 
-            var boundaryRect = m_deckBuildingViewManager.DeckListView.GetComponent<RectTransform>().GetWorldRect();
-            var boundaryPos = m_deckBuildingViewManager.DeckListView.transform.position;
+            var boundaryRect = m_deckBuildingManager.DeckListView.GetComponent<RectTransform>().GetWorldRect();
+            var boundaryPos = m_deckBuildingManager.DeckListView.transform.position;
             
             var deckListItemPos = deckListItemTransform.position;
             var deckListItemRect = deckListItemTransform.GetWorldRect();
@@ -80,10 +81,10 @@ namespace Minimax.UI.View.ComponentViews
         private void OnDeleteFromDeckButtonClicked()
         {
             var cardId = m_deckListItemView.CardData.CardId;
-            m_deckBuildingViewManager.DeckListView.RemoveCardFromDeckList(cardId);
+            m_deckBuildingManager.DeckListView.RemoveCardFromDeckList(cardId);
             StartHide();
          
-            m_deckBuildingViewManager.DBCardScrollView.SetDBCardItemViewInteractable(cardId, true);
+            m_deckBuildingManager.DBCardScrollView.SetDBCardItemViewInteractable(cardId, true);
         }
     }
 }
