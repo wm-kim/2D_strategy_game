@@ -18,9 +18,6 @@ namespace Minimax.CoreSystems
             new SerializedDictionary<PageNavigationType, PageNavigation>();
         [SerializeField, Range(0, 1)] private float m_pageTransitionDuration = 0.15f;
         
-        [Header("Listening to")]
-        [SerializeField] private IntEventSO m_switchNavigationEvent;
-
         private void Awake()
         {
             ResetNavigationCache();
@@ -29,13 +26,11 @@ namespace Minimax.CoreSystems
         private void OnEnable()
         {
             GlobalManagers.Instance.Input.OnBackButton += OnMobileBackButton;
-            m_switchNavigationEvent.OnEventRaised.AddListener(SwitchNavigation);
         }
         
         private void OnDisable()
         {
             GlobalManagers.Instance.Input.OnBackButton -= OnMobileBackButton;
-            m_switchNavigationEvent.OnEventRaised.RemoveListener(SwitchNavigation);
         }
         
         /// <summary>
@@ -55,7 +50,7 @@ namespace Minimax.CoreSystems
             }
         }
 
-        private void SwitchNavigation(int index)
+        public void SwitchNavigation(int index)
         {
             var navType = (PageNavigationType) index;
             if (m_currentNavigation != null && m_currentNavigation.NavigationType == navType) return;

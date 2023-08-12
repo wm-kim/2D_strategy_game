@@ -89,6 +89,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4554dcecefbb81b4080042d2f7053cae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_pageNavigationManager: {fileID: 0}
+  m_bottomButtonGroupController: {fileID: 1031239217047134236}
 --- !u!1 &6665516419305240987
 GameObject:
   m_ObjectHideFlags: 0
@@ -177,9 +179,6 @@ MonoBehaviour:
   - {fileID: 4778141568189720860}
   - {fileID: 8094491771738953978}
   m_activeIndices: 
-  OnButtonSelected: {fileID: 11400000, guid: bca736771c1d7bf43b9d59fb695f83be, type: 2}
-  OnButtonDeselected: {fileID: 0}
-  OnExceedMaxSelectNum: {fileID: 0}
 --- !u!1001 &803009612148508312
 PrefabInstance:
   m_ObjectHideFlags: 0

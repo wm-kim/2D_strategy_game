@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Minimax.CoreSystems;
 using Minimax.ScriptableObjects;
 using Minimax.UI.View.ComponentViews;
+using Minimax.UI.View.Popups;
 using Minimax.Utilities;
 using Unity.Services.CloudCode;
 using UnityEngine;
@@ -54,15 +55,16 @@ namespace Minimax
             try
             {
                 // Show a loading popup while we wait for the cloud code to finish
-                GlobalManagers.Instance.Popup.RegisterLoadingPopupToQueue("Saving Deck to Cloud");
+                using (new LoadingPopupContext("Saving Deck to Cloud"))
+                {
+                    // Call the function within the module and provide the parameters we defined in there
+                    await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "SaveDeckData",
+                        new Dictionary<string, object> { { "key", Define.DeckSaveKey }, { "value", deckJson } });
+                }
                 
-                // Call the function within the module and provide the parameters we defined in there
-                string result = await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "SaveDeckData",
-                    new Dictionary<string, object> { { "key", Define.DeckSaveKey }, { "value", deckJson } });
-                DebugWrapper.Log(result);
+                // Save deck name into player prefs
+                PlayerPrefs.SetString(Define.CurrentDeckSaveKey, deckDTO.Name);
                 
-                // Hide the loading popup and show a success popup
-                GlobalManagers.Instance.Popup.HideCurrentPopup();
                 GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.MenuScene);
             }
             catch (CloudCodeException exception)

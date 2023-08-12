@@ -486,7 +486,7 @@ MonoBehaviour:
   m_pageType: -1
   m_dbDeckItemViewPrefab: {fileID: 2294345178867385192, guid: 6f161e39e0e153946a6cd97f0d04bb9a, type: 3}
   m_contentTransform: {fileID: 4202286410112225262}
-  m_deckButtonGroupController: {fileID: 1714869352674705655}
+  m_deckButtonGroupController: {fileID: 4891958833338662613}
   m_currentDeckNameText: {fileID: 214918048448910340}
 --- !u!114 &4040792268512482236
 MonoBehaviour:
@@ -858,7 +858,7 @@ GameObject:
   - component: {fileID: 4202286410112225262}
   - component: {fileID: 7560061431904915785}
   - component: {fileID: 7904783879404331397}
-  - component: {fileID: 1714869352674705655}
+  - component: {fileID: 4891958833338662613}
   m_Layer: 0
   m_Name: Content
   m_TagString: Untagged
@@ -925,7 +925,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 2
---- !u!114 &1714869352674705655
+--- !u!114 &4891958833338662613
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -942,9 +942,6 @@ MonoBehaviour:
   m_maxSelectNum: 0
   m_buttonList: []
   m_activeIndices: 
-  OnButtonSelected: {fileID: 0}
-  OnButtonDeselected: {fileID: 0}
-  OnExceedMaxSelectNum: {fileID: 0}
 --- !u!1 &6463239526719813398
 GameObject:
   m_ObjectHideFlags: 0

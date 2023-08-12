@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Minimax.ScriptableObjects.Events;
 using Minimax.ScriptableObjects.Events.Primitives;
@@ -26,17 +27,17 @@ namespace Minimax.UI.Controller
         /// <summary>
         /// 버튼이 선택되었을 때 발생하는 이벤트
         /// </summary>
-        public IntEventSO OnButtonSelected; 
+        public Action<int> OnButtonSelected; 
 
         /// <summary>
         /// 버튼 선택이 해제되었을 때 발생하는 이벤트
         /// </summary>
-        public IntEventSO OnButtonDeselected;
+        public Action<int> OnButtonDeselected;
 
         /// <summary>
         /// 최대 선택 가능한 버튼 수를 초과했을 때 발생하는 이벤트
         /// </summary>
-        public VoidEventSO OnExceedMaxSelectNum;
+        public Action OnExceedMaxSelectNum;
 
         public void Awake()
         {
@@ -61,7 +62,7 @@ namespace Minimax.UI.Controller
                 if (m_maxSelectNum > 0 && m_activeIndices.Count >= m_maxSelectNum && !m_activeIndices.Contains(index))
                 {
                     // 최대 선택 가능한 버튼 수를 초과하면 OnExceedMaxSelectNum 이벤트 호출
-                    OnExceedMaxSelectNum?.RaiseEvent();
+                    OnExceedMaxSelectNum?.Invoke();
                     return;
                 }
 
@@ -71,7 +72,7 @@ namespace Minimax.UI.Controller
                 if (isActive)
                 {
                     m_activeIndices.Remove(index);
-                    OnButtonDeselected?.RaiseEvent(index);
+                    OnButtonDeselected?.Invoke(index);
                 }
                 else
                 {
@@ -92,7 +93,7 @@ namespace Minimax.UI.Controller
                 {
                     m_buttonList[m_activeIndices[0]].SetVisualActive(false);
                     m_buttonList[index].SetVisualActive(true);
-                    OnButtonDeselected?.RaiseEvent(m_activeIndices[0]);
+                    OnButtonDeselected?.Invoke(m_activeIndices[0]);
                     m_activeIndices[0] = index;
                 }
                 // 이미 선택된 버튼을 다시 선택했을 때
@@ -102,7 +103,7 @@ namespace Minimax.UI.Controller
                     if (m_isDeselectable)
                     {
                         m_buttonList[index].SetVisualActive(false);
-                        OnButtonDeselected?.RaiseEvent(index);
+                        OnButtonDeselected?.Invoke(index);
                         m_activeIndices.Clear();
                     }
                     return;
@@ -110,7 +111,7 @@ namespace Minimax.UI.Controller
             }
 
             // 선택된 버튼의 인덱스를 인자로 OnButtonSelected
-            OnButtonSelected?.RaiseEvent(index);
+            OnButtonSelected?.Invoke(index);
         }
         
         /// <summary>
@@ -137,7 +138,8 @@ namespace Minimax.UI.Controller
         {
             if (!m_buttonList.Contains(buttonToRemove))
             {
-                DebugWrapper.LogWarning("해당 버튼은 이 그룹에 포함되어 있지 않습니다.");
+                DebugWrapper.LogWarning($"ButtonGroupController.RemoveButtonView: " +
+                                        $"{buttonToRemove} is not in the list.");
                 return;
             }
 

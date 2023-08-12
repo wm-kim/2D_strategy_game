@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Minimax.UI.Controller;
 using Minimax.UnityGamingService.CloudSave;
 using Minimax.Utilities;
@@ -21,29 +23,38 @@ namespace Minimax.UI.View.Pages
         // Caching 
         private Dictionary<int, DeckDTO> m_decks;
         private Dictionary<int, DBDeckItemView> m_deckItemViews = new Dictionary<int, DBDeckItemView>();
-        
 
-        private void Start()
+        private async void Start()
         {
-            FetchDecksFromCloud();
+            // Set current deck name
+            if (PlayerPrefs.HasKey(Define.CurrentDeckSaveKey))
+                m_currentDeckNameText.text = PlayerPrefs.GetString(Define.CurrentDeckSaveKey);
+            else m_currentDeckNameText.text = "None";
+            
+            var loadDecks = await FetchDecksFromCloud();
+            if (loadDecks) InstantiateDeckItemView();
         }
         
-        private async void FetchDecksFromCloud()
+        private async UniTask<bool> FetchDecksFromCloud()
         {
             m_decks = await CloudService.Load<Dictionary<int, DeckDTO>>(Define.DeckSaveKey);
             if (m_decks == null)
             {
                 DebugWrapper.LogWarning("No deck data found.");
+                return false;
             }
-            else
+
+            return true;
+        }
+        
+        private void InstantiateDeckItemView()
+        {
+            foreach (var deck in m_decks)
             {
-                foreach (var deck in m_decks)
-                {
-                    var deckItemView = Instantiate(m_dbDeckItemViewPrefab, m_contentTransform);
-                    deckItemView.Init(deck.Value.Name, deck.Value.Id, this);
-                    m_deckButtonGroupController.AddButtonView(deckItemView);
-                    m_deckItemViews.Add(deck.Value.Id, deckItemView);
-                }
+                var deckItemView = Instantiate(m_dbDeckItemViewPrefab, m_contentTransform);
+                deckItemView.Init(deck.Value.Name, deck.Value.Id, this);
+                m_deckButtonGroupController.AddButtonView(deckItemView);
+                m_deckItemViews.Add(deck.Value.Id, deckItemView);
             }
         }
         
@@ -56,11 +67,21 @@ namespace Minimax.UI.View.Pages
         
         public void RemoveDeck(int deckId)
         {
+            m_deckButtonGroupController.RemoveButtonView(m_deckItemViews[deckId]);
             Destroy(m_deckItemViews[deckId].gameObject);
             m_deckItemViews.Remove(deckId);
             m_decks.Remove(deckId);
         }
         
-        public void Reset() => m_deckButtonGroupController.Reset();
+        public void ResetDBDeckItem() => m_deckButtonGroupController.Reset();
+        
+        /// <summary>
+        /// Set all selected button interactable into true
+        /// </summary>
+        public void ResetAllSelectedButton()
+        {
+            foreach (var deckItemView in m_deckItemViews)
+                deckItemView.Value.SelectButton.interactable = true;
+        }
     }
 }
