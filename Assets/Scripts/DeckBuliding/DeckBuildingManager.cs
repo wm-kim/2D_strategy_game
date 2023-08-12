@@ -19,11 +19,13 @@ namespace Minimax
         public DeckDataSO DeckDataSO => m_deckDataSO;
         
         [Header("View References")]
+        [SerializeField] private DeckListPanelView m_deckListPanelView;
         [SerializeField] private DeckListView m_deckListView;
         [SerializeField] private DBCardScrollView m_dbCardScrollView;
         [SerializeField] private DBCardItemMenuView m_dbCardItemMenuView;
         [SerializeField] private DeckListItemMenuView m_deckListItemMenuView;
         
+        public DeckListPanelView DeckListPanelView => m_deckListPanelView;
         public DeckListView DeckListView => m_deckListView;
         public DBCardScrollView DBCardScrollView => m_dbCardScrollView;
         public DBCardItemMenuView DBCardItemMenuView => m_dbCardItemMenuView;
@@ -43,14 +45,15 @@ namespace Minimax
             {
                 GlobalManagers.Instance.Popup.RegisterOneButtonPopupToQueue($"Deck must contain {k_requiredDeckSize} cards.", "OK",
                     () => GlobalManagers.Instance.Popup.HideCurrentPopup());
+                return;
             }
 
             // Serialize the deck to JSON
             var deckJson = Newtonsoft.Json.JsonConvert.SerializeObject(deckDTO);
-            DebugWrapper.Log(deckJson);
             
             try
             {
+                // Show a loading popup while we wait for the cloud code to finish
                 GlobalManagers.Instance.Popup.RegisterLoadingPopupToQueue("Saving Deck to Cloud");
                 
                 // Call the function within the module and provide the parameters we defined in there
@@ -58,6 +61,7 @@ namespace Minimax
                     new Dictionary<string, object> { { "key", Define.DeckSaveKey }, { "value", deckJson } });
                 DebugWrapper.Log(result);
                 
+                // Hide the loading popup and show a success popup
                 GlobalManagers.Instance.Popup.HideCurrentPopup();
                 GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.MenuScene);
             }

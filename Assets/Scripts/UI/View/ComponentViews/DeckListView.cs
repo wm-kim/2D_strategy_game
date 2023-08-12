@@ -1,15 +1,14 @@
-using System;
 using System.Collections.Generic;
 using Minimax.ScriptableObjects;
 using Minimax.ScriptableObjects.CardDatas;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Minimax
 {
     public class DeckListView : MonoBehaviour
     {
         [SerializeField] private DeckBuildingManager m_deckBuildingManager;
+
         private DeckDataSO m_deckDataSO;
         
         [SerializeField] private DeckListItemView m_deckListItemPrefab;
@@ -43,6 +42,7 @@ namespace Minimax
             Destroy(m_deckListItemViews[cardId].gameObject);
             m_deckListItemViews.Remove(cardId);
         }
+        
         
         private void UpdateListView()
         {

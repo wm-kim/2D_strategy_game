@@ -1,6 +1,7 @@
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Minimax.UI.View.ComponentViews
 {
@@ -9,6 +10,7 @@ namespace Minimax.UI.View.ComponentViews
         [Header("References")]
         [SerializeField] private CanvasGroup m_deckListBackground = default;
         [SerializeField] private RectTransform m_deckListPanel = default;
+        [SerializeField] private TextMeshProUGUI m_deckNameText;
         
         [Header("Animation")]
         [SerializeField, Range(0f, 1f)] private float m_animationDuration = 0.5f;
@@ -69,5 +71,7 @@ namespace Minimax.UI.View.ComponentViews
         
         // need this function to be removed from the event listener
         private void OnBackgroundClicked() => StartHide();
+        
+        public void SetDeckName(string deckName) => m_deckNameText.text = deckName;
     }
 }

@@ -1,8 +1,7 @@
 using Minimax.CoreSystems;
-using Minimax.UI.View.Popups;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
+using TMPro;
 
 namespace Minimax.UI.Controller.PageControllers
 {
@@ -14,18 +13,16 @@ namespace Minimax.UI.Controller.PageControllers
         [Space(10f)]
         [SerializeField] private Button m_exitAndSaveButton;
         [SerializeField] private Button m_exitWithoutSaveButton;
+        [SerializeField] private TMP_InputField m_deckNameInputField;
         
-        private void OnEnable()
+        private void Start()
         {
             m_exitAndSaveButton.onClick.AddListener(OnExitAndSavePressed);
             m_exitWithoutSaveButton.onClick.AddListener(OnExitWithoutSavePressed);
             GlobalManagers.Instance.Input.OnBackButton += OnBackButtonPressed;
-        }
-        
-        private void OnDisable()
-        {
-            m_exitWithoutSaveButton.onClick.RemoveListener(OnExitWithoutSavePressed);
-            GlobalManagers.Instance.Input.OnBackButton -= OnBackButtonPressed;
+            m_deckNameInputField.onValueChanged.AddListener(OnDeckNameChanged);
+            
+            m_deckNameInputField.text = "New Deck Name";
         }
         
         private void OnExitWithoutSavePressed()
@@ -53,6 +50,12 @@ namespace Minimax.UI.Controller.PageControllers
         private void OnExitAndSavePressed()
         {
             m_deckBuildingManager.SaveDeckToCloud();
+        }
+        
+        private void OnDeckNameChanged(string deckName)
+        {
+            m_deckBuildingManager.DeckDataSO.SetDeckName(deckName);
+            m_deckBuildingManager.DeckListPanelView.SetDeckName(deckName);
         }
     }
 }
