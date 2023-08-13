@@ -1,28 +1,22 @@
-using System;
 using Minimax.ScriptableObjects.CardDatas;
-using Minimax.UI.View.ComponentViews;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Minimax
+namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
-    public class DeckListItemView : MonoBehaviour
+    public class DBCardItemView : MonoBehaviour
     {
         [Header("Inner References")]
+        [Space(10f)]
         [SerializeField] private Button m_button;
         [SerializeField] private TextMeshProUGUI m_cardDataText;
-        
+
         private DeckBuildingManager m_deckBuildingManager;
         private CardBaseData m_cardData;
         
         public CardBaseData CardData => m_cardData;
-
-        private void Start()
-        {
-            m_button.onClick.AddListener(OnButtonClicked);
-        }
-
+        
         public void Init(CardBaseData cardData, DeckBuildingManager deckBuildingManager)
         {
             m_deckBuildingManager = deckBuildingManager;
@@ -34,11 +28,18 @@ namespace Minimax
         {
             m_cardDataText.text = $"Card ID : {cardId.ToString()}";
         }
-
+        
+        public void SetButtonInteractable(bool interactable) => m_button.interactable = interactable;
+      
+        private void Start()
+        {
+            m_button.onClick.AddListener(OnButtonClicked);
+        }
+        
         private void OnButtonClicked()
         {
-            m_deckBuildingManager.SelectedDeckListItemView = this;
-            m_deckBuildingManager.DeckListItemMenuView.StartShow();
+            m_deckBuildingManager.SelectedDBCardItemView = this;
+            m_deckBuildingManager.DBCardItemMenuView.StartShow();
         }
     }
 }

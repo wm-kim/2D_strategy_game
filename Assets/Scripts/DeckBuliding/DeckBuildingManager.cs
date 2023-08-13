@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using Minimax.CoreSystems;
 using Minimax.ScriptableObjects;
 using Minimax.UI.View.ComponentViews;
+using Minimax.UI.View.ComponentViews.DeckBuilding;
 using Minimax.UI.View.Popups;
 using Minimax.Utilities;
 using Unity.Services.CloudCode;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Minimax
 {
@@ -16,8 +18,8 @@ namespace Minimax
     public class DeckBuildingManager : MonoBehaviour
     {
         [Header("Model References")]
-        [SerializeField] private DeckDataSO m_deckDataSO;
-        public DeckDataSO DeckDataSO => m_deckDataSO;
+        [SerializeField] private DeckListSO m_deckListSO;
+        public DeckListSO DeckListSO => m_deckListSO;
         
         [Header("View References")]
         [SerializeField] private DeckListPanelView m_deckListPanelView;
@@ -39,7 +41,7 @@ namespace Minimax
         
         public async void SaveDeckToCloud()
         {
-            var deckDTO = m_deckDataSO.GetDeckDTO();
+            var deckDTO = m_deckListSO.GetDeckDTO();
             
             // Validate the deck in the client side before sending it to the cloud
             if (!ClientSideDeckValidation(deckDTO))
@@ -59,12 +61,12 @@ namespace Minimax
                 {
                     // Call the function within the module and provide the parameters we defined in there
                     await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "SaveDeckData",
-                        new Dictionary<string, object> { { "key", Define.DeckSaveKey }, { "value", deckJson } });
+                        new Dictionary<string, object> { { "key", Define.DeckCloudKey }, { "value", deckJson } });
                 }
                 
                 // Save deck name into player prefs
-                PlayerPrefs.SetString(Define.CurrentDeckSaveKey, deckDTO.Name);
-                
+                PlayerPrefs.SetString(Define.CurrentDeckNameCacheKey, deckDTO.Name);
+                GlobalManagers.Instance.Cache.SetNeedUpdate(Define.DeckDtoCollectionCacheKey);
                 GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.MenuScene);
             }
             catch (CloudCodeException exception)

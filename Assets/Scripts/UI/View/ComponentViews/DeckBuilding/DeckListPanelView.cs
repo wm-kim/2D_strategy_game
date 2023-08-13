@@ -1,9 +1,9 @@
 using DG.Tweening;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
-namespace Minimax.UI.View.ComponentViews
+namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DeckListPanelView : StatefulUIView
     {

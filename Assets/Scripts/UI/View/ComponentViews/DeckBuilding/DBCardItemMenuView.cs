@@ -2,11 +2,10 @@ using Minimax.CoreSystems;
 using Minimax.Utilities;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
-namespace Minimax.UI.View.ComponentViews
+namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DBCardItemMenuView : StatefulUIView
     {

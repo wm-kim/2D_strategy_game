@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Minimax.ScriptableObjects.Events;
-using Minimax.ScriptableObjects.Events.Primitives;
-using Minimax.UI.View;
 using Minimax.UI.View.ComponentViews;
 using Minimax.Utilities;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Minimax.UI.Controller
@@ -14,11 +12,16 @@ namespace Minimax.UI.Controller
         [SerializeField, Tooltip("다중 선택 모드 여부")]    
         private bool m_isMultipleSelection = false;
 
-        [SerializeField, Tooltip("단일 선택 모드에서 모든 선택지를 선택 해제 가능한지 여부")]
-        private bool m_isDeselectable = false;
-
+        [ShowIf("m_isMultipleSelection")]
         [SerializeField, Tooltip("다중 선택 모드에서 최대 선택 가능한 버튼 수")]
         private int m_maxSelectNum = 0;
+        
+        [HideIf("m_isMultipleSelection")]
+        [SerializeField, Tooltip("단일 선택 모드에서 모든 선택지를 선택 해제 가능한지 여부")]
+        private bool m_isDeselectable = false;
+        
+        [SerializeField, Tooltip("Start()에서 첫 번째 버튼을 선택할지 여부")]
+        private bool m_selectButtonOnStart = true;
         
         [SerializeField] private List<ButtonView> m_buttonList = new List<ButtonView>();
 
@@ -39,7 +42,7 @@ namespace Minimax.UI.Controller
         /// </summary>
         public Action OnExceedMaxSelectNum;
 
-        public void Awake()
+        public void Init()
         {
             for (int i = 0; i < m_buttonList.Count; i++)
             {
@@ -51,7 +54,8 @@ namespace Minimax.UI.Controller
         private void Start()
         {
             Reset();
-            if (m_buttonList.Count > 0) m_buttonList[0].Button.onClick.Invoke();
+            if (m_selectButtonOnStart && m_buttonList.Count > 0) 
+                m_buttonList[0].Button.onClick.Invoke();
         }
         
         private void ToggleActiveState(int index)

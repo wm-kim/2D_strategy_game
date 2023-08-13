@@ -484,6 +484,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_currentState: -1
   m_pageType: -1
+  m_deckCollectionSO: {fileID: 11400000, guid: 16c0c060878cda8488d5b9d31ebf920d, type: 2}
   m_dbDeckItemViewPrefab: {fileID: 2294345178867385192, guid: 6f161e39e0e153946a6cd97f0d04bb9a, type: 3}
   m_contentTransform: {fileID: 4202286410112225262}
   m_deckButtonGroupController: {fileID: 4891958833338662613}
@@ -940,6 +941,7 @@ MonoBehaviour:
   m_isMultipleSelection: 0
   m_isDeselectable: 1
   m_maxSelectNum: 0
+  m_selectButtonOnStart: 0
   m_buttonList: []
   m_activeIndices: 
 --- !u!1 &6463239526719813398

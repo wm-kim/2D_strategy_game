@@ -10,6 +10,7 @@ namespace Minimax.UI.Controller
         
         private void Awake()
         {
+            m_bottomButtonGroupController.Init();
             m_bottomButtonGroupController.OnButtonSelected += OnBottomButtonSelected;
         }
 

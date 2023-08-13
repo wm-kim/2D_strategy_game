@@ -1,7 +1,7 @@
 using Minimax.ScriptableObjects.Events.Primitives;
 using UnityEngine;
 
-namespace Minimax.UI.View.ComponentViews
+namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DraggingCardView : MonoBehaviour
     {

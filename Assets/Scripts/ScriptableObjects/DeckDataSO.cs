@@ -5,8 +5,8 @@ using UnityEngine;
 
 namespace Minimax.ScriptableObjects
 {
-    [CreateAssetMenu(fileName = "New Deck Data", menuName = "ScriptableObjects/DeckDataSO")]
-    public class DeckDataSO : ScriptableObject
+    [CreateAssetMenu(fileName = "New Deck Data", menuName = "ScriptableObjects/DeckListSO")]
+    public class DeckListSO : ScriptableObject
     {
         private string m_deckName = "New Deck Name";
         private Dictionary<int, CardBaseData> m_deckList  = new Dictionary<int, CardBaseData>();

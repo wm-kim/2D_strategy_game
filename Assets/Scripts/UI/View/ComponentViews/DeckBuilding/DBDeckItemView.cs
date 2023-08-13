@@ -1,17 +1,14 @@
-using System.Collections;
 using System.Collections.Generic;
 using BrunoMikoski.AnimationSequencer;
-using Minimax.UI.View;
-using Minimax.UI.View.ComponentViews;
 using Minimax.UI.View.Pages;
 using Minimax.UI.View.Popups;
 using Minimax.Utilities;
-using UnityEngine;
 using TMPro;
 using Unity.Services.CloudCode;
+using UnityEngine;
 using UnityEngine.UI;
 
-namespace Minimax
+namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     [RequireComponent(typeof(Button))]
     public class DBDeckItemView : ButtonView
@@ -31,6 +28,7 @@ namespace Minimax
         
         // Caching Deck Page View Reference for setting current deck name
         private DeckPageView m_deckPageView;
+        // Caching deck id for deleting deck
         private int m_deckId = -1;
         
         public void Init(string deckName, int deckId, DeckPageView deckPageView)
@@ -70,16 +68,16 @@ namespace Minimax
                 using (new LoadingPopupContext("Selecting Deck..."))
                 {
                     await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "SelectPlayerDeck",
-                        new Dictionary<string, object> { { "key", Define.CurrentDeckSaveKey }, { "value", m_deckId.ToString() } });
+                        new Dictionary<string, object> { { "key", Define.CurrentDeckIdCloudKey }, { "value", m_deckId.ToString() } });
                 }
                 
                 DebugWrapper.Log($"Deck Id : {m_deckId} is selected");
                 
-                m_deckPageView.CurrentDeckId = m_deckId;
                 m_deckPageView.SetCurrentDeckName(m_deckNameText.text);
                 
-                // save deck name to player prefs
-                PlayerPrefs.SetString(Define.CurrentDeckSaveKey, m_deckNameText.text);
+                // save deck name and Id to player prefs
+                PlayerPrefs.SetInt(Define.CurrentDeckIdCacheKey, m_deckId);
+                PlayerPrefs.SetString(Define.CurrentDeckNameCacheKey, m_deckNameText.text);
                 
                 m_deckPageView.ResetAllSelectedButton();
                 // Set select button interactable to false
@@ -101,18 +99,20 @@ namespace Minimax
                 using (new LoadingPopupContext("Deleting Deck..."))
                 {
                     await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "DeletePlayerDeck",
-                        new Dictionary<string, object> { { "key", Define.DeckSaveKey }, { "value", m_deckId.ToString() } });
+                        new Dictionary<string, object> { { "key", Define.DeckCloudKey }, { "value", m_deckId.ToString() } });
                 }
                 
                 DebugWrapper.Log($"Deck Id : {m_deckId} is deleted");
                 
                 m_deckPageView.RemoveDeck(m_deckId);
                 
-                if (m_deckPageView.CurrentDeckId == m_deckId)
+                if (m_deckId == PlayerPrefs.GetInt(Define.CurrentDeckIdCacheKey))
                 {
-                    m_deckPageView.CurrentDeckId = -1;
                     m_deckPageView.SetCurrentDeckName("None");
-                    PlayerPrefs.SetString(Define.CurrentDeckSaveKey, "None");
+                    
+                    // save deck name and Id to player prefs    
+                    PlayerPrefs.SetInt(Define.CurrentDeckIdCacheKey, -1);
+                    PlayerPrefs.SetString(Define.CurrentDeckNameCacheKey, "None");
                 }
             }
             catch (CloudCodeException exception)

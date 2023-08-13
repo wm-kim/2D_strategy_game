@@ -1,5 +1,7 @@
 using System;
 using AYellowpaper.SerializedCollections;
+using Cysharp.Threading.Tasks;
+using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.CoreSystems
@@ -15,103 +17,118 @@ namespace Minimax.CoreSystems
         // 각 캐시 오브젝트를 관리하기 위한 딕셔너리
         [SerializeField, ReadOnly]
         private SerializedDictionary<string, CacheObject> cacheObjects = new SerializedDictionary<string, CacheObject>();
+        
+        /// <summary>
+        /// 캐시 오브젝트가 등록되어 있는지 여부를 반환합니다.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        private bool CheckHasKey(string key)
+        {
+            if (string.IsNullOrEmpty(key))  throw new ArgumentNullException(nameof(key), "키는 null일 수 없습니다.");
+            bool hasKey = cacheObjects.ContainsKey(key);
+            if (!hasKey) DebugWrapper.LogWarning($"캐시 오브젝트 키 {key}가 존재하지 않습니다.");
+            return hasKey;
+        }
 
         /// <summary>
-        /// 캐시 오브젝트를 등록하고 초기화합니다.
+        /// 동기 캐시 오브젝트를 등록하거나 이미 등록된 캐시 오브젝트를 반환합니다.
         /// </summary>
         /// <param name="key">캐시 오브젝트의 키</param>
         /// <param name="onLoadAction">캐시 오브젝트의 데이터 로드 액션</param>
-        public void RegisterCacheObject(string key, Action onLoadAction)
+        /// <param name="onLoadCompleted">캐시 오브젝트가 이미 로드되어 있는 경우 수행할 액션</param>
+        public void Register(string key, Action onLoadAction, Action onLoadCompleted = null)
         {
-            if (!cacheObjects.TryGetValue(key, out CacheObject cacheObject))
+            if (!cacheObjects.ContainsKey(key))
             {
-                cacheObject = new CacheObject();
-                cacheObject.Initialize(onLoadAction);
+                var cacheObject = new CacheObject(onLoadAction, onLoadCompleted);
                 cacheObjects[key] = cacheObject;
             }
-            else
+        }
+        
+        /// <summary>
+        /// 동기 캐시 오브젝트를 등록하거나 이미 등록된 캐시 오브젝트를 반환합니다.
+        /// </summary>
+        /// <param name="key">캐시 오브젝트의 키</param>
+        /// <param name="onLoadAsyncAction">캐시 오브젝트의 데이터 비동기 로드 액션</param>
+        /// <param name="onLoadCompleted">캐시 오브젝트가 이미 로드되어 있는 경우 수행할 액션</param>
+        public void Register(string key, Func<UniTask> onLoadAsyncAction, Action onLoadCompleted = null)
+        {
+            if (!cacheObjects.ContainsKey(key))
             {
-                Debug.LogWarning($"{key} cache object already exists.");
+                var cacheObject = new CacheObject(onLoadAsyncAction, onLoadCompleted);
+                cacheObjects[key] = cacheObject;
             }
         }
         
         /// <summary>
         /// 등록된 캐시 오브젝트를 제거합니다.
         /// </summary>
-        /// <param name="key">제거할 캐시 오브젝트의 키</param>
-        private void UnregisterCacheObject(string key)
+        public void Unregister(string key)
         {
-            if (cacheObjects.TryGetValue(key, out CacheObject cacheObject))
+            if (CheckHasKey(key))
                 cacheObjects.Remove(key);
-            else
-            {
-                Debug.LogWarning($"cannot find {key} cache object.");
-            }
-        }
-
-        /// <summary>
-        /// 특정 캐시 오브젝트를 로드합니다.
-        /// </summary>
-        /// <param name="key">로드할 캐시 오브젝트의 키</param>
-        public void LoadCacheObject(string key)
-        {
-            if (cacheObjects.TryGetValue(key, out CacheObject cacheObject))
-            {
-                cacheObject.Load();
-            }
-            else
-            {
-                Debug.LogWarning($"cannot find {key} cache object.");
-            }
-        }
-
-        /// <summary>
-        /// 모든 캐시 오브젝트를 로드합니다.
-        /// </summary>
-        public void LoadAllCacheObjects()
-        {
-            foreach (var cacheObject in cacheObjects.Values)
-            {
-                cacheObject.Load();
-            }
         }
         
         /// <summary>
+        /// 캐시 데이터를 로드하거나 로드가 완료된 경우 수행할 액션을 업데이트합니다.
+        /// 보콩은 호출할 일이 없지만, multi-scene을 지원하기 위해 추가하였습니다.
+        /// Action이 scene에 종속된 reference를 가지고 있을 경우, 해당 scene이 unload되면 Action이 무효화됩니다.
+        /// </summary>
+        public void UpdateLoadAction(string key, Action onLoadAction)
+        {
+            if (CheckHasKey(key)) cacheObjects[key].UpdateLoadAction(onLoadAction);
+        }
+        
+        public void UpdateLoadAction(string key, Func<UniTask> onLoadAsyncAction)
+        {
+            if (CheckHasKey(key)) cacheObjects[key].UpdateLoadAction(onLoadAsyncAction);
+        }
+        
+        public void UpdateLoadCompletedAction(string key, Action onLoadCompleted)
+        {
+            if (CheckHasKey(key)) cacheObjects[key].UpdateLoadCompletedAction(onLoadCompleted);
+        }
+        
+        /// <summary>
+        /// 특정 캐시 오브젝트를 로드합니다.
+        /// </summary>
+        public void RequestLoad(string key)
+        {
+            DebugWrapper.Log($"RequestLoad {key}");
+            if (CheckHasKey(key))
+            {
+                if (cacheObjects[key].IsAsync) cacheObjects[key].RequestLoadAsync();
+                else cacheObjects[key].RequestLoad();
+            }
+        }
+
+        /// <summary>
         /// 특정 캐시 오브젝트의 업데이트 필요 상태를 표시합니다.
         /// </summary>
-        /// <param name="key">업데이트 필요 상태를 표시할 캐시 오브젝트의 키</param>
         public void SetNeedUpdate(string key)
         {
-            if (cacheObjects.TryGetValue(key, out CacheObject cacheObject))
+            if (CheckHasKey(key))
             {
-                cacheObject.SetNeedUpdate();
-            }
-            else
-            {
-                Debug.LogWarning($"cannot find {key} cache object.");
+                cacheObjects[key].SetNeedUpdate();
             }
         }
 
         /// <summary>
         /// 특정 캐시 오브젝트의 상태를 초기화합니다.
         /// </summary>
-        /// <param name="key">초기화할 캐시 오브젝트의 키</param>
-        public void ResetCacheObject(string key)
+        public void Reset(string key)
         {
-            if (cacheObjects.TryGetValue(key, out CacheObject cacheObject))
+            if (CheckHasKey(key))
             {
-                cacheObject.Reset();
-            }
-            else
-            {
-                Debug.LogWarning($"cannot find {key} cache object.");
+                cacheObjects[key].Reset();
             }
         }
 
         /// <summary>
         /// 모든 캐시 오브젝트의 상태를 초기화합니다.
         /// </summary>
-        public void ResetAllCacheObjects()
+        public void ResetAll()
         {
             foreach (var cacheObject in cacheObjects.Values)
             {

@@ -18,7 +18,7 @@ namespace Minimax.UI.Controller.PageControllers
         
         private void RequestLoadGamePlayScene()
         {
-            GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.GamePlayScene, true);
+            GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.GamePlayScene, false);
         }
     }
 }

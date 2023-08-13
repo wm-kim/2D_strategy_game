@@ -1,13 +1,8 @@
 using System.Collections.Generic;
-using Minimax.ScriptableObjects.CardDatas;
 using Minimax.ScriptableObjects.Events;
-using Minimax.UI.View.ComponentViews;
-using Minimax.Utilities;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
-using UnityEngine.Serialization;
 
-namespace Minimax
+namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DBCardScrollView : MonoBehaviour
     {

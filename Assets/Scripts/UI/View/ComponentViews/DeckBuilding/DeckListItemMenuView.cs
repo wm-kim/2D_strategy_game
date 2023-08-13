@@ -1,13 +1,10 @@
-using System;
 using Minimax.CoreSystems;
-using Minimax.UI;
+using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.UI;
-using Minimax.Utilities;
-using UnityEngine.Serialization;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
-namespace Minimax.UI.View.ComponentViews
+namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DeckListItemMenuView : StatefulUIView
     {

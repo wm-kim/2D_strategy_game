@@ -3,13 +3,13 @@ using Minimax.ScriptableObjects;
 using Minimax.ScriptableObjects.CardDatas;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DeckListView : MonoBehaviour
     {
         [SerializeField] private DeckBuildingManager m_deckBuildingManager;
 
-        private DeckDataSO m_deckDataSO;
+        private DeckListSO m_deckListSO;
         
         [SerializeField] private DeckListItemView m_deckListItemPrefab;
         public Transform m_deckListItemParent;
@@ -18,14 +18,14 @@ namespace Minimax
 
         private void Start()
         {
-            m_deckDataSO = m_deckBuildingManager.DeckDataSO;
-            m_deckDataSO.Init();
+            m_deckListSO = m_deckBuildingManager.DeckListSO;
+            m_deckListSO.Init();
         }
 
         public void AddCardToDeckList(CardBaseData cardData)
         {
-            if (m_deckDataSO.ContainsCard(cardData.CardId)) return;
-            m_deckDataSO.AddCard(cardData);
+            if (m_deckListSO.ContainsCard(cardData.CardId)) return;
+            m_deckListSO.AddCard(cardData);
             
             // Instantiate DeckListItemView
             var deckListItemView = Instantiate(m_deckListItemPrefab, m_deckListItemParent);
@@ -35,8 +35,8 @@ namespace Minimax
         
         public void RemoveCardFromDeckList(int cardId)
         {
-            if (!m_deckDataSO.ContainsCard(cardId)) return;
-            m_deckDataSO.RemoveCard(cardId);
+            if (!m_deckListSO.ContainsCard(cardId)) return;
+            m_deckListSO.RemoveCard(cardId);
             
             // Destroy DeckListItemView
             Destroy(m_deckListItemViews[cardId].gameObject);

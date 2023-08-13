@@ -54,7 +54,7 @@ namespace Minimax.UI.Controller.PageControllers
         
         private void OnDeckNameChanged(string deckName)
         {
-            m_deckBuildingManager.DeckDataSO.SetDeckName(deckName);
+            m_deckBuildingManager.DeckListSO.SetDeckName(deckName);
             m_deckBuildingManager.DeckListPanelView.SetDeckName(deckName);
         }
     }
