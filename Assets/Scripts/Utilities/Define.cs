@@ -12,5 +12,9 @@ namespace Minimax.Utilities
         public static readonly string CurrentDeckNameCacheKey = "currentDeckName";
         public static readonly string CurrentDeckIdCacheKey = "currentDeckId";
 #endregion
+
+#region GamePlay
+        public static readonly int MaxHandCardCount = 10;
+#endregion
     }
 }
