@@ -1,6 +1,7 @@
 using DG.Tweening;
 using Minimax.ScriptableObjects.Settings;
 using Minimax.UI.View.ComponentViews.GamePlay;
+using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -24,7 +25,7 @@ namespace Minimax.GamePlay.PlayerHand
         public ClientPlayerHandManager HandManager { get; private set; }
 
         // States
-        [ReadOnly]  private HandCardSlotState m_currentState;
+        [ReadOnly] private HandCardSlotState m_currentState;
         public DefaultState DefaultState { get; private set; }
         public HoverState HoverState { get; private set; }
         public DraggingState DraggingState { get; private set; }

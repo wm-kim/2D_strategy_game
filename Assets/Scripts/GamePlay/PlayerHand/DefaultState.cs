@@ -1,4 +1,5 @@
 using DG.Tweening;
+using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.GamePlay.PlayerHand
@@ -33,14 +34,16 @@ namespace Minimax.GamePlay.PlayerHand
 
         public override void OnPointerEnter()
         {
-            // if the card is not selected, then we can hover it
+            // if the card is not selected(not dragging), then we can hover it
             if (m_slot.HandManager.SelectedIndex == -1)
                 m_slot.ChangeState(m_slot.HoverState);
         }
 
         public override void OnPointerExit() { }
 
-        public override void OnPointerDown() { }
+        public override void OnPointerDown()
+        {
+        }
         
         public override void OnPointerUp() { }
     }

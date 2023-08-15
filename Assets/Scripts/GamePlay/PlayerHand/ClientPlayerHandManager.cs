@@ -45,6 +45,8 @@ namespace Minimax.GamePlay.PlayerHand
 
         public int CardCount => m_slotList.Count;
         public int HoveringIndex { get; set; } = -1;
+        
+        // SelectedIndex is set when the player drags a card
         public int SelectedIndex { get; set; } = -1;
 
         private void Awake()

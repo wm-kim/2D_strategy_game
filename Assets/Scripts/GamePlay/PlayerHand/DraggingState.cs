@@ -1,5 +1,6 @@
 using DG.Tweening;
 using Minimax.CoreSystems;
+using Minimax.Utilities;
 using UnityEngine;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
@@ -22,7 +23,7 @@ namespace Minimax.GamePlay.PlayerHand
         
         private void MoveCardViewToTouchPosition(Vector2 touchPosition, TouchPhase touchPhase)
         {
-            if (touchPhase == TouchPhase.Moved || touchPhase == TouchPhase.Began)
+            if (touchPhase is TouchPhase.Moved or TouchPhase.Began or TouchPhase.Stationary)
             {
                 Vector3 targetPosition = new Vector3(touchPosition.x, touchPosition.y, 0) 
                                          + (Vector3) m_slot.HandCardSlotSettings.DraggingOffset;
@@ -42,6 +43,11 @@ namespace Minimax.GamePlay.PlayerHand
                         m_slot.HandCardSlotSettings.DraggingTweenDuration);
                 }
             }
+            if (touchPhase == TouchPhase.Ended)
+            {
+                m_slot.HandManager.SelectedIndex = -1;
+                m_slot.ChangeState(m_slot.DefaultState);
+            }
         }
 
         public override void MoveCardView()
@@ -55,6 +61,7 @@ namespace Minimax.GamePlay.PlayerHand
 
         public override void OnPointerExit()
         {
+            
         }
 
         public override void OnPointerDown()
