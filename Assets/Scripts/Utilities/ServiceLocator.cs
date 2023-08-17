@@ -9,7 +9,7 @@ namespace Minimax.Utilities
         private IDictionary<Type, MonoBehaviour> m_services = new Dictionary<Type, MonoBehaviour>();
         private IDictionary<string, MonoBehaviour> m_namedServices = new Dictionary<string, MonoBehaviour>();
 
-        public void RegisterService<T>(T service, string serviceName = null) where T : MonoBehaviour
+        public void RegisterService<T>(T service, string serviceName) where T : MonoBehaviour
         {
             var type = typeof(T);
             if (!m_services.ContainsKey(type))
@@ -18,7 +18,7 @@ namespace Minimax.Utilities
             }
             else
             {
-                Debug.LogWarning($"Service of type {type} is already registered.");
+                DebugWrapper.LogWarning($"Service of type {type} is already registered.");
             }
             
             if (!string.IsNullOrEmpty(serviceName))
@@ -29,7 +29,7 @@ namespace Minimax.Utilities
                 }
                 else
                 {
-                    Debug.LogWarning($"Service of name {serviceName} is already registered.");
+                    DebugWrapper.LogWarning($"Service of name {serviceName} is already registered.");
                 }
             }
         }
@@ -43,7 +43,7 @@ namespace Minimax.Utilities
             }
             else
             {
-                Debug.LogError($"No service of type {type} is registered.");
+                DebugWrapper.LogError($"No service of type {type} is registered.");
                 return null;
             }
         }
@@ -56,35 +56,22 @@ namespace Minimax.Utilities
             }
             else
             {
-                Debug.LogError($"No service with name {serviceName} is registered.");
+                DebugWrapper.LogError($"No service with name {serviceName} is registered.");
                 return null;
-            }
-        }
-        
-        public void UnregisterService<T>() where T : MonoBehaviour
-        {
-            var type = typeof(T);
-            if (m_services.ContainsKey(type))
-            {
-                var service = m_services[type];
-                m_services.Remove(type);
-            }
-            else
-            {
-                Debug.LogWarning($"No service of type {type} is registered.");
             }
         }
         
         public void UnregisterService(string serviceName)
         {
-            if (m_namedServices.ContainsKey(serviceName))
+            if (m_namedServices.TryGetValue(serviceName, out var service))
             {
-                var service = m_namedServices[serviceName];
+                var type = service.GetType();
+                m_services.Remove(type);
                 m_namedServices.Remove(serviceName);
             }
             else
             {
-                Debug.LogWarning($"No service with name {serviceName} is registered.");
+                DebugWrapper.LogWarning($"No service with name {serviceName} is registered.");
             }
         }
     }

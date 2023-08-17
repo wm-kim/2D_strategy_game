@@ -10,6 +10,7 @@ namespace Minimax.GamePlay.PlayerHand
 
         public override void Enter()
         {
+            m_slot.HandManager.DeselectCard();
             m_slot.CardView.transform.SetParent(m_slot.transform);
         }
 
@@ -35,7 +36,7 @@ namespace Minimax.GamePlay.PlayerHand
         public override void OnPointerEnter()
         {
             // if the card is not selected(not dragging), then we can hover it
-            if (m_slot.HandManager.SelectedIndex == -1)
+            if (!m_slot.HandManager.IsSelecting)
                 m_slot.ChangeState(m_slot.HoverState);
         }
 

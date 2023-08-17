@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Minimax
 {
-    public class GamePlayOverlayController : MonoBehaviour
+    public class GamePlaySettingController : MonoBehaviour
     {
         [Header("References")]
         [SerializeField] private Button m_gamePlaySettingsButton;

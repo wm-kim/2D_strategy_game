@@ -157,7 +157,6 @@ namespace Minimax
                     
                     // 이전에 로드된 씬을 언로드합니다.
                     await SceneManager.UnloadSceneAsync(m_currentlyLoadedScene);
-                    DebugWrapper.Log($"Unloaded the {m_currentlyLoadedScene} scene.");
                 }
                 
                 // 네트워크를 통하지 않고 씬을 로드합니다.
@@ -169,8 +168,6 @@ namespace Minimax
         
         private void SceneLoadCompleted(string sceneToLoad)
         {
-            DebugWrapper.Log($"Loaded the {sceneToLoad} scene.");
-            
             m_currentlyLoadedScene = sceneToLoad;
              var activeScene = SceneManager.GetSceneByName(m_currentlyLoadedScene);
             // Set the loaded scene as the active scene

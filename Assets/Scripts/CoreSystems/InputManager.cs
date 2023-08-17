@@ -22,7 +22,7 @@ namespace Minimax.CoreSystems
         [Tooltip("Duration for touch to be considered as long touch")]
         private float m_longTouchThreshold = 1f;
         
-        public Action<Vector2, TouchPhase> OnTouch { get; set; }
+        public Action<EnhancedTouch.Touch> OnTouch { get; set; }
         public Action<Vector2> OnDoubleTouch { get; set; }
         public Action<Vector2> OnLongTouch { get; set; }
         public Action OnBackButton { get; set; }
@@ -92,7 +92,7 @@ namespace Minimax.CoreSystems
                 }
                 
                 SetTouchImagePosition(activeTouch.screenPosition);
-                OnTouch?.Invoke(activeTouch.screenPosition, activeTouch.phase);
+                OnTouch?.Invoke(activeTouch);
             }
             
             // mobile back button

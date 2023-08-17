@@ -44,10 +44,17 @@ namespace Minimax.GamePlay.PlayerHand
         private List<Quaternion> m_slotRotationList = new List<Quaternion>();
 
         public int CardCount => m_slotList.Count;
-        public int HoveringIndex { get; set; } = -1;
+        
+        private int m_hoveringIndex= -1;
+        public void HoverCard(int index) => m_hoveringIndex = index;
+        public void UnHoverCard() => m_hoveringIndex = -1;
+        public bool IsHovering => m_hoveringIndex != -1;
         
         // SelectedIndex is set when the player drags a card
-        public int SelectedIndex { get; set; } = -1;
+        private int m_selectedIndex = -1;
+        public void SelectCard(int index) => m_selectedIndex = index;
+        public void DeselectCard() => m_selectedIndex = -1;
+        public bool IsSelecting => m_selectedIndex != -1;
 
         private void Awake()
         {
@@ -183,8 +190,8 @@ namespace Minimax.GamePlay.PlayerHand
 
         public void HoverOffHoveringCard()
         {
-            if (HoveringIndex == -1) return;
-            m_slotList[HoveringIndex].HoverOff();
+            if (!IsHovering) return;
+            m_slotList[m_hoveringIndex].HoverOff();
         }
     }
 }

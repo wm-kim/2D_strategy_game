@@ -2,6 +2,7 @@ using Minimax.CoreSystems;
 using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.UI;
+using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Minimax.UI.View.ComponentViews.DeckBuilding
@@ -24,12 +25,12 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
             m_deleteFromDeckButton.onClick.AddListener(OnDeleteFromDeckButtonClicked);
         }
 
-        private void OnTouchOutside(Vector2 touchPosition, TouchPhase touchPhase)
+        private void OnTouchOutside(EnhancedTouch.Touch touch)
         {
             if (m_currentState == UIVisibleState.Appeared)
             {
-                bool isBeginOrMovedTouch = touchPhase == TouchPhase.Began || touchPhase == TouchPhase.Moved;
-                bool isOutsideCardDisplayMenu = !RectTransformUtility.RectangleContainsScreenPoint(m_deckListItemMenu, touchPosition);
+                bool isBeginOrMovedTouch = touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved;
+                bool isOutsideCardDisplayMenu = !RectTransformUtility.RectangleContainsScreenPoint(m_deckListItemMenu, touch.screenPosition);
                 if (isBeginOrMovedTouch && isOutsideCardDisplayMenu)
                 {
                     StartHide();

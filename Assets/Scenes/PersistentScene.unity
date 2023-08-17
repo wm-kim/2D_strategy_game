@@ -528,6 +528,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 5095178001822900288}
     m_Modifications:
+    - target: {fileID: 2292672094097220220, guid: 05a940bae651f6f449a12dae879b8610, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2453379407237355247, guid: 05a940bae651f6f449a12dae879b8610, type: 3}
       propertyPath: managedReferences[2306430448567058436].target
       value: 
@@ -4337,8 +4341,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 8184764731396324954}
   m_HandleRect: {fileID: 8294463037909126894}
   m_Direction: 2
-  m_Value: 1
-  m_Size: 0.9626613
+  m_Value: 0
+  m_Size: 0.96266145
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

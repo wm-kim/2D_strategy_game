@@ -1,7 +1,7 @@
 using DG.Tweening;
 using Minimax.CoreSystems;
-using Minimax.Utilities;
 using UnityEngine;
+using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Minimax.GamePlay.PlayerHand
@@ -12,7 +12,7 @@ namespace Minimax.GamePlay.PlayerHand
         
         public override void Enter()
         {
-            m_slot.HandManager.SelectedIndex = m_slot.Index;
+            m_slot.HandManager.SelectCard(m_slot.Index);
             GlobalManagers.Instance.Input.OnTouch += MoveCardViewToTouchPosition;
         }
 
@@ -21,11 +21,11 @@ namespace Minimax.GamePlay.PlayerHand
             GlobalManagers.Instance.Input.OnTouch -= MoveCardViewToTouchPosition;
         }
         
-        private void MoveCardViewToTouchPosition(Vector2 touchPosition, TouchPhase touchPhase)
+        private void MoveCardViewToTouchPosition(EnhancedTouch.Touch touch)
         {
-            if (touchPhase is TouchPhase.Moved or TouchPhase.Began or TouchPhase.Stationary)
+            if (touch.phase is TouchPhase.Moved or TouchPhase.Began or TouchPhase.Stationary)
             {
-                Vector3 targetPosition = new Vector3(touchPosition.x, touchPosition.y, 0) 
+                Vector3 targetPosition = new Vector3(touch.screenPosition.x, touch.screenPosition.y, 0) 
                                          + (Vector3) m_slot.HandCardSlotSettings.DraggingOffset;
 
                 if (Vector3.Distance(m_slot.CardView.transform.position, targetPosition) > m_positionThreshold)
@@ -43,9 +43,9 @@ namespace Minimax.GamePlay.PlayerHand
                         m_slot.HandCardSlotSettings.DraggingTweenDuration);
                 }
             }
-            if (touchPhase == TouchPhase.Ended)
+            if (touch.phase == TouchPhase.Ended)
             {
-                m_slot.HandManager.SelectedIndex = -1;
+                m_slot.HandManager.DeselectCard();
                 m_slot.ChangeState(m_slot.DefaultState);
             }
         }
@@ -70,7 +70,7 @@ namespace Minimax.GamePlay.PlayerHand
         
         public override void OnPointerUp()
         {
-            m_slot.HandManager.SelectedIndex = -1;
+            m_slot.HandManager.DeselectCard();
             m_slot.ChangeState(m_slot.DefaultState);
         }
     }

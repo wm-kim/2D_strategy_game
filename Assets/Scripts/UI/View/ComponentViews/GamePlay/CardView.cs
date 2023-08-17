@@ -1,4 +1,6 @@
+using System;
 using DG.Tweening;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace Minimax.UI.View.ComponentViews.GamePlay
@@ -14,6 +16,11 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
             PosTween?.Kill();
             RotTween?.Kill();
             ScaleTween?.Kill();
+        }
+
+        private void OnDestroy()
+        {
+            KillTweens();
         }
     }
 }

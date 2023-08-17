@@ -2,6 +2,7 @@ using DG.Tweening;
 using Minimax.CoreSystems;
 using Minimax.Utilities;
 using UnityEngine;
+using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Minimax.GamePlay.PlayerHand
@@ -28,7 +29,7 @@ namespace Minimax.GamePlay.PlayerHand
             
             // If there is a card currently being hovered, then we need to stop hovering it
             m_slot.HandManager.HoverOffHoveringCard();
-            m_slot.HandManager.HoveringIndex = m_slot.Index;
+            m_slot.HandManager.HoverCard(m_slot.Index);
 
             // Set the card view as the last sibling in its parent to render it on top of the other cards
             m_slot.CardView.transform.SetParent(m_slot.HandManager.transform);
@@ -41,16 +42,21 @@ namespace Minimax.GamePlay.PlayerHand
             inputManager.OnTouch -= CheckForSecondTouch;
             
             // Reset the hovering index
-            m_slot.HandManager.HoveringIndex = -1;
+            m_slot.HandManager.UnHoverCard();
         }
 
-        private void CheckForSecondTouch(Vector2 touchPosition, TouchPhase touchPhase)
+        private void CheckForSecondTouch(EnhancedTouch.Touch touch)
         {
-            DebugWrapper.Log($"Contact count: {m_contactCount}");
-            bool isTouchBegan = touchPhase == TouchPhase.Began;
             var cardViewRect = m_slot.CardView.GetComponent<RectTransform>();
-            bool isInsideCardDisplayMenu = RectTransformUtility.RectangleContainsScreenPoint(cardViewRect, touchPosition);
-            if (isTouchBegan && isInsideCardDisplayMenu)
+            bool isInsideCardDisplayMenu = RectTransformUtility.RectangleContainsScreenPoint(cardViewRect, touch.screenPosition);
+
+            if (!isInsideCardDisplayMenu)
+                return;
+
+            var currentSection = GlobalManagers.Instance.ServiceLocator.GetService<SectionDivider>().CurrentSection;
+            bool isTouchBegan = touch.phase == TouchPhase.Began;
+
+            if (isTouchBegan)
             {
                 if (m_contactCount >= 1)
                 {
@@ -61,7 +67,11 @@ namespace Minimax.GamePlay.PlayerHand
                     m_contactCount++;
                 }
             }
-            if (touchPhase == TouchPhase.Ended)
+            else if (touch.phase == TouchPhase.Moved && currentSection != SectionDivider.Section.MyHand)
+            {
+                m_slot.ChangeState(m_slot.DraggingState);
+            }
+            else if (touch.phase == TouchPhase.Ended)
             {
                 m_contactCount++;
             }
