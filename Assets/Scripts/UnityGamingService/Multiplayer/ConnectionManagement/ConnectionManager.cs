@@ -30,8 +30,6 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         [SerializeField] private VoidEventSO m_startHostEvent = default;
         [SerializeField] private VoidEventSO m_startClientEvent = default;
 
-        public int MaxConnectedPlayers { get; private set; } = 2;
-
         internal OfflineState Offline;
         internal StartingHostState StartingHost;
         internal HostingState Hosting;

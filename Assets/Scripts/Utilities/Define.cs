@@ -14,6 +14,7 @@ namespace Minimax.Utilities
 #endregion
 
 #region GamePlay
+        public static int MaxConnectedPlayers = 2;
         public static readonly int MaxHandCardCount = 10;
 #endregion
     }

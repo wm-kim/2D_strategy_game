@@ -1,3 +1,4 @@
+using Minimax.Utilities;
 using Newtonsoft.Json;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
@@ -69,7 +70,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         private ConnectStatus GetConnectStatus(ConnectionPayload connectionPayload)
         {
-            if (m_connectionManager.NetworkManager.ConnectedClientsIds.Count >= m_connectionManager.MaxConnectedPlayers)
+            if (m_connectionManager.NetworkManager.ConnectedClientsIds.Count >= Define.MaxConnectedPlayers)
             {
                 return ConnectStatus.ServerFull;
             }

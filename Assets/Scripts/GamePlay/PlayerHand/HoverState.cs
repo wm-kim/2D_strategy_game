@@ -51,7 +51,10 @@ namespace Minimax.GamePlay.PlayerHand
             bool isInsideCardDisplayMenu = RectTransformUtility.RectangleContainsScreenPoint(cardViewRect, touch.screenPosition);
 
             if (!isInsideCardDisplayMenu)
+            {
+                m_slot.ChangeState(m_slot.DefaultState);
                 return;
+            }
 
             var currentSection = GlobalManagers.Instance.ServiceLocator.GetService<SectionDivider>().CurrentSection;
             bool isTouchBegan = touch.phase == TouchPhase.Began;
