@@ -186,8 +186,8 @@ namespace Minimax
                 {
                     if (NetworkManager.IsClient)
                     {
-                        DebugWrapper.Log($"Loaded the {sceneEvent.SceneName} scene on " +
-                                         $"{clientOrServer}-({sceneEvent.ClientId}).");
+                        DebugWrapper.Instance.Log($"Loaded the {sceneEvent.SceneName} scene on " +
+                                                  $"{clientOrServer}-({sceneEvent.ClientId}).");
                     }
                     break;
                 }
@@ -197,8 +197,8 @@ namespace Minimax
                     var load = sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted ? "Load" : "Unload";
                     if (NetworkManager.IsClient)
                     {
-                        DebugWrapper.Log($"{load} {sceneEvent.SceneName} event completed for the following client " +
-                                         $"identifiers : ({string.Join(",", sceneEvent.ClientsThatCompleted)})");
+                        DebugWrapper.Instance.Log($"{load} {sceneEvent.SceneName} event completed for the following client " +
+                                                  $"identifiers : ({string.Join(",", sceneEvent.ClientsThatCompleted)})");
                         if (load == "Load") SceneLoadCompleted(sceneEvent.SceneName);
                         if (load == "Unload") m_unloadCompleted = true;
                     }
@@ -220,8 +220,8 @@ namespace Minimax
             var sceneEventAction = isLoading ? "load" : "unload";
             if (status != SceneEventProgressStatus.Started)
             {
-                DebugWrapper.LogWarning($"Failed to {sceneEventAction} {targetScene} with" +
-                                 $" a {nameof(SceneEventProgressStatus)}: {status}");
+                DebugWrapper.Instance.LogWarning($"Failed to {sceneEventAction} {targetScene} with" +
+                                                 $" a {nameof(SceneEventProgressStatus)}: {status}");
             }
         }
     }

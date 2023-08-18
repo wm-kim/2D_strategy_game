@@ -18,7 +18,7 @@ namespace Minimax.Utilities
             }
             else
             {
-                DebugWrapper.LogWarning($"Service of type {type} is already registered.");
+                DebugWrapper.Instance.LogWarning($"Service of type {type} is already registered.");
             }
             
             if (!string.IsNullOrEmpty(serviceName))
@@ -29,7 +29,7 @@ namespace Minimax.Utilities
                 }
                 else
                 {
-                    DebugWrapper.LogWarning($"Service of name {serviceName} is already registered.");
+                    DebugWrapper.Instance.LogWarning($"Service of name {serviceName} is already registered.");
                 }
             }
         }
@@ -43,7 +43,7 @@ namespace Minimax.Utilities
             }
             else
             {
-                DebugWrapper.LogError($"No service of type {type} is registered.");
+                DebugWrapper.Instance.LogError($"No service of type {type} is registered.");
                 return null;
             }
         }
@@ -56,7 +56,7 @@ namespace Minimax.Utilities
             }
             else
             {
-                DebugWrapper.LogError($"No service with name {serviceName} is registered.");
+                DebugWrapper.Instance.LogError($"No service with name {serviceName} is registered.");
                 return null;
             }
         }
@@ -71,7 +71,7 @@ namespace Minimax.Utilities
             }
             else
             {
-                DebugWrapper.LogWarning($"No service with name {serviceName} is registered.");
+                DebugWrapper.Instance.LogWarning($"No service with name {serviceName} is registered.");
             }
         }
     }

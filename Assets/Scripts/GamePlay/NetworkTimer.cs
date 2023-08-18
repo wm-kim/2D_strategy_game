@@ -33,7 +33,7 @@ namespace Minimax
         {
             m_countdownStarted.Value = true;
             m_timeTillZero = m_timeBeforeGameStarts;
-            DebugWrapper.Log($"Game Start in {m_timeBeforeGameStarts} seconds...");
+            DebugWrapper.Instance.Log($"Game Start in {m_timeBeforeGameStarts} seconds...");
         }
         
         [ServerRpc]
@@ -102,7 +102,7 @@ namespace Minimax
 
                     if (!m_hasGameStarted.Value)
                     {
-                        DebugWrapper.Log("Game Started");
+                        DebugWrapper.Instance.Log("Game Started");
                         m_hasGameStarted.Value = true;
                         StartTimerForNextTurnServerRpc();
                     }

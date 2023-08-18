@@ -31,7 +31,7 @@ namespace Minimax.ScriptableObjects.Events.Primitives
             if (OnEventRaised != null) OnEventRaised.Invoke(value);
             else
             {
-                DebugWrapper.LogWarning($"DataEventSO: " + name + " has no listeners!");
+                DebugWrapper.Instance.LogWarning($"DataEventSO: " + name + " has no listeners!");
             }
         }
     }

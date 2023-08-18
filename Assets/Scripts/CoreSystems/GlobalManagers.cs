@@ -13,6 +13,7 @@ namespace Minimax.CoreSystems
         [SerializeField] private PopupManager m_popupManager;
         [SerializeField] private SceneLoader m_sceneLoader;
         [SerializeField] private CacheManager m_cacheManager;
+        
         public InputManager Input => m_inputManager;
         public PopupManager Popup => m_popupManager;
         public SceneLoader Scene => m_sceneLoader;

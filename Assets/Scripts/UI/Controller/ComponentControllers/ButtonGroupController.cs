@@ -142,8 +142,8 @@ namespace Minimax.UI.Controller
         {
             if (!m_buttonList.Contains(buttonToRemove))
             {
-                DebugWrapper.LogWarning($"ButtonGroupController.RemoveButtonView: " +
-                                        $"{buttonToRemove} is not in the list.");
+                DebugWrapper.Instance.LogWarning($"ButtonGroupController.RemoveButtonView: " +
+                                                 $"{buttonToRemove} is not in the list.");
                 return;
             }
 

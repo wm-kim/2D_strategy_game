@@ -101,7 +101,7 @@ namespace Minimax.CoreSystems
         {
             if (m_popupQueue.Count == 0)
             {
-                DebugWrapper.LogWarning("Popup queue is empty");
+                DebugWrapper.Instance.LogWarning("Popup queue is empty");
                 return;
             }
             

@@ -23,7 +23,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         public override void OnClientDisconnect(ulong clientId)
         {
             var disconnectReason = m_connectionManager.NetworkManager.DisconnectReason;
-            DebugWrapper.Log("Client disconnected: " + disconnectReason);
+            DebugWrapper.Instance.Log("Client disconnected: " + disconnectReason);
             m_connectionManager.ChangeState(m_connectionManager.Offline);
         }
 
@@ -39,7 +39,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             
             if (!m_connectionManager.NetworkManager.StartClient())
             {
-                DebugWrapper.LogError("Failed to start client");
+                DebugWrapper.Instance.LogError("Failed to start client");
                 m_connectionManager.ChangeState(m_connectionManager.Offline);
             }
         }

@@ -14,8 +14,7 @@ namespace Minimax
         [Header("Addressable Assets")]
         public AssetLabelReference m_dbCardAssetsLabel;
 
-        [Header("Broadcasting on")] 
-        [SerializeField] private VoidEventSO m_onDBCardsLoadedEvent;
+        public Action OnDBCardsLoaded { get; set; }
         
         private Dictionary<int, CardBaseData> m_cardDB = new Dictionary<int, CardBaseData>();
         
@@ -24,7 +23,7 @@ namespace Minimax
         public CardBaseData GetCardData(int cardID)
         {
             if (m_cardDB.TryGetValue(cardID, out var data)) return data;
-            DebugWrapper.LogError($"CardDBManager: Card ID {cardID} not found in DB");
+            DebugWrapper.Instance.LogError($"CardDBManager: Card ID {cardID} not found in DB");
             return null;
         }
         
@@ -38,11 +37,11 @@ namespace Minimax
             if (obj.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
             {
                 foreach (var cardData in obj.Result) m_cardDB.Add(cardData.CardId, cardData);
-                m_onDBCardsLoadedEvent.RaiseEvent();
+                OnDBCardsLoaded?.Invoke();
             }
             else
             {
-                DebugWrapper.LogError("DBCardScrollView: Failed to load DB cards");
+                DebugWrapper.Instance.LogError("DBCardScrollView: Failed to load DB cards");
             }
         }
     }

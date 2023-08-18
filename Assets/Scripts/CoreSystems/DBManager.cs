@@ -31,12 +31,12 @@ namespace Minimax.CoreSystems
 
             if (dataSnapshot.Exists)
             {
-                DebugWrapper.Log($"Data read successfully from {path}");
+                DebugWrapper.Instance.Log($"Data read successfully from {path}");
                 return dataSnapshot;
             }
             else
             {
-                DebugWrapper.LogError($"No data exists at {path}");
+                DebugWrapper.Instance.LogError($"No data exists at {path}");
                 return null;
             }
         }
@@ -56,7 +56,7 @@ namespace Minimax.CoreSystems
                 .GetReference(path)
                 .SetRawJsonValueAsync(JsonConvert.SerializeObject(cardData));
 
-            DebugWrapper.Log($"Card data written successfully to {path}");
+            DebugWrapper.Instance.Log($"Card data written successfully to {path}");
         }
     }
 }

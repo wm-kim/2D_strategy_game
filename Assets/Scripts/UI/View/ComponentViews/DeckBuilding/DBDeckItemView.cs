@@ -71,7 +71,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
                         new Dictionary<string, object> { { "key", Define.CurrentDeckIdCloudKey }, { "value", m_deckId.ToString() } });
                 }
                 
-                DebugWrapper.Log($"Deck Id : {m_deckId} is selected");
+                DebugWrapper.Instance.Log($"Deck Id : {m_deckId} is selected");
                 
                 m_deckPageView.SetCurrentDeckName(m_deckNameText.text);
                 
@@ -85,7 +85,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
             }
             catch (CloudCodeException exception)
             {
-                DebugWrapper.LogError(exception.Message);
+                DebugWrapper.Instance.LogError(exception.Message);
             }
         }
         
@@ -102,7 +102,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
                         new Dictionary<string, object> { { "key", Define.DeckCloudKey }, { "value", m_deckId.ToString() } });
                 }
                 
-                DebugWrapper.Log($"Deck Id : {m_deckId} is deleted");
+                DebugWrapper.Instance.Log($"Deck Id : {m_deckId} is deleted");
                 
                 m_deckPageView.RemoveDeck(m_deckId);
                 
@@ -117,7 +117,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
             }
             catch (CloudCodeException exception)
             {
-                DebugWrapper.LogError(exception.Message);
+                DebugWrapper.Instance.LogError(exception.Message);
             }
         }
     }

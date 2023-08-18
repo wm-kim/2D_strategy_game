@@ -170,6 +170,61 @@ public class Class1
         }
     }
     
+    [CloudCodeFunction("GetPlayerDecks")]
+    public async Task<List<DeckDTO>> GetPlayerDecks(IExecutionContext context, IGameApiClient gameApiClient, List<string> playerIds)
+    {
+        try
+        {
+            // get the current deck id of each player
+            List<int> currentDeckIds = new List<int>();
+            foreach (var playerId in playerIds)
+            {
+                var currentDeckIdObject = await GetDataFromServer(context, gameApiClient, playerId, CurrentDeckSaveKey);
+                if (currentDeckIdObject == null)
+                {
+                    throw new Exception("No current deck id found for player " + playerId);
+                }
+                else
+                {
+                    int currentDeckId = JsonConvert.DeserializeObject<int>(currentDeckIdObject.ToString());
+                    currentDeckIds.Add(currentDeckId);
+                }
+            }
+            
+            // get the current decks of each player
+            List<DeckDTO> decksList = new List<DeckDTO>();
+            foreach (var playerId in playerIds)
+            {
+                var decksObject = await GetDataFromServer(context, gameApiClient, playerId, DeckSaveKey);
+                if (decksObject == null)
+                {
+                    throw new Exception("No decks found for player " + playerId);
+                }
+                else
+                {
+                    Dictionary<int, DeckDTO> decks = JsonConvert.DeserializeObject<Dictionary<int, DeckDTO>>(decksObject.ToString());
+                    // check if the deck exists
+                    
+                    var playerIdIndex = playerIds.IndexOf(playerId);
+                    if (!decks.ContainsKey(currentDeckIds[playerIdIndex]))
+                    {
+                        throw new Exception($"Deck {currentDeckIds[playerIdIndex]} not found for player {playerId}");
+                    }
+                    else
+                    {
+                        decksList.Add(decks[currentDeckIds[playerIdIndex]]);
+                    }
+                }
+            }
+            
+            return decksList;
+        }
+        catch (Exception e)
+        {
+            throw;
+        }
+    }
+    
     private bool IsValidDeckList(List<int> deckList) => deckList.Count is RequiredDeckSize;
     
     private int GetAvailableDeckId(Dictionary<int, DeckDTO> decks)
@@ -223,6 +278,22 @@ public class Class1
         try
         {
             var result = await gameApiClient.CloudSaveData.GetItemsAsync(context, context.AccessToken, context.ProjectId, context.PlayerId, new List<string> {key});
+            return result.Data.Results.FirstOrDefault()?.Value;
+        }
+        catch (ApiException ex)
+        {
+            throw;
+        }
+    }
+    
+    /// <summary>
+    /// Gets the player data from the server.
+    /// </summary>
+    private async Task<object?> GetDataFromServer(IExecutionContext context, IGameApiClient gameApiClient, string playerId, string key)
+    {
+        try
+        {
+            var result = await gameApiClient.CloudSaveData.GetItemsAsync(context, context.ServiceToken, context.ProjectId, playerId, new List<string> {key});
             return result.Data.Results.FirstOrDefault()?.Value;
         }
         catch (ApiException ex)

@@ -56,7 +56,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             
             if (!m_connectionManager.NetworkManager.StartHost())
             {
-                DebugWrapper.LogError("Failed to start host");
+                DebugWrapper.Instance.LogError("Failed to start host");
                 m_connectionManager.ChangeState(m_connectionManager.Offline);
             }
         }

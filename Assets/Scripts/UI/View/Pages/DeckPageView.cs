@@ -61,15 +61,15 @@ namespace Minimax.UI.View.Pages
 
         private async UniTask FetchDecksFromCloud()
         {
-            DebugWrapper.Log("Fetching decks from cloud...");
+            DebugWrapper.Instance.Log("Fetching decks from cloud...");
             var decks = await CloudService.Load<Dictionary<int, DeckDTO>>(Define.DeckCloudKey);
             if (decks == null || decks.Count == 0)
             {
-                DebugWrapper.LogWarning("No deck data found.");
+                DebugWrapper.Instance.LogWarning("No deck data found.");
             }
             else
             {
-                DebugWrapper.Log("Decks successfully fetched from cloud.");
+                DebugWrapper.Instance.Log("Decks successfully fetched from cloud.");
                 m_deckCollectionSO.Decks = decks;
             }
         }

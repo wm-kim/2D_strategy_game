@@ -74,7 +74,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public void ChangeState(ConnectionState nextState)
         {
-            DebugWrapper.Log(
+            DebugWrapper.Instance.Log(
                 $"{name}: Changed connection state from {m_currentState.GetType().Name} to {nextState.GetType().Name}.");
 
             if (m_currentState != null)

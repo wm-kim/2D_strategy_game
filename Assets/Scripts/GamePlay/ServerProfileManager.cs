@@ -70,7 +70,7 @@ namespace Minimax
             {
                 var playerData = sessionPlayerData.Value;
                 m_networkPlayerProfile.PlayerProfiles.Add(new NetworkPlayerProfile.PlayerProfileData(clientId, playerData.PlayerName));
-                DebugWrapper.Log($"Added new player profile for {clientId} with name {playerData.PlayerName}");
+                DebugWrapper.Instance.Log($"Added new player profile for {clientId} with name {playerData.PlayerName}");
             }
         }
         

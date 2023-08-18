@@ -22,7 +22,7 @@ namespace Minimax
             {
                 // Marks the current session as started, so from now on we keep the data of disconnected players.
                 SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
-                DebugWrapper.Log("Session started");
+                DebugWrapper.Instance.Log("Session started");
                 
                 m_turnManager.StartGameServerRpc();
                 

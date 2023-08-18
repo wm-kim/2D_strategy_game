@@ -13,14 +13,11 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
         public GameObject m_dbCardItemPrefab;
         public Transform m_dbCardItemParent;
         
-        [Header("Listening To")]
-        [SerializeField] private VoidEventSO m_onDBCardsLoadedEvent;
-        
         private Dictionary<int, DBCardItemView> m_dbCardItems = new Dictionary<int, DBCardItemView>();
 
         private void Start()
         {
-            m_onDBCardsLoadedEvent.OnEventRaised.AddListener(OnDBCardsLoaded);
+            m_cardDBManager.OnDBCardsLoaded += OnDBCardsLoaded;
         }
         
         private void OnDBCardsLoaded()
