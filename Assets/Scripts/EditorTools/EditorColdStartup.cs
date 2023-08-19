@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Minimax.CoreSystems;
+using Minimax.SceneManagement;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;

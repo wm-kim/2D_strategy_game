@@ -20,5 +20,10 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         {
             m_connectionManager.ChangeState(m_connectionManager.StartingHost);
         }
+        
+        public override void StartServer()
+        {
+            m_connectionManager.ChangeState(m_connectionManager.StartingServer);
+        }
     }
 }

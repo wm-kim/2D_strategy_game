@@ -1,3 +1,4 @@
+#if !DEDICATED_SERVER
 using Cysharp.Threading.Tasks;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
@@ -12,6 +13,7 @@ namespace Minimax.UnityGamingService.Multiplayer
 {
     public class GooglePlayAuthentication : MonoBehaviour
     {
+
         [SerializeField, ReadOnly] private string m_googlePlayToken;
         [SerializeField, ReadOnly] private  string m_googlePlayError;
 
@@ -123,3 +125,4 @@ namespace Minimax.UnityGamingService.Multiplayer
         }
     }
 }
+#endif

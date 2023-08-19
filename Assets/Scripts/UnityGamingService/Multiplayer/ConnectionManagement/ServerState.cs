@@ -1,18 +1,26 @@
+using Minimax.CoreSystems;
+using Minimax.SceneManagement;
 using Minimax.Utilities;
 using Newtonsoft.Json;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
+using Unity.Services.Multiplay;
 using UnityEngine;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
-    public class HostingState : OnlineState
+    public class ServerState : OnlineState
     {
-        public HostingState(ConnectionManager connectionManager) : base(connectionManager) { }
-        
-        public override void Enter()
+        public ServerState(ConnectionManager connectionManager) : base(connectionManager)
         {
-            
+        }
+
+        public override async void Enter()
+        {
+#if DEDICATED_SERVER
+            Debug.Log("Ready server for accepting players");
+            await MultiplayService.Instance.ReadyServerForPlayersAsync();
+#endif
         }
 
         public override void Exit()
@@ -20,7 +28,22 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             SessionManager<SessionPlayerData>.Instance.OnServerEnded();
         }
 
-        public override void OnClientConnected(ulong clientId) { }
+        public override void OnClientConnected(ulong clientId)
+        {
+            DebugWrapper.Instance.Log($"Client {clientId} connected");
+#if DEDICATED_SERVER
+            // check if server reached max players and if so, start the game
+            var currentScene = GlobalManagers.Instance.Scene.CurrentlyLoadedScene;
+            if (currentScene == SceneType.MenuScene.ToString())
+            {
+                if (!m_connectionManager.HasAvailablePlayerSlot())
+                {
+                    Debug.Log("Server reached max players, automatically starting game");
+                    GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.GamePlayScene, true);
+                }
+            }
+#endif
+        }
         
         public override void OnClientDisconnect(ulong clientId)
         {
@@ -32,8 +55,22 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                     SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
                 }
             }
+            
+#if DEDICATED_SERVER
+            // automatically shutdown if there are no more clients in the gameplay scene
+            var currentScene = GlobalManagers.Instance.Scene.CurrentlyLoadedScene;
+            if (currentScene == SceneType.GamePlayScene.ToString())
+            {
+                if (m_connectionManager.HasNoPlayerConnected())
+                {
+                    Debug.Log("No more clients in the gameplay scene, shutting down server");
+                    m_connectionManager.NetworkManager.Shutdown();
+                    Application.Quit();
+                }
+            }
+#endif
         }
-
+        
         public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request,
             NetworkManager.ConnectionApprovalResponse response)
         {
@@ -61,12 +98,11 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
             
             response.Approved = false;
+            DebugWrapper.Instance.Log($"Client {clientId} denied: {gameReturnStatus}");
             
             // If response.Approved is false, you can provide a message that explains the reason why via ConnectionApprovalResponse.
             // On the client-side, NetworkManager.DisconnectReason will be populated with this message via DisconnectReasonMessage
             response.Reason = JsonUtility.ToJson(gameReturnStatus);
         }
-
-       
     }
 }

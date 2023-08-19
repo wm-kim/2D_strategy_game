@@ -2,7 +2,7 @@ using Minimax.Utilities;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
-    public class ClientConnectedState : ConnectionState
+    public class ClientConnectedState : OnlineState
     {
         public ClientConnectedState(ConnectionManager connectionManager) : base(connectionManager) { }
         
@@ -14,7 +14,14 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         {
             var disconnectReason = m_connectionManager.NetworkManager.DisconnectReason;
             DebugWrapper.Instance.Log("Client disconnected: " + disconnectReason);
-            m_connectionManager.ChangeState(m_connectionManager.Offline);
+            if (string.IsNullOrEmpty(disconnectReason))
+            {
+                m_connectionManager.ChangeState(m_connectionManager.ClientReconnecting);
+            }
+            else
+            {
+                m_connectionManager.ChangeState(m_connectionManager.Offline);
+            }
         }
     }
    

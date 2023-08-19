@@ -1,7 +1,4 @@
 using System;
-using Minimax.ScriptableObjects.Events;
-using Minimax.ScriptableObjects.Events.Primitives;
-using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -96,7 +93,8 @@ namespace Minimax.CoreSystems
             }
             
             // mobile back button
-            if (Keyboard.current.escapeKey.wasPressedThisFrame) OnBackButton?.Invoke();
+            // null check for dedicated server
+            if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame) OnBackButton?.Invoke();
         }
     }
 }

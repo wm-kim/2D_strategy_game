@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.SceneManagement
 {
     public class SceneTypeSelector : MonoBehaviour
     {

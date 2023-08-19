@@ -1,5 +1,6 @@
 using System;
 using Minimax.CoreSystems;
+using Minimax.SceneManagement;
 using Minimax.ScriptableObjects.Events;
 using UnityEngine;
 using UnityEngine.UI;

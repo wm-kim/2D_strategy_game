@@ -1,10 +1,12 @@
+using System;
 using Minimax.Utilities;
 using Unity.Services.Authentication;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
-    public class ClientConnectingState : ConnectionState
+    public class ClientConnectingState : OnlineState
     {
         public ClientConnectingState(ConnectionManager connectionManager) : base(connectionManager) { }
 
@@ -27,7 +29,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             m_connectionManager.ChangeState(m_connectionManager.Offline);
         }
 
-        private void ConnectClient()
+        protected void ConnectClient()
         {
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
@@ -36,11 +38,20 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             });
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
             m_connectionManager.NetworkManager.NetworkConfig.ConnectionData = payloadBytes;
-            
-            if (!m_connectionManager.NetworkManager.StartClient())
+
+            try
             {
-                DebugWrapper.Instance.LogError("Failed to start client");
-                m_connectionManager.ChangeState(m_connectionManager.Offline);
+                if (!m_connectionManager.NetworkManager.StartClient())
+                {
+                    DebugWrapper.Instance.LogError("NetworkManager Failed to start client");
+                    m_connectionManager.ChangeState(m_connectionManager.Offline);
+                }
+            }
+            catch (Exception e)
+            {
+                DebugWrapper.Instance.LogError("Error connecting client, see following exception");
+                DebugWrapper.Instance.LogException(e);
+                throw;
             }
         }
     }

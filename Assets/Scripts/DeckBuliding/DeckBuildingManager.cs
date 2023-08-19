@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Minimax.CoreSystems;
+using Minimax.SceneManagement;
 using Minimax.ScriptableObjects;
 using Minimax.UI.View.ComponentViews;
 using Minimax.UI.View.ComponentViews.DeckBuilding;

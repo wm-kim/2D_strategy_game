@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
-    public class StartingHostState : ConnectionState
+    public class StartingHostState : OnlineState
     {
         public StartingHostState(ConnectionManager connectionManager) : base(connectionManager) { }
         

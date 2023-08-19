@@ -15,9 +15,10 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
         
         private Dictionary<int, DBCardItemView> m_dbCardItems = new Dictionary<int, DBCardItemView>();
 
-        private void Start()
+        private async void Start()
         {
-            m_cardDBManager.OnDBCardsLoaded += OnDBCardsLoaded;
+            bool isDBLoaded = await m_cardDBManager.LoadDBCardsAsync();
+            if (isDBLoaded) OnDBCardsLoaded();
         }
         
         private void OnDBCardsLoaded()

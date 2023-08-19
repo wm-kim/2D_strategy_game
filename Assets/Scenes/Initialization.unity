@@ -167,9 +167,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1b816df63aa7402a9f46f00538f866da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_mainScene: 2
-  m_gamePlayScene: 4
-  m_loadSceneEvent: {fileID: 11400000, guid: 82184ca721492e748b0933d714756021, type: 2}
+  m_clientStartScene: 2
+  m_serverStartScene: 3
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

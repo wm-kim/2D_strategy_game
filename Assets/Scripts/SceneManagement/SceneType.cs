@@ -1,4 +1,4 @@
-namespace Minimax
+namespace Minimax.SceneManagement
 {
     public enum SceneType
     {

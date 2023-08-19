@@ -1,14 +1,11 @@
-using System;
 using BrunoMikoski.AnimationSequencer;
 using Cysharp.Threading.Tasks;
-using Minimax.ScriptableObjects.Events;
-using Minimax.ScriptableObjects.Events.Primitives;
 using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Minimax
+namespace Minimax.SceneManagement
 {
     /// <summary>
     /// Wrapper class for loading scenes, shows a loading screen while loading.
@@ -24,6 +21,7 @@ namespace Minimax
 
         [SerializeField, ReadOnly] string m_sceneToLoad;
         [SerializeField, ReadOnly] string m_currentlyLoadedScene;
+        public string CurrentlyLoadedScene => m_currentlyLoadedScene;
         
         private NetworkManager m_netManager => NetworkManager.Singleton;
         private bool m_isInitialized = false;
@@ -76,7 +74,7 @@ namespace Minimax
                         NetworkManager.SceneManager.VerifySceneBeforeUnloading = ServerSideUnLoadSceneValidation;
                         NetworkManager.SceneManager.SetClientSynchronizationMode(LoadSceneMode.Additive);
                     }
-                    else if (NetworkManager.IsClient)
+                    else
                     {
                         NetworkManager.SceneManager.PostSynchronizationSceneUnloading = true;
                     }
@@ -199,9 +197,9 @@ namespace Minimax
                     {
                         DebugWrapper.Instance.Log($"{load} {sceneEvent.SceneName} event completed for the following client " +
                                                   $"identifiers : ({string.Join(",", sceneEvent.ClientsThatCompleted)})");
-                        if (load == "Load") SceneLoadCompleted(sceneEvent.SceneName);
-                        if (load == "Unload") m_unloadCompleted = true;
                     }
+                    if (load == "Load") SceneLoadCompleted(sceneEvent.SceneName);
+                    if (load == "Unload") m_unloadCompleted = true;
                     break;
                 }
             }

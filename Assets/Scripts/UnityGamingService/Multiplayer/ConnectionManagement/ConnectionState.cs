@@ -19,8 +19,14 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         
         public virtual void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response) { }
         
+        public virtual void OnTransportFailure() { }
+        
+        public virtual void OnUserRequestedShutdown() { }
+        
         public virtual void StartClient() { }
         
         public virtual void StartHost() { }
+        
+        public virtual void StartServer() { }
     }
 }

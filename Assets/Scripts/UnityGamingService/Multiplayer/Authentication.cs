@@ -47,12 +47,12 @@ namespace Minimax.UnityGamingService.Multiplayer
                 }
                 
 #if UNITY_EDITOR
-                if (ClonesManager.IsClone()) options.SetProfile("clone");
-#endif
-
-#if !DEDICATED_SERVER
-                // Set the profile to a random number to separate players
-                // options.SetProfile(UnityEngine.Random.Range(0, 10000).ToString());
+                if (ClonesManager.IsClone())
+                {
+                    // Get the custom argument for this clone project.  
+                    string customArgument = ClonesManager.GetArgument();
+                    options.SetProfile(customArgument);
+                }
 #endif
                 await UnityServices.InitializeAsync(options);
                 DebugWrapper.Instance.Log(UnityServices.State.ToString());

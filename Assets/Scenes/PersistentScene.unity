@@ -2660,6 +2660,7 @@ MonoBehaviour:
   m_popupManager: {fileID: 9120744337750235838}
   m_sceneLoader: {fileID: 1674993025022459428}
   m_cacheManager: {fileID: 1884383719}
+  m_connectonManager: {fileID: 6432574738680464056}
 --- !u!114 &5661542680213629211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2941,6 +2942,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6914563128397495210, guid: 6b6151ffcbcb7464798072909c9b2d5f, type: 3}
   m_PrefabInstance: {fileID: 6386364610380876581}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &6432574738680464056 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8415751678572295376, guid: 6b6151ffcbcb7464798072909c9b2d5f, type: 3}
+  m_PrefabInstance: {fileID: 6386364610380876581}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e24350db18143c44991f1bcfcddc94ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6450526068170080003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4408,7 +4420,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 8294463037909126894}
   m_Direction: 2
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.96266145
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4983,7 +4995,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000076293945}
+  m_AnchoredPosition: {x: 0, y: 0.000045776367}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &8294627573717370934

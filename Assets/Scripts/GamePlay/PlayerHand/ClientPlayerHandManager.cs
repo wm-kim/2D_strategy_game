@@ -78,7 +78,7 @@ namespace Minimax.GamePlay.PlayerHand
             }
         }
 
-#region Test
+#if UNITY_EDITOR
         // For testing
         public InputAction m_inputAction;
 
@@ -105,7 +105,7 @@ namespace Minimax.GamePlay.PlayerHand
                 RemoveCard(3);
             }
         }
-#endregion
+#endif
 
         // 아직 덱이 구현이 안되어 있어서 임시로 만들어 놓은 함수
         public void AddCardFromDeck()
