@@ -24,7 +24,5 @@ namespace Minimax.CoreSystems
         public CacheManager Cache => m_cacheManager;
         public ConnectionManager Connection => m_connectonManager;
         public ServiceLocator ServiceLocator { get; private set; } = new ServiceLocator();
-        public MessageChannelManager MessageChannel { get; private set; } = new MessageChannelManager();
-        public NetworkedMessageChannelManager NetworkedMessageChannel { get; private set; } = new NetworkedMessageChannelManager();
     }
 }

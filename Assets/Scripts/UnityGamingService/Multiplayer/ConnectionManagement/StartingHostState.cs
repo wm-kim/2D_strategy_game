@@ -21,6 +21,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public override void OnServerStarted()
         {
+            m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.Success);
             m_connectionManager.ChangeState(m_connectionManager.Hosting);
         }
         

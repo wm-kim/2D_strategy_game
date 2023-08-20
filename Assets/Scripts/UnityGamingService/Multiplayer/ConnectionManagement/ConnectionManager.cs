@@ -14,8 +14,9 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
     {
         Undefined,
         Success,
-        ServerFull,         // can't join, server is already at capacity.
-        LoggedInAgain,      // logged in on a separate client, causing this one to be kicked out.
+        ServerFull,                 // can't join, server is already at capacity.
+        LoggedInAgain,              // logged in on a separate client, causing this one to be kicked out.
+        UserRequestedDisconnect,    // Intentional Disconnect triggered by the user.
     }
     
     [Serializable]
@@ -28,7 +29,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
     public class ConnectionManager : MonoBehaviour
     {
         public NetworkManager NetworkManager => NetworkManager.Singleton;
-        public IMessageChannel<ConnectStatus> ConnectStatusChannel { get; private set; } 
+        public IMessageChannel<ConnectStatus> ConnectStatusChannel { get; private set; } = new MessageChannel<ConnectStatus>();
         
         private ConnectionState m_currentState;
         internal OfflineState Offline;
@@ -39,7 +40,6 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         internal ClientConnectingState ClientConnecting;
         internal ClientReconnectingState ClientReconnecting;
         internal ClientConnectedState ClientConnected;
-        
         private Dictionary<ulong, ClientRpcParams> m_clientRpcParams = new Dictionary<ulong, ClientRpcParams>();
         
         private void Awake()
@@ -52,7 +52,6 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             ClientConnecting = new ClientConnectingState(this);
             ClientReconnecting = new ClientReconnectingState(this);
             ClientConnected = new ClientConnectedState(this);
-            ConnectStatusChannel = GlobalManagers.Instance.MessageChannel.RegisterMessageChannel<ConnectStatus>();
         }
 
         private void Start()
