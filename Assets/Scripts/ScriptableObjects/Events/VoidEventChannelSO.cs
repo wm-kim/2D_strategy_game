@@ -13,7 +13,7 @@ namespace Minimax.ScriptableObjects.Events
         {
             if (OnEventRaised != null)
             {
-                DebugWrapper.Instance.Log("VoidEventSO: " + name + " was raised.");
+                DebugWrapper.Log("VoidEventSO: " + name + " was raised.");
                 OnEventRaised.Invoke();
             }
         }

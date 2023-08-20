@@ -27,7 +27,7 @@ namespace Minimax.CoreSystems
         {
             if (string.IsNullOrEmpty(key))  throw new ArgumentNullException(nameof(key), "키는 null일 수 없습니다.");
             bool hasKey = cacheObjects.ContainsKey(key);
-            if (!hasKey) DebugWrapper.Instance.LogWarning($"캐시 오브젝트 키 {key}가 존재하지 않습니다.");
+            if (!hasKey) DebugWrapper.LogWarning($"캐시 오브젝트 키 {key}가 존재하지 않습니다.");
             return hasKey;
         }
 
@@ -95,7 +95,7 @@ namespace Minimax.CoreSystems
         /// </summary>
         public void RequestLoad(string key)
         {
-            DebugWrapper.Instance.Log($"RequestLoad {key}");
+            DebugWrapper.Log($"RequestLoad {key}");
             if (CheckHasKey(key))
             {
                 if (cacheObjects[key].IsAsync) cacheObjects[key].RequestLoadAsync();

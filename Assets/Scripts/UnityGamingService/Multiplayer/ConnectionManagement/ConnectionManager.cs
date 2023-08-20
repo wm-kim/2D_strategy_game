@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using Minimax.CoreSystems;
 using Minimax.ScriptableObjects.Events;
 using Minimax.Utilities;
+using Minimax.Utilities.PubSub;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
@@ -14,7 +16,6 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         Success,
         ServerFull,         // can't join, server is already at capacity.
         LoggedInAgain,      // logged in on a separate client, causing this one to be kicked out.
-        
     }
     
     [Serializable]
@@ -26,9 +27,10 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
     
     public class ConnectionManager : MonoBehaviour
     {
-        private ConnectionState m_currentState;
         public NetworkManager NetworkManager => NetworkManager.Singleton;
+        public IMessageChannel<ConnectStatus> ConnectStatusChannel { get; private set; } 
         
+        private ConnectionState m_currentState;
         internal OfflineState Offline;
         internal StartingHostState StartingHost;
         internal HostingState Hosting;
@@ -39,7 +41,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         internal ClientConnectedState ClientConnected;
         
         private Dictionary<ulong, ClientRpcParams> m_clientRpcParams = new Dictionary<ulong, ClientRpcParams>();
-
+        
         private void Awake()
         {
             Offline = new OfflineState(this);
@@ -50,6 +52,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             ClientConnecting = new ClientConnectingState(this);
             ClientReconnecting = new ClientReconnectingState(this);
             ClientConnected = new ClientConnectedState(this);
+            ConnectStatusChannel = GlobalManagers.Instance.MessageChannel.RegisterMessageChannel<ConnectStatus>();
         }
 
         private void Start()
@@ -60,7 +63,6 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             NetworkManager.OnServerStarted += OnServerStarted;
             NetworkManager.OnTransportFailure += OnTransportFailure;
             NetworkManager.ConnectionApprovalCallback += ApprovalCheck;
-            
         }
 
         private void OnDestroy()
@@ -77,7 +79,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public void ChangeState(ConnectionState nextState)
         {
-            DebugWrapper.Instance.Log(
+            DebugWrapper.Log(
                 $"{name}: Changed connection state from {m_currentState.GetType().Name} to {nextState.GetType().Name}.");
 
             if (m_currentState != null)

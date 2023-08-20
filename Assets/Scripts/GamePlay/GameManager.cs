@@ -15,7 +15,7 @@ namespace Minimax
     public class GameManager : NetworkBehaviour
     {
         [Header("References")]
-        [SerializeField] private TurnManager m_turnManager;
+        [SerializeField] private NetworkTimer m_networkTimer;
         [SerializeField] private ProfileManager m_profileManager;
         
         private NetworkManager m_networkManager => NetworkManager.Singleton;
@@ -35,10 +35,12 @@ namespace Minimax
             {
                 // Marks the current session as started, so from now on we keep the data of disconnected players.
                 SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
-                DebugWrapper.Instance.Log("Session started");
+                DebugWrapper.Log("Session started");
+                
+                // Cache the client rpc params for later use.
                 GlobalManagers.Instance.Connection.CacheClientRpcParams();
                 
-                m_turnManager.StartGameServerRpc();
+                m_networkTimer.SetTimer(10);
                 
                 m_networkManager.SceneManager.OnSceneEvent += GameManager_OnSceneEvent;
             }

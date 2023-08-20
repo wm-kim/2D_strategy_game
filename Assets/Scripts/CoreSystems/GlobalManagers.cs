@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using Minimax.SceneManagement;
 using Minimax.UnityGamingService.Multiplayer.ConnectionManagement;
 using Minimax.Utilities;
+using Minimax.Utilities.PubSub;
 using UnityEngine;
 
 namespace Minimax.CoreSystems
@@ -21,7 +23,8 @@ namespace Minimax.CoreSystems
         public SceneLoader Scene => m_sceneLoader;
         public CacheManager Cache => m_cacheManager;
         public ConnectionManager Connection => m_connectonManager;
-        
         public ServiceLocator ServiceLocator { get; private set; } = new ServiceLocator();
+        public MessageChannelManager MessageChannel { get; private set; } = new MessageChannelManager();
+        public NetworkedMessageChannelManager NetworkedMessageChannel { get; private set; } = new NetworkedMessageChannelManager();
     }
 }

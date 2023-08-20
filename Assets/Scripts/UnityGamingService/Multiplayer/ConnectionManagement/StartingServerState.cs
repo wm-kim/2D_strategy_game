@@ -23,7 +23,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         {
             if (!m_connectionManager.NetworkManager.StartServer())
             {
-                DebugWrapper.Instance.LogError("Failed to start server");
+                DebugWrapper.LogError("Failed to start server");
                 m_connectionManager.ChangeState(m_connectionManager.Offline);
             }
         }

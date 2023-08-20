@@ -19,7 +19,7 @@ namespace Minimax.ScriptableObjects
                     }
                     else if (assets.Length > 1)
                     {
-                        DebugWrapper.Instance.LogWarning("SingletonSO -> instance -> assets length is greater than 1 for type " + typeof(T).ToString() + ".");
+                        DebugWrapper.LogWarning("SingletonSO -> instance -> assets length is greater than 1 for type " + typeof(T).ToString() + ".");
                     }
                     m_instance = assets[0];
                 }

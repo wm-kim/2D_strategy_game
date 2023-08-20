@@ -25,7 +25,7 @@ namespace Minimax.ScriptableObjects
         {
             if (!m_deckList.ContainsKey(cardData.CardId))
                 m_deckList.Add(cardData.CardId, cardData);
-            else DebugWrapper.Instance.LogError("DeckDataSO: " + name + " already contains card " + cardData.CardId + ".");
+            else DebugWrapper.LogError("DeckDataSO: " + name + " already contains card " + cardData.CardId + ".");
         }
 
         public void RemoveCard(int cardId)

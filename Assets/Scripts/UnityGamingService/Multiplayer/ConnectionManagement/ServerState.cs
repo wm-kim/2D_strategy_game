@@ -30,7 +30,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public override void OnClientConnected(ulong clientId)
         {
-            DebugWrapper.Instance.Log($"Client {clientId} connected");
+            DebugWrapper.Log($"Client {clientId} connected");
 #if DEDICATED_SERVER
             // check if server reached max players and if so, start the game
             var currentScene = GlobalManagers.Instance.Scene.CurrentlyLoadedScene;
@@ -98,7 +98,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
             
             response.Approved = false;
-            DebugWrapper.Instance.Log($"Client {clientId} denied: {gameReturnStatus}");
+            DebugWrapper.Log($"Client {clientId} denied: {gameReturnStatus}");
             
             // If response.Approved is false, you can provide a message that explains the reason why via ConnectionApprovalResponse.
             // On the client-side, NetworkManager.DisconnectReason will be populated with this message via DisconnectReasonMessage

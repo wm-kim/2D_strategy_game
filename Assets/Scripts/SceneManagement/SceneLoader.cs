@@ -184,7 +184,7 @@ namespace Minimax.SceneManagement
                 {
                     if (NetworkManager.IsClient)
                     {
-                        DebugWrapper.Instance.Log($"Loaded the {sceneEvent.SceneName} scene on " +
+                        DebugWrapper.Log($"Loaded the {sceneEvent.SceneName} scene on " +
                                                   $"{clientOrServer}-({sceneEvent.ClientId}).");
                     }
                     break;
@@ -195,7 +195,7 @@ namespace Minimax.SceneManagement
                     var load = sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted ? "Load" : "Unload";
                     if (NetworkManager.IsClient)
                     {
-                        DebugWrapper.Instance.Log($"{load} {sceneEvent.SceneName} event completed for the following client " +
+                        DebugWrapper.Log($"{load} {sceneEvent.SceneName} event completed for the following client " +
                                                   $"identifiers : ({string.Join(",", sceneEvent.ClientsThatCompleted)})");
                     }
                     if (load == "Load") SceneLoadCompleted(sceneEvent.SceneName);
@@ -218,7 +218,7 @@ namespace Minimax.SceneManagement
             var sceneEventAction = isLoading ? "load" : "unload";
             if (status != SceneEventProgressStatus.Started)
             {
-                DebugWrapper.Instance.LogWarning($"Failed to {sceneEventAction} {targetScene} with" +
+                DebugWrapper.LogWarning($"Failed to {sceneEventAction} {targetScene} with" +
                                                  $" a {nameof(SceneEventProgressStatus)}: {status}");
             }
         }

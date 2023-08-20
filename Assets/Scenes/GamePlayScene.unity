@@ -1192,10 +1192,9 @@ GameObject:
   m_Component:
   - component: {fileID: 775888027}
   - component: {fileID: 775888028}
-  - component: {fileID: 775888030}
   - component: {fileID: 775888029}
   m_Layer: 0
-  m_Name: TurnManager
+  m_Name: NetworkTimer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1228,10 +1227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 439ff39e428b50d49af29c4c2364635f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_turnManager: {fileID: 775888030}
   m_timerText: {fileID: 849094558}
-  m_timeBeforeGameStarts: 3
-  m_timeForOneTurn: 15
 --- !u!114 &775888029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1252,21 +1248,6 @@ MonoBehaviour:
   SpawnWithObservers: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &775888030
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 775888026}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad641e644ea62f54db469462de929ffa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_networkTimer: {fileID: 775888028}
-  m_turnText: {fileID: 131533585}
-  m_endTurnButton: {fileID: 533317569}
 --- !u!1 &776263449
 GameObject:
   m_ObjectHideFlags: 0
@@ -3914,7 +3895,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca921673daea24043bad0fee1b386ff1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_turnManager: {fileID: 775888030}
+  m_networkTimer: {fileID: 775888028}
   m_profileManager: {fileID: 1800505021}
 --- !u!114 &2061959280
 MonoBehaviour:

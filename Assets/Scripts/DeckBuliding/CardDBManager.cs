@@ -21,7 +21,7 @@ namespace Minimax
         public CardBaseData GetCardData(int cardID)
         {
             if (m_cardDB.TryGetValue(cardID, out var data)) return data;
-            DebugWrapper.Instance.LogError($"CardDBManager: Card ID {cardID} not found in DB");
+            DebugWrapper.LogError($"CardDBManager: Card ID {cardID} not found in DB");
             return null;
         }
         
@@ -37,7 +37,7 @@ namespace Minimax
             }
             else
             {
-                DebugWrapper.Instance.LogError("CardDBManager: Failed to load DB cards");
+                DebugWrapper.LogError("CardDBManager: Failed to load DB cards");
                 return false;
             }
         }

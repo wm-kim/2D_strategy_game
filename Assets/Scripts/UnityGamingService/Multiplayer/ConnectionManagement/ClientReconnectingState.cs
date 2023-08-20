@@ -82,12 +82,12 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
             
             // 연결을 시도합니다.
-            DebugWrapper.Instance.Log("Attempting to reconnect to server...");
+            DebugWrapper.Log("Attempting to reconnect to server...");
             
             m_connectionManager.NetworkManager.Shutdown();
             // wait until NetworkManager completes shutting down
             yield return new WaitWhile(() => m_connectionManager.NetworkManager.ShutdownInProgress);
-            DebugWrapper.Instance.Log($"Reconnecting attempt {m_attempts + 1}/{Define.MaxReconnectionAttempts}...");
+            DebugWrapper.Log($"Reconnecting attempt {m_attempts + 1}/{Define.MaxReconnectionAttempts}...");
             
             // If first attempt, wait some time before attempting to reconnect to give time to services to update
             if (m_attempts == 0)

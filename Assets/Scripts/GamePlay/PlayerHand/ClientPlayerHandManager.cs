@@ -112,7 +112,7 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (CardCount >= Define.MaxHandCardCount)
             {
-                DebugWrapper.Instance.LogWarning("손패가 가득 찼습니다.");
+                DebugWrapper.LogWarning("손패가 가득 찼습니다.");
                 return;
             }
             

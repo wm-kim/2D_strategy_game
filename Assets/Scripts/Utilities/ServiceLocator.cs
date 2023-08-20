@@ -4,6 +4,12 @@ using UnityEngine;
 
 namespace Minimax.Utilities
 {
+    /// <summary>
+    /// For locating and referencing services.
+    /// This is useful when there is a class that is not a MonoBehaviour but needs to reference a MonoBehaviour.
+    /// This could be done by using dependency injection but I don't want to overcomplicate things.
+    /// Also could be done by using a singleton pattern but It is not a good practice to make unnecessary singletons.
+    /// </summary>
     public class ServiceLocator
     {
         private IDictionary<Type, MonoBehaviour> m_services = new Dictionary<Type, MonoBehaviour>();
@@ -18,7 +24,7 @@ namespace Minimax.Utilities
             }
             else
             {
-                DebugWrapper.Instance.LogWarning($"Service of type {type} is already registered.");
+                DebugWrapper.LogWarning($"Service of type {type} is already registered.");
             }
             
             if (!string.IsNullOrEmpty(serviceName))
@@ -29,7 +35,7 @@ namespace Minimax.Utilities
                 }
                 else
                 {
-                    DebugWrapper.Instance.LogWarning($"Service of name {serviceName} is already registered.");
+                    DebugWrapper.LogWarning($"Service of name {serviceName} is already registered.");
                 }
             }
         }
@@ -43,7 +49,7 @@ namespace Minimax.Utilities
             }
             else
             {
-                DebugWrapper.Instance.LogError($"No service of type {type} is registered.");
+                DebugWrapper.LogError($"No service of type {type} is registered.");
                 return null;
             }
         }
@@ -56,7 +62,7 @@ namespace Minimax.Utilities
             }
             else
             {
-                DebugWrapper.Instance.LogError($"No service with name {serviceName} is registered.");
+                DebugWrapper.LogError($"No service with name {serviceName} is registered.");
                 return null;
             }
         }
@@ -71,7 +77,7 @@ namespace Minimax.Utilities
             }
             else
             {
-                DebugWrapper.Instance.LogWarning($"No service with name {serviceName} is registered.");
+                DebugWrapper.LogWarning($"No service with name {serviceName} is registered.");
             }
         }
     }

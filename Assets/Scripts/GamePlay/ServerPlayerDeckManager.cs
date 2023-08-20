@@ -60,7 +60,7 @@ namespace Minimax
 
         private async UniTask<bool> FetchPlayerDeckListFromCloud()
         {
-            DebugWrapper.Instance.Log("Fetching player deck list from cloud...");
+            DebugWrapper.Log("Fetching player deck list from cloud...");
             
             // Get all connected player ids from session manager
             List<string> connectedPlayerIds = new List<string>();
@@ -79,7 +79,7 @@ namespace Minimax
                         { "playerIds", connectedPlayerIds }
                     });
             
-                DebugWrapper.Instance.Log($"Fetched player deck list from cloud: {playerDecks}");
+                DebugWrapper.Log($"Fetched player deck list from cloud: {playerDecks}");
                 
                 var playerDeckLists = JsonConvert.DeserializeObject<List<DeckDTO>>(playerDecks);
                 for (int i = 0; i < connectedPlayerIds.Count; i++)
@@ -91,7 +91,7 @@ namespace Minimax
             }
             catch (CloudCodeException exception)
             {
-                DebugWrapper.Instance.LogError(exception.Message);
+                DebugWrapper.LogError(exception.Message);
                 return false;
             }
         }

@@ -72,7 +72,7 @@ namespace Minimax
             }
             catch (CloudCodeException exception)
             {
-                DebugWrapper.Instance.LogError(exception.Message);
+                DebugWrapper.LogError(exception.Message);
             }
         }
         
