@@ -7,6 +7,6 @@ namespace Minimax.SceneManagement
         MainScene,
         MenuScene,
         GamePlayScene,
-        DeckBuildingScene
+        DeckBuildingScene,
     }
 }

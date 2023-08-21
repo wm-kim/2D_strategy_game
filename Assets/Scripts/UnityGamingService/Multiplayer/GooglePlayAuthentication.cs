@@ -7,7 +7,6 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Core.Environments;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Minimax.UnityGamingService.Multiplayer
 {

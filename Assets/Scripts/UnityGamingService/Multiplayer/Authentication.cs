@@ -22,12 +22,14 @@ namespace Minimax.UnityGamingService.Multiplayer
     {
         [SerializeField] private EnvironmentType m_environment = EnvironmentType.undefined;
         
+#if !DEDICATED_SERVER
         private async void Start()
         {
             await InitializeUnityAuthentication();
             SetupEvents();
             await SignInAnonymously();
         }
+#endif
 
         private async UniTask InitializeUnityAuthentication()
         {

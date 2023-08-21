@@ -14,10 +14,12 @@ namespace Minimax.Utilities
 #endregion
 
 #region NETWORK_SETTINGS
+        public static readonly int TimeOutSeconds = 5;
         public static readonly int MaxConnectPayloadSize = 1024;
         public static readonly int TimeBeforeFirstAttempt = 1;
         public static readonly int TimeBetweenReconnectionAttempts = 5;
         public static readonly int MaxReconnectionAttempts = 2;
+        public static readonly string MatchMakingQueueName = "default-queue";
 #endregion
 
 #region GamePlay

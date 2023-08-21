@@ -26,7 +26,7 @@ namespace Minimax
         {
             if (IsServer)
             {
-                SetupPlayerDecks();
+                // SetupPlayerDecks();
             }
             
             base.OnNetworkSpawn();

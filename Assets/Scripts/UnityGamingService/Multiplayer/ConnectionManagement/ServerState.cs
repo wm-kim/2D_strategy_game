@@ -1,9 +1,12 @@
+using System.Collections.Generic;
 using Minimax.CoreSystems;
 using Minimax.SceneManagement;
 using Minimax.Utilities;
 using Newtonsoft.Json;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
+using Unity.Services.Matchmaker;
+using Unity.Services.Matchmaker.Models;
 using Unity.Services.Multiplay;
 using UnityEngine;
 
@@ -40,9 +43,11 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 });
             
 #if DEDICATED_SERVER
+            HandleUpdateBackfillTickets();
+            
             // check if server reached max players and if so, start the game
             var currentScene = GlobalManagers.Instance.Scene.CurrentlyLoadedScene;
-            if (currentScene == SceneType.MenuScene.ToString())
+            if (currentScene != SceneType.GamePlayScene.ToString())
             {
                 if (!m_connectionManager.HasAvailablePlayerSlot())
                 {
@@ -75,6 +80,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
             
 #if DEDICATED_SERVER
+            HandleUpdateBackfillTickets();      
+
             // automatically shutdown if there are no more clients in the gameplay scene
             var currentScene = GlobalManagers.Instance.Scene.CurrentlyLoadedScene;
             if (currentScene == SceneType.GamePlayScene.ToString())
@@ -128,5 +135,41 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             // On the client-side, NetworkManager.DisconnectReason will be populated with this message via DisconnectReasonMessage
             response.Reason = JsonUtility.ToJson(gameReturnStatus);
         }
+        
+#if DEDICATED_SERVER
+        private async void HandleUpdateBackfillTickets() {
+            if (m_connectionManager.BackfillTicketId != null 
+                && m_connectionManager.PayloadAllocation != null 
+                && m_connectionManager.HasAvailablePlayerSlot()) {
+                
+                DebugWrapper.Log("HandleUpdateBackfillTickets");
+
+                List<Unity.Services.Matchmaker.Models.Player> playerList = new List<Unity.Services.Matchmaker.Models.Player>();
+
+                var connectedClientIds = m_connectionManager.NetworkManager.ConnectedClientsIds;
+                foreach(var clientId in connectedClientIds)
+                {
+                    var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
+                    playerList.Add(new Unity.Services.Matchmaker.Models.Player(playerId));
+                }
+
+                var payloadAllocation = m_connectionManager.PayloadAllocation;
+                MatchProperties matchProperties = new MatchProperties(
+                    payloadAllocation.MatchProperties.Teams, 
+                    playerList, 
+                    payloadAllocation.MatchProperties.Region, 
+                    payloadAllocation.MatchProperties.BackfillTicketId
+                );
+
+                try {
+                    await MatchmakerService.Instance.UpdateBackfillTicketAsync(payloadAllocation.BackfillTicketId,
+                        new BackfillTicket(m_connectionManager.BackfillTicketId, properties: new BackfillTicketProperties(matchProperties))
+                    );
+                } catch (MatchmakerServiceException e) {
+                    DebugWrapper.Log("Error: " + e);
+                }
+            }
+        }
+#endif
     }
 }

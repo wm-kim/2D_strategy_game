@@ -29,5 +29,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         
         public virtual void StartServer() { }
         public virtual void OnServerStopped() { }
+        
+        public virtual void OnUpdate() { }
     }
 }

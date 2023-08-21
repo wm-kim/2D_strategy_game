@@ -6,6 +6,7 @@ using Minimax.Utilities;
 using Minimax.Utilities.PubSub;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
+using Unity.Services.Matchmaker;
 using UnityEngine;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
@@ -31,6 +32,19 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         public string playerName;
     }
     
+    [Serializable]
+    public class PayloadAllocation
+    {
+        public Unity.Services.Matchmaker.Models.MatchProperties MatchProperties;
+        public string GeneratorName;
+        public string QueueName;
+        public string PoolName;
+        public string EnvironmentId;
+        public string BackfillTicketId;
+        public string MatchId;
+        public string PoolId;
+    }
+    
     public struct ConnectionEventMessage : INetworkSerializeByMemcpy
     {
         public ConnectStatus ConnectStatus;
@@ -41,11 +55,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
     {
         public NetworkManager NetworkManager => NetworkManager.Singleton;
 
-        public IMessageChannel<ConnectStatus> ConnectStatusChannel { get; private set; } =
-            new BufferedMessageChannel<ConnectStatus>();
-        
-        public IMessageChannel<ConnectionEventMessage> ConnectionEventChannel { get; private set; } =
-            new NetworkedMessageChannel<ConnectionEventMessage>();
+        public IMessageChannel<ConnectStatus> ConnectStatusChannel { get; private set; } 
+        public IMessageChannel<ConnectionEventMessage> ConnectionEventChannel { get; private set; }
         
         private ConnectionState m_currentState;
         internal OfflineState Offline;
@@ -58,8 +69,26 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         internal ClientConnectedState ClientConnected;
         private Dictionary<ulong, ClientRpcParams> m_clientRpcParams = new Dictionary<ulong, ClientRpcParams>();
         
-        private void Awake()
+#if DEDICATED_SERVER
+        public string BackfillTicketId { get; set; }
+        public PayloadAllocation PayloadAllocation { get; set; }
+        
+        public async void DeleteBackfillTicket()
         {
+            if (BackfillTicketId != null)
+                await MatchmakerService.Instance.DeleteBackfillTicketAsync(BackfillTicketId);
+            else
+            {
+                DebugWrapper.LogError("BackfillTicketId is null");
+            }
+        }
+#endif
+        
+        public void Awake()
+        {
+            ConnectStatusChannel = new BufferedMessageChannel<ConnectStatus>();
+            ConnectionEventChannel = new NetworkedMessageChannel<ConnectionEventMessage>();
+            
             Offline = new OfflineState(this);
             StartingHost = new StartingHostState(this);
             Hosting = new HostingState(this);
@@ -79,6 +108,11 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             NetworkManager.OnTransportFailure += OnTransportFailure;
             NetworkManager.OnServerStopped += OnServerStopped;
             NetworkManager.ConnectionApprovalCallback += ApprovalCheck;
+        }
+
+        private void Update()
+        {
+            m_currentState.OnUpdate();
         }
 
         private void OnDestroy()

@@ -1,3 +1,4 @@
+using System;
 using Minimax.CoreSystems;
 using Minimax.SceneManagement;
 using UnityEngine;
@@ -10,11 +11,11 @@ namespace Minimax.UI.Controller.PageControllers
         [Header("References")]
         [SerializeField] private Button m_startButton;
 
-        private void Start()
+        private void Awake()
         {
             m_startButton.onClick.AddListener(RequestLoadMenuScene);
         }
-        
+
         private void RequestLoadMenuScene()
         {
             GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.MenuScene);

@@ -24,6 +24,8 @@ namespace Minimax
         {
 #if DEDICATED_SERVER
             await MultiplayService.Instance.UnreadyServerAsync();
+            GlobalManagers.Instance.Connection.DeleteBackfillTicket();
+            
             // just for clearing logs
             Camera.main.enabled = false;
 #endif
