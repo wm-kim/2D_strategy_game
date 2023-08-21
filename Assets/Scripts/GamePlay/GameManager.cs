@@ -31,6 +31,12 @@ namespace Minimax
 
         public override void OnNetworkSpawn()
         {
+            m_networkManager.SceneManager.OnSceneEvent += GameManager_OnSceneEvent;
+            m_networkTimer.ConFig(10f, null, () => 
+                GlobalManagers.Instance.Popup.RegisterOneButtonPopupToQueue("Game Started", "Ok", () => 
+                    GlobalManagers.Instance.Popup.HideCurrentPopup())
+                );
+            
             if (IsServer)
             {
                 // Marks the current session as started, so from now on we keep the data of disconnected players.
@@ -39,10 +45,6 @@ namespace Minimax
                 
                 // Cache the client rpc params for later use.
                 GlobalManagers.Instance.Connection.CacheClientRpcParams();
-                
-                m_networkTimer.SetTimer(10);
-                
-                m_networkManager.SceneManager.OnSceneEvent += GameManager_OnSceneEvent;
             }
             
             base.OnNetworkSpawn();
@@ -50,11 +52,7 @@ namespace Minimax
         
         public override void OnNetworkDespawn()
         {
-            if (IsServer)
-            {
-                m_networkManager.SceneManager.OnSceneEvent -= GameManager_OnSceneEvent;
-            }
-            
+            m_networkManager.SceneManager.OnSceneEvent -= GameManager_OnSceneEvent;
             base.OnNetworkDespawn();
         }
         
@@ -62,7 +60,16 @@ namespace Minimax
         private void GameManager_OnSceneEvent(SceneEvent sceneEvent)
         {
             if (sceneEvent.SceneEventType != SceneEventType.LoadEventCompleted) return;
-            
+
+            if (IsServer)
+            {
+                SetPlayerNames();
+                m_networkTimer.StartTimer();
+            }
+        }
+        
+        private void SetPlayerNames()
+        {
             foreach (var clientId in m_networkManager.ConnectedClientsIds)
             {
                 var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);

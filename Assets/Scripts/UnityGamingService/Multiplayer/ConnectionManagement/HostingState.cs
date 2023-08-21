@@ -20,7 +20,15 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             SessionManager<SessionPlayerData>.Instance.OnServerEnded();
         }
 
-        public override void OnClientConnected(ulong clientId) { }
+        public override void OnClientConnected(ulong clientId)
+        {
+            m_connectionManager.ConnectionEventChannel.Publish(
+                new ConnectionEventMessage()
+                {
+                    ConnectStatus = ConnectStatus.Success,
+                    PlayerName = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId)?.PlayerName
+                });
+        }
         
         public override void OnClientDisconnect(ulong clientId)
         {
@@ -29,9 +37,25 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
                 if (playerId != null)
                 {
+                    var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
+                    if (sessionData.HasValue)
+                    {
+                        m_connectionManager.ConnectionEventChannel.Publish(
+                            new ConnectionEventMessage()
+                            {
+                                ConnectStatus = ConnectStatus.GenericDisconnect,
+                                PlayerName = sessionData.Value.PlayerName
+                            });
+                    }
                     SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
                 }
             }
+        }
+
+        public override void OnServerStopped()
+        {
+            m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.GenericDisconnect);
+            m_connectionManager.ChangeState(m_connectionManager.Offline);
         }
 
         public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request,
@@ -61,12 +85,11 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
             
             response.Approved = false;
+            DebugWrapper.Log($"Client {clientId} denied: {gameReturnStatus}");
             
             // If response.Approved is false, you can provide a message that explains the reason why via ConnectionApprovalResponse.
             // On the client-side, NetworkManager.DisconnectReason will be populated with this message via DisconnectReasonMessage
             response.Reason = JsonUtility.ToJson(gameReturnStatus);
         }
-
-       
     }
 }

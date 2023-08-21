@@ -24,7 +24,12 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.Success);
             m_connectionManager.ChangeState(m_connectionManager.Hosting);
         }
-        
+
+        public override void OnServerStopped()
+        {
+            StartHostFailed();
+        }
+
         public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
         {
             var connectionData = request.Payload;
@@ -57,9 +62,15 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             
             if (!m_connectionManager.NetworkManager.StartHost())
             {
-                DebugWrapper.LogError("Failed to start host");
-                m_connectionManager.ChangeState(m_connectionManager.Offline);
+                StartHostFailed();
             }
+        }
+        
+        private void StartHostFailed()
+        {
+            DebugWrapper.LogError("Failed to start host");
+            m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.StartHostFailed);
+            m_connectionManager.ChangeState(m_connectionManager.Offline);
         }
     }
 }

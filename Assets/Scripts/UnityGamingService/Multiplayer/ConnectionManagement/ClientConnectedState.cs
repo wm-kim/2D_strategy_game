@@ -1,4 +1,5 @@
 using Minimax.Utilities;
+using UnityEngine;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
@@ -10,16 +11,20 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public override void Exit() { }
         
-        public override void OnClientDisconnect(ulong clientId)
+        public override void OnClientDisconnect(ulong _)
         {
             var disconnectReason = m_connectionManager.NetworkManager.DisconnectReason;
-            DebugWrapper.Log("Client disconnected: " + disconnectReason);
+            DebugWrapper.Log("Client disconnected");
+            
             if (string.IsNullOrEmpty(disconnectReason))
             {
+                m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.Reconnecting);
                 m_connectionManager.ChangeState(m_connectionManager.ClientReconnecting);
             }
             else
             {
+                var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
+                m_connectionManager.ConnectStatusChannel.Publish(connectStatus);
                 m_connectionManager.ChangeState(m_connectionManager.Offline);
             }
         }

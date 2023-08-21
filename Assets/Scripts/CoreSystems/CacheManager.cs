@@ -32,7 +32,7 @@ namespace Minimax.CoreSystems
         }
 
         /// <summary>
-        /// 동기 캐시 오브젝트를 등록하거나 이미 등록된 캐시 오브젝트를 반환합니다.
+        /// 동기 캐시 오브젝트를 등록합니다.
         /// </summary>
         /// <param name="key">캐시 오브젝트의 키</param>
         /// <param name="onLoadAction">캐시 오브젝트의 데이터 로드 액션</param>
@@ -47,7 +47,7 @@ namespace Minimax.CoreSystems
         }
         
         /// <summary>
-        /// 동기 캐시 오브젝트를 등록하거나 이미 등록된 캐시 오브젝트를 반환합니다.
+        /// 비동기 캐시 오브젝트를 등록합니다.
         /// </summary>
         /// <param name="key">캐시 오브젝트의 키</param>
         /// <param name="onLoadAsyncAction">캐시 오브젝트의 데이터 비동기 로드 액션</param>
@@ -74,20 +74,30 @@ namespace Minimax.CoreSystems
         /// 캐시 데이터를 로드하거나 로드가 완료된 경우 수행할 액션을 업데이트합니다.
         /// 보콩은 호출할 일이 없지만, multi-scene을 지원하기 위해 추가하였습니다.
         /// Action이 scene에 종속된 reference를 가지고 있을 경우, 해당 scene이 unload되면 Action이 무효화됩니다.
+        /// 따라서 매번 scene이 load될 때마다 Action을 업데이트해야 합니다.
         /// </summary>
         public void UpdateLoadAction(string key, Action onLoadAction)
         {
-            if (CheckHasKey(key)) cacheObjects[key].UpdateLoadAction(onLoadAction);
+            if (!CheckHasKey(key)) return;
+            
+            if (cacheObjects[key].IsLoaded) 
+                cacheObjects[key].UpdateLoadAction(onLoadAction);
         }
         
         public void UpdateLoadAction(string key, Func<UniTask> onLoadAsyncAction)
         {
-            if (CheckHasKey(key)) cacheObjects[key].UpdateLoadAction(onLoadAsyncAction);
+            if (!CheckHasKey(key)) return;
+            
+            if (cacheObjects[key].IsLoaded) 
+                cacheObjects[key].UpdateLoadAction(onLoadAsyncAction);
         }
         
         public void UpdateLoadCompletedAction(string key, Action onLoadCompleted)
         {
-            if (CheckHasKey(key)) cacheObjects[key].UpdateLoadCompletedAction(onLoadCompleted);
+            if (!CheckHasKey(key)) return;
+            
+            if (cacheObjects[key].IsLoaded) 
+                cacheObjects[key].UpdateLoadCompletedAction(onLoadCompleted);
         }
         
         /// <summary>

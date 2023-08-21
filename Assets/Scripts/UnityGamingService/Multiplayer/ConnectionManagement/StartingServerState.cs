@@ -19,13 +19,24 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             m_connectionManager.ChangeState(m_connectionManager.Server);
         }
 
+        public override void OnServerStopped()
+        {
+            StartServerFailed();
+        }
+
         public override void StartServer()
         {
             if (!m_connectionManager.NetworkManager.StartServer())
             {
-                DebugWrapper.LogError("Failed to start server");
-                m_connectionManager.ChangeState(m_connectionManager.Offline);
+                StartServerFailed();
             }
+        }
+
+        private void StartServerFailed()
+        {
+            DebugWrapper.LogError("Failed to start server");
+            m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.StartServerFailed);
+            m_connectionManager.ChangeState(m_connectionManager.Offline);
         }
     }
 }

@@ -33,7 +33,12 @@ namespace Minimax.ScriptableObjects
                     recentDeck = deck;
             }
             
-            Assert.IsNotNull(recentDeck);
+            if (recentDeck == null)
+            {
+                Debug.LogError("empty deck collection, so can not get recent deck id");
+                return -1;
+            }
+            
             return recentDeck.Id;
         }
     }

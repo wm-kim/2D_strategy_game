@@ -56,6 +56,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                     var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
                     switch (connectStatus)
                     {
+                        case ConnectStatus.UserRequestedDisconnect:
                         case ConnectStatus.ServerFull:
                             m_connectionManager.ChangeState(m_connectionManager.Offline);
                             break;
@@ -67,6 +68,16 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
             else
             {
+                if (string.IsNullOrEmpty(disconnectReason))
+                {
+                    m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.GenericDisconnect);
+                }
+                else
+                {
+                    var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
+                    m_connectionManager.ConnectStatusChannel.Publish(connectStatus);
+                }
+                
                 // 최대 재연결 시도 횟수를 초과한 경우, 오프라인 상태로 전환합니다.
                 m_connectionManager.ChangeState(m_connectionManager.Offline);
             }

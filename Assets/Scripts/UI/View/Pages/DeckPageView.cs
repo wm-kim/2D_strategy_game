@@ -35,20 +35,15 @@ namespace Minimax.UI.View.Pages
             
             var caches = GlobalManagers.Instance.Cache;
             caches.Register(Define.DeckDtoCollectionCacheKey, FetchDecksFromCloud, InitializeDeckViewsOnLoad);
-            caches.UpdateLoadCompletedAction(Define.DeckDtoCollectionCacheKey, InitializeDeckViewsOnUpdate);
+            caches.UpdateLoadCompletedAction(Define.DeckDtoCollectionCacheKey, InitializeDeckViewsOnLoad);
             caches.RequestLoad(Define.DeckDtoCollectionCacheKey);
         }
 
         private void InitializeDeckViewsOnLoad()
         {
+            if (m_deckCollectionSO.Decks == null || m_deckCollectionSO.Decks.Count == 0) return;
+            
             InstantiateDeckItemView();
-            DisableSelectedButton();
-        }
-        
-        private void InitializeDeckViewsOnUpdate()
-        {
-            InstantiateDeckItemView();
-            PlayerPrefs.SetInt(Define.CurrentDeckIdCacheKey, m_deckCollectionSO.GetRecentDeckId());
             DisableSelectedButton();
         }
         
@@ -71,6 +66,9 @@ namespace Minimax.UI.View.Pages
             {
                 DebugWrapper.Log("Decks successfully fetched from cloud.");
                 m_deckCollectionSO.Decks = decks;
+                
+                // setting recent deck id in PlayerPrefs
+                PlayerPrefs.SetInt(Define.CurrentDeckIdCacheKey, m_deckCollectionSO.GetRecentDeckId());
             }
         }
         

@@ -3,6 +3,7 @@ using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using TMPro;
+using UnityEngine.Assertions;
 
 namespace Minimax
 {
@@ -12,20 +13,32 @@ namespace Minimax
         [SerializeField] private TextMeshProUGUI m_timerText;
 
         private NetworkVariable<float> m_time = new NetworkVariable<float>(0f);
+        // 타이머가 완료되었는지 여부를 추적하는 변수
+        private bool m_isTimerFinished = false;
+
+        private float m_duration = 0f;
+        private Action m_onServerTimerComplete;
+        private Action m_onClientTimerComplete;
         
-        /// <summary>
-        /// 타이머가 종료되었을 때 호출되는 이벤트입니다. 서버에서만 호출됩니다.
-        /// </summary>
-        public event Action ServerOnTimerFinished;
+        public void ConFig(float duration, Action onServerTimerComplete, Action onClientTimerComplete = null)
+        {
+            Assert.IsTrue(duration > 0f);
+            
+            m_duration = duration;
+            m_onServerTimerComplete = onServerTimerComplete;
+            m_onClientTimerComplete = onClientTimerComplete;
+        }
         
-        /// <summary>
-        /// 타이머가 종료되었을 때 호출되는 이벤트입니다. 클라이언트에서만 호출됩니다.
-        /// </summary>
-        public event Action ClientOnTimerFinished;
-        
+        public void ClearConfig()
+        {
+            m_duration = 0f;
+            m_onServerTimerComplete = null;
+            m_onClientTimerComplete = null;
+        }
+
         void Update()
         {
-            if (IsServer && m_time.Value >= 0f)
+            if (IsServer && m_time.Value > 0f && !m_isTimerFinished)
             {
                 m_time.Value -= Time.deltaTime;
                 // Update timer text
@@ -42,21 +55,26 @@ namespace Minimax
         private void TimeFinished()
         {
             m_time.Value = 0f;
-            ServerOnTimerFinished?.Invoke();
+            m_isTimerFinished = true;
+            
+            DebugWrapper.Log("Time Finished");
+            m_onServerTimerComplete?.Invoke();
             TimerFinishedClientRpc();
         }
 
-        public void SetTimer(float time)
+        public void StartTimer()
         {
-            DebugWrapper.Log($"SetTimerServerRpc: {time}");
-            m_time.Value = time;
+            if (!IsServer) return;
+            
+            DebugWrapper.Log($"StartTimer, duration: {m_duration}");
+            m_isTimerFinished = false;
+            m_time.Value = m_duration;
         }
         
         [ClientRpc]
         private void TimerFinishedClientRpc()
         {
-            // Handle timer finished event on clients
-            ClientOnTimerFinished?.Invoke();
+            m_onClientTimerComplete?.Invoke();
         }
     }
 }

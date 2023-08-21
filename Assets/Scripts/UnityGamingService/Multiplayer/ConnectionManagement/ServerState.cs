@@ -31,6 +31,14 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         public override void OnClientConnected(ulong clientId)
         {
             DebugWrapper.Log($"Client {clientId} connected");
+            
+            m_connectionManager.ConnectionEventChannel.Publish(
+                new ConnectionEventMessage()
+                {
+                    ConnectStatus = ConnectStatus.Success,
+                    PlayerName = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId)?.PlayerName
+                });
+            
 #if DEDICATED_SERVER
             // check if server reached max players and if so, start the game
             var currentScene = GlobalManagers.Instance.Scene.CurrentlyLoadedScene;
@@ -52,6 +60,16 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
                 if (playerId != null)
                 {
+                    var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
+                    if (sessionData.HasValue)
+                    {
+                        m_connectionManager.ConnectionEventChannel.Publish(
+                            new ConnectionEventMessage()
+                            {
+                                ConnectStatus = ConnectStatus.GenericDisconnect,
+                                PlayerName = sessionData.Value.PlayerName
+                            });
+                    }
                     SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
                 }
             }
@@ -69,6 +87,12 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 }
             }
 #endif
+        }
+        
+        public override void OnServerStopped()
+        {
+            m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.GenericDisconnect);
+            m_connectionManager.ChangeState(m_connectionManager.Offline);
         }
         
         public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request,

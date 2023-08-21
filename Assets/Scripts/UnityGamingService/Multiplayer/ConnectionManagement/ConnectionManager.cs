@@ -16,7 +16,12 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         Success,
         ServerFull,                 // can't join, server is already at capacity.
         LoggedInAgain,              // logged in on a separate client, causing this one to be kicked out.
+        Reconnecting,               // client lost connection and is attempting to reconnect.
         UserRequestedDisconnect,    // Intentional Disconnect triggered by the user.
+        GenericDisconnect,          // server disconnected, but no specific reason given.
+        StartHostFailed,            // host failed to bind
+        StartServerFailed,          // server failed to bind
+        StartClientFailed           // failed to connect to server and/or invalid network endpoint
     }
     
     [Serializable]
@@ -26,10 +31,21 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         public string playerName;
     }
     
+    public struct ConnectionEventMessage : INetworkSerializeByMemcpy
+    {
+        public ConnectStatus ConnectStatus;
+        public FixedPlayerName PlayerName;
+    }
+    
     public class ConnectionManager : MonoBehaviour
     {
         public NetworkManager NetworkManager => NetworkManager.Singleton;
-        public IMessageChannel<ConnectStatus> ConnectStatusChannel { get; private set; } = new MessageChannel<ConnectStatus>();
+
+        public IMessageChannel<ConnectStatus> ConnectStatusChannel { get; private set; } =
+            new BufferedMessageChannel<ConnectStatus>();
+        
+        public IMessageChannel<ConnectionEventMessage> ConnectionEventChannel { get; private set; } =
+            new NetworkedMessageChannel<ConnectionEventMessage>();
         
         private ConnectionState m_currentState;
         internal OfflineState Offline;
@@ -61,6 +77,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             NetworkManager.OnClientDisconnectCallback += OnClientDisconnectCallback;
             NetworkManager.OnServerStarted += OnServerStarted;
             NetworkManager.OnTransportFailure += OnTransportFailure;
+            NetworkManager.OnServerStopped += OnServerStopped;
             NetworkManager.ConnectionApprovalCallback += ApprovalCheck;
         }
 
@@ -111,7 +128,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             m_currentState.ApprovalCheck(request, response);
         }
         
-        void OnTransportFailure()
+        private void OnTransportFailure()
         {
             m_currentState.OnTransportFailure();
         }
@@ -134,6 +151,12 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         public void RequestShutdown()
         {
             m_currentState.OnUserRequestedShutdown();
+        }
+        
+        // we don't need this parameter as the ConnectionState already carries the relevant information
+        private void OnServerStopped(bool _)
+        {
+            m_currentState.OnServerStopped();
         }
 
         /// <summary>

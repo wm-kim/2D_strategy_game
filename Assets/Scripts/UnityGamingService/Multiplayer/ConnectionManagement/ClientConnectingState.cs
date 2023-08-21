@@ -17,16 +17,15 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public override void Exit() { }
 
-        public override void OnClientConnected(ulong clientId)
+        public override void OnClientConnected(ulong _)
         {
+            m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.Success);
             m_connectionManager.ChangeState(m_connectionManager.ClientConnected);
         }
         
         public override void OnClientDisconnect(ulong clientId)
         {
-            var disconnectReason = m_connectionManager.NetworkManager.DisconnectReason;
-            DebugWrapper.Log("Client disconnected: " + disconnectReason);
-            m_connectionManager.ChangeState(m_connectionManager.Offline);
+            StartingClientFailed();
         }
 
         protected void ConnectClient()
@@ -43,8 +42,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             {
                 if (!m_connectionManager.NetworkManager.StartClient())
                 {
-                    DebugWrapper.LogError("NetworkManager Failed to start client");
-                    m_connectionManager.ChangeState(m_connectionManager.Offline);
+                    StartingClientFailed();
                 }
             }
             catch (Exception e)
@@ -53,6 +51,24 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 DebugWrapper.LogException(e);
                 throw;
             }
+        }
+
+        private void StartingClientFailed()
+        {
+            var disconnectReason = m_connectionManager.NetworkManager.DisconnectReason;
+            DebugWrapper.Log("Client disconnected");
+            
+            if (string.IsNullOrEmpty(disconnectReason))
+            {
+                m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.StartClientFailed);
+            }
+            else
+            {
+                var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
+                m_connectionManager.ConnectStatusChannel.Publish(connectStatus);
+            }
+            
+            m_connectionManager.ChangeState(m_connectionManager.Offline);
         }
     }
     
