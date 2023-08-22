@@ -43,13 +43,6 @@ namespace Minimax.UI.Controller.PageControllers
             m_findMatchButton.onClick.AddListener(FindMatch);
         }
 
-#if DEDICATED_SERVER
-        private void Start()
-        {
-            GlobalManagers.Instance.Connection.StartServer();
-        }
-#endif
-
         private void RequestLoadGamePlayScene()
         {
             GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.GamePlayScene, true);

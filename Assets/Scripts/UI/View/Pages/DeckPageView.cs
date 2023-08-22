@@ -54,7 +54,7 @@ namespace Minimax.UI.View.Pages
                 ? PlayerPrefs.GetString(Define.CurrentDeckNameCacheKey) : "None";
         }
 
-        private async UniTask FetchDecksFromCloud()
+        private async UniTask FetchDecksFromCloud(bool isUpdate)
         {
             DebugWrapper.Log("Fetching decks from cloud...");
             var decks = await CloudService.Load<Dictionary<int, DeckDTO>>(Define.DeckCloudKey);
@@ -68,7 +68,7 @@ namespace Minimax.UI.View.Pages
                 m_deckCollectionSO.Decks = decks;
                 
                 // setting recent deck id in PlayerPrefs
-                PlayerPrefs.SetInt(Define.CurrentDeckIdCacheKey, m_deckCollectionSO.GetRecentDeckId());
+                if (isUpdate) PlayerPrefs.SetInt(Define.CurrentDeckIdCacheKey, m_deckCollectionSO.GetRecentDeckId());
             }
         }
         

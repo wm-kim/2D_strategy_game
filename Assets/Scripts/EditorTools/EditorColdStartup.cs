@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Minimax.CoreSystems;
 using Minimax.SceneManagement;
+using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
@@ -24,7 +25,7 @@ namespace Minimax
             }
             else
             {
-                Debug.Log("Persistent scene is already loaded.");
+                DebugWrapper.Log("Persistent scene is already loaded.", LogLevel.Debug);
             }
         }
         

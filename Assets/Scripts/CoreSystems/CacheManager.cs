@@ -37,7 +37,7 @@ namespace Minimax.CoreSystems
         /// <param name="key">캐시 오브젝트의 키</param>
         /// <param name="onLoadAction">캐시 오브젝트의 데이터 로드 액션</param>
         /// <param name="onLoadCompleted">캐시 오브젝트가 이미 로드되어 있는 경우 수행할 액션</param>
-        public void Register(string key, Action onLoadAction, Action onLoadCompleted = null)
+        public void Register(string key, Action<bool> onLoadAction, Action onLoadCompleted = null)
         {
             if (!cacheObjects.ContainsKey(key))
             {
@@ -52,7 +52,7 @@ namespace Minimax.CoreSystems
         /// <param name="key">캐시 오브젝트의 키</param>
         /// <param name="onLoadAsyncAction">캐시 오브젝트의 데이터 비동기 로드 액션</param>
         /// <param name="onLoadCompleted">캐시 오브젝트가 이미 로드되어 있는 경우 수행할 액션</param>
-        public void Register(string key, Func<UniTask> onLoadAsyncAction, Action onLoadCompleted = null)
+        public void Register(string key, Func<bool, UniTask> onLoadAsyncAction, Action onLoadCompleted = null)
         {
             if (!cacheObjects.ContainsKey(key))
             {
@@ -76,7 +76,7 @@ namespace Minimax.CoreSystems
         /// Action이 scene에 종속된 reference를 가지고 있을 경우, 해당 scene이 unload되면 Action이 무효화됩니다.
         /// 따라서 매번 scene이 load될 때마다 Action을 업데이트해야 합니다.
         /// </summary>
-        public void UpdateLoadAction(string key, Action onLoadAction)
+        public void UpdateLoadAction(string key, Action<bool> onLoadAction)
         {
             if (!CheckHasKey(key)) return;
             
@@ -84,7 +84,7 @@ namespace Minimax.CoreSystems
                 cacheObjects[key].UpdateLoadAction(onLoadAction);
         }
         
-        public void UpdateLoadAction(string key, Func<UniTask> onLoadAsyncAction)
+        public void UpdateLoadAction(string key, Func<bool, UniTask> onLoadAsyncAction)
         {
             if (!CheckHasKey(key)) return;
             

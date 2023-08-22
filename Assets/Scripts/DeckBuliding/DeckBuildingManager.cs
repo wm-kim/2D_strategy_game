@@ -62,7 +62,7 @@ namespace Minimax
                 {
                     // Call the function within the module and provide the parameters we defined in there
                     await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "SaveDeckData",
-                        new Dictionary<string, object> { { "key", Define.DeckCloudKey }, { "value", deckJson } });
+                        new Dictionary<string, object> {{ "value", deckJson } });
                 }
                 
                 // Save deck name into player prefs

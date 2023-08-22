@@ -2,9 +2,8 @@ namespace Minimax.Utilities
 {
     public static class Define
     {
-#region CLOUD_SAVE_KEYS
+#region CLOUD_KEYS
         public static readonly string DeckCloudKey = "decks";
-        public static readonly string CurrentDeckIdCloudKey = "currentDeckId";
 #endregion
         
 #region CACHE_KEYS
@@ -14,7 +13,7 @@ namespace Minimax.Utilities
 #endregion
 
 #region NETWORK_SETTINGS
-        public static readonly int TimeOutSeconds = 5;
+        public static readonly int TimeOutSeconds = 30;
         public static readonly int MaxConnectPayloadSize = 1024;
         public static readonly int TimeBeforeFirstAttempt = 1;
         public static readonly int TimeBetweenReconnectionAttempts = 5;

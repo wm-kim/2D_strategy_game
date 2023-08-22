@@ -23,19 +23,17 @@ public class Class1
     }
     
     [CloudCodeFunction("SaveDeckData")]
-    public async Task SaveDeckData(IExecutionContext context, IGameApiClient gameApiClient, string key, object value)
+    public async Task SaveDeckData(IExecutionContext context, IGameApiClient gameApiClient, object value)
     {
         try
         {
-            CheckValidKeyAndValue(key, value, DeckSaveKey);
-            
             // convert the value to a list of ints and check if it's valid
             DeckDTO deckDTO = JsonConvert.DeserializeObject<DeckDTO>(value.ToString());
             if (deckDTO != null && !IsValidDeckList(deckDTO.CardIds)) 
                 throw new Exception("Invalid deck list");
             
             // get the current decks
-            var decksObject = await GetData(context, gameApiClient, key);
+            var decksObject = await GetData(context, gameApiClient, DeckSaveKey);
             if (decksObject == null)
             {
                 // await SaveData(context, gameApiClient, key, new List<DeckDTO> {deckDTO});
@@ -78,19 +76,17 @@ public class Class1
     // TODO - also needs to validate card ids
     
     [CloudCodeFunction("SelectPlayerDeck")]
-    public async Task SelectPlayerDeck(IExecutionContext context, IGameApiClient gameApiClient, string key, object value)
+    public async Task SelectPlayerDeck(IExecutionContext context, IGameApiClient gameApiClient, object value)
     {
         try
         {
-            CheckValidKeyAndValue(key, value, CurrentDeckSaveKey);
-            
             // convert the value to an int and check if it's valid
             int deckId = JsonConvert.DeserializeObject<int>(value.ToString());
             if (deckId < 0 || deckId >= RequiredDeckSize) 
                 throw new Exception("Invalid deck id");
             
             // get the current decks
-            var decksObject = await GetData(context, gameApiClient, "decks");
+            var decksObject = await GetData(context, gameApiClient, DeckSaveKey);
             if (decksObject == null)
             {
                 throw new Exception("No decks found");
@@ -116,19 +112,17 @@ public class Class1
     }
     
     [CloudCodeFunction("DeletePlayerDeck")]
-    public async Task DeletePlayerDeck(IExecutionContext context, IGameApiClient gameApiClient, string key, object value)
+    public async Task DeletePlayerDeck(IExecutionContext context, IGameApiClient gameApiClient, object value)
     {
         try
         {
-            CheckValidKeyAndValue(key, value, DeckSaveKey);
-            
             // convert the value to an int and check if it's valid
             int deckId = JsonConvert.DeserializeObject<int>(value.ToString());
             if (deckId < 0 || deckId >= RequiredDeckSize) 
                 throw new Exception("Invalid deck id");
             
             // get the current decks
-            var decksObject = await GetData(context, gameApiClient, key);
+            var decksObject = await GetData(context, gameApiClient, DeckSaveKey);
             if (decksObject == null)
             {
                 throw new Exception("No decks found");

@@ -19,8 +19,21 @@ namespace Minimax.CoreSystems
         [SerializeField, Tooltip("캐시 데이터를 업데이트해야 하는지 여부")]
         private bool m_needUpdate = false;
 
-        private Action m_onLoad = null;
-        private Func<UniTask> m_onLoadAsync = null;
+        /// <summary>
+        /// 동기 캐시 데이터를 로드하는 경우 수행할 액션입니다.
+        /// 처음 로드되는 경우 true, 업데이트가 필요하여 로드되는 경우 false를 인자로 받습니다.
+        /// </summary>
+        private Action<bool> m_onLoad = null;
+        
+        /// <summary>
+        /// 비동기 캐시 데이터를 로드하는 경우 수행할 액션입니다.
+        /// 처음 로드되는 경우 true, 업데이트가 필요하여 로드되는 경우 false를 인자로 받습니다.
+        /// </summary>
+        private Func<bool, UniTask> m_onLoadAsync = null;
+        
+        /// <summary>
+        /// 캐시 데이터 로드가 완료된 경우 수행할 액션입니다.
+        /// </summary>
         private Action m_onLoadCompleted = null;
 
         /// <summary>
@@ -40,7 +53,7 @@ namespace Minimax.CoreSystems
         /// <summary>
         /// 캐시 데이터를 로드하거나 로드가 완료된 경우 수행할 액션을 설정합니다.
         /// </summary>
-        public CacheObject(Action onLoadAction, Action onLoadCompleted = null)
+        public CacheObject(Action<bool> onLoadAction, Action onLoadCompleted = null)
         {
             m_onLoad = onLoadAction ?? throw new ArgumentNullException(nameof(onLoadAction), "로드 액션은 null일 수 없습니다.");
             m_onLoadCompleted = onLoadCompleted;
@@ -49,7 +62,7 @@ namespace Minimax.CoreSystems
         /// <summary>
         /// 캐시 데이터를 로드하거나 로드가 완료된 경우 수행할 액션을 설정합니다.
         /// </summary>
-        public CacheObject(Func<UniTask> onLoadAsyncAction, Action onLoadCompleted = null)
+        public CacheObject(Func<bool, UniTask> onLoadAsyncAction, Action onLoadCompleted = null)
         {
             m_onLoadAsync = onLoadAsyncAction ?? throw new ArgumentNullException(nameof(onLoadAsyncAction), "로드 액션은 null일 수 없습니다.");
             m_onLoadCompleted = onLoadCompleted;
@@ -58,7 +71,15 @@ namespace Minimax.CoreSystems
         /// <summary>
         /// 캐시 데이터를 업데이트해야 하는지 여부를 설정합니다.
         /// </summary>
-        public void SetNeedUpdate() => m_needUpdate = true;
+        public void SetNeedUpdate()
+        {
+            // 처음 로드되지 않은 경우 업데이트가 필요하지 않으므로 예외를 발생시킵니다.
+            if (!m_isLoaded)
+            {
+                throw new InvalidOperationException("아직 캐시 데이터가 로드되지 않았으므로 업데이트가 필요하지 않습니다.");
+            }
+            m_needUpdate = true;
+        }
 
         /// <summary>
         /// 캐시 데이터를 로드합니다.
@@ -69,7 +90,6 @@ namespace Minimax.CoreSystems
             
             if (!m_isLoaded || m_needUpdate)
             {
-                m_onLoad?.Invoke();
                 m_onLoadCompleted?.Invoke();
             
                 m_isLoaded = true;
@@ -89,8 +109,8 @@ namespace Minimax.CoreSystems
             if (!m_isLoaded || m_needUpdate)
             {
                 Assert.IsTrue(IsAsync, "동기 로드 액션을 사용하는 경우 RequestLoad()를 사용해야 합니다.");
-              
-                await m_onLoadAsync.Invoke();
+
+                await m_onLoadAsync.Invoke(m_needUpdate);
                 m_onLoadCompleted?.Invoke();
                 
                 m_isLoaded = true;
@@ -102,12 +122,12 @@ namespace Minimax.CoreSystems
             }
         }
         
-        public void UpdateLoadAction(Action onLoadAction)
+        public void UpdateLoadAction(Action<bool> onLoadAction)
         {
             m_onLoad = onLoadAction ?? throw new ArgumentNullException(nameof(onLoadAction), "로드 액션은 null일 수 없습니다.");
         }
         
-        public void UpdateLoadAction(Func<UniTask> onLoadAsyncAction)
+        public void UpdateLoadAction(Func<bool, UniTask> onLoadAsyncAction)
         {
             m_onLoadAsync = onLoadAsyncAction ?? throw new ArgumentNullException(nameof(onLoadAsyncAction), "로드 액션은 null일 수 없습니다.");
         }

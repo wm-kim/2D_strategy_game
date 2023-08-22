@@ -26,7 +26,7 @@ namespace Minimax
         {
             if (IsServer)
             {
-                // SetupPlayerDecks();
+                SetupPlayerDecks();
             }
             
             base.OnNetworkSpawn();
@@ -73,15 +73,23 @@ namespace Minimax
 
             try
             {
+#if DEDICATED_SERVER
+                var playerDeckLists =
+                    await WebRequestManager.ServerRunCloudCodeModuleEndpointAsync<List<DeckDTO>>("Deck", "GetPlayerDecks", 
+                        new Dictionary<string, object>
+                        {
+                            { "playerIds", connectedPlayerIds }
+                        });
+#elif UNITY_EDITOR
                 var playerDecks = await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "GetPlayerDecks",
                     new Dictionary<string, object>
                     {
                         { "playerIds", connectedPlayerIds }
                     });
-            
                 DebugWrapper.Log($"Fetched player deck list from cloud: {playerDecks}");
-                
                 var playerDeckLists = JsonConvert.DeserializeObject<List<DeckDTO>>(playerDecks);
+#endif
+
                 for (int i = 0; i < connectedPlayerIds.Count; i++)
                 {
                     m_playerDeckLists.Add(m_networkManager.ConnectedClientsIds[i], playerDeckLists[i]);

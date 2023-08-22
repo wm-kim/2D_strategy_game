@@ -68,7 +68,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
                 using (new LoadingPopupContext("Selecting Deck..."))
                 {
                     await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "SelectPlayerDeck",
-                        new Dictionary<string, object> { { "key", Define.CurrentDeckIdCloudKey }, { "value", m_deckId.ToString() } });
+                        new Dictionary<string, object> {{ "value", m_deckId.ToString() } });
                 }
                 
                 DebugWrapper.Log($"Deck Id : {m_deckId} is selected");
@@ -99,13 +99,14 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
                 using (new LoadingPopupContext("Deleting Deck..."))
                 {
                     await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "DeletePlayerDeck",
-                        new Dictionary<string, object> { { "key", Define.DeckCloudKey }, { "value", m_deckId.ToString() } });
+                        new Dictionary<string, object> {{ "value", m_deckId.ToString() }});
                 }
                 
                 DebugWrapper.Log($"Deck Id : {m_deckId} is deleted");
                 
                 m_deckPageView.RemoveDeck(m_deckId);
                 
+                // if the deleting deck is current selected deck
                 if (m_deckId == PlayerPrefs.GetInt(Define.CurrentDeckIdCacheKey))
                 {
                     m_deckPageView.SetCurrentDeckName("None");
