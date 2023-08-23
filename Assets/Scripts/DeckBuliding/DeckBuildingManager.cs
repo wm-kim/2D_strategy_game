@@ -68,7 +68,7 @@ namespace Minimax
                 // Save deck name into player prefs
                 PlayerPrefs.SetString(Define.CurrentDeckNameCacheKey, deckDTO.Name);
                 GlobalManagers.Instance.Cache.SetNeedUpdate(Define.DeckDtoCollectionCacheKey);
-                GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.MenuScene);
+                GlobalManagers.Instance.Scene.LoadScene(SceneType.MenuScene);
             }
             catch (CloudCodeException exception)
             {

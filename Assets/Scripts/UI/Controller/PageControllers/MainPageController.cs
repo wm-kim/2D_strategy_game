@@ -18,7 +18,7 @@ namespace Minimax.UI.Controller.PageControllers
 
         private void RequestLoadMenuScene()
         {
-            GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.MenuScene);
+            GlobalManagers.Instance.Scene.LoadScene(SceneType.MenuScene);
         }
     }
 }

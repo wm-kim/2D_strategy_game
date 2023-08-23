@@ -20,6 +20,11 @@ namespace Minimax
         private Action m_onServerTimerComplete;
         private Action m_onClientTimerComplete;
         
+        /// <summary>
+        /// 타이머가 파괴되었는지 여부를 추적하는 변수, 이미 파괴된 타이머는 더 이상 업데이트하지 않습니다.
+        /// </summary>
+        private bool m_isDestroyed = false;
+        
         public void ConFig(float duration, Action onServerTimerComplete, Action onClientTimerComplete = null)
         {
             Assert.IsTrue(duration > 0f);
@@ -38,11 +43,17 @@ namespace Minimax
 
         void Update()
         {
-            if (IsServer && m_time.Value > 0f && !m_isTimerFinished)
+            if (m_isDestroyed) return; 
+            
+            if (IsServer)
             {
-                m_time.Value -= Time.deltaTime;
-                // Update timer text
-                if (m_time.Value <= 0f) TimeFinished();
+                if (m_time.Value > 0f && !m_isTimerFinished)
+                {
+                    m_time.Value -= Time.deltaTime;
+                    // Update timer text
+                    if (m_time.Value <= 0f) TimeFinished();
+                }
+                
             }
             
             if (IsClient)
@@ -75,6 +86,12 @@ namespace Minimax
         private void TimerFinishedClientRpc()
         {
             m_onClientTimerComplete?.Invoke();
+        }
+        
+        public override void OnNetworkDespawn()
+        {
+            m_isDestroyed = true;
+            base.OnNetworkDespawn();
         }
     }
 }

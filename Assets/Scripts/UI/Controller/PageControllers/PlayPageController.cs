@@ -23,10 +23,6 @@ namespace Minimax.UI.Controller.PageControllers
         [SerializeField] private Button m_startClientButton;
         [SerializeField] private Button m_startGameButton;
 
-        [SerializeField] private TMP_InputField m_ipInputField;
-        [SerializeField] private TMP_InputField m_portInputField;
-        [SerializeField] private Button m_connectButton;
-
         [SerializeField] private Button m_findMatchButton;
 
         private CreateTicketResponse createTicketResponse;
@@ -39,22 +35,12 @@ namespace Minimax.UI.Controller.PageControllers
             m_startHostButton.onClick.AddListener(GlobalManagers.Instance.Connection.StartHost);
             m_startClientButton.onClick.AddListener(GlobalManagers.Instance.Connection.StartClient);
             m_startGameButton.onClick.AddListener(RequestLoadGamePlayScene);
-            m_connectButton.onClick.AddListener(ConnectToDedicatedServer);
             m_findMatchButton.onClick.AddListener(FindMatch);
         }
 
         private void RequestLoadGamePlayScene()
         {
-            GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.GamePlayScene, true);
-        }
-
-        private void ConnectToDedicatedServer()
-        {
-            string ipv4Address = m_ipInputField.text;
-            ushort port = ushort.Parse(m_portInputField.text);
-            NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4Address, port);
-
-            GlobalManagers.Instance.Connection.StartClient();
+            GlobalManagers.Instance.Scene.LoadScene(SceneType.GamePlayScene, true);
         }
 
         private async void FindMatch()

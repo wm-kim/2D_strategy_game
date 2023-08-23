@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Minimax.CoreSystems;
+using Minimax.SceneManagement;
 using Minimax.ScriptableObjects.Events;
 using Minimax.Utilities;
 using Minimax.Utilities.PubSub;
@@ -22,7 +23,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         GenericDisconnect,          // server disconnected, but no specific reason given.
         StartHostFailed,            // host failed to bind
         StartServerFailed,          // server failed to bind
-        StartClientFailed           // failed to connect to server and/or invalid network endpoint
+        StartClientFailed,          // failed to connect to server and/or invalid network endpoint
+        ServerEndedSession,         // server intentionally ended the session.
     }
     
     [Serializable]
@@ -51,7 +53,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         public FixedPlayerName PlayerName;
     }
     
-    public class ConnectionManager : MonoBehaviour
+    public class ConnectionManager : NetworkBehaviour
     {
         public NetworkManager NetworkManager => NetworkManager.Singleton;
 
@@ -68,7 +70,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         internal ClientReconnectingState ClientReconnecting;
         internal ClientConnectedState ClientConnected;
         private Dictionary<ulong, ClientRpcParams> m_clientRpcParams = new Dictionary<ulong, ClientRpcParams>();
-        
+
 #if DEDICATED_SERVER
         public string BackfillTicketId { get; set; }
         public PayloadAllocation PayloadAllocation { get; set; }
@@ -199,11 +201,6 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         /// </summary>
         public bool HasAvailablePlayerSlot() => NetworkManager.ConnectedClientsIds.Count < Define.MaxConnectedPlayers;
         
-        /// <summary>
-        /// Returns true if there are no players connected to the game.
-        /// </summary>
-        public bool HasNoPlayerConnected() => NetworkManager.ConnectedClientsIds.Count <= 0;
-        
         public ConnectStatus GetConnectStatus(ConnectionPayload connectionPayload)
         {
             if (!HasAvailablePlayerSlot())
@@ -233,9 +230,41 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
         }
         
+        public void ClearClientRpcParams()
+        {
+            m_clientRpcParams.Clear();
+        }
+        
         public ClientRpcParams GetClientRpcParams(ulong clientId)
         {
             return m_clientRpcParams[clientId];
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void RequestShutdownServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            if (!IsServer) return;
+            
+            var clientId = serverRpcParams.Receive.SenderClientId;
+            var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
+            if (playerData.HasValue)
+            {
+                DebugWrapper.Log($"{playerData.Value.PlayerName} requested shutdown."); 
+            }
+
+            var reason = JsonUtility.ToJson(ConnectStatus.ServerEndedSession);
+            for (var i = NetworkManager.ConnectedClientsIds.Count - 1; i >= 0; i--)
+            {
+                var id = NetworkManager.ConnectedClientsIds[i];
+                NetworkManager.DisconnectClient(id, reason);
+            }
+            
+            ChangeState(Offline);
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else 
+            Application.Quit();
+#endif
         }
     }
 }

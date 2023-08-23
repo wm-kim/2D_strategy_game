@@ -55,6 +55,9 @@ namespace Minimax
         public override void OnNetworkDespawn()
         {
             m_networkManager.SceneManager.OnSceneEvent -= GameManager_OnSceneEvent;
+            
+            // clear the cached client rpc params
+            GlobalManagers.Instance.Connection.ClearClientRpcParams();
             base.OnNetworkDespawn();
         }
         

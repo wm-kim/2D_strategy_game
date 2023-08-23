@@ -51,8 +51,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             {
                 if (!m_connectionManager.HasAvailablePlayerSlot())
                 {
-                    Debug.Log("Server reached max players, automatically starting game");
-                    GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.GamePlayScene, true);
+                    DebugWrapper.Log("Server reached max players, automatically starting game");
+                    GlobalManagers.Instance.Scene.LoadScene(SceneType.GamePlayScene, true);
                 }
             }
 #endif
@@ -78,21 +78,9 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                     SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
                 }
             }
-            
+ 
 #if DEDICATED_SERVER
-            HandleUpdateBackfillTickets();      
-
-            // automatically shutdown if there are no more clients in the gameplay scene
-            var currentScene = GlobalManagers.Instance.Scene.CurrentlyLoadedScene;
-            if (currentScene == SceneType.GamePlayScene.ToString())
-            {
-                if (m_connectionManager.HasNoPlayerConnected())
-                {
-                    Debug.Log("No more clients in the gameplay scene, shutting down server");
-                    m_connectionManager.NetworkManager.Shutdown();
-                    Application.Quit();
-                }
-            }
+            HandleUpdateBackfillTickets();
 #endif
         }
         

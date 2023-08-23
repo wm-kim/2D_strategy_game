@@ -53,7 +53,6 @@ namespace Minimax.SceneManagement
             base.OnDestroy();
         }
         
-        public void RequestLoadScene(SceneType sceneToLoad, bool useNetwork = false) => LoadScene(sceneToLoad.ToString(), useNetwork);
 #if UNITY_EDITOR
         public void RequestColdStartup(SceneType sceneToLoad) => ColdStartup(sceneToLoad.ToString());
 #endif
@@ -114,8 +113,16 @@ namespace Minimax.SceneManagement
 #endif 
         private bool IsInitialLoading => string.IsNullOrEmpty(m_currentlyLoadedScene);
 
-        private async void LoadScene(string sceneToLoad, bool useNetwork = false)
+        public async void LoadScene(SceneType sceneTypeToLoad, bool useNetwork = false)
         {
+            var sceneToLoad = sceneTypeToLoad.ToString();
+            
+            if (m_currentlyLoadedScene == sceneToLoad)
+            {
+                Debug.LogWarning($"Trying to load scene {sceneToLoad} which is already loaded");
+                return;
+            }
+            
             if (useNetwork)
             {
                 if (IsSpawned && IsNetworkSceneManagementEnabled && !NetworkManager.ShutdownInProgress)

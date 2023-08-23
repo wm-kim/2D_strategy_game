@@ -25,7 +25,7 @@ namespace Minimax.UI.View.Popups
         private void OnConfirmButtonClicked()
         {
             GlobalManagers.Instance.Popup.HideCurrentPopup();
-            GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.MenuScene);
+            GlobalManagers.Instance.Connection.RequestShutdown();
         }
         
         private void OnCancelButtonClicked()

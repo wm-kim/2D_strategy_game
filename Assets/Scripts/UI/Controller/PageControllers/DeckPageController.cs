@@ -17,7 +17,7 @@ namespace Minimax.UI.Controller.PageControllers
         
         private void RequestLoadDeckBuildScene()
         {
-            GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.DeckBuildingScene);
+            GlobalManagers.Instance.Scene.LoadScene(SceneType.DeckBuildingScene);
         }
     }
 }

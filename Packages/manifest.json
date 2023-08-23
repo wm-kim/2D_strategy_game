@@ -13,7 +13,7 @@
     "com.unity.mobile.notifications": "2.2.0",
     "com.unity.multiplayer.samples.coop": "https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop.git?path=/Packages/com.unity.multiplayer.samples.coop",
     "com.unity.multiplayer.tools": "1.1.0",
-    "com.unity.netcode.gameobjects": "1.5.1",
+    "com.unity.netcode.gameobjects": "1.5.2",
     "com.unity.remote-config": "3.3.2",
     "com.unity.render-pipelines.universal": "14.0.8",
     "com.unity.services.authentication": "2.6.1",

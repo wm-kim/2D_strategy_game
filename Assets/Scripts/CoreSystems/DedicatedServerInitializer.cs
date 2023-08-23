@@ -1,9 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Minimax.CoreSystems;
 using Minimax.Utilities;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Minimax
@@ -13,8 +12,8 @@ namespace Minimax
 #if DEDICATED_SERVER
         private async void Start()
         {
-            await ServerAuthentication();
             GlobalManagers.Instance.Connection.StartServer();
+            await ServerAuthentication();
         }
 
         private async UniTask ServerAuthentication()

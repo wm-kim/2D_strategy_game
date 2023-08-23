@@ -66,7 +66,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                     }
                 }
             }
-            else
+            else // 최대 재연결 시도 횟수를 초과한 경우
             {
                 if (string.IsNullOrEmpty(disconnectReason))
                 {
@@ -78,7 +78,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                     m_connectionManager.ConnectStatusChannel.Publish(connectStatus);
                 }
                 
-                // 최대 재연결 시도 횟수를 초과한 경우, 오프라인 상태로 전환합니다.
+                // 오프라인 상태로 전환합니다.
                 m_connectionManager.ChangeState(m_connectionManager.Offline);
             }
         }

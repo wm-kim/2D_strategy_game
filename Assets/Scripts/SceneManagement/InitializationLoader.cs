@@ -23,10 +23,10 @@ namespace Minimax.SceneManagement
         private void LoadInitialScene()
         {
 #if !DEDICATED_SERVER
-            GlobalManagers.Instance.Scene.RequestLoadScene(m_clientStartScene);
+            GlobalManagers.Instance.Scene.LoadScene(m_clientStartScene);
             SceneManager.UnloadSceneAsync(0);
 #else
-            GlobalManagers.Instance.Scene.RequestLoadScene(m_serverStartScene);
+            GlobalManagers.Instance.Scene.LoadScene(m_serverStartScene);
             SceneManager.UnloadSceneAsync(0);
 #endif
         }

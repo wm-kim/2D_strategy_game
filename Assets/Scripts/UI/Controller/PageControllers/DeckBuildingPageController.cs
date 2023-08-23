@@ -39,7 +39,7 @@ namespace Minimax.UI.Controller.PageControllers
                 "No",
                 () =>
                 {
-                    GlobalManagers.Instance.Scene.RequestLoadScene(SceneType.MenuScene);
+                    GlobalManagers.Instance.Scene.LoadScene(SceneType.MenuScene);
                     GlobalManagers.Instance.Popup.HideCurrentPopup();
                 },
                 () =>

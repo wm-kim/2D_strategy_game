@@ -30,6 +30,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         protected void ConnectClient()
         {
+            DebugWrapper.Log("Connecting client...");
+            
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
                 playerId = AuthenticationService.Instance.PlayerId,
