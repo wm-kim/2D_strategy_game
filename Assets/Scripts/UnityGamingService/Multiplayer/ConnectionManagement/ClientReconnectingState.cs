@@ -1,6 +1,9 @@
 using System;
 using System.Collections;
+using Minimax.CoreSystems;
+using Minimax.SceneManagement;
 using Minimax.Utilities;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
@@ -22,6 +25,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         public override void Enter()
         {
             m_attempts = 0;
+            
+            
             m_reconnectCoroutine = m_connectionManager.StartCoroutine(ReconnectCoroutine());
         }
 
@@ -68,6 +73,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
             else // 최대 재연결 시도 횟수를 초과한 경우
             {
+                DebugWrapper.Log("Used up all reconnection attempts, giving up.");
                 if (string.IsNullOrEmpty(disconnectReason))
                 {
                     m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.GenericDisconnect);
@@ -79,10 +85,11 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 }
                 
                 // 오프라인 상태로 전환합니다.
+                GlobalManagers.Instance.Scene.LoadScene(SceneType.MenuScene);
                 m_connectionManager.ChangeState(m_connectionManager.Offline);
             }
         }
-        
+
         IEnumerator ReconnectCoroutine()
         {
             // 첫 번째 시도에서 성공하지 않은 경우, 다시 시도하기 전에 잠시 어느 정도의 시간을 기다립니다.

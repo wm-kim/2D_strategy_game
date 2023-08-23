@@ -58,6 +58,12 @@ namespace SingularityGroup.HotReload {
             }
         }
         
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        static void InitializeUnityEvents() {
+            UnityEventHelper.Initialize();
+        }
+
+        
         void LoadPatches(string filePath) {
             PlayerLog("Loading patches from file {0}", filePath);
             var file = new FileInfo(filePath);
@@ -82,15 +88,16 @@ namespace SingularityGroup.HotReload {
             return assemblySearchPaths;
         }
        
-        internal void RegisterPatches(MethodPatchResponse patches, bool persist) {
+        internal List<string> RegisterPatches(MethodPatchResponse patches, bool persist) {
             PlayerLog("Register patches.\nWarnings: {0} \nMethods:\n{1}", string.Join("\n", patches.failures), string.Join("\n", patches.patches.SelectMany(p => p.modifiedMethods).Select(m => m.displayName)));
             pendingPatches.Add(patches);
-            ApplyPatches(persist);
+            return ApplyPatches(persist);
         }
         
-        void ApplyPatches(bool persist) {
+        List<string> ApplyPatches(bool persist) {
             PlayerLog("ApplyPatches. {0} patches pending.", pendingPatches.Count);
             EnsureSymbolResolver();
+            var errors = new List<string>();
 
             try {
                 int count = 0;
@@ -98,7 +105,7 @@ namespace SingularityGroup.HotReload {
                     if (seenResponses.Contains(response.id)) {
                         continue;
                     }
-                    HandleMethodPatchResponse(response);
+                    HandleMethodPatchResponse(response, errors);
                     patchHistory.Add(response);
 
                     seenResponses.Add(response.id);
@@ -118,6 +125,7 @@ namespace SingularityGroup.HotReload {
             }
 
             PatchesApplied++;
+            return errors;
         }
         
         internal void ClearPatchedMethods() {
@@ -152,7 +160,7 @@ namespace SingularityGroup.HotReload {
             };
         }
 
-        void HandleMethodPatchResponse(MethodPatchResponse response) {
+        void HandleMethodPatchResponse(MethodPatchResponse response, List<string> errors) {
             EnsureSymbolResolver();
 
             foreach(var patch in response.patches) {
@@ -172,7 +180,10 @@ namespace SingularityGroup.HotReload {
                     
                     symbolResolver.AddAssembly(asm);
                     for (int i = 0; i < patch.modifiedMethods.Length; i++) {
-                        PatchMethod(module, patch.modifiedMethods[i], patch.patchMethods[i], patch.unityJobs.Length > 0);
+                        var err = PatchMethod(module, patch.modifiedMethods[i], patch.patchMethods[i], patch.unityJobs.Length > 0);
+                        if (!string.IsNullOrEmpty(err)) {
+                            errors.Add(err);
+                        }
                     }
                     JobHotReloadUtility.HotReloadBurstCompiledJobs(patch, module);
                 } catch(Exception ex) {
@@ -181,7 +192,7 @@ namespace SingularityGroup.HotReload {
             }
         }
 
-        void PatchMethod(Module module, SMethod sOriginalMethod, SMethod sPatchMethod, bool containsBurstJobs) {
+        string PatchMethod(Module module, SMethod sOriginalMethod, SMethod sPatchMethod, bool containsBurstJobs) {
             try {
                 var patchMethod = module.ResolveMethod(sPatchMethod.metadataToken);
                 var start = DateTime.UtcNow;
@@ -192,14 +203,14 @@ namespace SingularityGroup.HotReload {
                 }
 
                 if(state.match == null) {
-                    Log.Warning(
+                    var error = 
                         "Method mismatch: {0}, patch: {1}. This can have multiple reasons:\n"
                         + "1. You are running the Editor multiple times for the same project using symlinks, and are making changes from the symlink project\n"
                         + "2. A bug in Hot Reload. Please send us a reproduce (code before/after), and we'll get it fixed for you\n"
-                        , sOriginalMethod.simpleName, patchMethod.Name
-                    );
+                        ;
+                    Log.Warning(error, sOriginalMethod.simpleName, patchMethod.Name);
 
-                    return;
+                    return string.Format(error, sOriginalMethod.simpleName, patchMethod.Name);
                 }
 
                 PlayerLog("Detour method {0:X8} {1}, offset: {2}", sOriginalMethod.metadataToken, patchMethod.Name, state.offset);
@@ -212,15 +223,17 @@ namespace SingularityGroup.HotReload {
                         Directory.CreateDirectory(tmpDir);
                         File.WriteAllText(Path.Combine(tmpDir, "code-patcher-detour-log"), $"success {patchMethod.Name}");
                     }
+                    return null;
                 } else {
                     if(result.exception is InvalidProgramException && containsBurstJobs) {
                         //ignore. The method is likely burst compiled and can't be patched
+                        return null;
                     } else {
-                        HandleMethodPatchFailure(sOriginalMethod, result.exception);
+                        return HandleMethodPatchFailure(sOriginalMethod, result.exception);
                     }
                 }
             } catch(Exception ex) {
-                HandleMethodPatchFailure(sOriginalMethod, ex);
+                return HandleMethodPatchFailure(sOriginalMethod, ex);
             }
         }
         
@@ -313,9 +326,10 @@ namespace SingularityGroup.HotReload {
                 sOriginalMethod.simpleName));
         }
     
-        void HandleMethodPatchFailure(SMethod method, Exception exception) {
-            Log.Warning($"Failed to apply patch for method {method.displayName} in assembly {method.assemblyName}\n{exception}");
-            Log.Exception(exception);
+        string HandleMethodPatchFailure(SMethod method, Exception exception) {
+            var err = $"Failed to apply patch for method {method.displayName} in assembly {method.assemblyName}\n{exception}";
+            Log.Warning(err);
+            return err;
         }
 
         void EnsureSymbolResolver() {

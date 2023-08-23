@@ -764,7 +764,7 @@ namespace SingularityGroup.HotReload.Editor {
         }
 
         internal void RenderLicenseInfo(LoginStatusResponse loginStatus, bool verbose = false, bool allowHide = true, string overrideActionButton = null, bool showConsumptions = false) {
-            HotReloadPrefs.ShowLogin = EditorGUILayout.Foldout(HotReloadPrefs.ShowLogin, "License", true, HotReloadWindowStyles.FoldoutStyle);
+            HotReloadPrefs.ShowLogin = EditorGUILayout.Foldout(HotReloadPrefs.ShowLogin, "Hot Reload License", true, HotReloadWindowStyles.FoldoutStyle);
             if (HotReloadPrefs.ShowLogin) {
                 EditorGUILayout.Space();
                 if ((loginStatus?.isLicensed != true && showConsumptions) && !(loginStatus == null || loginStatus.isFree)) {

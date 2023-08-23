@@ -47,7 +47,7 @@ namespace Minimax.UI.Controller.PageControllers
         {
             DebugWrapper.Log("Find Match");
 
-            GlobalManagers.Instance.Popup.RegisterLoadingPopupToQueue("Finding Match...");
+            GlobalManagers.Instance.Popup.RegisterLoadingPopupToQueue(Define.FindingMatchPopup,"Finding Match...");
             
             // create ticket
             createTicketResponse = await MatchmakerService.Instance.CreateTicketAsync(

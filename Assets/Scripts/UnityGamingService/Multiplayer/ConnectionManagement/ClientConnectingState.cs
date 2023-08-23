@@ -1,5 +1,6 @@
 using System;
 using Minimax.Utilities;
+using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -54,7 +55,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 throw;
             }
         }
-
+        
         private void StartingClientFailed()
         {
             var disconnectReason = m_connectionManager.NetworkManager.DisconnectReason;

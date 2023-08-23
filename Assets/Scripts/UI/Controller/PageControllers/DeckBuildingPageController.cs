@@ -1,5 +1,6 @@
 using Minimax.CoreSystems;
 using Minimax.SceneManagement;
+using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -33,7 +34,8 @@ namespace Minimax.UI.Controller.PageControllers
         
         private void OnBackButtonPressed()
         {
-            GlobalManagers.Instance.Popup.MobileBackButtonTwoButtonPopup(
+            GlobalManagers.Instance.Popup.MobileBackTwoButtonPopup(
+                Define.ExitDeckBuilderPopup,
                 "Exit without saving?",
                 "Yes",
                 "No",

@@ -7,6 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using SingularityGroup.HotReload;
 using SingularityGroup.HotReload.Editor.Util;
 using SingularityGroup.HotReload.Newtonsoft.Json;
 using UnityEditor;

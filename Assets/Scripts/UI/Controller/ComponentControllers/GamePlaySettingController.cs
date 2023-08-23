@@ -29,12 +29,12 @@ namespace Minimax
 
         private void RequestOpenGamePlaySettingsPopup()
         {
-            GlobalManagers.Instance.Popup.RegisterDefaultPopupToQueue(PopupType.GamePlaySettingsPopup);
+            GlobalManagers.Instance.Popup.RegisterPopupToQueue(PopupType.GamePlaySettingsPopup);
         }
         
         private void OnBackButtonPressed()
         {
-            GlobalManagers.Instance.Popup.MobileBackButtonDefaultPopup(PopupType.GamePlaySettingsPopup);
+            GlobalManagers.Instance.Popup.MobileBackButtonPopup(PopupType.GamePlaySettingsPopup);
         }
     }
 }

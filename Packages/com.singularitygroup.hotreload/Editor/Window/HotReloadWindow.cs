@@ -77,7 +77,7 @@ namespace SingularityGroup.HotReload.Editor {
             this.minSize = new Vector2(425, 150f);
             var tex = Resources.Load<Texture>(HotReloadWindowStyles.IsDarkMode ? "Icon_DarkMode" : "Icon_LightMode");
             this.titleContent = new GUIContent(" Hot Reload", tex);
-            this._showOnStartupOption = HotReloadPrefs.GetShowOnStartupEnum();
+            this._showOnStartupOption = HotReloadPrefs.ShowOnStartup;
 
             foreach (var patch in CodePatcher.I.PendingPatches) {
                 pendingPatches.Add(patch.id, new PatchInfo(patch));
@@ -208,6 +208,10 @@ namespace SingularityGroup.HotReload.Editor {
         static GUIStyle renderAppBoxStyle => _renderAppBoxStyle ?? (_renderAppBoxStyle = new GUIStyle(GUI.skin.box) {
             padding = new RectOffset(10, 10, 10, 10)
         });
+        
+        static GUILayoutOption[] _nonExpandable;
+        public static GUILayoutOption[] NonExpandableLayout => _nonExpandable ?? (_nonExpandable = new [] {GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(true)});
+        
         void RenderRateApp() {
             if (HotReloadPrefs.RateAppShown) {
                 return;
@@ -217,7 +221,13 @@ namespace SingularityGroup.HotReload.Editor {
                 return;
             }
             EditorGUILayout.BeginVertical(renderAppBoxStyle);
+            EditorGUILayout.BeginHorizontal();
             HotReloadGUIHelper.HelpBox("Are you enjoying using Hot Reload?", MessageType.Info, 11);
+            if (GUILayout.Button("Hide", NonExpandableLayout)) {
+                RequestHelper.RequestEditorEventWithRetry(new Stat(StatSource.Client, StatLevel.Debug, StatFeature.RateApp), new EditorExtraData { { "dismissed", true } }).Forget();
+                HotReloadPrefs.RateAppShown = true;
+            }
+            EditorGUILayout.EndHorizontal();
             using (new EditorGUILayout.HorizontalScope()) {
                 if (GUILayout.Button("Yes")) {
                     var openedUrl = PackageConst.IsAssetStoreBuild && EditorUtility.DisplayDialog("Rate Hot Reload", "Thank you for using Hot Reload!\n\nPlease consider leaving a review on the Asset Store to support us.", "Open in browser", "Cancel");
@@ -226,7 +236,9 @@ namespace SingularityGroup.HotReload.Editor {
                     }
                     HotReloadPrefs.RateAppShown = true;
                     var data = new EditorExtraData();
-                    data.Add("opened_url", openedUrl);
+                    if (PackageConst.IsAssetStoreBuild) {
+                        data.Add("opened_url", openedUrl);
+                    }
                     data.Add("enjoy_app", true);
                     RequestHelper.RequestEditorEventWithRetry(new Stat(StatSource.Client, StatLevel.Debug, StatFeature.RateApp), data).Forget();
                 }
@@ -276,34 +288,31 @@ namespace SingularityGroup.HotReload.Editor {
             
             aboutTab.documentationButton.OnGUI();
             GUILayout.FlexibleSpace();
-            using(var changeScope = new EditorGUI.ChangeCheckScope()) {
-                var prevLabelWidth = EditorGUIUtility.labelWidth;
-                try {
-                    EditorGUIUtility.labelWidth = 105f;
-                    using (new GUILayout.VerticalScope()) {
-                        GUILayout.FlexibleSpace();
-                        using (new GUILayout.HorizontalScope()) {
-                            GUILayout.Label("Show On Startup");
-                            Rect buttonRect = GUILayoutUtility.GetLastRect();
-                            if (EditorGUILayout.DropdownButton(new GUIContent(Regex.Replace(_showOnStartupOption.ToString(), "([a-z])([A-Z])", "$1 $2")), FocusType.Passive, GUILayout.Width(110f))) {
-                                GenericMenu menu = new GenericMenu();
-                                foreach (ShowOnStartupEnum option in Enum.GetValues(typeof(ShowOnStartupEnum))) {
-                                    menu.AddItem(new GUIContent(Regex.Replace(option.ToString(), "([a-z])([A-Z])", "$1 $2")), false, () => {
+            var prevLabelWidth = EditorGUIUtility.labelWidth;
+            try {
+                EditorGUIUtility.labelWidth = 105f;
+                using (new GUILayout.VerticalScope()) {
+                    GUILayout.FlexibleSpace();
+                    using (new GUILayout.HorizontalScope()) {
+                        GUILayout.Label("Show On Startup");
+                        Rect buttonRect = GUILayoutUtility.GetLastRect();
+                        if (EditorGUILayout.DropdownButton(new GUIContent(Regex.Replace(_showOnStartupOption.ToString(), "([a-z])([A-Z])", "$1 $2")), FocusType.Passive, GUILayout.Width(110f))) {
+                            GenericMenu menu = new GenericMenu();
+                            foreach (ShowOnStartupEnum option in Enum.GetValues(typeof(ShowOnStartupEnum))) {
+                                menu.AddItem(new GUIContent(Regex.Replace(option.ToString(), "([a-z])([A-Z])", "$1 $2")), false, () => {
+                                    if (_showOnStartupOption != option) {
                                         _showOnStartupOption = option;
-                                    });
-                                }
-                                menu.DropDown(new Rect(buttonRect.x,  buttonRect.y, 100, 0));
+                                        HotReloadPrefs.ShowOnStartup = _showOnStartupOption;
+                                    }
+                                });
                             }
+                            menu.DropDown(new Rect(buttonRect.x, buttonRect.y, 100, 0));
                         }
-                        GUILayout.FlexibleSpace();
                     }
-                } finally {
-                    EditorGUIUtility.labelWidth = prevLabelWidth;
+                    GUILayout.FlexibleSpace();
                 }
-                
-                if(changeScope.changed) {
-                    HotReloadPrefs.ShowOnStartup = _showOnStartupOption.ToString();
-                }
+            } finally {
+                EditorGUIUtility.labelWidth = prevLabelWidth;
             }
         }
 

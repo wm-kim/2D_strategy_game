@@ -35,7 +35,9 @@ namespace Minimax
         {
             m_networkManager.SceneManager.OnSceneEvent += GameManager_OnSceneEvent;
             m_networkTimer.ConFig(10f, null, () => 
-                GlobalManagers.Instance.Popup.RegisterOneButtonPopupToQueue("Game Started", "Ok", () => 
+                GlobalManagers.Instance.Popup.RegisterOneButtonPopupToQueue(
+                    Define.GameStartedPopup,
+                    "Game Started", "Ok", () => 
                     GlobalManagers.Instance.Popup.HideCurrentPopup())
                 );
             

@@ -1,5 +1,7 @@
 using System;
+using System.IO;
 using JetBrains.Annotations;
+using SingularityGroup.HotReload.Editor.Cli;
 using UnityEditor;
 
 namespace SingularityGroup.HotReload.Editor {
@@ -9,6 +11,7 @@ namespace SingularityGroup.HotReload.Editor {
         private const string LicenseEmailKey = "HotReloadWindow.LicenseEmail";
         private const string RenderAuthLoginKey = "HotReloadWindow.RenderAuthLogin";
         private const string FirstLoginCachedKey = "HotReloadWindow.FirstLoginCachedKey";
+        [Obsolete]
         private const string ShowOnStartupKey = "HotReloadWindow.ShowOnStartup";
         private const string PasswordCachedKey = "HotReloadWindow.PasswordCached";
         private const string ExposeServerToLocalNetworkKey = "HotReloadWindow.ExposeServerToLocalNetwork";
@@ -23,6 +26,7 @@ namespace SingularityGroup.HotReload.Editor {
         private const string LoggedBurstHintKey = "HotReloadWindow.LoggedBurstHint";
         private const string ShouldDoAutoRefreshFixupKey = "HotReloadWindow.ShouldDoAutoRefreshFixup";
         private const string ActiveDaysKey = "HotReloadWindow.ActiveDays";
+        [Obsolete]
         private const string RateAppShownKey = "HotReloadWindow.RateAppShown";
         private const string PatchesCollapseKey = "HotReloadWindow.PatchesCollapse";
         private const string PatchesGroupAllKey = "HotReloadWindow.PatchesGroupAll";
@@ -96,9 +100,38 @@ namespace SingularityGroup.HotReload.Editor {
             set { EditorPrefs.SetBool(FirstLoginCachedKey, value); }
         }
 
-        public static string ShowOnStartup { // WindowAutoOpen
+        [Obsolete]
+        public static string ShowOnStartupLegacy { // WindowAutoOpen
             get { return EditorPrefs.GetString(ShowOnStartupKey); }
             set { EditorPrefs.SetString(ShowOnStartupKey, value); }
+        }
+        
+        public static string showOnStartupPath { get; }= Path.Combine(CliUtils.GetAppDataPath(), "showOnStartup.txt");
+        static ShowOnStartupEnum? showOnStartup;
+        public static ShowOnStartupEnum ShowOnStartup {
+            get {
+                if (showOnStartup != null) {
+                    return showOnStartup.Value;
+                }
+                if (!File.Exists(showOnStartupPath)) {
+                    showOnStartup = ShowOnStartupEnum.Always;
+                    return showOnStartup.Value;
+                }
+                var text = File.ReadAllText(showOnStartupPath);
+                ShowOnStartupEnum _showOnStartup;
+                if (Enum.TryParse(text, true, out _showOnStartup)) {
+                    showOnStartup = _showOnStartup;
+                    return showOnStartup.Value;
+                }
+                showOnStartup = ShowOnStartupEnum.Always;
+                return showOnStartup.Value;
+            }
+            set {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                Directory.CreateDirectory(Path.GetDirectoryName(showOnStartupPath));
+                File.WriteAllText(showOnStartupPath, value.ToString());
+                showOnStartup = value;
+            }
         }
 
 
@@ -159,9 +192,32 @@ namespace SingularityGroup.HotReload.Editor {
             set { EditorPrefs.SetString(ActiveDaysKey, value); }
         }
         
-        public static bool RateAppShown {
+        [Obsolete]
+        public static bool RateAppShownLegacy {
             get { return EditorPrefs.GetBool(RateAppShownKey, false); }
             set { EditorPrefs.SetBool(RateAppShownKey, value); }
+        }
+        
+        static string rateAppPath = Path.Combine(CliUtils.GetAppDataPath(), "ratedApp.txt");
+        static bool? rateAppShown;
+        public static bool RateAppShown {
+            get {
+                if (rateAppShown != null) {
+                    return rateAppShown.Value;
+                }
+                rateAppShown = File.Exists(rateAppPath);
+                return rateAppShown.Value;
+            }
+            set {
+                // ReSharper disable once AssignNullToNotNullAttribute
+                Directory.CreateDirectory(Path.GetDirectoryName(rateAppPath));
+                if (value && !File.Exists(rateAppPath)) {
+                    using (File.Create(rateAppPath)) { }
+                } else if (!value && File.Exists(rateAppPath)) {
+                    File.Delete(rateAppPath);
+                }
+                rateAppShown = value;
+            }
         }
 
         [Obsolete]
@@ -176,9 +232,10 @@ namespace SingularityGroup.HotReload.Editor {
             set { EditorPrefs.SetBool(PatchesCollapseKey, value); }
         }
 
+        [Obsolete]
         public static ShowOnStartupEnum GetShowOnStartupEnum() {
             ShowOnStartupEnum showOnStartupEnum;
-            if (Enum.TryParse(HotReloadPrefs.ShowOnStartup, true, out showOnStartupEnum)) {
+            if (Enum.TryParse(HotReloadPrefs.ShowOnStartupLegacy, true, out showOnStartupEnum)) {
                 return showOnStartupEnum;
             }
             return ShowOnStartupEnum.Always;

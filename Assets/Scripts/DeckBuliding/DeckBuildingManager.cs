@@ -47,7 +47,9 @@ namespace Minimax
             // Validate the deck in the client side before sending it to the cloud
             if (!ClientSideDeckValidation(deckDTO))
             {
-                GlobalManagers.Instance.Popup.RegisterOneButtonPopupToQueue($"Deck must contain {k_requiredDeckSize} cards.", "OK",
+                GlobalManagers.Instance.Popup.RegisterOneButtonPopupToQueue( 
+                    Define.InvalidDeckPopup,
+                    $"Deck must contain {k_requiredDeckSize} cards.", "OK",
                     () => GlobalManagers.Instance.Popup.HideCurrentPopup());
                 return;
             }
@@ -58,7 +60,7 @@ namespace Minimax
             try
             {
                 // Show a loading popup while we wait for the cloud code to finish
-                using (new LoadingPopupContext("Saving Deck to Cloud"))
+                using (new LoadingPopupContext(Define.SavingDeckPopup,"Saving Deck to Cloud..."))
                 {
                     // Call the function within the module and provide the parameters we defined in there
                     await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "SaveDeckData",

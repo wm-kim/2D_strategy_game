@@ -12,17 +12,20 @@ namespace SingularityGroup.HotReload.Editor {
         public readonly bool trialLicense;
         public readonly LoginStatusResponse loginStatus;
         public readonly bool isServerHealthy;
+        public readonly bool registrationRequired;
         
         public HotReloadSettingsTabState(
             bool running,
             bool trialLicense,
             LoginStatusResponse loginStatus,
-            bool isServerHealthy
+            bool isServerHealthy,
+            bool registrationRequired
         ) {
             this.running = running;
             this.trialLicense = trialLicense;
             this.loginStatus = loginStatus;
             this.isServerHealthy = isServerHealthy;
+            this.registrationRequired = registrationRequired;
         }
     }
     
@@ -73,11 +76,18 @@ namespace SingularityGroup.HotReload.Editor {
                     running: EditorCodePatcher.Running, 
                     trialLicense: EditorCodePatcher.Status != null && (EditorCodePatcher.Status?.isTrial == true),
                     loginStatus: EditorCodePatcher.Status,
-                    isServerHealthy: ServerHealthCheck.I.IsServerHealthy
+                    isServerHealthy: ServerHealthCheck.I.IsServerHealthy,
+                    registrationRequired: RedeemLicenseHelper.I.RegistrationRequired
                 );
             }
 
-            if (!EditorCodePatcher.LoginNotRequired && !RedeemLicenseHelper.I.RegistrationRequired) {
+
+            if (!EditorCodePatcher.LoginNotRequired 
+                && !currentState.registrationRequired 
+                // Delay showing login in settings to not confuse users that they need to login to use Free trial
+                && (HotReloadPrefs.RateAppShown
+                    || PackageConst.IsAssetStoreBuild)
+            ) {
                 using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.DynamicSectionOuterBoxCompact)) {
                     using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.DynamicSectionInnerBoxWide)) {
                         using (new EditorGUILayout.VerticalScope()) {

@@ -20,7 +20,7 @@ namespace SingularityGroup.HotReload.Editor {
 
         // HandleEditorStart is only called on editor start, not on domain reload
         public static void HandleEditorStart(string updatedFromVersion) {
-            var showOnStartup = HotReloadPrefs.GetShowOnStartupEnum();
+            var showOnStartup = HotReloadPrefs.ShowOnStartup;
             if (showOnStartup == ShowOnStartupEnum.Always || (showOnStartup == ShowOnStartupEnum.OnNewVersion && !String.IsNullOrEmpty(updatedFromVersion))) {
                 HotReloadWindow.Open();
             }

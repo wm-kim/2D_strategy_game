@@ -65,7 +65,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
                 // First reset the deck page view, deselecting all deck item views
                 m_deckPageView.ResetDBDeckItem();
                 
-                using (new LoadingPopupContext("Selecting Deck..."))
+                using (new LoadingPopupContext(Define.SelectDeckPopup,"Selecting Deck..."))
                 {
                     await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "SelectPlayerDeck",
                         new Dictionary<string, object> {{ "value", m_deckId.ToString() } });
@@ -96,7 +96,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
                 // First reset the deck page view, deselecting all deck item views
                 m_deckPageView.ResetDBDeckItem();
                 
-                using (new LoadingPopupContext("Deleting Deck..."))
+                using (new LoadingPopupContext(Define.DeleteDeckPopup,"Deleting Deck..."))
                 {
                     await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "DeletePlayerDeck",
                         new Dictionary<string, object> {{ "value", m_deckId.ToString() }});

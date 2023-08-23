@@ -8,9 +8,10 @@ namespace Minimax.UI.View.Popups
     /// </summary>
     public class LoadingPopupContext : IDisposable
     {
-        public LoadingPopupContext(string message)
+        /// <param name="key">queue안에서 중복되는지 확인하기 위한 식별자입니다.</param>
+        public LoadingPopupContext(string key, string message)
         {
-            GlobalManagers.Instance.Popup.RegisterLoadingPopupToQueue(message);
+            GlobalManagers.Instance.Popup.RegisterLoadingPopupToQueue(key, message);
         }
 
         public void Dispose()

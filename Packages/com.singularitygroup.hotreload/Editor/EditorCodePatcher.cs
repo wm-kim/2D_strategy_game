@@ -16,6 +16,7 @@ using UnityEngine;
 using Debug = UnityEngine.Debug;
 using Task = System.Threading.Tasks.Task;
 using System.Reflection;
+using UnityEditor.Compilation;
 
 
 namespace SingularityGroup.HotReload.Editor {
@@ -36,7 +37,8 @@ namespace SingularityGroup.HotReload.Editor {
         internal static bool compileError => _compileError;
         
         internal static PatchStatus patchStatus = PatchStatus.None;
-        
+
+        static bool quitting;
         static EditorCodePatcher() {
             if(init) {
                 //Avoid infinite recursion in case the static constructor gets accessed via `InitPatchesBlocked` below
@@ -63,6 +65,16 @@ namespace SingularityGroup.HotReload.Editor {
             if (ServerHealthCheck.I.IsServerHealthy) {
                 EditorApplication.delayCall += TryPrepareBuildInfo;
             }
+            // reset in case last session didn't shut down properly
+            CheckEditorSettings();
+            EditorApplication.quitting += ResetSettingsOnQuit;
+            CompilationPipeline.compilationFinished += obj => {
+                // reset in case package got removed
+                // if it got removed, it will not be enabled again
+                // if it wasn't removed, settings will get handled by OnIntervalMainThread
+                AutoRefreshSettingChecker.Reset();
+                ScriptCompilationSettingChecker.Reset();
+            };
             DetectEditorStart();
             DetectVersionUpdate();
             SingularityGroup.HotReload.Demo.Demo.I = new EditorDemo();
@@ -70,6 +82,22 @@ namespace SingularityGroup.HotReload.Editor {
             if(EditorApplication.isPlayingOrWillChangePlaymode) {
                 CodePatcher.I.InitPatchesBlocked(patchesFilePath);
             }
+
+#pragma warning disable CS0612 // Type or member is obsolete
+            if (HotReloadPrefs.RateAppShownLegacy) {
+                HotReloadPrefs.RateAppShown = true;
+            }
+            if (!File.Exists(HotReloadPrefs.showOnStartupPath)) {
+                var showOnStartupLegacy = HotReloadPrefs.GetShowOnStartupEnum();
+                HotReloadPrefs.ShowOnStartup = showOnStartupLegacy;
+            }
+#pragma warning restore CS0612 // Type or member is obsolete
+        }
+
+        public static void ResetSettingsOnQuit() {
+            quitting = true;
+            AutoRefreshSettingChecker.Reset();
+            ScriptCompilationSettingChecker.Reset();
         }
 
         public static bool autoRecompileUnsupportedChangesSupported;
@@ -249,6 +277,9 @@ namespace SingularityGroup.HotReload.Editor {
         }
 
         static void CheckEditorSettings() {
+            if (quitting) {
+                return;
+            }
             CheckAutoRefresh();
             CheckScriptCompilation();
         }
@@ -273,9 +304,6 @@ namespace SingularityGroup.HotReload.Editor {
 
         static string[] assetExtensionBlacklist = new[] {
             ".cs",
-            ".asmdef",
-            ".asmref",
-            ".rsp",
             // TODO add setting to allow scenes to get hot reloaded for users who collaborate (their scenes change externally)
             ".unity",
             // safer to ignore meta files completely until there's a use-case
@@ -283,6 +311,15 @@ namespace SingularityGroup.HotReload.Editor {
             // debug files
             ".mdb",
             ".pdb",
+        };
+
+        public static string[] compileFiles = new[] {
+            ".asmdef",
+            ".asmref",
+            ".rsp",
+        };
+
+        public static string[] plugins = new[] {
             // native plugins
             ".dll",
             ".bundle",
@@ -301,6 +338,25 @@ namespace SingularityGroup.HotReload.Editor {
             // ignore directories
             if (Directory.Exists(assetPath)) {
                 return;
+            }
+            foreach (var compileFile in compileFiles) {
+                if (assetPath.EndsWith(compileFile, StringComparison.Ordinal)) {
+                    Failures = new List<string>(Failures) { $"errors: AssemblyFileEdit: Editing assembly files requires recompiling in Unity. in {assetPath}" };
+                    if (HotReloadPrefs.AutoRecompileUnsupportedChangesImmediately || UnityEditorInternal.InternalEditorUtility.isApplicationActive) {
+                        TryRecompileUnsupportedChanges();
+                    }
+                    return;
+                }
+            }
+            // Add plugin changes to unsupported changes list
+            foreach (var plugin in plugins) {
+                if (assetPath.EndsWith(plugin, StringComparison.Ordinal)) {
+                    Failures = new List<string>(Failures) { $"errors: NativePluginEdit: Editing native plugins requires recompiling in Unity. in {assetPath}" };
+                    if (HotReloadPrefs.AutoRecompileUnsupportedChangesImmediately || UnityEditorInternal.InternalEditorUtility.isApplicationActive) {
+                        TryRecompileUnsupportedChanges();
+                    }
+                    return;
+                }
             }
             // ignore file extensiosn that trigger domain reload
             foreach (var blacklisted in assetExtensionBlacklist) {
@@ -336,7 +392,12 @@ namespace SingularityGroup.HotReload.Editor {
         static void HandleResponseReceived(MethodPatchResponse response) {
             if (response.patches.Length > 0) {
                 LogBurstHint(response);
-                CodePatcher.I.RegisterPatches(response, persist: true);
+                var errors = CodePatcher.I.RegisterPatches(response, persist: true);
+                if (errors?.Count > 0) {
+                    var newFailures = new List<string>(Failures);
+                    newFailures.AddRange(errors);
+                    Failures = newFailures;
+                }
                 CodePatcher.I.SaveAppliedPatches(patchesFilePath).Forget();
                 var window = HotReloadWindow.Current;
                 if(window) {
@@ -356,7 +417,8 @@ namespace SingularityGroup.HotReload.Editor {
                     }
                 }
                 Failures = newFailures;
-                if (HotReloadPrefs.AutoRecompileUnsupportedChangesImmediately) {
+                
+                if (HotReloadPrefs.AutoRecompileUnsupportedChangesImmediately || UnityEditorInternal.InternalEditorUtility.isApplicationActive) {
                     TryRecompileUnsupportedChanges();
                 }
             } else {

@@ -14,7 +14,7 @@ namespace SingularityGroup.HotReload.Editor {
         public const string ManageAccountURL = "https://users.licensespring.com/login";
         public const string ForgotPasswordURL = "https://users.licensespring.com/reset-password";
         public const string ReportIssueURL = "https://gitlab.com/singularitygroup/hot-reload-for-unity/-/issues/new";
-        public const string TroubleshootingURL = "https://hotreload.net/documentation#troubleshooting";
+        public const string TroubleshootingURL = "https://hotreload.net/documentation/troubleshooting";
         public const string UnityStoreRateAppURL = "https://assetstore.unity.com/packages/slug/254358#reviews";
         public const string ChangelogURL = WebsiteURL + "/changelog";
         public const string DiscordInviteUrl = "https://discord.com/invite/kgxAS4Bqxr";
