@@ -34,9 +34,9 @@ namespace Minimax.UI.View.Pages
             SetCurrentDeckName();
             
             var caches = GlobalManagers.Instance.Cache;
-            caches.Register(Define.DeckDtoCollectionCacheKey, FetchDecksFromCloud, InitializeDeckViewsOnLoad);
-            caches.UpdateLoadCompletedAction(Define.DeckDtoCollectionCacheKey, InitializeDeckViewsOnLoad);
-            caches.RequestLoad(Define.DeckDtoCollectionCacheKey);
+            caches.Register(Define.DeckDtoCollectionCache, FetchDecksFromCloud, InitializeDeckViewsOnLoad);
+            caches.UpdateLoadCompletedAction(Define.DeckDtoCollectionCache, InitializeDeckViewsOnLoad);
+            caches.RequestLoad(Define.DeckDtoCollectionCache);
         }
 
         private void InitializeDeckViewsOnLoad()
@@ -50,14 +50,14 @@ namespace Minimax.UI.View.Pages
         // Set current deck name
         private void SetCurrentDeckName()
         {
-            m_currentDeckNameText.text = PlayerPrefs.HasKey(Define.CurrentDeckNameCacheKey) 
-                ? PlayerPrefs.GetString(Define.CurrentDeckNameCacheKey) : "None";
+            m_currentDeckNameText.text = PlayerPrefs.HasKey(Define.CurrentDeckNameCache) 
+                ? PlayerPrefs.GetString(Define.CurrentDeckNameCache) : "None";
         }
 
         private async UniTask FetchDecksFromCloud(bool isUpdate)
         {
             DebugWrapper.Log("Fetching decks from cloud...");
-            var decks = await CloudService.Load<Dictionary<int, DeckDTO>>(Define.DeckCloudKey);
+            var decks = await CloudService.Load<Dictionary<int, DeckDTO>>(Define.DeckCloud);
             if (decks == null || decks.Count == 0)
             {
                 DebugWrapper.LogWarning("No deck data found.");
@@ -68,7 +68,7 @@ namespace Minimax.UI.View.Pages
                 m_deckCollectionSO.Decks = decks;
                 
                 // setting recent deck id in PlayerPrefs
-                if (isUpdate) PlayerPrefs.SetInt(Define.CurrentDeckIdCacheKey, m_deckCollectionSO.GetRecentDeckId());
+                if (isUpdate) PlayerPrefs.SetInt(Define.CurrentDeckIdCache, m_deckCollectionSO.GetRecentDeckId());
             }
         }
         
@@ -85,9 +85,9 @@ namespace Minimax.UI.View.Pages
         
         private void DisableSelectedButton()
         {
-            if (!PlayerPrefs.HasKey(Define.CurrentDeckIdCacheKey)) return;
+            if (!PlayerPrefs.HasKey(Define.CurrentDeckIdCache)) return;
             
-            int selectedDeckId = PlayerPrefs.GetInt(Define.CurrentDeckIdCacheKey);
+            int selectedDeckId = PlayerPrefs.GetInt(Define.CurrentDeckIdCache);
             
             foreach (var deckItemView in m_deckItemViews)
             {

@@ -5,7 +5,6 @@ using Minimax.CoreSystems;
 using Minimax.UnityGamingService.Multiplayer;
 using Minimax.UnityGamingService.Multiplayer.ConnectionManagement;
 using Minimax.Utilities;
-using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using Unity.Services.Multiplay;
 using UnityEngine;
@@ -44,11 +43,8 @@ namespace Minimax
             if (IsServer)
             {
                 // Marks the current session as started, so from now on we keep the data of disconnected players.
-                SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
+                UnityGamingService.Multiplayer.SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
                 DebugWrapper.Log("Session started");
-                
-                // Cache the client rpc params for later use.
-                GlobalManagers.Instance.Connection.CacheClientRpcParams();
             }
             
             base.OnNetworkSpawn();
@@ -59,7 +55,7 @@ namespace Minimax
             m_networkManager.SceneManager.OnSceneEvent -= GameManager_OnSceneEvent;
             
             // clear the cached client rpc params
-            GlobalManagers.Instance.Connection.ClearClientRpcParams();
+            GlobalManagers.Instance.Connection.ClientRpcParams.Clear();
             base.OnNetworkDespawn();
         }
         
@@ -79,7 +75,7 @@ namespace Minimax
         {
             foreach (var clientId in m_networkManager.ConnectedClientsIds)
             {
-                var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
+                var playerData = UnityGamingService.Multiplayer.SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
                 if (!playerData.HasValue) return;
                 var playerName = playerData.Value.PlayerName;
                 m_profileManager.SetMyPlayerNameClientRpc(clientId, playerName);

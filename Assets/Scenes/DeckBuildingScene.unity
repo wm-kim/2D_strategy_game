@@ -271,7 +271,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -350,7 +350,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_dbCardAssetsLabel:
     m_LabelString: Card
-  m_onDBCardsLoadedEvent: {fileID: 11400000, guid: 61499e9197c615746819a05c32767b00, type: 2}
 --- !u!1001 &467938561
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -445,6 +444,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6981218592978870712, guid: 17c90cef662a4bb40b94a5f6e559a38a, type: 3}
   m_PrefabInstance: {fileID: 467938561}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &563473866
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 563473867}
+  - component: {fileID: 563473868}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &563473867
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 563473866}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -27.1792, y: 378.27344, z: -10.205185}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 738968385}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &563473868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 563473866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IsGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 6f94dd99bc47aaa4d947fc409f6f51a0, type: 2}
 --- !u!1 &738968384
 GameObject:
   m_ObjectHideFlags: 0
@@ -476,6 +524,7 @@ Transform:
   m_Children:
   - {fileID: 467938562}
   - {fileID: 202510735}
+  - {fileID: 563473867}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &838198579 stripped

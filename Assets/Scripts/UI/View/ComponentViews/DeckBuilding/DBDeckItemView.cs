@@ -76,8 +76,8 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
                 m_deckPageView.SetCurrentDeckName(m_deckNameText.text);
                 
                 // save deck name and Id to player prefs
-                PlayerPrefs.SetInt(Define.CurrentDeckIdCacheKey, m_deckId);
-                PlayerPrefs.SetString(Define.CurrentDeckNameCacheKey, m_deckNameText.text);
+                PlayerPrefs.SetInt(Define.CurrentDeckIdCache, m_deckId);
+                PlayerPrefs.SetString(Define.CurrentDeckNameCache, m_deckNameText.text);
                 
                 m_deckPageView.ResetAllSelectedButton();
                 // Set select button interactable to false
@@ -107,13 +107,13 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
                 m_deckPageView.RemoveDeck(m_deckId);
                 
                 // if the deleting deck is current selected deck
-                if (m_deckId == PlayerPrefs.GetInt(Define.CurrentDeckIdCacheKey))
+                if (m_deckId == PlayerPrefs.GetInt(Define.CurrentDeckIdCache))
                 {
                     m_deckPageView.SetCurrentDeckName("None");
                     
                     // save deck name and Id to player prefs    
-                    PlayerPrefs.SetInt(Define.CurrentDeckIdCacheKey, -1);
-                    PlayerPrefs.SetString(Define.CurrentDeckNameCacheKey, "None");
+                    PlayerPrefs.SetInt(Define.CurrentDeckIdCache, -1);
+                    PlayerPrefs.SetString(Define.CurrentDeckNameCache, "None");
                 }
             }
             catch (CloudCodeException exception)

@@ -1,7 +1,6 @@
 using System;
 using Minimax.UnityGamingService.Multiplayer;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
 

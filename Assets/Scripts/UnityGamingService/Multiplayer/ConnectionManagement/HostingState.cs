@@ -1,6 +1,5 @@
 using Minimax.Utilities;
 using Newtonsoft.Json;
-using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
 

@@ -1,5 +1,4 @@
 using Minimax.Utilities;
-using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
@@ -55,7 +54,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
                 playerId = AuthenticationService.Instance.PlayerId,
-                playerName = "PlayerName_" + Random.Range(0, 1000)
+                playerName = "PlayerName_" + Random.Range(0, 1000),
             });
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
             m_connectionManager.NetworkManager.NetworkConfig.ConnectionData = payloadBytes;

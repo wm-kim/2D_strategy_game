@@ -3,7 +3,6 @@ using Minimax.CoreSystems;
 using Minimax.SceneManagement;
 using Minimax.Utilities;
 using Newtonsoft.Json;
-using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using Unity.Services.Matchmaker;
 using Unity.Services.Matchmaker.Models;
@@ -90,6 +89,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             m_connectionManager.ChangeState(m_connectionManager.Offline);
         }
         
+        // [TODO] Need to authenticate your user against an UGS' auth service, send auth token to dedicated server
         public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request,
             NetworkManager.ConnectionApprovalResponse response)
         {
@@ -109,6 +109,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
             if (gameReturnStatus == ConnectStatus.Success)
             {
+                DebugWrapper.Log($"Client {clientId} approved");
                 SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
                     new SessionPlayerData(clientId, connectionPayload.playerName, true));
                 

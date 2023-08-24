@@ -1,4 +1,3 @@
-using Unity.Multiplayer.Samples.BossRoom;
 
 namespace Minimax.UnityGamingService.Multiplayer
 {

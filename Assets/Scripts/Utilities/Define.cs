@@ -3,13 +3,13 @@ namespace Minimax.Utilities
     public static class Define
     {
 #region CLOUD_KEYS
-        public static readonly string DeckCloudKey = "decks";
+        public static readonly string DeckCloud = "decks";
 #endregion
         
 #region CACHE_KEYS
-        public static readonly string DeckDtoCollectionCacheKey = "deckDtoCollection";
-        public static readonly string CurrentDeckNameCacheKey = "currentDeckName";
-        public static readonly string CurrentDeckIdCacheKey = "currentDeckId";
+        public static readonly string DeckDtoCollectionCache = "deckDtoCollection";
+        public static readonly string CurrentDeckNameCache = "currentDeckName";
+        public static readonly string CurrentDeckIdCache = "currentDeckId";
 #endregion
 
 #region POPUP_KEYS
@@ -20,6 +20,8 @@ namespace Minimax.Utilities
         public static readonly string SavingDeckPopup = "savingDeck";
         public static readonly string SelectDeckPopup = "selectDeck";
         public static readonly string DeleteDeckPopup = "deleteDeck";
+        public static readonly string ReconnectingPopup = "reconnecting";
+        public static readonly string ServerDisconnectedPopup = "serverDisconnected";
 #endregion
 
 #region NETWORK_SETTINGS

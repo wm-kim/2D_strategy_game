@@ -30,10 +30,10 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
             else
             {
-                DebugWrapper.Log($"Disconnected reason: {disconnectReason}");
-                
                 var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
                 m_connectionManager.ConnectStatusChannel.Publish(connectStatus);
+                
+                DebugWrapper.Log($"Disconnected reason: {connectStatus.ToString()}");
                 
                 GlobalManagers.Instance.Scene.LoadScene(SceneType.MenuScene);
                 m_connectionManager.ChangeState(m_connectionManager.Offline);

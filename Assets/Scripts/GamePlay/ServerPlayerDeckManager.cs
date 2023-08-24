@@ -3,7 +3,6 @@ using Cysharp.Threading.Tasks;
 using Minimax.ScriptableObjects.CardDatas;
 using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;
-using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using Unity.Services.CloudCode;
 using UnityEngine;
@@ -67,7 +66,7 @@ namespace Minimax
             
             foreach (var clientId in m_networkManager.ConnectedClientsIds)
             {
-                var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
+                var playerId = UnityGamingService.Multiplayer.SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
                 connectedPlayerIds.Add(playerId);
             }
 

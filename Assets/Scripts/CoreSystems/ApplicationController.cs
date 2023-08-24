@@ -1,3 +1,4 @@
+using Minimax.UnityGamingService.Multiplayer;
 using UnityEngine;
 
 namespace Minimax.CoreSystems

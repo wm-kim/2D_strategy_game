@@ -1,6 +1,5 @@
 #if UNITY_EDITOR
 using Minimax.UnityGamingService.Multiplayer;
-using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -26,7 +25,7 @@ namespace Minimax
             if (state == PlayModeStateChange.ExitingPlayMode)
             {
                 NetworkManager.Singleton.Shutdown();
-                SessionManager<SessionPlayerData>.Instance.OnServerEnded();
+                UnityGamingService.Multiplayer.SessionManager<SessionPlayerData>.Instance.OnServerEnded();
             }
         }
     }

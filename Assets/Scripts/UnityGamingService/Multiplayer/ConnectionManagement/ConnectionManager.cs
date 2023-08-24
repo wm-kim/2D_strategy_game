@@ -5,7 +5,6 @@ using Minimax.SceneManagement;
 using Minimax.ScriptableObjects.Events;
 using Minimax.Utilities;
 using Minimax.Utilities.PubSub;
-using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using Unity.Services.Matchmaker;
 using UnityEngine;
@@ -59,6 +58,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public IMessageChannel<ConnectStatus> ConnectStatusChannel { get; private set; } 
         public IMessageChannel<ConnectionEventMessage> ConnectionEventChannel { get; private set; }
+        public ClientRpcParamManager ClientRpcParams { get; private set; } = new ClientRpcParamManager();
         
         private ConnectionState m_currentState;
         internal OfflineState Offline;
@@ -69,7 +69,6 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         internal ClientConnectingState ClientConnecting;
         internal ClientReconnectingState ClientReconnecting;
         internal ClientConnectedState ClientConnected;
-        private Dictionary<ulong, ClientRpcParams> m_clientRpcParams = new Dictionary<ulong, ClientRpcParams>();
 
 #if DEDICATED_SERVER
         public string BackfillTicketId { get; set; }
@@ -212,33 +211,6 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 ConnectStatus.LoggedInAgain : ConnectStatus.Success;
         }
         
-        /// <summary>
-        /// Cache client rpc params for all connected clients, to avoid creating new params every time.
-        /// </summary>
-        public void CacheClientRpcParams()
-        {
-            var connectionIds = NetworkManager.ConnectedClientsIds;
-            foreach (var clientId in connectionIds)
-            {
-                m_clientRpcParams.Add(clientId, new ClientRpcParams
-                {
-                    Send = new ClientRpcSendParams
-                    {
-                        TargetClientIds = new ulong[] { clientId } 
-                    }
-                });
-            }
-        }
-        
-        public void ClearClientRpcParams()
-        {
-            m_clientRpcParams.Clear();
-        }
-        
-        public ClientRpcParams GetClientRpcParams(ulong clientId)
-        {
-            return m_clientRpcParams[clientId];
-        }
 
         [ServerRpc(RequireOwnership = false)]
         public void RequestShutdownServerRpc(ServerRpcParams serverRpcParams = default)
@@ -251,8 +223,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             {
                 DebugWrapper.Log($"{playerData.Value.PlayerName} requested shutdown."); 
             }
-
-            var reason = JsonUtility.ToJson(ConnectStatus.ServerEndedSession);
+    
+            var reason = JsonUtility.ToJson(ConnectStatus.UserRequestedDisconnect);
             for (var i = NetworkManager.ConnectedClientsIds.Count - 1; i >= 0; i--)
             {
                 var id = NetworkManager.ConnectedClientsIds[i];

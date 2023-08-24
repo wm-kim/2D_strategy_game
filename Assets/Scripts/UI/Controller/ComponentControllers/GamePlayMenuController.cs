@@ -1,20 +1,22 @@
 using Cysharp.Threading.Tasks;
 using Minimax.CoreSystems;
 using Minimax.UI.View.Popups;
+using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Minimax
 {
-    public class GamePlaySettingController : MonoBehaviour
+    public class GamePlayMenuController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private Button m_gamePlaySettingsButton;
+        [SerializeField] private Button m_surrenderButton;
         
         private void Start()
         {
-            m_gamePlaySettingsButton.onClick.AddListener(RequestOpenGamePlaySettingsPopup);
+            m_surrenderButton.onClick.AddListener(RequestOpenGamePlaySettingsPopup);
         }
 
         private void OnEnable()
@@ -29,12 +31,12 @@ namespace Minimax
 
         private void RequestOpenGamePlaySettingsPopup()
         {
-            GlobalManagers.Instance.Popup.RegisterPopupToQueue(PopupType.GamePlaySettingsPopup);
+            GlobalManagers.Instance.Popup.RegisterPopupToQueue(PopupType.SurrenderPopup, PopupCommandType.Unique);
         }
         
         private void OnBackButtonPressed()
         {
-            GlobalManagers.Instance.Popup.MobileBackButtonPopup(PopupType.GamePlaySettingsPopup);
+            GlobalManagers.Instance.Popup.MobileBackButtonPopup(PopupType.SurrenderPopup, PopupCommandType.Unique);
         }
     }
 }

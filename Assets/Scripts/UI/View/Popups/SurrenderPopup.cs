@@ -7,14 +7,14 @@ using UnityEngine.UI;
 
 namespace Minimax.UI.View.Popups
 {
-    public class GamePlaySettingsPopup : PopupView
+    public class SurrenderPopup : PopupView
     {
         [Header("References")]
         [Space(10f)]
         [SerializeField] private Button m_confirmButton;
         [SerializeField] private Button m_cancelButton;
 
-        protected override void SetPopupType() => Type = PopupType.GamePlaySettingsPopup;
+        protected override void SetPopupType() => Type = PopupType.SurrenderPopup;
         
         private void Start()
         {
