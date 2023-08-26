@@ -76,7 +76,7 @@ namespace Minimax
                 return;
             }
 
-            var touchDelta = touch.delta * (0.01f * m_panSpeed);
+            var touchDelta = touch.delta * (m_panSpeed);
             var newPanPosition = m_targetPosition - new Vector3(touchDelta.x, touchDelta.y);
             
             // clamp the new pan position to the pan bounds

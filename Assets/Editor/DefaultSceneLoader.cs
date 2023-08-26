@@ -3,8 +3,6 @@ using Minimax.UnityGamingService.Multiplayer;
 using Unity.Netcode;
 using UnityEditor;
 using UnityEditor.SceneManagement;
-using UnityEngine;
-
 
 namespace Minimax
 {
@@ -25,7 +23,7 @@ namespace Minimax
             if (state == PlayModeStateChange.ExitingPlayMode)
             {
                 NetworkManager.Singleton.Shutdown();
-                UnityGamingService.Multiplayer.SessionManager<SessionPlayerData>.Instance.OnServerEnded();
+                SessionManager<SessionPlayerData>.Instance.OnServerEnded();
             }
         }
     }

@@ -14,7 +14,7 @@ namespace Minimax.UI.View.Pages
 
         private void Awake()
         {
-            m_model.GameTitle.Value = "Game Title : " + m_model.GameTitle.Value;
+            m_model.GameTitle.Value = m_model.GameTitle.Value;
             m_model.GameVersion.Value = "Version : " + m_model.GameVersion.Value;
         }
     }

@@ -769,7 +769,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1672272530}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8162a258509b4c0e9be6a0d831fed182, type: 3}
   m_Name: 
@@ -1786,8 +1786,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayPage
       objectReference: {fileID: 0}
+    - target: {fileID: 5852311355844298604, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -359
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 4139529677167129945, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
+    - {fileID: 7977830361892873370, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
+    - {fileID: 5037186868335657935, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc0d6b0b53f932f41b0a092c569d91b5, type: 3}
