@@ -1,8 +1,8 @@
 using System;
 using Minimax.CoreSystems;
 using Minimax.SceneManagement;
-using NovaSamples.UIControls;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Minimax.UI.Controller.PageControllers
 {
@@ -13,7 +13,7 @@ namespace Minimax.UI.Controller.PageControllers
 
         private void Awake()
         {
-            m_startButton.OnClicked.AddListener(RequestLoadMenuScene);
+            m_startButton.onClick.AddListener(RequestLoadMenuScene);
         }
 
         private void RequestLoadMenuScene()

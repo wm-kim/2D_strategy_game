@@ -33,7 +33,12 @@ namespace Minimax
         public override void OnNetworkSpawn()
         {
             m_networkManager.SceneManager.OnSceneEvent += GameManager_OnSceneEvent;
-            m_networkTimer.ConFig(10f);
+            m_networkTimer.ConFig(10f, null, () => 
+                GlobalManagers.Instance.Popup.RegisterOneButtonPopupToQueue(
+                    Define.GameStartedPopup,
+                    "Game Started", "Ok", () => 
+                    GlobalManagers.Instance.Popup.HideCurrentPopup())
+                );
             
             if (IsServer)
             {

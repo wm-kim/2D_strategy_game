@@ -1,8 +1,8 @@
 using System;
 using Minimax.Utilities;
-using Nova;
 using Unity.Netcode;
 using UnityEngine;
+using TMPro;
 using UnityEngine.Assertions;
 
 namespace Minimax
@@ -10,7 +10,7 @@ namespace Minimax
     public class NetworkTimer : NetworkBehaviour
     {
         [Header("References")]
-        [SerializeField] private TextBlock m_timerText;
+        [SerializeField] private TextMeshProUGUI m_timerText;
 
         private NetworkVariable<float> m_time = new NetworkVariable<float>(0f);
         // 타이머가 완료되었는지 여부를 추적하는 변수
@@ -25,7 +25,7 @@ namespace Minimax
         /// </summary>
         private bool m_isDestroyed = false;
         
-        public void ConFig(float duration, Action onServerTimerComplete = null, Action onClientTimerComplete = null)
+        public void ConFig(float duration, Action onServerTimerComplete, Action onClientTimerComplete = null)
         {
             Assert.IsTrue(duration > 0f);
             
@@ -59,7 +59,7 @@ namespace Minimax
             if (IsClient)
             {
                 // Update timer text
-                m_timerText.Text = m_time.Value.ToString("F1");
+                m_timerText.text = m_time.Value.ToString("F1");
             }
         }
         
