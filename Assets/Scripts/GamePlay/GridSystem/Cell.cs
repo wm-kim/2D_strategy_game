@@ -12,13 +12,25 @@ namespace Minimax
     public class Cell : IEquatable<Cell>
     {
         int m_hash = -1;
+        
+        /// <summary>
+        /// Coordinates of the cell on the grid.
+        /// </summary>
         private Vector2 m_offsetCoord;
+        
+        /// <summary>
+        /// Position of the cell on the world.
+        /// </summary>
+        private Vector2 m_worldPosition;
+
+        public Vector2 WorldPos => m_worldPosition;
         
         public Vector2 OffsetCoord { get => m_offsetCoord; set => m_offsetCoord = value; }
         
-        public Cell(int x, int y)
+        public Cell(int x, int y, Vector2 worldPosition)
         {
             m_offsetCoord = new Vector2(x, y);
+            m_worldPosition = worldPosition;
         }
         
         public Cell(Vector2 offsetCoord)

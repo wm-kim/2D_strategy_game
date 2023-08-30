@@ -37,5 +37,9 @@ namespace Minimax.Utilities
 #region GamePlay
         public static readonly int MaxHandCardCount = 10;
 #endregion
+
+#region SortingLayer
+        public static readonly string MapOverlay = "MapOverlay";
+#endregion
     }
 }

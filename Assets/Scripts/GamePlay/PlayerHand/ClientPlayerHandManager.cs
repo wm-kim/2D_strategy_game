@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using Minimax.GamePlay.GridSystem;
 using Minimax.Utilities;
 using Sirenix.OdinInspector;
 using UnityEngine;
@@ -21,6 +22,9 @@ namespace Minimax.GamePlay.PlayerHand
         private Camera m_uiCamera;
         public Camera UICamera => m_uiCamera;
         
+        [BoxGroup("References")] [SerializeField]
+        private Map m_map;
+        
         [BoxGroup("Card Settings")] [SerializeField, Tooltip("카드가 놓일 곡선의 반지름")] [Range(0, 10000)]
         private float m_curvRadius = 2000f;
 
@@ -38,6 +42,12 @@ namespace Minimax.GamePlay.PlayerHand
 
         [BoxGroup("Animation Settings")] [SerializeField, Tooltip("슬롯 정렬 애니메이션의 시간")]
         private float m_tweenDuration = 0.5f;
+        
+        [BoxGroup("Animation Settings")] [SerializeField, Tooltip("선택한 카드 Fade In/Out 애니메이션의 시간")] [Range(0, 1)]
+        private float m_cardFadeDuration = 0.2f;
+        
+        [BoxGroup("Animation Settings")] [SerializeField, Tooltip("선택한 카드 Fade Alpha")] [Range(0, 1)]
+        private float m_cardFadeAlpha = 0.20f;
 
         // Object Pooling HandCardSlot
         private IObjectPool<HandCardSlot> m_cardPool;
@@ -49,17 +59,13 @@ namespace Minimax.GamePlay.PlayerHand
 
         public int CardCount => m_slotList.Count;
         
-        
         private int m_hoveringIndex= -1;
         public void HoverCard(int index) => m_hoveringIndex = index;
         public void UnHoverCard() => m_hoveringIndex = -1;
         public bool IsHovering => m_hoveringIndex != -1;
-
         
         // SelectedIndex is set when the player drags a card
         private int m_selectedIndex = -1;
-        public void SelectCard(int index) => m_selectedIndex = index;
-        public void DeselectCard() => m_selectedIndex = -1;
         public bool IsSelecting => m_selectedIndex != -1;
 
         private void Awake()
@@ -82,6 +88,12 @@ namespace Minimax.GamePlay.PlayerHand
                 m_slotPositionList.Add(Vector3.zero);
                 m_slotRotationList.Add(Quaternion.identity);
             }
+        }
+
+        private void Start()
+        {
+            m_map.OnTouchOverMap += OnTouchOverMapMap;
+            m_map.OnTouchOutsideOfMap += OnUnHoverMap;
         }
 
 #if UNITY_EDITOR
@@ -198,6 +210,31 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (!IsHovering) return;
             m_slotList[m_hoveringIndex].HoverOff();
+        }
+        
+        public void SelectCard(int index) => m_selectedIndex = index;
+
+        public void DeselectCard()
+        {
+            if (!IsSelecting) return;
+            
+            m_slotList[m_selectedIndex].CardView.FadeView(1f, m_cardFadeDuration);
+            m_selectedIndex = -1;
+        }
+        
+        // I think it is inefficient to add/remove this listener function
+        // to Map's OnTouchOverMap event whenever player select/deselect a card.
+        // instead, I can just check if the player is selecting a card or not, inside the listeners
+        private void OnTouchOverMapMap(Cell cell)
+        {
+            if (!IsSelecting) return;
+            m_slotList[m_selectedIndex].CardView.FadeView(m_cardFadeAlpha, m_cardFadeDuration);
+        }
+
+        private void OnUnHoverMap()
+        {
+            if (!IsSelecting) return;
+            m_slotList[m_selectedIndex].CardView.FadeView(1f, m_cardFadeDuration);
         }
     }
 }

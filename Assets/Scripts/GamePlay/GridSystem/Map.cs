@@ -29,15 +29,31 @@ namespace Minimax.GamePlay.GridSystem
         public Cell SelectedCell { get; private set; }
 
 #region Events
-        public event Action<Cell> OnCellClicked;
+        /// <summary>
+        /// Invoked when the touch is over the map
+        /// </summary>
+        public event Action<Cell> OnTouchOverMap;
+        
+        /// <summary>
+        /// Invoked when the touch is outside the map
+        /// </summary>
+        public event Action OnTouchOutsideOfMap;
+        
+        /// <summary>
+        /// Invoked when the touch is over the map and ended
+        /// </summary>
+        public event Action<Cell> OnTouchEndOverMap;
+        
+        public event Action<Cell> OnTap;
 #endregion
 
         private Grid<Cell> m_grid;
         
         private void Awake()
         {
-            m_grid = new Grid<Cell>(m_mapSize, m_mapSize, m_tilemap.cellSize, Vector3.zero, 
-                (g, x, y) => new Cell(x, y));
+            m_grid = new Grid<Cell>(m_mapSize, m_mapSize, m_tilemap.cellSize, Vector3.zero,
+                (grid, x, y) =>
+                    new Cell(x, y, grid.GetWorldPosFromCoord(x, y)));
             DebugWrapper.Log(m_grid.GetGridCenterPos().ToString());
             
             // Set Camera boundary
@@ -50,14 +66,37 @@ namespace Minimax.GamePlay.GridSystem
 
         private void OnEnable()
         {
+            GlobalManagers.Instance.Input.OnTouch += HoverCell;
             GlobalManagers.Instance.Input.OnTap += SelectCell;
         }
-        
+
         private void OnDisable()
         {
+            GlobalManagers.Instance.Input.OnTouch -= HoverCell;
             GlobalManagers.Instance.Input.OnTap -= SelectCell;
         }
-
+        
+        private void HoverCell(Touch touch)
+        {
+            var worldPos = m_cameraController.Camera.ScreenToWorldPoint(touch.screenPosition);
+        
+            if (m_grid.TryGetGridCellFromWorldIso(worldPos, out var cell))
+            {
+                if (touch.phase != UnityEngine.InputSystem.TouchPhase.Ended)
+                {
+                    OnTouchOverMap?.Invoke(cell);
+                }
+                else
+                {
+                    OnTouchEndOverMap?.Invoke(cell);
+                }
+            }
+            else 
+            {
+                OnTouchOutsideOfMap?.Invoke();
+            }
+        }
+        
         /// <summary>
         /// Selects the cell that is touched.
         /// </summary>
@@ -67,8 +106,8 @@ namespace Minimax.GamePlay.GridSystem
             
             if (m_grid.TryGetGridCellFromWorldIso(worldPos, out var cell))
             {
-                DebugWrapper.Log(cell.ToString());
-                OnCellClicked?.Invoke(cell);
+                SelectedCell = cell;
+                OnTap?.Invoke(cell);
             }
         }
     }

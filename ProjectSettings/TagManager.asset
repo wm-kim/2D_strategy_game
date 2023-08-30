@@ -43,3 +43,9 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Map
+    uniqueID: 2994120937
+    locked: 0
+  - name: MapOverlay
+    uniqueID: 414030517
+    locked: 0

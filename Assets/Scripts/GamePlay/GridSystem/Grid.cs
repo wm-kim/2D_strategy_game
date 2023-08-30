@@ -57,9 +57,8 @@ namespace Minimax.GamePlay.GridSystem
         for (int y = 0; y < m_cells.GetLength(1); y++)
         {
           // seems like cell unit is half of the unity unit
-          var factor = 0.5f * m_cellSize.x;
-          Vector2 pos = CartesianToWorldIso((x + 0.5f) * factor, (y + 0.5f) * factor);
-          var text = DebugWrapper.CreateText($"{x}, {y}", parent, pos, textScale);
+          var text = DebugWrapper.CreateText($"{x}, {y}", parent, 
+            GetWorldPosFromCoord(x, y), textScale, Define.MapOverlay);
           text.name = $"({x}, {y})";
         }
       }
@@ -129,6 +128,12 @@ namespace Minimax.GamePlay.GridSystem
       // seems like cell unit is half of the unity unit
       var factor = 0.5f * m_cellSize.x;
       return CartesianToWorldIso(centerX * factor, centerY * factor);
+    }
+    
+    public Vector2 GetWorldPosFromCoord(int x, int y)
+    {
+      var factor = 0.5f * m_cellSize.x;
+      return CartesianToWorldIso((x + 0.5f) * factor, (y + 0.5f) * factor);
     }
 
     /// <summary>

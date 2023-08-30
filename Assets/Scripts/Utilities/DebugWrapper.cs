@@ -48,12 +48,13 @@ namespace Minimax.Utilities
         }
         
         
-        public static TextMesh CreateText(string text, Transform parent = null, Vector3 localPosition = default, float scale = 1f)
+        public static TextMesh CreateText(string text, Transform parent = null, Vector3 localPosition = default, float scale = 1f, string sortingLayerName = "Default")
         {
             var textObject = new GameObject("Text");
             textObject.transform.SetParent(parent);
             textObject.transform.localPosition = localPosition;
             textObject.transform.localScale = Vector3.one * scale;
+            textObject.AddComponent<MeshRenderer>().sortingLayerName = sortingLayerName;
             var textComponent = textObject.AddComponent<TextMesh>();
             textComponent.alignment = TextAlignment.Center;
             textComponent.anchor = TextAnchor.MiddleCenter;
