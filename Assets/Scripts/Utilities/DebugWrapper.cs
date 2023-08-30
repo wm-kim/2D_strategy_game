@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using Minimax.CoreSystems;
 using Unity.Netcode;
+using UnityEngine;
 
 namespace Minimax.Utilities
 {
@@ -44,6 +45,20 @@ namespace Minimax.Utilities
         {
             if (m_currentLogLevel > logLevel) return;
             UnityEngine.Debug.LogException(exception);
+        }
+        
+        
+        public static TextMesh CreateText(string text, Transform parent = null, Vector3 localPosition = default, float scale = 1f)
+        {
+            var textObject = new GameObject("Text");
+            textObject.transform.SetParent(parent);
+            textObject.transform.localPosition = localPosition;
+            textObject.transform.localScale = Vector3.one * scale;
+            var textComponent = textObject.AddComponent<TextMesh>();
+            textComponent.alignment = TextAlignment.Center;
+            textComponent.anchor = TextAnchor.MiddleCenter;
+            textComponent.text = text;
+            return textComponent;
         }
     }
 }

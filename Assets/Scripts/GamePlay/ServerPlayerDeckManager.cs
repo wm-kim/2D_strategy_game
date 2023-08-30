@@ -3,13 +3,13 @@ using Cysharp.Threading.Tasks;
 using Minimax.ScriptableObjects.CardDatas;
 using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;
+using Newtonsoft.Json;
 using Unity.Netcode;
 using Unity.Services.CloudCode;
 using UnityEngine;
-using Newtonsoft.Json;
 using UnityEngine.Rendering;
 
-namespace Minimax
+namespace Minimax.GamePlay
 {
     public class ServerPlayerDeckManager : NetworkBehaviour
     {

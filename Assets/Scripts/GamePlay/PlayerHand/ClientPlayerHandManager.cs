@@ -16,7 +16,11 @@ namespace Minimax.GamePlay.PlayerHand
 
         [BoxGroup("References")] [SerializeField]
         private Transform m_cardParent;
-
+        
+        [BoxGroup("References")] [SerializeField]
+        private Camera m_uiCamera;
+        public Camera UICamera => m_uiCamera;
+        
         [BoxGroup("Card Settings")] [SerializeField, Tooltip("카드가 놓일 곡선의 반지름")] [Range(0, 10000)]
         private float m_curvRadius = 2000f;
 
@@ -45,10 +49,12 @@ namespace Minimax.GamePlay.PlayerHand
 
         public int CardCount => m_slotList.Count;
         
+        
         private int m_hoveringIndex= -1;
         public void HoverCard(int index) => m_hoveringIndex = index;
         public void UnHoverCard() => m_hoveringIndex = -1;
         public bool IsHovering => m_hoveringIndex != -1;
+
         
         // SelectedIndex is set when the player drags a card
         private int m_selectedIndex = -1;

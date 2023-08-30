@@ -1,20 +1,15 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Minimax.CoreSystems;
 using Minimax.UnityGamingService.Multiplayer;
-using Minimax.UnityGamingService.Multiplayer.ConnectionManagement;
 using Minimax.Utilities;
 using Unity.Netcode;
-using Unity.Services.Multiplay;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.GamePlay
 {
     public class GameManager : NetworkBehaviour
     {
         [Header("References")]
-        [SerializeField] private NetworkTimer m_networkTimer;
+        [SerializeField] private TurnManager m_turnManager;
         [SerializeField] private ProfileManager m_profileManager;
         
         private NetworkManager m_networkManager => NetworkManager.Singleton;
@@ -33,12 +28,6 @@ namespace Minimax
         public override void OnNetworkSpawn()
         {
             m_networkManager.SceneManager.OnSceneEvent += GameManager_OnSceneEvent;
-            m_networkTimer.ConFig(10f, null, () => 
-                GlobalManagers.Instance.Popup.RegisterOneButtonPopupToQueue(
-                    Define.GameStartedPopup,
-                    "Game Started", "Ok", () => 
-                    GlobalManagers.Instance.Popup.HideCurrentPopup())
-                );
             
             if (IsServer)
             {
@@ -67,7 +56,7 @@ namespace Minimax
             if (IsServer)
             {
                 SetPlayerNames();
-                m_networkTimer.StartTimer();
+                m_turnManager.StartGame();
             }
         }
         

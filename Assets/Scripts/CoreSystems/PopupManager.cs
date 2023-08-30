@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
-using AYellowpaper.SerializedCollections;
+using DG.Tweening;
 using Minimax.UI.View.Popups;
 using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.Universal;
+using UnityEngine.Serialization;
 
 namespace Minimax.CoreSystems
 {
@@ -12,10 +15,11 @@ namespace Minimax.CoreSystems
     {
         [Header("Addressable")] 
         [SerializeField] private AssetLabelReference m_popupAssetLabelReference;
-
-        [SerializeField, ReadOnly] private string m_path = "Assets/Prefabs/UIPopups/";
-
+        
+        [Header("References")]
         [SerializeField] private Canvas m_popupCanvas;
+        [SerializeField] private CanvasGroup m_popupBackground;
+        [SerializeField] private Volume m_globalVolume;
 
         // popup의 대기열을 관리하는 Queue, First come first serve로 popup을 표시한다.
         private List<IPopupCommand> m_popupQueue = new List<IPopupCommand>();
@@ -25,20 +29,22 @@ namespace Minimax.CoreSystems
         private string m_currentPopupKey = string.Empty;
         private int m_currentPopupPriority = 0;
 
-        [Header("Settings")] [SerializeField, Range(0.0f, 1f)]
-        private float m_popupFadeDuration = 0.2f;
-
-        [SerializeField, Range(0.0f, 1f)] private float m_hidePopupFadeDuration = 0.2f;
+        [Header("Settings")] 
+        [SerializeField, Range(0.0f, 1f)] private float m_fadeInDuration = 0.2f;
+        [SerializeField, Range(0.0f, 1f)] private float m_fadeOutDuration = 0.2f;
+        [SerializeField, Range(0.0f, 300f)] private float m_blurAmount = 150f;
 
         [Space(10f)]
-        
         [SerializeField, ReadOnly]
-        private SerializedDictionary<PopupType, PopupView> m_loadedPopups =
-            new SerializedDictionary<PopupType, PopupView>();
+        private AYellowpaper.SerializedCollections.SerializedDictionary<PopupType, PopupView> m_loadedPopups =
+            new AYellowpaper.SerializedCollections.SerializedDictionary<PopupType, PopupView>();
         
         private void Awake()
         {
             PreLoadPopup();
+            
+            m_popupBackground.alpha = 0f;
+            m_popupBackground.gameObject.SetActive(false);
         }
 
         private void PreLoadPopup()
@@ -163,7 +169,18 @@ namespace Minimax.CoreSystems
         public void HideCurrentPopup()
         {
             if (m_currentPopupView == null) return;
-            m_currentPopupView.StartHide(m_hidePopupFadeDuration);
+            
+            // blur 효과를 제거합니다.
+            if (m_globalVolume.profile.TryGet<DepthOfField>(out var dof))
+            {
+                DOTween.To(() => dof.focalLength.value, x => dof.focalLength.value = x, 0f, 
+                    m_fadeInDuration);
+            }
+            
+            m_popupBackground.DOFade(0, m_fadeOutDuration)
+                .OnComplete(() => m_popupBackground.gameObject.SetActive(false));
+            
+            m_currentPopupView.StartHide(m_fadeOutDuration);
             ShowNextPopup();
         }
 
@@ -207,8 +224,18 @@ namespace Minimax.CoreSystems
                     popup.GetComponent<OneButtonPopup>().ConfigureWithCommand(oneButtonPopupCommand);
                     break;
             }
-
-            m_currentPopupView.StartShow(m_popupFadeDuration);
+            
+            m_popupBackground.gameObject.SetActive(true);
+            
+            // blur 효과를 위해 depth of field를 조절합니다.
+            if (m_globalVolume.profile.TryGet<DepthOfField>(out var dof))
+            {
+                DOTween.To(() => dof.focalLength.value, x => dof.focalLength.value = x, m_blurAmount, 
+                    m_fadeInDuration);
+            }
+            
+            m_popupBackground.DOFade(1f, m_fadeInDuration);
+            m_currentPopupView.StartShow(m_fadeInDuration);
         }
     }
 }

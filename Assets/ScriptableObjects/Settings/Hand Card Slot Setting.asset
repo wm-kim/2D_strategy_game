@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66ae7e2548d04256b478c464e4dbf0fa, type: 3}
   m_Name: Hand Card Slot Setting
   m_EditorClassIdentifier: 
-  HoverOffset: {x: 0, y: 170}
+  HoverOffset: {x: 0, y: 180}
   HoverScale: 1.2
   HoverDuration: 0.05
   DropDownDuration: 0.2

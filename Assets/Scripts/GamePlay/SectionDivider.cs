@@ -1,13 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using Minimax.CoreSystems;
-using Minimax.Utilities;
 using UnityEngine;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
-using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
-namespace Minimax
+namespace Minimax.GamePlay
 {
     public class SectionDivider : MonoBehaviour
     {
@@ -18,10 +13,13 @@ namespace Minimax
             Map
         }
         
+        [Header("Camera")]
+        [SerializeField] private Camera m_uiCamera;
+        
+        [Header("Sections")]
         [SerializeField] private RectTransform m_myHandSection;
         [SerializeField] private RectTransform m_mapSection;
         
-
         public Section CurrentSection { get; private set; } = Section.Default;
 
         private void Start()
@@ -42,8 +40,8 @@ namespace Minimax
         
         private void DivideSections(EnhancedTouch.Touch touch)
         {
-            bool isInsideMyHandSection = RectTransformUtility.RectangleContainsScreenPoint(m_myHandSection, touch.screenPosition);
-            bool isInsideMapSection = RectTransformUtility.RectangleContainsScreenPoint(m_mapSection, touch.screenPosition);
+            bool isInsideMyHandSection = RectTransformUtility.RectangleContainsScreenPoint(m_myHandSection, touch.screenPosition, m_uiCamera);
+            bool isInsideMapSection = RectTransformUtility.RectangleContainsScreenPoint(m_mapSection, touch.screenPosition, m_uiCamera);
             
             if (isInsideMapSection) CurrentSection = Section.Map;
             else if (isInsideMyHandSection) CurrentSection = Section.MyHand;

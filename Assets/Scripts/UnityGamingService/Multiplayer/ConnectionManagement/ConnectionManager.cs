@@ -200,6 +200,10 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         /// </summary>
         public bool HasAvailablePlayerSlot() => NetworkManager.ConnectedClientsIds.Count < Define.MaxConnectedPlayers;
         
+        
+        /// <summary>
+        /// Returns the current connection status for a player attempting to join the game.
+        /// </summary>
         public ConnectStatus GetConnectStatus(ConnectionPayload connectionPayload)
         {
             if (!HasAvailablePlayerSlot())
@@ -210,7 +214,50 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             return SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(connectionPayload.playerId) ?
                 ConnectStatus.LoggedInAgain : ConnectStatus.Success;
         }
+
+        public int GetAvailablePlayerNumber()
+        {
+            for (var i = 0; i < Define.MaxConnectedPlayers; i++)
+            {
+                if (IsPlayerNumberAvailable(i))
+                {
+                    return i;
+                }
+            }
+            
+            // Server is full
+            return -1;
+        }
+
+        private bool IsPlayerNumberAvailable(int playerNumber)
+        {
+            var connectedClients = NetworkManager.ConnectedClientsIds;
+            foreach (var clientId in connectedClients)
+            {
+                var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
+                if (playerData.HasValue)
+                {
+                    if (playerData.Value.PlayerNumber == playerNumber)
+                    {
+                        return false;
+                    }
+                }
+            }
+            
+            return true;
+        }
         
+        public int GetPlayerNumber(ulong clientId)
+        {
+            var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
+            if (playerData.HasValue)
+            {
+                return playerData.Value.PlayerNumber;
+            }
+            
+            // this should never happen
+            return -1;
+        }
 
         [ServerRpc(RequireOwnership = false)]
         public void RequestShutdownServerRpc(ServerRpcParams serverRpcParams = default)
@@ -223,7 +270,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             {
                 DebugWrapper.Log($"{playerData.Value.PlayerName} requested shutdown."); 
             }
-    
+            
+            // disconnect all clients
             var reason = JsonUtility.ToJson(ConnectStatus.UserRequestedDisconnect);
             for (var i = NetworkManager.ConnectedClientsIds.Count - 1; i >= 0; i--)
             {
@@ -232,6 +280,11 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
             
             ChangeState(Offline);
+            ShutDownApplication();
+        }
+
+        public void ShutDownApplication()
+        {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else 

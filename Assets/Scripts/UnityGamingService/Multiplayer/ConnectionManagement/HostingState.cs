@@ -46,7 +46,9 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                                 PlayerName = sessionData.Value.PlayerName
                             });
                     }
+                    
                     SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
+                    m_connectionManager.ClientRpcParams.Remove(clientId);
                 }
             }
         }
@@ -55,6 +57,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         {
             m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.GenericDisconnect);
             m_connectionManager.ChangeState(m_connectionManager.Offline);
+            m_connectionManager.ShutDownApplication();
         }
 
         public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request,
@@ -73,11 +76,18 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             var payload = System.Text.Encoding.UTF8.GetString(connectionData);
             var connectionPayload = JsonConvert.DeserializeObject<ConnectionPayload>(payload);
             var gameReturnStatus = m_connectionManager.GetConnectStatus(connectionPayload);
-
-            if (gameReturnStatus == ConnectStatus.Success)
+            int playerNumber = m_connectionManager.GetAvailablePlayerNumber();
+            
+            bool isConnectSuccess = gameReturnStatus == ConnectStatus.Success;
+            bool isPlayerNumberAvailable = playerNumber != -1;
+            
+            if (isConnectSuccess && isPlayerNumberAvailable)
             {
+                DebugWrapper.Log($"Client {clientId} approved");
+                DebugWrapper.Log($"Player {connectionPayload.playerName} assigned to player number {playerNumber}");
+                
                 SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
-                    new SessionPlayerData(clientId, connectionPayload.playerName, true));
+                    new SessionPlayerData(clientId, connectionPayload.playerName, playerNumber, true));
                 
                 response.Approved = true;
                 return;

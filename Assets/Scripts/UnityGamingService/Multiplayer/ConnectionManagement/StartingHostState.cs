@@ -39,10 +39,11 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             {
                 var payload = System.Text.Encoding.UTF8.GetString(connectionData);
                 var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload);
+                int playerNumber = 0;
 
                 SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId,
                     connectionPayload.playerId,
-                    new SessionPlayerData(clientId, connectionPayload.playerName, true));
+                    new SessionPlayerData(clientId, connectionPayload.playerName, playerNumber, true));
 
                 response.Approved = true;
             }
@@ -70,6 +71,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             DebugWrapper.LogError("Failed to start host");
             m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.StartHostFailed);
             m_connectionManager.ChangeState(m_connectionManager.Offline);
+            m_connectionManager.ShutDownApplication();
         }
     }
 }

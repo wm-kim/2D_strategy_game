@@ -1,10 +1,8 @@
-using System;
-using Minimax.UnityGamingService.Multiplayer;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.GamePlay
 {
     public class ProfileManager : NetworkBehaviour
     {

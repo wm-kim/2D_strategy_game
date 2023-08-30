@@ -1,11 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using Minimax.Utilities;
 using Unity.Netcode;
-using UnityEngine;
 
-namespace Minimax
+namespace Minimax.GamePlay
 {
     public class NetworkPlayerProfile : NetworkBehaviour
     {

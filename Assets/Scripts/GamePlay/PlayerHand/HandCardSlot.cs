@@ -1,3 +1,4 @@
+using System;
 using DG.Tweening;
 using Minimax.ScriptableObjects.Settings;
 using Minimax.UI.View.ComponentViews.GamePlay;
@@ -29,7 +30,7 @@ namespace Minimax.GamePlay.PlayerHand
         public DefaultState DefaultState { get; private set; }
         public HoverState HoverState { get; private set; }
         public DraggingState DraggingState { get; private set; }
-
+        
         public void Init(ClientPlayerHandManager handManager, int index, string objectName)
         {
             HandManager = handManager;

@@ -1,10 +1,7 @@
-using Cysharp.Threading.Tasks;
 using Minimax.CoreSystems;
 using Minimax.UI.View.Popups;
-using Minimax.Utilities;
-using NovaSamples.UIControls;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 namespace Minimax
 {
@@ -15,7 +12,7 @@ namespace Minimax
         
         private void Start()
         {
-            m_menuButton.OnClicked.AddListener(RequestOpenMenuPopup);
+            m_menuButton.onClick.AddListener(RequestOpenMenuPopup);
         }
 
         private void OnEnable()

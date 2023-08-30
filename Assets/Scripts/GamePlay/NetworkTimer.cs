@@ -1,12 +1,18 @@
 using System;
 using Minimax.Utilities;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
-using TMPro;
 using UnityEngine.Assertions;
 
-namespace Minimax
+namespace Minimax.GamePlay
 {
+    public enum TimerType
+    {
+        Player0Turn,
+        Player1Turn,
+    }
+    
     public class NetworkTimer : NetworkBehaviour
     {
         [Header("References")]
@@ -28,7 +34,7 @@ namespace Minimax
         public void ConFig(float duration, Action onServerTimerComplete, Action onClientTimerComplete = null)
         {
             Assert.IsTrue(duration > 0f);
-            
+
             m_duration = duration;
             m_onServerTimerComplete = onServerTimerComplete;
             m_onClientTimerComplete = onClientTimerComplete;
@@ -65,6 +71,8 @@ namespace Minimax
         
         private void TimeFinished()
         {
+            if (!IsServer) return;
+            
             m_time.Value = 0f;
             m_isTimerFinished = true;
             
@@ -80,6 +88,14 @@ namespace Minimax
             DebugWrapper.Log($"StartTimer, duration: {m_duration}");
             m_isTimerFinished = false;
             m_time.Value = m_duration;
+        }
+        
+        public void EndTimerImmediately()
+        {
+            if (!IsServer) return;
+            
+            DebugWrapper.Log("EndTimerImmediately");
+            TimeFinished();
         }
         
         [ClientRpc]

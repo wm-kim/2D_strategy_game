@@ -25,7 +25,9 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (touch.phase is TouchPhase.Moved or TouchPhase.Began or TouchPhase.Stationary)
             {
-                Vector3 targetPosition = new Vector3(touch.screenPosition.x, touch.screenPosition.y, 0) 
+                var camera = m_slot.HandManager.UICamera;
+                var touchWorldPosition = camera.ScreenToWorldPoint(touch.screenPosition);
+                Vector3 targetPosition = new Vector3(touchWorldPosition.x, touchWorldPosition.y, 0)
                                          + (Vector3) m_slot.HandCardSlotSettings.DraggingOffset;
 
                 if (Vector3.Distance(m_slot.CardView.transform.position, targetPosition) > m_positionThreshold)

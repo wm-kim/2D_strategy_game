@@ -18,6 +18,7 @@ namespace Minimax.GamePlay.PlayerHand
         {
             m_slot = slot;
         } 
+        
         public override void Enter()
         {
             // Reset the first touch flag
@@ -38,7 +39,7 @@ namespace Minimax.GamePlay.PlayerHand
         public override void Exit()
         {
             // Unsubscribe from the input events
-            var inputManager = GlobalManagers.Instance.Input; 
+            var inputManager = GlobalManagers.Instance.Input;
             inputManager.OnTouch -= CheckForSecondTouch;
             
             // Reset the hovering index
@@ -48,7 +49,9 @@ namespace Minimax.GamePlay.PlayerHand
         private void CheckForSecondTouch(EnhancedTouch.Touch touch)
         {
             var cardViewRect = m_slot.CardView.GetComponent<RectTransform>();
-            bool isInsideCardDisplayMenu = RectTransformUtility.RectangleContainsScreenPoint(cardViewRect, touch.screenPosition);
+            bool isInsideCardDisplayMenu =
+                RectTransformUtility.RectangleContainsScreenPoint(cardViewRect, touch.screenPosition,
+                    m_slot.HandManager.UICamera);
 
             if (!isInsideCardDisplayMenu)
             {
@@ -57,8 +60,11 @@ namespace Minimax.GamePlay.PlayerHand
             }
 
             var currentSection = GlobalManagers.Instance.ServiceLocator.GetService<SectionDivider>().CurrentSection;
+            
             bool isTouchBegan = touch.phase == TouchPhase.Began;
-
+            bool isTouchMoved = touch.phase == TouchPhase.Moved;
+            bool isTouchEnded = touch.phase == TouchPhase.Ended;
+            
             if (isTouchBegan)
             {
                 if (m_contactCount >= 1)
@@ -70,11 +76,11 @@ namespace Minimax.GamePlay.PlayerHand
                     m_contactCount++;
                 }
             }
-            else if (touch.phase == TouchPhase.Moved && currentSection != SectionDivider.Section.MyHand)
+            else if (isTouchMoved && currentSection != SectionDivider.Section.MyHand)
             {
                 m_slot.ChangeState(m_slot.DraggingState);
             }
-            else if (touch.phase == TouchPhase.Ended)
+            else if (isTouchEnded)
             {
                 m_contactCount++;
             }
@@ -82,9 +88,9 @@ namespace Minimax.GamePlay.PlayerHand
         
         public override void MoveCardView()
         {
-            Vector3 targetPosition = new Vector3(m_slot.transform.position.x, 0, 0) +
+            var cameraBottomY = m_slot.HandManager.UICamera.ViewportToWorldPoint(Vector3.zero).y;
+            Vector3 targetPosition = new Vector3(m_slot.transform.position.x, cameraBottomY, 0) +
                                      (Vector3)m_slot.HandCardSlotSettings.HoverOffset;
-
             if (Vector3.Distance(m_slot.CardView.transform.position, targetPosition) > m_positionThreshold)
             {
                 Vector3 targetRotation = Vector3.zero;

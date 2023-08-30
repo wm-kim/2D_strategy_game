@@ -1,24 +1,32 @@
-using System;
-using DG.Tweening;
 using Minimax.CoreSystems;
 using Minimax.GamePlay.PlayerHand;
-using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
-namespace Minimax
+namespace Minimax.GamePlay
 {
+    [RequireComponent(typeof(Camera))]
     public class CameraController : MonoBehaviour
     {
-        [SerializeField] private ClientPlayerHandManager m_clientPlayerHandManager;
-        [SerializeField, Range(0, 2)] private float m_panSpeed = 1f;
-        [SerializeField] private RectTransform m_panBounds;
+        [Header("References")]
+        [SerializeField]
+        Camera m_camera;
+        [SerializeField] 
+        private ClientPlayerHandManager m_clientPlayerHandManager;
         
+        [Header("Settings")]
+        [SerializeField, Range(0, 2)] 
+        private float m_panSpeed = 1f;
         [SerializeField, Tooltip("The time it takes for the camera to reach the target position")] 
         private float m_panSmoothTime = 0.1f;
-        private Camera m_camera;
+        [SerializeField, Range(1, 2), Tooltip("The scale of the camera boundary relative to the map size")]
+        private float m_bounadryScaleX = 1.2f;
+        [SerializeField, Range(1, 2), Tooltip("The scale of the camera boundary relative to the map size")]
+        private float m_bounadryScaleY = 1.5f;
+        
+        public Camera Camera => m_camera;
         
         // This is for optimization purposes
         private float m_moveThreshold = 0.1f;
@@ -26,6 +34,7 @@ namespace Minimax
         private Vector3  m_currentFocusPosition;
         private Vector3  m_targetPosition;
         private Vector2 m_panSmoothVelocity;
+        private Rect m_panBound;
         
         private void OnEnable()
         {
@@ -39,8 +48,6 @@ namespace Minimax
         
         void Start()
         {
-            m_camera = Camera.main;
-            
             m_currentFocusPosition = m_camera.transform.position;
             m_targetPosition = m_currentFocusPosition;
         }
@@ -49,7 +56,7 @@ namespace Minimax
         {
             UpdateCameraTransform();
         }
-
+        
         private void MoveCamera(EnhancedTouch.Touch touch)
         {
             // If the touch is not a move touch, do not proceed with camera movement
@@ -76,16 +83,28 @@ namespace Minimax
                 return;
             }
 
-            var touchDelta = touch.delta * (0.01f * m_panSpeed);
+            var touchDelta = touch.delta * m_camera.orthographicSize * m_panSpeed * 0.001f;
             var newPanPosition = m_targetPosition - new Vector3(touchDelta.x, touchDelta.y);
             
             // clamp the new pan position to the pan bounds
-            var rect = m_panBounds.rect;
-            newPanPosition.x = Mathf.Clamp(newPanPosition.x, rect.xMin, rect.xMax);
-            newPanPosition.y = Mathf.Clamp(newPanPosition.y, rect.yMin, rect.yMax);
+            newPanPosition.x = Mathf.Clamp(newPanPosition.x, m_panBound.xMin, m_panBound.xMax);
+            newPanPosition.y = Mathf.Clamp(newPanPosition.y, m_panBound.yMin, m_panBound.yMax);
             
             m_targetPosition = newPanPosition;
         }
+        
+        
+        public void SetCameraBoundary(Vector3 center, Vector2 size)
+        {
+            m_camera.transform.position = center;
+            m_currentFocusPosition = center;
+            m_panBound = new Rect(
+                (center.x - size.x) * 0.5f * this.m_bounadryScaleX, 
+                center.y - size.y * 0.5f * this.m_bounadryScaleY,
+                size.x * m_bounadryScaleX,
+                size.y * m_bounadryScaleY);
+        }
+        
         
         private void UpdateCameraTransform()
         {
