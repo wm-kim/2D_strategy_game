@@ -1,24 +1,30 @@
+using System;
 using Minimax.CoreSystems;
 using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Minimax.GamePlay
 {
     /// <summary>
     /// 게임의 전반적인 흐름을 관리합니다.
-    /// 게임을 시작하기 전에 필요한 설정들을 하고, 게임이 시작되면 턴을 시작합니다.
+    /// 게임을 시작하기 전에 필요한 설정들을 하고, 모든 플레이어가 준비되면 게임을 시작합니다.
     /// </summary>
     public class GameManager : NetworkBehaviour
     {
         [Header("References")]
-        [SerializeField] private ServerPlayerDeckManager m_serverPlayerDeckManager;
+        [SerializeField] private ServerPlayersDeckManager m_serverPlayersDeckManager;
         [SerializeField] private TurnManager m_turnManager;
         [SerializeField] private ProfileManager m_profileManager;
         
         private NetworkManager m_networkManager => NetworkManager.Singleton;
-
+        
+        public bool IsGameStarted { get; private set; }
+        // Events
+        public event Action OnGameStarted;
+        
         private async void Start()
         {
 #if DEDICATED_SERVER
@@ -49,6 +55,7 @@ namespace Minimax.GamePlay
             m_networkManager.SceneManager.OnSceneEvent -= GameManager_OnSceneEvent;
             
             // clear the cached client rpc params
+            IDFactory.ResetIDs();
             GlobalManagers.Instance.Connection.ClientRpcParams.Clear();
             base.OnNetworkDespawn();
         }
@@ -60,10 +67,19 @@ namespace Minimax.GamePlay
 
             if (IsServer)
             {
-                await m_serverPlayerDeckManager.SetupPlayerDecks();
+                await m_serverPlayersDeckManager.SetupPlayersDeck();
                 m_profileManager.SetPlayerNames();
-                m_turnManager.StartGame();
+                m_turnManager.StartInitialTurn();
+                
+                StartGame();
             }
+        }
+        
+        private void StartGame()
+        {
+            if (IsGameStarted) return;
+            IsGameStarted = true;
+            OnGameStarted?.Invoke();
         }
     }
 }

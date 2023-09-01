@@ -11,7 +11,7 @@ namespace Minimax.GamePlay.PlayerHand
         public override void Enter()
         {
             m_slot.HandManager.DeselectCard();
-            m_slot.CardView.transform.SetParent(m_slot.transform);
+            m_slot.HandCardView.transform.SetParent(m_slot.transform);
         }
 
         public override void Exit() { }
@@ -20,16 +20,16 @@ namespace Minimax.GamePlay.PlayerHand
         {
             Vector3 targetPosition = m_slot.transform.position;
 
-            if (Vector3.Distance(m_slot.CardView.transform.position, targetPosition) > m_positionThreshold)
+            if (Vector3.Distance(m_slot.HandCardView.transform.position, targetPosition) > m_positionThreshold)
             {
                 Vector3 targetRotation = m_slot.transform.eulerAngles;
                 float targetScale = 1f;
                 float duration = m_slot.HandCardSlotSettings.DropDownDuration;
                 
-                m_slot.CardView.KillTweens();
-                m_slot.CardView.PosTween = m_slot.CardView.transform.DOMove(targetPosition, duration);
-                m_slot.CardView.RotTween = m_slot.CardView.transform.DORotate(targetRotation, duration);
-                m_slot.CardView.ScaleTween = m_slot.CardView.transform.DOScale(targetScale, duration);
+                m_slot.HandCardView.KillTweens();
+                m_slot.HandCardView.PosTween = m_slot.HandCardView.transform.DOMove(targetPosition, duration);
+                m_slot.HandCardView.RotTween = m_slot.HandCardView.transform.DORotate(targetRotation, duration);
+                m_slot.HandCardView.ScaleTween = m_slot.HandCardView.transform.DOScale(targetScale, duration);
             }
         }
 

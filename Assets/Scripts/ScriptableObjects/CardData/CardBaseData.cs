@@ -8,19 +8,21 @@ namespace Minimax.ScriptableObjects.CardDatas
     public class CardBaseData : ScriptableObject
     {
         public int CardId;
+        public int Cost;
         public string CardName;
         public string Description;
         
         [JsonConverter(typeof(StringEnumConverter))]
-        public CardType CardType;
+        protected CardType CardType;
         
-        public int Cost;
+        public CardType GetCardType() => CardType;
+        
     }
 
     public enum CardType
     {
         Undefined,
         Unit,
-        Spell,
+        Special,
     }
 }

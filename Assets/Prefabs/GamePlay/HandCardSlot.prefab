@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fa528ab8fe316048bcd3ebbef2159c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <CardView>k__BackingField: {fileID: 8630389178180307310}
+  <HandCardView>k__BackingField: {fileID: 8630389178180307310}
   <HandCardSlotSettings>k__BackingField: {fileID: 11400000, guid: 7b577c468ca39994a9f75aca90140e58, type: 2}
 --- !u!1001 &1906383431166906396
 PrefabInstance:

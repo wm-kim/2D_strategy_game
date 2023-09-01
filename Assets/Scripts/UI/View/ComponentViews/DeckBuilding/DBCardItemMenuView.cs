@@ -10,6 +10,8 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DBCardItemMenuView : StatefulUIView
     {
+        [Header("References")]
+        [SerializeField] private Camera m_mainCamera;
         [SerializeField] private DeckBuildingManager m_deckBuildingManager;
         
         [Header("Inner References")]
@@ -17,7 +19,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
         [SerializeField] private TextMeshProUGUI m_cardNameText = default;
         [SerializeField] private Button m_addToDeckButton = default;
         
-        [SerializeField] private float m_xOffset = 30f;
+        [SerializeField] private float m_xOffset = 2f;
         private DBCardItemView m_dbCardItem;
         
         private void Start()
@@ -31,6 +33,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
         {
             m_deckBuildingManager.DeckListView.AddCardToDeckList(m_dbCardItem.CardData);
             m_dbCardItem.SetButtonInteractable(false);
+            m_dbCardItem = null;
             StartHide();
         }
 
@@ -82,7 +85,8 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
             if (m_currentState == UIVisibleState.Appeared)
             {
                 bool isBeginOrMovedTouch = touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved;
-                bool isOutsideCardDisplayMenu = !RectTransformUtility.RectangleContainsScreenPoint(m_dbCardItemMenu, touch.screenPosition);
+                bool isOutsideCardDisplayMenu = 
+                    !RectTransformUtility.RectangleContainsScreenPoint(m_dbCardItemMenu, touch.screenPosition, m_mainCamera);
                 if (isBeginOrMovedTouch && isOutsideCardDisplayMenu)
                 {
                     StartHide();

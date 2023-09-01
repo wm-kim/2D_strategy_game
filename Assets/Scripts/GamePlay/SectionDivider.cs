@@ -1,3 +1,4 @@
+using System;
 using Minimax.CoreSystems;
 using UnityEngine;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
@@ -22,11 +23,26 @@ namespace Minimax.GamePlay
         
         public Section CurrentSection { get; private set; } = Section.Default;
 
-        private void Start()
+        private void OnEnable()
         {
-            GlobalManagers.Instance.Input.OnTouch += DivideSections;
             // register this service
             GlobalManagers.Instance.ServiceLocator.RegisterService(this, nameof(SectionDivider));
+            GlobalManagers.Instance.Input.OnTouch += DivideSections;
+        }
+
+        private void OnDisable()
+        {
+            if (GlobalManagers.Instance == null) return;
+            
+            if (GlobalManagers.Instance.Input != null)
+            {
+                GlobalManagers.Instance.Input.OnTouch -= DivideSections;
+            }
+            
+            if (GlobalManagers.Instance.ServiceLocator != null)
+            {
+                GlobalManagers.Instance.ServiceLocator.UnregisterService(nameof(SectionDivider));
+            }
         }
 
         private void DivideSections(EnhancedTouch.Touch touch)
@@ -37,15 +53,6 @@ namespace Minimax.GamePlay
             if (isInsideMapSection) CurrentSection = Section.Map;
             else if (isInsideMyHandSection) CurrentSection = Section.MyHand;
             else CurrentSection = Section.Default;
-        }
-        
-        private void OnDestroy()
-        {
-            if (GlobalManagers.Instance) 
-                GlobalManagers.Instance.Input.OnTouch -= DivideSections;
-            
-            // unregister this service
-            GlobalManagers.Instance.ServiceLocator.UnregisterService(nameof(SectionDivider));
         }
     }
 }

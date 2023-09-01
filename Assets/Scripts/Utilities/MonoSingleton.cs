@@ -21,7 +21,7 @@ namespace Minimax.Utilities
                     lock (instanceLock)
                     {
                         // 락을 획득한 후에도 다시 한번 null 체크를 한다.
-                        if (s_instance == null)
+                        if (s_instance == null && Time.timeScale != 0)
                         {
                             CreateInstance();
                         }
@@ -68,5 +68,10 @@ namespace Minimax.Utilities
         
         // 인스턴스가 초기화되었는지 확인
         public static bool IsInitialized => s_instance != null;
+
+        private void OnApplicationQuit()
+        {
+            Time.timeScale = 0;
+        }
     }
 }

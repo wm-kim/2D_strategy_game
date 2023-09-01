@@ -30,18 +30,18 @@ namespace Minimax.GamePlay.PlayerHand
                 Vector3 targetPosition = new Vector3(touchWorldPosition.x, touchWorldPosition.y, 0)
                                          + (Vector3) m_slot.HandCardSlotSettings.DraggingOffset;
 
-                if (Vector3.Distance(m_slot.CardView.transform.position, targetPosition) > m_positionThreshold)
+                if (Vector3.Distance(m_slot.HandCardView.transform.position, targetPosition) > m_positionThreshold)
                 {
-                    m_slot.CardView.KillTweens();
+                    m_slot.HandCardView.KillTweens();
                     
-                    m_slot.CardView.transform.position = 
-                        Vector3.Lerp(m_slot.CardView.transform.position, targetPosition, 
+                    m_slot.HandCardView.transform.position = 
+                        Vector3.Lerp(m_slot.HandCardView.transform.position, targetPosition, 
                             Time.deltaTime * m_slot.HandCardSlotSettings.DraggingSpeed);
 
-                    m_slot.CardView.RotTween = m_slot.CardView.transform.DORotate(Vector3.zero,
+                    m_slot.HandCardView.RotTween = m_slot.HandCardView.transform.DORotate(Vector3.zero,
                         m_slot.HandCardSlotSettings.DraggingTweenDuration);
                     
-                    m_slot.CardView.ScaleTween = m_slot.CardView.transform.DOScale(1f,
+                    m_slot.HandCardView.ScaleTween = m_slot.HandCardView.transform.DOScale(1f,
                         m_slot.HandCardSlotSettings.DraggingTweenDuration);
                 }
             }

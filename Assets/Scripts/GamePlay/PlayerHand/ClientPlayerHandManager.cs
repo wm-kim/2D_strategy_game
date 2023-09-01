@@ -10,6 +10,9 @@ using UnityEngine.Pool;
 
 namespace Minimax.GamePlay.PlayerHand
 {
+    /// <summary>
+    /// Only responsible for visualizing the player's hand.
+    /// </summary>
     public class ClientPlayerHandManager : MonoBehaviour
     {
         [BoxGroup("References")] [SerializeField]
@@ -17,6 +20,7 @@ namespace Minimax.GamePlay.PlayerHand
 
         [BoxGroup("References")] [SerializeField]
         private Transform m_cardParent;
+        public Transform CardParent => m_cardParent;
         
         [BoxGroup("References")] [SerializeField]
         private Camera m_uiCamera;
@@ -218,7 +222,7 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (!IsSelecting) return;
             
-            m_slotList[m_selectedIndex].CardView.FadeView(1f, m_cardFadeDuration);
+            m_slotList[m_selectedIndex].HandCardView.FadeView(1f, m_cardFadeDuration);
             m_selectedIndex = -1;
         }
         
@@ -228,13 +232,13 @@ namespace Minimax.GamePlay.PlayerHand
         private void OnTouchOverMapMap(Cell cell)
         {
             if (!IsSelecting) return;
-            m_slotList[m_selectedIndex].CardView.FadeView(m_cardFadeAlpha, m_cardFadeDuration);
+            m_slotList[m_selectedIndex].HandCardView.FadeView(m_cardFadeAlpha, m_cardFadeDuration);
         }
 
         private void OnUnHoverMap()
         {
             if (!IsSelecting) return;
-            m_slotList[m_selectedIndex].CardView.FadeView(1f, m_cardFadeDuration);
+            m_slotList[m_selectedIndex].HandCardView.FadeView(1f, m_cardFadeDuration);
         }
     }
 }

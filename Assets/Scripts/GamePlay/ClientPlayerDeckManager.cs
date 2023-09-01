@@ -12,14 +12,14 @@ using UnityEngine.UI;
 namespace Minimax
 {
     /// <summary>
-    /// This class is a view component for the client player's deck.
+    /// This class is responsible for visualizing the client player's deck.
     /// </summary>
     public class ClientPlayerDeckManager : NetworkBehaviour
     {
         [Header("References")]
         [SerializeField] private Button m_myDeckButton;
         [SerializeField] private TranslucentImageSource m_playerPanelBlurSource;
-        [SerializeField] private UIFader m_deckViewFader;
+        [SerializeField] private CardListView m_deckViewFader;
         [SerializeField] private Button m_closeMyDeckViewButton;
         
         [Header("Settings")]
@@ -44,9 +44,9 @@ namespace Minimax
         {
             DebugWrapper.Log($"SetupPlayerDeckClientRpc: {JsonConvert.SerializeObject(cardIds)}");
             m_cardIds = new List<int>(cardIds);
+            
+            m_deckViewFader.Init(m_cardIds);
         }
-        
-        // [TODO] Need CardDataVisualizer to visualize the card
         
         private void ShowMyDeckView()
         {

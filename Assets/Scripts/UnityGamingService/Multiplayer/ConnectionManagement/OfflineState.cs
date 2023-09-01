@@ -6,7 +6,10 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         
         public override void Enter()
         {
-            m_connectionManager.NetworkManager.Shutdown();
+            if (m_connectionManager != null && m_connectionManager.NetworkManager != null)
+            {
+                m_connectionManager.NetworkManager.Shutdown();
+            }
         }
 
         public override void Exit() { }

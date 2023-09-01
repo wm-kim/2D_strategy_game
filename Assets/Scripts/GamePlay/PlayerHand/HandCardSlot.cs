@@ -21,7 +21,7 @@ namespace Minimax.GamePlay.PlayerHand
             RotTween?.Kill();
         }
         
-        [field: SerializeField] public CardView CardView { get; private set; }
+        [field: SerializeField] public HandCardView HandCardView { get; private set; }
         [field: SerializeField] public HandCardSlotSettingSO HandCardSlotSettings { get; private set; }
         public ClientPlayerHandManager HandManager { get; private set; }
 

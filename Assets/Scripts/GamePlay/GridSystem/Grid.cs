@@ -7,6 +7,9 @@ using Debug = UnityEngine.Debug;
 
 namespace Minimax.GamePlay.GridSystem
 {
+  /// <summary>
+  /// Contains the logic for the grid system, have collection of cells
+  /// </summary>
   public class Grid<TGridCell>  
   {
     /// <summary>

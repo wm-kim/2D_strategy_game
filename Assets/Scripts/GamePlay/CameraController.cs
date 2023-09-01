@@ -1,3 +1,4 @@
+using System;
 using Minimax.CoreSystems;
 using Minimax.GamePlay.PlayerHand;
 using UnityEngine;
@@ -7,12 +8,10 @@ using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
 namespace Minimax.GamePlay
 {
-    [RequireComponent(typeof(Camera))]
     public class CameraController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField]
-        Camera m_camera;
+        [SerializeField] Camera m_camera;
         [SerializeField] 
         private ClientPlayerHandManager m_clientPlayerHandManager;
         
@@ -41,7 +40,20 @@ namespace Minimax.GamePlay
         {
             m_currentFocusPosition = m_camera.transform.position;
             m_targetPosition = m_currentFocusPosition;
+            
+        }
+
+        private void OnEnable()
+        {
             GlobalManagers.Instance.Input.OnTouch += MoveCamera;
+        }
+        
+        private void OnDisable()
+        {
+            if (GlobalManagers.Instance != null && GlobalManagers.Instance.Input != null)
+            {
+                GlobalManagers.Instance.Input.OnTouch -= MoveCamera;
+            }
         }
 
         private void LateUpdate()

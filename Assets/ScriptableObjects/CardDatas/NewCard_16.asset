@@ -9,11 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6e04495009411f439fe1da6b8ba1e64, type: 3}
+  m_Script: {fileID: 11500000, guid: df27c75e46bb443288e45dbd136ac4ab, type: 3}
   m_Name: NewCard_16
   m_EditorClassIdentifier: 
   CardId: 16
+  Cost: 8
   CardName: NewCard_16
-  Description: 
-  CardType: 0
-  Cost: 0
+  Description: This is a random card
+  Attack: 8
+  Health: 4
+  Movement: 2

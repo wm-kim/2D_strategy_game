@@ -19,14 +19,14 @@ namespace Minimax.GamePlay
         [SerializeField] private float m_turnDuration = 10f;
         
         private NetworkManager m_networkManager => NetworkManager.Singleton;
-        private NetworkVariable<int> m_whosTurn = new NetworkVariable<int>();
+        private NetworkVariable<int> m_whosTurn = new NetworkVariable<int>(-1);
 
         private void Awake()
         {
             m_endTurnButton.onClick.AddListener(RequestEndTurn);
         }
 
-        public void StartGame()
+        public void StartInitialTurn()
         {
             if (!IsServer) return;
             

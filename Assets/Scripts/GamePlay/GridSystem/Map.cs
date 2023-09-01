@@ -72,8 +72,11 @@ namespace Minimax.GamePlay.GridSystem
 
         private void OnDisable()
         {
-            GlobalManagers.Instance.Input.OnTouch -= HoverCell;
-            GlobalManagers.Instance.Input.OnTap -= SelectCell;
+            if (GlobalManagers.Instance != null && GlobalManagers.Instance.Input != null)
+            {
+                GlobalManagers.Instance.Input.OnTouch -= HoverCell;
+                GlobalManagers.Instance.Input.OnTap -= SelectCell;
+            }
         }
         
         private void HoverCell(Touch touch)

@@ -14,7 +14,7 @@ using UnityEngine.Serialization;
 
 namespace Minimax.GamePlay
 {
-    public class ServerPlayerDeckManager : NetworkBehaviour
+    public class ServerPlayersDeckManager : NetworkBehaviour
     {
         [Header("References")]
         [SerializeField] private CardDBManager m_cardDBManager;
@@ -25,12 +25,12 @@ namespace Minimax.GamePlay
         /// <summary>
         /// Stores the deck list fetched from cloud. Key: playerNumber, Value: DeckDTO
         /// </summary>
-        private Dictionary<int, DeckDTO> m_playerDeckLists = new Dictionary<int, DeckDTO>();
+        private Dictionary<int, DeckDTO> m_playersDeckList = new Dictionary<int, DeckDTO>();
         
         [SerializeField, Tooltip("Key: playerNumber, Value: Deck Card Data")]
-        private SerializedDictionary<int, List<CardBaseData>> m_playerDecks = new SerializedDictionary<int, List<CardBaseData>>();
+        private SerializedDictionary<int, List<CardBaseData>> m_playersDeck = new SerializedDictionary<int, List<CardBaseData>>();
 
-        public async UniTask SetupPlayerDecks()
+        public async UniTask SetupPlayersDeck()
         {
             var isPlayerDeckListFetched = await FetchPlayerDeckListFromCloud();
             var isDBLoaded = await m_cardDBManager.LoadDBCardsAsync();
@@ -38,8 +38,8 @@ namespace Minimax.GamePlay
             if (isPlayerDeckListFetched && isDBLoaded)
             {
                 // first shuffle the deck (before shuffling, the deck is sorted by card id)
-                ShufflePlayerDeckLists();
-                GetPlayerDecksCardDataFromDB();
+                ShufflePlayersDeckList();
+                GetPlayersDeckDataFromDB();
                 
                 // send player deck list to clients
                 var connectionManager = GlobalManagers.Instance.Connection;
@@ -58,18 +58,18 @@ namespace Minimax.GamePlay
         /// <summary>
         /// Get card data from DB using card id from deck list fetched from cloud
         /// </summary>
-        private void GetPlayerDecksCardDataFromDB()
+        private void GetPlayersDeckDataFromDB()
         {
-            for (int i = 0; i < m_playerDeckLists.Count; i++)
+            for (int i = 0; i < m_playersDeckList.Count; i++)
             {
                 var deck = new List<CardBaseData>();
-                foreach (var pair in m_playerDeckLists)
+                foreach (var pair in m_playersDeckList)
                 {
                     foreach (var cardId in pair.Value.CardIds)
                     {
                         deck.Add(m_cardDBManager.GetCardData(cardId));
                     }
-                    m_playerDecks.Add(pair.Key, deck);
+                    m_playersDeck.Add(pair.Key, deck);
                 }
             }
         }
@@ -112,7 +112,7 @@ namespace Minimax.GamePlay
                 for (int i = 0; i < m_networkManager.ConnectedClientsIds.Count; i++)
                 {
                     var playerNumber = connectionManager.GetPlayerNumber(m_networkManager.ConnectedClientsIds[i]);
-                    m_playerDeckLists.Add(playerNumber, playerDeckLists[i]);
+                    m_playersDeckList.Add(playerNumber, playerDeckLists[i]);
                 }
                 
                 return true;
@@ -123,18 +123,17 @@ namespace Minimax.GamePlay
                 return false;
             }
         }
-        
-        
+
         /// <summary>
         /// 각 player들의 모든 덱을 섞는다.
         /// </summary>
-        private void ShufflePlayerDeckLists()
+        private void ShufflePlayersDeckList()
         {
-            foreach (var deckList in m_playerDeckLists)
+            foreach (var deckList in m_playersDeckList)
             {
                for (int i = 0; i < deckList.Value.CardIds.Count; i++)
                {
-                   ShuffleList(deckList.Value.CardIds);
+                   deckList.Value.CardIds.Shuffle();
                }
             }
         }
@@ -145,34 +144,25 @@ namespace Minimax.GamePlay
         /// </summary>
         private int[] CopyPlayerDeckListAndShuffle(int playerNumber)
         {
-            var deckList = m_playerDeckLists[playerNumber].CardIds;
+            var deckList = m_playersDeckList[playerNumber].CardIds;
             var deck = new int[deckList.Count];
             for (int i = 0; i < deckList.Count; i++)
             {
                 deck[i] = deckList[i];
             }
-            ShuffleList(deck);
+            
+            deck.Shuffle();
             return deck;
         }
         
-        private void ShuffleList(List<int> list)
+        public List<CardBaseData> GetPlayerDeck(int playerNumber)
         {
-            int n = list.Count;
-            for (int i = n - 1; i > 0; i--)
-            {
-                int rnd = Random.Range(0, i + 1);
-                (list[rnd], list[i]) = (list[i], list[rnd]);
-            }
+            return m_playersDeck[playerNumber];
         }
         
-        private void ShuffleList(int[] list)
+        public void RemoveCardOfIndex(int playerNumber, int index)
         {
-            int n = list.Length;
-            for (int i = n - 1; i > 0; i--)
-            {
-                int rnd = Random.Range(0, i + 1);
-                (list[rnd], list[i]) = (list[i], list[rnd]);
-            }
+            m_playersDeck[playerNumber].RemoveAt(index);
         }
     }
 }

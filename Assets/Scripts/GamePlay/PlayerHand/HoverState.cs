@@ -33,7 +33,7 @@ namespace Minimax.GamePlay.PlayerHand
             m_slot.HandManager.HoverCard(m_slot.Index);
 
             // Set the card view as the last sibling in its parent to render it on top of the other cards
-            m_slot.CardView.transform.SetParent(m_slot.HandManager.transform);
+            m_slot.HandCardView.transform.SetParent(m_slot.HandManager.CardParent);
         }
 
         public override void Exit()
@@ -48,7 +48,7 @@ namespace Minimax.GamePlay.PlayerHand
 
         private void CheckForSecondTouch(EnhancedTouch.Touch touch)
         {
-            var cardViewRect = m_slot.CardView.GetComponent<RectTransform>();
+            var cardViewRect = m_slot.HandCardView.GetComponent<RectTransform>();
             bool isInsideCardDisplayMenu =
                 RectTransformUtility.RectangleContainsScreenPoint(cardViewRect, touch.screenPosition,
                     m_slot.HandManager.UICamera);
@@ -91,16 +91,16 @@ namespace Minimax.GamePlay.PlayerHand
             var cameraBottomY = m_slot.HandManager.UICamera.ViewportToWorldPoint(Vector3.zero).y;
             Vector3 targetPosition = new Vector3(m_slot.transform.position.x, cameraBottomY, 0) +
                                      (Vector3)m_slot.HandCardSlotSettings.HoverOffset;
-            if (Vector3.Distance(m_slot.CardView.transform.position, targetPosition) > m_positionThreshold)
+            if (Vector3.Distance(m_slot.HandCardView.transform.position, targetPosition) > m_positionThreshold)
             {
                 Vector3 targetRotation = Vector3.zero;
                 float targetScale = m_slot.HandCardSlotSettings.HoverScale;
                 float duration = m_slot.HandCardSlotSettings.HoverDuration;
 
-                m_slot.CardView.KillTweens();
-                m_slot.CardView.PosTween = m_slot.CardView.transform.DOMove(targetPosition, duration);
-                m_slot.CardView.RotTween = m_slot.CardView.transform.DORotate(targetRotation, duration);
-                m_slot.CardView.ScaleTween = m_slot.CardView.transform.DOScale(targetScale, duration);
+                m_slot.HandCardView.KillTweens();
+                m_slot.HandCardView.PosTween = m_slot.HandCardView.transform.DOMove(targetPosition, duration);
+                m_slot.HandCardView.RotTween = m_slot.HandCardView.transform.DORotate(targetRotation, duration);
+                m_slot.HandCardView.ScaleTween = m_slot.HandCardView.transform.DOScale(targetScale, duration);
             }
         }
 

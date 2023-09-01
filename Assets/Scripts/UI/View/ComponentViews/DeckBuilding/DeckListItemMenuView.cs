@@ -9,6 +9,8 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DeckListItemMenuView : StatefulUIView
     {
+        [Header("References")]
+        [SerializeField] private Camera m_mainCamera;
         [SerializeField] private DeckBuildingManager m_deckBuildingManager;
         
         [Header("Inner References")]
@@ -30,7 +32,8 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
             if (m_currentState == UIVisibleState.Appeared)
             {
                 bool isBeginOrMovedTouch = touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved;
-                bool isOutsideCardDisplayMenu = !RectTransformUtility.RectangleContainsScreenPoint(m_deckListItemMenu, touch.screenPosition);
+                bool isOutsideCardDisplayMenu = 
+                    !RectTransformUtility.RectangleContainsScreenPoint(m_deckListItemMenu, touch.screenPosition, m_mainCamera);
                 if (isBeginOrMovedTouch && isOutsideCardDisplayMenu)
                 {
                     StartHide();

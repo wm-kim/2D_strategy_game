@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Minimax.UI.View.ComponentViews.GamePlay
 {
-    public class CardView : MonoBehaviour
+    public class HandCardView : MonoBehaviour
     {
         public Tween PosTween { get; set; }
         public Tween RotTween { get; set; }

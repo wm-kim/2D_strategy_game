@@ -19,7 +19,8 @@ namespace Minimax
             var tree = new OdinMenuTree();
             
             tree.Add("Create Random Cards", new CreateRandomCardData());
-            tree.Add("Create New Card", new CreateNewCardData());
+            tree.Add("Create New Unit Card", new CreateNewUnitCardData());
+            
             tree.AddAllAssetsAtPath("Card Datas", "Assets/ScriptableObjects/CardDatas", typeof(CardBaseData));
             
             return tree;
@@ -34,35 +35,40 @@ namespace Minimax
             {
                 for (int i = 0; i < NumberOfGeneratingCards; i++)
                 {
-                    var cardData = ScriptableObject.CreateInstance<CardBaseData>();
+                    var cardData = ScriptableObject.CreateInstance<UnitBaseData>();
                     cardData.CardId = i;
                     cardData.CardName = "NewCard_" + i;
+                    cardData.Cost = Random.Range(1, 10);
+                    cardData.Description = "This is a random card";
+                    cardData.Attack = Random.Range(1, 10);
+                    cardData.Health = Random.Range(1, 10);
+                    cardData.Movement = Random.Range(1, 5);
                     AssetDatabase.CreateAsset(cardData, $"Assets/ScriptableObjects/CardDatas/{cardData.CardName}.asset");
                 }
                 AssetDatabase.SaveAssets();
             }
         }
         
-        public class CreateNewCardData
+        public class CreateNewUnitCardData
         {
-            public CreateNewCardData()
+            public CreateNewUnitCardData()
             {
-                CardData = ScriptableObject.CreateInstance<CardBaseData>();
-                CardData.CardName = "New Card";
+                UnitBaseData = ScriptableObject.CreateInstance<UnitBaseData>();
+                UnitBaseData.CardName = "New Unit Card";
             }
 
             [InlineEditor(ObjectFieldMode = InlineEditorObjectFieldModes.Hidden)]
-            public CardBaseData CardData;
+            public UnitBaseData UnitBaseData;
             
-            [Button("Add New Card Data")]
+            [Button("Add New Unit Card Data")]
             private void CreateNewCard()
             {
-                AssetDatabase.CreateAsset(CardData, $"Assets/ScriptableObjects/CardDatas/{CardData.CardName}.asset");
+                AssetDatabase.CreateAsset(UnitBaseData, $"Assets/ScriptableObjects/CardDatas/{UnitBaseData.CardName}.asset");
                 AssetDatabase.SaveAssets();
                 
                 // create new instance of the card data SO 
-                CardData = ScriptableObject.CreateInstance<CardBaseData>();
-                CardData.CardName = "New Card";
+                UnitBaseData = ScriptableObject.CreateInstance<UnitBaseData>();
+                UnitBaseData.CardName = "New Unit Card";
             }
         }
     }
