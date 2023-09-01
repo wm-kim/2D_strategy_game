@@ -3,8 +3,10 @@ using System.Collections.Generic;
 using DG.Tweening;
 using Minimax.UI.View.Popups;
 using Minimax.Utilities;
+using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UnityEngine.Assertions;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.Serialization;
@@ -13,13 +15,15 @@ namespace Minimax.CoreSystems
 {
     public class PopupManager : MonoBehaviour
     {
+        public static PopupManager Instance { get; private set; }
+        
         [Header("Addressable")] 
-        [SerializeField] private AssetLabelReference m_popupAssetLabelReference;
+        [SerializeField] private AssetLabelReference m_popupAssetLabel;
+        [SerializeField] private AssetLabelReference m_commonPopupAssetLabel;
         
         [Header("References")]
         [SerializeField] private Canvas m_popupCanvas;
-        [SerializeField] private CanvasGroup m_popupBackground;
-        [SerializeField] private Volume m_globalVolume;
+        [SerializeField] private UIFader m_popupBackgroundFader;
 
         // popup의 대기열을 관리하는 Queue, First come first serve로 popup을 표시한다.
         private List<IPopupCommand> m_popupQueue = new List<IPopupCommand>();
@@ -32,7 +36,6 @@ namespace Minimax.CoreSystems
         [Header("Settings")] 
         [SerializeField, Range(0.0f, 1f)] private float m_fadeInDuration = 0.2f;
         [SerializeField, Range(0.0f, 1f)] private float m_fadeOutDuration = 0.2f;
-        [SerializeField, Range(0.0f, 300f)] private float m_blurAmount = 150f;
 
         [Space(10f)]
         [SerializeField, ReadOnly]
@@ -41,15 +44,30 @@ namespace Minimax.CoreSystems
         
         private void Awake()
         {
-            PreLoadPopup();
+            Instance = this;
             
-            m_popupBackground.alpha = 0f;
-            m_popupBackground.gameObject.SetActive(false);
+            Assert.IsTrue(m_popupAssetLabel.labelString != Define.CommonPopupAssetLabel);
+            Assert.IsTrue(m_commonPopupAssetLabel.labelString == Define.CommonPopupAssetLabel);
+            
+            PreLoadPopups();
         }
 
-        private void PreLoadPopup()
+        private void PreLoadPopups()
         {
-            Addressables.LoadAssetsAsync<GameObject>(m_popupAssetLabelReference, null).Completed += handle =>
+            if (m_popupAssetLabel != null && !string.IsNullOrEmpty(m_popupAssetLabel.labelString))
+            {
+                Addressables.LoadAssetsAsync<GameObject>(m_popupAssetLabel, null).Completed += handle =>
+                {
+                    foreach (var popup in handle.Result)
+                    {
+                        var popupView = popup.GetComponent<PopupView>();
+                        popupView.SetPopupTypeAndCheck();
+                        m_loadedPopups.Add(popupView.Type, popupView);
+                    }
+                };
+            }
+            
+            Addressables.LoadAssetsAsync<GameObject>(m_commonPopupAssetLabel, null).Completed += handle =>
             {
                 foreach (var popup in handle.Result)
                 {
@@ -170,16 +188,7 @@ namespace Minimax.CoreSystems
         {
             if (m_currentPopupView == null) return;
             
-            // blur 효과를 제거합니다.
-            if (m_globalVolume.profile.TryGet<DepthOfField>(out var dof))
-            {
-                DOTween.To(() => dof.focalLength.value, x => dof.focalLength.value = x, 0f, 
-                    m_fadeInDuration);
-            }
-            
-            m_popupBackground.DOFade(0, m_fadeOutDuration)
-                .OnComplete(() => m_popupBackground.gameObject.SetActive(false));
-            
+            m_popupBackgroundFader.StartHide(m_fadeOutDuration);
             m_currentPopupView.StartHide(m_fadeOutDuration);
             ShowNextPopup();
         }
@@ -225,16 +234,7 @@ namespace Minimax.CoreSystems
                     break;
             }
             
-            m_popupBackground.gameObject.SetActive(true);
-            
-            // blur 효과를 위해 depth of field를 조절합니다.
-            if (m_globalVolume.profile.TryGet<DepthOfField>(out var dof))
-            {
-                DOTween.To(() => dof.focalLength.value, x => dof.focalLength.value = x, m_blurAmount, 
-                    m_fadeInDuration);
-            }
-            
-            m_popupBackground.DOFade(1f, m_fadeInDuration);
+            m_popupBackgroundFader.StartShow(m_fadeInDuration);
             m_currentPopupView.StartShow(m_fadeInDuration);
         }
     }

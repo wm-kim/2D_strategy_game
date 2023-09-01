@@ -24,13 +24,13 @@ namespace Minimax.UI.View.Popups
         
         private void OnConfirmButtonClicked()
         {
-            GlobalManagers.Instance.Popup.HideCurrentPopup();
+            PopupManager.Instance.HideCurrentPopup();
             GlobalManagers.Instance.Connection.RequestShutdown();
         }
         
         private void OnCancelButtonClicked()
         {
-            GlobalManagers.Instance.Popup.HideCurrentPopup();
+            PopupManager.Instance.HideCurrentPopup();
         }
     }
 }

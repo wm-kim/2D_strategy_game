@@ -47,10 +47,10 @@ namespace Minimax
             // Validate the deck in the client side before sending it to the cloud
             if (!ClientSideDeckValidation(deckDTO))
             {
-                GlobalManagers.Instance.Popup.RegisterOneButtonPopupToQueue( 
+                PopupManager.Instance.RegisterOneButtonPopupToQueue( 
                     Define.InvalidDeckPopup,
                     $"Deck must contain {k_requiredDeckSize} cards.", "OK",
-                    () => GlobalManagers.Instance.Popup.HideCurrentPopup());
+                    () => PopupManager.Instance.HideCurrentPopup());
                 return;
             }
 

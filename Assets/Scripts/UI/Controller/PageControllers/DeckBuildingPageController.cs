@@ -34,7 +34,7 @@ namespace Minimax.UI.Controller.PageControllers
         
         private void OnBackButtonPressed()
         {
-            GlobalManagers.Instance.Popup.MobileBackTwoButtonPopup(
+            PopupManager.Instance.MobileBackTwoButtonPopup(
                 Define.ExitDeckBuilderPopup,
                 "Exit without saving?",
                 "Yes",
@@ -42,11 +42,11 @@ namespace Minimax.UI.Controller.PageControllers
                 () =>
                 {
                     GlobalManagers.Instance.Scene.LoadScene(SceneType.MenuScene);
-                    GlobalManagers.Instance.Popup.HideCurrentPopup();
+                    PopupManager.Instance.HideCurrentPopup();
                 },
                 () =>
                 {
-                    GlobalManagers.Instance.Popup.HideCurrentPopup();
+                    PopupManager.Instance.HideCurrentPopup();
                 });
         }
         

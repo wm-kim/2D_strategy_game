@@ -66,7 +66,7 @@ namespace Minimax.CoreSystems
         {
             if (!m_currentNavigation.Pop())
             {
-                GlobalManagers.Instance.Popup.MobileBackButtonPopup(PopupType.QuitAppPopup);
+                PopupManager.Instance.MobileBackButtonPopup(PopupType.QuitAppPopup);
             }
         }
     }

@@ -36,20 +36,12 @@ namespace Minimax.GamePlay
         private Vector2 m_panSmoothVelocity;
         private Rect m_panBound;
         
-        private void OnEnable()
-        {
-            GlobalManagers.Instance.Input.OnTouch += MoveCamera;
-        }
 
-        private void OnDisable()
-        {
-            GlobalManagers.Instance.Input.OnTouch -= MoveCamera;
-        }
-        
-        void Start()
+        private void Start()
         {
             m_currentFocusPosition = m_camera.transform.position;
             m_targetPosition = m_currentFocusPosition;
+            GlobalManagers.Instance.Input.OnTouch += MoveCamera;
         }
 
         private void LateUpdate()
@@ -83,7 +75,7 @@ namespace Minimax.GamePlay
                 return;
             }
 
-            var touchDelta = touch.delta * m_camera.orthographicSize * m_panSpeed * 0.001f;
+            var touchDelta = touch.delta * (m_camera.orthographicSize * m_panSpeed * 0.001f);
             var newPanPosition = m_targetPosition - new Vector3(touchDelta.x, touchDelta.y);
             
             // clamp the new pan position to the pan bounds

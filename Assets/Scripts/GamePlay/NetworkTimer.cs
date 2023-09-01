@@ -59,7 +59,6 @@ namespace Minimax.GamePlay
                     // Update timer text
                     if (m_time.Value <= 0f) TimeFinished();
                 }
-                
             }
             
             if (IsClient)

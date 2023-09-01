@@ -117,7 +117,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             m_currentState.OnUpdate();
         }
 
-        private void OnDestroy()
+        public override void OnDestroy()
         {
             if (NetworkManager != null)
             {
@@ -127,6 +127,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 NetworkManager.OnTransportFailure += OnTransportFailure;
                 NetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
             }
+            
+            base.OnDestroy();
         }
 
         public void ChangeState(ConnectionState nextState)

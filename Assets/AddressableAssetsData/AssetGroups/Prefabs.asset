@@ -17,12 +17,6 @@ MonoBehaviour:
     m_SerializedData: []
   m_GUID: 2da0571fcf3ca844f941db2356db8cc1
   m_SerializeEntries:
-  - m_GUID: d971bfb46eb6979469e89d6935b143f3
-    m_Address: Assets/Prefabs/UIPopups
-    m_ReadOnly: 0
-    m_SerializedLabels:
-    - Popup
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 93ea8ad61a9a0a243bb00a1881d97022
     m_Address: Assets/Prefabs/SharedManagers
     m_ReadOnly: 0
@@ -32,6 +26,24 @@ MonoBehaviour:
     m_Address: Assets/Prefabs/UI/UIComponents
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7bdd1bee411ad8b4e8401b720279933f
+    m_Address: Assets/Prefabs/UI/UIPopups/Menu
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - MenuPopup
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7b20e22ba976bf246a2bd831cc279bad
+    m_Address: Assets/Prefabs/UI/UIPopups/GamePlay
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - GamePlayPopup
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4520e01a1e029594b805d655c828701a
+    m_Address: Assets/Prefabs/UI/UIPopups/Common
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - CommonPopup
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 6abb7b901d7418040a2790f0eae3d6f1, type: 2}

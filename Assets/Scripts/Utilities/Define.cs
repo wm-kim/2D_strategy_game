@@ -2,6 +2,10 @@ namespace Minimax.Utilities
 {
     public static class Define
     {
+#region AssetLabels
+        public static readonly string CommonPopupAssetLabel = "CommonPopup";
+#endregion
+            
 #region CLOUD_KEYS
         public static readonly string DeckCloud = "decks";
 #endregion

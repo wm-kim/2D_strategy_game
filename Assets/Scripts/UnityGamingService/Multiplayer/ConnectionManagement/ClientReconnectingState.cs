@@ -27,7 +27,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         {
             m_attempts = 0;
 
-            GlobalManagers.Instance.Popup.RegisterLoadingPopupToQueue(Define.ReconnectingPopup,
+            PopupManager.Instance.RegisterLoadingPopupToQueue(Define.ReconnectingPopup,
                 "Lost connection to the server. Reconnecting...",
                 PopupCommandType.Unique, 1);
 
@@ -89,12 +89,12 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 }
                 
                 // 오프라인 상태로 전환합니다.
-                GlobalManagers.Instance.Popup.RegisterOneButtonPopupToQueue(Define.ServerDisconnectedPopup,
+                PopupManager.Instance.RegisterOneButtonPopupToQueue(Define.ServerDisconnectedPopup,
                     "Server unexpectedly disconnected.", "OK", 
                     () =>
                     {
                         GlobalManagers.Instance.Scene.LoadScene(SceneType.MenuScene);
-                        GlobalManagers.Instance.Popup.HideCurrentPopup();
+                        PopupManager.Instance.HideCurrentPopup();
                     },
                     PopupCommandType.Unique, 2);
                     

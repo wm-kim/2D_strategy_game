@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 8344ea4d79e42f0488ecbae243d2b0d8
   m_currentHash:
     serializedVersion: 2
-    Hash: 00000000000000000000000000000000
+    Hash: 243d0f718f9d154cf6590ece8574d74e
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_BundleLocalCatalog: 0
@@ -90,8 +90,10 @@ MonoBehaviour:
   m_LabelTable:
     m_LabelNames:
     - default
-    - Popup
     - Card
+    - CommonPopup
+    - GamePlayPopup
+    - MenuPopup
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 4107f1bb50a3df7468a9a6197766bd0c, type: 2}

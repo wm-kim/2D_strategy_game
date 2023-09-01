@@ -24,20 +24,11 @@ namespace Minimax.GamePlay
 
         private void Start()
         {
+            GlobalManagers.Instance.Input.OnTouch += DivideSections;
             // register this service
             GlobalManagers.Instance.ServiceLocator.RegisterService(this, nameof(SectionDivider));
         }
 
-        private void OnEnable()
-        {
-            GlobalManagers.Instance.Input.OnTouch += DivideSections;
-        }
-        
-        private void OnDisable()
-        {
-            GlobalManagers.Instance.Input.OnTouch -= DivideSections;
-        }
-        
         private void DivideSections(EnhancedTouch.Touch touch)
         {
             bool isInsideMyHandSection = RectTransformUtility.RectangleContainsScreenPoint(m_myHandSection, touch.screenPosition, m_uiCamera);
@@ -50,6 +41,9 @@ namespace Minimax.GamePlay
         
         private void OnDestroy()
         {
+            if (GlobalManagers.Instance) 
+                GlobalManagers.Instance.Input.OnTouch -= DivideSections;
+            
             // unregister this service
             GlobalManagers.Instance.ServiceLocator.UnregisterService(nameof(SectionDivider));
         }

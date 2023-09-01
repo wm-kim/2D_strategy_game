@@ -6,9 +6,14 @@ using UnityEngine;
 
 namespace Minimax.GamePlay
 {
+    /// <summary>
+    /// 게임의 전반적인 흐름을 관리합니다.
+    /// 게임을 시작하기 전에 필요한 설정들을 하고, 게임이 시작되면 턴을 시작합니다.
+    /// </summary>
     public class GameManager : NetworkBehaviour
     {
         [Header("References")]
+        [SerializeField] private ServerPlayerDeckManager m_serverPlayerDeckManager;
         [SerializeField] private TurnManager m_turnManager;
         [SerializeField] private ProfileManager m_profileManager;
         
@@ -49,25 +54,15 @@ namespace Minimax.GamePlay
         }
         
         // only executed on server
-        private void GameManager_OnSceneEvent(SceneEvent sceneEvent)
+        private async void GameManager_OnSceneEvent(SceneEvent sceneEvent)
         {
             if (sceneEvent.SceneEventType != SceneEventType.LoadEventCompleted) return;
 
             if (IsServer)
             {
-                SetPlayerNames();
+                await m_serverPlayerDeckManager.SetupPlayerDecks();
+                m_profileManager.SetPlayerNames();
                 m_turnManager.StartGame();
-            }
-        }
-        
-        private void SetPlayerNames()
-        {
-            foreach (var clientId in m_networkManager.ConnectedClientsIds)
-            {
-                var playerData = UnityGamingService.Multiplayer.SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
-                if (!playerData.HasValue) return;
-                var playerName = playerData.Value.PlayerName;
-                m_profileManager.SetMyPlayerNameClientRpc(clientId, playerName);
             }
         }
     }

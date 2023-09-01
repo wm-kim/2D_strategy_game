@@ -47,7 +47,7 @@ namespace Minimax.UI.Controller.PageControllers
         {
             DebugWrapper.Log("Find Match");
 
-            GlobalManagers.Instance.Popup.RegisterLoadingPopupToQueue(Define.FindingMatchPopup,"Finding Match...");
+            PopupManager.Instance.RegisterLoadingPopupToQueue(Define.FindingMatchPopup,"Finding Match...");
             
             // create ticket
             createTicketResponse = await MatchmakerService.Instance.CreateTicketAsync(
@@ -109,7 +109,7 @@ namespace Minimax.UI.Controller.PageControllers
                 {
                     case MultiplayAssignment.StatusOptions.Found:
                         createTicketResponse = null;
-                        GlobalManagers.Instance.Popup.HideCurrentPopup();
+                        PopupManager.Instance.HideCurrentPopup();
                         
                         DebugWrapper.Log(multiplayAssignment.Ip + " " + multiplayAssignment.Port);
 
@@ -124,12 +124,12 @@ namespace Minimax.UI.Controller.PageControllers
                     case MultiplayAssignment.StatusOptions.Failed:
                         createTicketResponse = null;
                         DebugWrapper.Log("Failed to create Multiplay server!");
-                        GlobalManagers.Instance.Popup.HideCurrentPopup();
+                        PopupManager.Instance.HideCurrentPopup();
                         break;
                     case MultiplayAssignment.StatusOptions.Timeout:
                         createTicketResponse = null;
                         DebugWrapper.Log("Multiplay Timeout!");
-                        GlobalManagers.Instance.Popup.HideCurrentPopup();
+                        PopupManager.Instance.HideCurrentPopup();
                         break;
                 }
             }

@@ -13,26 +13,17 @@ namespace Minimax
         private void Start()
         {
             m_menuButton.onClick.AddListener(RequestOpenMenuPopup);
-        }
-
-        private void OnEnable()
-        {
             GlobalManagers.Instance.Input.OnBackButton += OnBackButtonPressed;
-        }
-        
-        private void OnDisable()
-        {
-            GlobalManagers.Instance.Input.OnBackButton -= OnBackButtonPressed;
         }
 
         private void RequestOpenMenuPopup()
         {
-            GlobalManagers.Instance.Popup.RegisterPopupToQueue(PopupType.GameMenuPopup, PopupCommandType.Unique);
+            PopupManager.Instance.RegisterPopupToQueue(PopupType.GameMenuPopup, PopupCommandType.Unique);
         }
         
         private void OnBackButtonPressed()
         {
-            GlobalManagers.Instance.Popup.MobileBackButtonPopup(PopupType.GameMenuPopup, PopupCommandType.Unique);
+            PopupManager.Instance.MobileBackButtonPopup(PopupType.GameMenuPopup, PopupCommandType.Unique);
         }
     }
 }

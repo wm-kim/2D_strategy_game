@@ -11,12 +11,12 @@ namespace Minimax.UI.View.Popups
         /// <param name="key">queue안에서 중복되는지 확인하기 위한 식별자입니다.</param>
         public LoadingPopupContext(string key, string message, PopupCommandType commandType = PopupCommandType.Duplicate, int priority = 0)
         {
-            GlobalManagers.Instance.Popup.RegisterLoadingPopupToQueue(key, message, commandType, priority);
+            PopupManager.Instance.RegisterLoadingPopupToQueue(key, message, commandType, priority);
         }
 
         public void Dispose()
         {
-            GlobalManagers.Instance.Popup.HideCurrentPopup();
+            PopupManager.Instance.HideCurrentPopup();
         }
     }
 }

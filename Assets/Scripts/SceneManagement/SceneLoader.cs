@@ -182,7 +182,7 @@ namespace Minimax.SceneManagement
             if (!IsInitialLoading) m_hideLoadingScreenAnimation.Play();
         }
         
-        async void OnSceneEvent(SceneEvent sceneEvent)
+        private void OnSceneEvent(SceneEvent sceneEvent)
         {
             var clientOrServer = sceneEvent.ClientId == NetworkManager.ServerClientId ? "server" : "client";
             switch (sceneEvent.SceneEventType)

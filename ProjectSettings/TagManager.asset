@@ -13,7 +13,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - DeckView
   - 
   - 
   - 
@@ -48,4 +48,10 @@ TagManager:
     locked: 0
   - name: MapOverlay
     uniqueID: 414030517
+    locked: 0
+  - name: Unit
+    uniqueID: 3404602355
+    locked: 0
+  - name: DeckView
+    uniqueID: 589350785
     locked: 0
