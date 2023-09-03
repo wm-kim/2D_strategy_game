@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using Minimax.GamePlay.CommandSystem;
 using Minimax.GamePlay.GridSystem;
 using Minimax.Utilities;
 using Sirenix.OdinInspector;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.Pool;
 
 namespace Minimax.GamePlay.PlayerHand
@@ -54,10 +54,9 @@ namespace Minimax.GamePlay.PlayerHand
         private float m_cardFadeAlpha = 0.20f;
 
         // Object Pooling HandCardSlot
-        private IObjectPool<HandCardSlot> m_cardPool;
+        private IObjectPool<HandCardSlot> m_cardSlotPool;
 
         private List<HandCardSlot> m_slotList = new List<HandCardSlot>();
-
         private List<Vector3> m_slotPositionList = new List<Vector3>();
         private List<Quaternion> m_slotRotationList = new List<Quaternion>();
 
@@ -75,7 +74,7 @@ namespace Minimax.GamePlay.PlayerHand
         private void Awake()
         {
             // Object Pooling
-            m_cardPool = new ObjectPool<HandCardSlot>(() =>
+            m_cardSlotPool = new ObjectPool<HandCardSlot>(() =>
                 {
                     var card = Instantiate(m_cardPrefab, m_cardParent);
                     card.gameObject.SetActive(false);
@@ -100,37 +99,8 @@ namespace Minimax.GamePlay.PlayerHand
             m_map.OnTouchOutsideOfMap += OnUnHoverMap;
         }
 
-#if UNITY_EDITOR
-        // For testing
-        public InputAction m_inputAction;
-
-        private void OnEnable()
-        {
-            // For testing
-            m_inputAction.Enable();
-        }
-        
-        private void OnDisable()
-        {
-            // For testing
-            m_inputAction.Disable();
-        }
-
-        private void Update()
-        {
-            if (Keyboard.current.aKey.wasPressedThisFrame)
-            {
-                AddCardFromDeck();
-            }
-            if (Keyboard.current.sKey.wasPressedThisFrame)
-            {
-                RemoveCard(3);
-            }
-        }
-#endif
-
         // 아직 덱이 구현이 안되어 있어서 임시로 만들어 놓은 함수
-        public void AddCardFromDeck()
+        public void AddCard(int cardUID)
         {
             if (CardCount >= Define.MaxHandCardCount)
             {
@@ -138,9 +108,9 @@ namespace Minimax.GamePlay.PlayerHand
                 return;
             }
             
-            var card = m_cardPool.Get();
-            card.Init(this, CardCount, $"HandCardSlot_{CardCount}");
-            m_slotList.Add(card);
+            var cardSlot = m_cardSlotPool.Get();
+            cardSlot.Init(this, CardCount, cardUID);
+            m_slotList.Add(cardSlot);
 
             UpdateSlotTransforms();
             TweenHandSlots();
@@ -150,7 +120,7 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (!IsValidIndex(index)) return;
 
-            m_cardPool.Release(m_slotList[index]);
+            m_cardSlotPool.Release(m_slotList[index]);
             m_slotList.RemoveAt(index);
             
             // Update Indexes
@@ -197,9 +167,11 @@ namespace Minimax.GamePlay.PlayerHand
             for (int i = 0; i < CardCount; i++)
             {
                 m_slotList[i].KillTweens();
-                m_slotList[i].PosTween = m_slotList[i].transform.DOLocalMove(m_slotPositionList[i], m_tweenDuration);
+                m_slotList[i].PosTween = m_slotList[i].transform.DOLocalMove(m_slotPositionList[i], m_tweenDuration)
+                    .OnComplete(Command.ExecutionComplete);
+                
                 m_slotList[i].RotTween = m_slotList[i].transform
-                    .DOLocalRotateQuaternion(m_slotRotationList[i], m_tweenDuration);
+                .DOLocalRotateQuaternion(m_slotRotationList[i], m_tweenDuration);
             }
         }
 

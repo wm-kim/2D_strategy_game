@@ -40,6 +40,9 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 var payload = System.Text.Encoding.UTF8.GetString(connectionData);
                 var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload);
                 int playerNumber = 0;
+                
+                DebugWrapper.Log("Approving self as host");
+                DebugWrapper.Log($"Player {connectionPayload.playerName} assigned to player number {playerNumber}");
 
                 SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId,
                     connectionPayload.playerId,

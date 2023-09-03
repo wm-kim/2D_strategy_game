@@ -40,6 +40,7 @@ namespace Minimax.Utilities
 
 #region GamePlay
         public static readonly int MaxHandCardCount = 10;
+        public static readonly int InitialHandCardCount = 3;
 #endregion
 
 #region SortingLayer

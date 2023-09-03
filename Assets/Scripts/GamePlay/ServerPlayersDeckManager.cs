@@ -26,20 +26,17 @@ namespace Minimax.GamePlay
         /// Stores the deck list fetched from cloud. Key: playerNumber, Value: DeckDTO
         /// </summary>
         private Dictionary<int, DeckDTO> m_playersDeckList = new Dictionary<int, DeckDTO>();
-        
-        [SerializeField, Tooltip("Key: playerNumber, Value: Deck Card Data")]
-        private SerializedDictionary<int, List<CardBaseData>> m_playersDeck = new SerializedDictionary<int, List<CardBaseData>>();
+
+        private Dictionary<int, List<ServerCard>> m_playersDeck = new Dictionary<int, List<ServerCard>>();
 
         public async UniTask SetupPlayersDeck()
         {
             var isPlayerDeckListFetched = await FetchPlayerDeckListFromCloud();
-            var isDBLoaded = await m_cardDBManager.LoadDBCardsAsync();
-            
-            if (isPlayerDeckListFetched && isDBLoaded)
+            if (isPlayerDeckListFetched)
             {
                 // first shuffle the deck (before shuffling, the deck is sorted by card id)
                 ShufflePlayersDeckList();
-                GetPlayersDeckDataFromDB();
+                GeneratePlayersDeck();
                 
                 // send player deck list to clients
                 var connectionManager = GlobalManagers.Instance.Connection;
@@ -49,28 +46,44 @@ namespace Minimax.GamePlay
                     var playerNumber = connectionManager.GetPlayerNumber(clientId);
                     
                     // copy the deck list and shuffle it again for prevent player from knowing the deck order
-                    var copiedCardIds = CopyPlayerDeckListAndShuffle(playerNumber);
-                    m_clientPlayerDeckManager.SetupPlayerDeckClientRpc(copiedCardIds, clientRpcParams);
+                    var copiedCardLogicList = new List<ServerCard>(m_playersDeck[playerNumber]);
+                    copiedCardLogicList.Shuffle();
+                    
+                    int[] copiedCardUniqueIds = new int[copiedCardLogicList.Count];
+                    int[] copiedCardIds = new int[copiedCardLogicList.Count];
+                    
+                    for (int i = 0; i < copiedCardLogicList.Count; i++)
+                    {
+                        copiedCardUniqueIds[i] = copiedCardLogicList[i].UID;
+                        copiedCardIds[i] = copiedCardLogicList[i].Data.CardId;
+                    }
+                    
+                    m_clientPlayerDeckManager.SetupPlayerDeckClientRpc(copiedCardUniqueIds,copiedCardIds, clientRpcParams);
                 }
             }
         }
 
         /// <summary>
-        /// Get card data from DB using card id from deck list fetched from cloud
+        /// Get card data from DB using card id from deck list fetched from cloud and generate players deck.
         /// </summary>
-        private void GetPlayersDeckDataFromDB()
+        private void GeneratePlayersDeck()
         {
-            for (int i = 0; i < m_playersDeckList.Count; i++)
+            foreach (var pair in m_playersDeckList)
             {
-                var deck = new List<CardBaseData>();
-                foreach (var pair in m_playersDeckList)
+                var deck = new List<ServerCard>();
+                var playerNumber = pair.Key;
+                
+                foreach (var cardId in pair.Value.CardIds)
                 {
-                    foreach (var cardId in pair.Value.CardIds)
+                    // create instance of card data from card id
+                    var cardData = Instantiate(m_cardDBManager.GetCardData(cardId));
+                    var serverCardLogic = new ServerCard(cardData)
                     {
-                        deck.Add(m_cardDBManager.GetCardData(cardId));
-                    }
-                    m_playersDeck.Add(pair.Key, deck);
+                        Owner = playerNumber
+                    };
+                    deck.Add(serverCardLogic);
                 }
+                m_playersDeck.Add(playerNumber, deck);
             }
         }
 
@@ -138,31 +151,6 @@ namespace Minimax.GamePlay
             }
         }
         
-        /// <summary>
-        /// Copy the deck from the deck list and shuffle it
-        /// This is used for client to view their deck
-        /// </summary>
-        private int[] CopyPlayerDeckListAndShuffle(int playerNumber)
-        {
-            var deckList = m_playersDeckList[playerNumber].CardIds;
-            var deck = new int[deckList.Count];
-            for (int i = 0; i < deckList.Count; i++)
-            {
-                deck[i] = deckList[i];
-            }
-            
-            deck.Shuffle();
-            return deck;
-        }
-        
-        public List<CardBaseData> GetPlayerDeck(int playerNumber)
-        {
-            return m_playersDeck[playerNumber];
-        }
-        
-        public void RemoveCardOfIndex(int playerNumber, int index)
-        {
-            m_playersDeck[playerNumber].RemoveAt(index);
-        }
+        public List<ServerCard> GetPlayerDeck(int playerNumber) => m_playersDeck[playerNumber];
     }
 }

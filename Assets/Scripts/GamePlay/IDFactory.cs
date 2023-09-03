@@ -23,6 +23,6 @@ namespace Minimax
     
     public interface IIdentifiable
     {
-        int ID { get; }
+        int UID { get; }
     }
 }

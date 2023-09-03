@@ -260,6 +260,24 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             // this should never happen
             return -1;
         }
+        
+        public ClientRpcParams GetClientRpcParams(int playerNumber)
+        {
+            foreach (var clientId in NetworkManager.ConnectedClientsIds)
+            {
+                var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
+                if (playerData.HasValue)
+                {
+                    if (playerData.Value.PlayerNumber == playerNumber)
+                    {
+                        return ClientRpcParams[clientId];
+                    }
+                }
+            }
+            
+            // this should never happen
+            return default;
+        }
 
         [ServerRpc(RequireOwnership = false)]
         public void RequestShutdownServerRpc(ServerRpcParams serverRpcParams = default)

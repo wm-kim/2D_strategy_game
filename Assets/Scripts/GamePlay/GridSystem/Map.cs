@@ -37,7 +37,7 @@ namespace Minimax.GamePlay.GridSystem
         /// <summary>
         /// Invoked when the touch is outside the map
         /// </summary>
-        public event Action OnTouchOutsideOfMap;
+        public event System.Action OnTouchOutsideOfMap;
         
         /// <summary>
         /// Invoked when the touch is over the map and ended
@@ -54,7 +54,6 @@ namespace Minimax.GamePlay.GridSystem
             m_grid = new Grid<Cell>(m_mapSize, m_mapSize, m_tilemap.cellSize, Vector3.zero,
                 (grid, x, y) =>
                     new Cell(x, y, grid.GetWorldPosFromCoord(x, y)));
-            DebugWrapper.Log(m_grid.GetGridCenterPos().ToString());
             
             // Set Camera boundary
             m_cameraController.SetCameraBoundary(m_grid.GetGridCenterPos(), m_grid.GetSize());

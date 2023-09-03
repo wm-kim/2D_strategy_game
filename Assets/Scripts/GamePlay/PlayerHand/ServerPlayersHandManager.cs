@@ -6,12 +6,12 @@ namespace Minimax.GamePlay.PlayerHand
 {
     public class ServerPlayersHandManager : NetworkBehaviour
     {
-         private Dictionary<int, CardLogic> m_cardsInHand = new Dictionary<int, CardLogic>();
+         private List<ServerCard> m_cardsInHand = new List<ServerCard>();
 
-         public void AddCardToHand(CardLogic card)
+         public void AddCardToHand(ServerCard card)
          {
             if (!IsServer) return;
-            m_cardsInHand.Add(card.ID, card);
+            m_cardsInHand.Add(card);
          }
     }
 }

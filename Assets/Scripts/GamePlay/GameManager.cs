@@ -1,5 +1,6 @@
 using System;
 using Minimax.CoreSystems;
+using Minimax.GamePlay.Logic;
 using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;
 using Unity.Netcode;
@@ -15,15 +16,19 @@ namespace Minimax.GamePlay
     public class GameManager : NetworkBehaviour
     {
         [Header("References")]
+        [SerializeField] private CardDBManager m_cardDBManager;
         [SerializeField] private ServerPlayersDeckManager m_serverPlayersDeckManager;
         [SerializeField] private TurnManager m_turnManager;
         [SerializeField] private ProfileManager m_profileManager;
         
+        [Header("Game Logics")]
+        [SerializeField] private CardDrawingLogic m_cardDrawingLogic;
+
         private NetworkManager m_networkManager => NetworkManager.Singleton;
         
         public bool IsGameStarted { get; private set; }
         // Events
-        public event Action OnGameStarted;
+        public event System.Action OnGameStarted;
         
         private async void Start()
         {
@@ -64,11 +69,15 @@ namespace Minimax.GamePlay
         private async void GameManager_OnSceneEvent(SceneEvent sceneEvent)
         {
             if (sceneEvent.SceneEventType != SceneEventType.LoadEventCompleted) return;
-
+            
+            // load card data from DB (server & client)
+            await m_cardDBManager.LoadDBCardsAsync();
+            
             if (IsServer)
             {
                 await m_serverPlayersDeckManager.SetupPlayersDeck();
                 m_profileManager.SetPlayerNames();
+                m_cardDrawingLogic.DrawAllPlayerInitialCards();
                 m_turnManager.StartInitialTurn();
                 
                 StartGame();

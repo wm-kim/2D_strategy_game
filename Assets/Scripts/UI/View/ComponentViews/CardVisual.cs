@@ -10,11 +10,9 @@ namespace Minimax
     {
         [SerializeField] private TextMeshProUGUI m_costText;
         [SerializeField] private TextMeshProUGUI m_cardTypeText;
-        private CardBaseData m_cardData;
         
         public void Init(CardBaseData cardData)
         {
-            m_cardData = cardData;
             m_costText.text = cardData.Cost.ToString();
             m_cardTypeText.text = cardData.GetCardType().ToString();
         }

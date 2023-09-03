@@ -7,6 +7,7 @@ namespace Minimax.ScriptableObjects.CardDatas
     [CreateAssetMenu(menuName = "ScriptableObjects/Cards/CardBaseData")]
     public class CardBaseData : ScriptableObject
     {
+        [Header("General Info")]
         public int CardId;
         public int Cost;
         public string CardName;
@@ -16,7 +17,6 @@ namespace Minimax.ScriptableObjects.CardDatas
         protected CardType CardType;
         
         public CardType GetCardType() => CardType;
-        
     }
 
     public enum CardType

@@ -1,13 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using Minimax.ScriptableObjects.CardDatas;
+using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 namespace Minimax
 {
     [System.Serializable]
-    public class CardLogic : IIdentifiable
+    public class ServerCard : IIdentifiable
     {
         /// <summary>
         /// the owner of this card (PlayerNumber)
@@ -15,7 +16,7 @@ namespace Minimax
         public int Owner;
         
         /// <summary>
-        /// an ID for this card instance
+        /// an ID for this card instance, server and client share this ID to communicate
         /// </summary>
         public int UniqueCardID;
         
@@ -24,14 +25,21 @@ namespace Minimax
         /// </summary>
         public CardBaseData Data;
         
-        public int ID { get { return UniqueCardID; } }
-        
+        public int UID => UniqueCardID;
+
         /// <summary>
         /// a static dictionary of all the cards that have been created
+        /// key: UniqueCardID, value: ServerCardLogic
         /// </summary>
-        public static Dictionary<int, CardLogic> CardsCreatedThisGame = new Dictionary<int, CardLogic>();
+        public static Dictionary<int, ServerCard> CardsCreatedThisGame = new Dictionary<int, ServerCard>();
         
-        public CardLogic(CardBaseData data)
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void Init()
+        {
+            CardsCreatedThisGame.Clear();
+        }
+        
+        public ServerCard(CardBaseData data)
         {
             Data = data;
             UniqueCardID = IDFactory.GetUniqueID();

@@ -10,6 +10,9 @@ using UnityEngine.AddressableAssets;
 
 namespace Minimax
 {
+    /// <summary>
+    /// CardDBManager는 카드 데이터베이스를 관리합니다.
+    /// </summary>
     public class CardDBManager : MonoBehaviour
     {
         [Header("Addressable Assets")]
@@ -32,7 +35,10 @@ namespace Minimax
 
             if (loadOp.Status == UnityEngine.ResourceManagement.AsyncOperations.AsyncOperationStatus.Succeeded)
             {
-                foreach (var cardData in loadOp.Result) m_cardDB.Add(cardData.CardId, cardData);
+                foreach (var cardData in loadOp.Result)
+                {
+                    m_cardDB.Add(cardData.CardId, cardData);
+                }
                 return true;
             }
             else
