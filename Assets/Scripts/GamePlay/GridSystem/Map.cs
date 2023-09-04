@@ -108,6 +108,7 @@ namespace Minimax.GamePlay.GridSystem
             
             if (m_grid.TryGetGridCellFromWorldIso(worldPos, out var cell))
             {
+                DebugWrapper.Log($"Selected Cell: {cell}");
                 SelectedCell = cell;
                 OnTap?.Invoke(cell);
             }

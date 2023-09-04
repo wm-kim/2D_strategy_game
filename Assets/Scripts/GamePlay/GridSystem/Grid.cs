@@ -10,12 +10,12 @@ namespace Minimax.GamePlay.GridSystem
   /// <summary>
   /// Contains the logic for the grid system, have collection of cells
   /// </summary>
-  public class Grid<TGridCell>  
+  public class Grid<TGridCell>
   {
     /// <summary>
-    /// 그리드 값이 변경되었을 때 발생하는 이벤트
+    /// 그리드 셀의 값이 변경되었을 때 발생하는 이벤트
     /// </summary>
-    public event Action<int, int> OnGridValueChanged;
+    public event Action<int, int> OnGridCellChanged;
 
     private int m_width;
     private int m_height;
@@ -29,9 +29,19 @@ namespace Minimax.GamePlay.GridSystem
     
     private TGridCell[,] m_cells;
     private Vector2 m_originPos;
+    
+    public enum GridRotation
+    {
+      Default,
+      Rotate90,
+      Rotate180,
+      Rotate270,
+    }
+    
+    private GridRotation m_rotation = GridRotation.Default;
 
     public Grid(int width, int height, Vector3 cellSize, Vector2 originPos,
-      Func<Grid<TGridCell>, int, int, TGridCell> createGridObject)
+      Func<Grid<TGridCell>, int, int, TGridCell> createGridObject, GridRotation rotation = GridRotation.Default)
     {
       m_width = width;
       m_height = height;
@@ -47,9 +57,49 @@ namespace Minimax.GamePlay.GridSystem
           m_cells[x, y] = createGridObject(this, x, y);
         }
       }
+      
+      m_rotation = rotation;
+      
+  #if UNITY_EDITOR
+      m_debugTexts = new TextMesh[width, height];
+  #endif
+    }
+    
+    /// <summary>
+    /// x, y 좌표를 회전시킨 좌표를 반환합니다.
+    /// </summary>
+    private Vector2Int GetRotatedCoord(int x, int y)
+    {
+      switch (m_rotation)
+      {
+        case GridRotation.Default:
+          return new Vector2Int(x, y);
+        case GridRotation.Rotate90:
+          return new Vector2Int(m_width - y - 1, x);
+        case GridRotation.Rotate180:
+          return new Vector2Int(m_width - x - 1, m_height - y - 1);
+        case GridRotation.Rotate270:
+          return new Vector2Int(y, m_height - x - 1);
+        default:
+          throw new ArgumentOutOfRangeException();
+      }
+    }
+    
+    /// <summary>
+    /// Method that can be used to set the rotation of the grid on runtime
+    /// </summary>
+    public void SetRotation(GridRotation rotation)
+    {
+      m_rotation = rotation;
+      
+#if UNITY_EDITOR
+      UpdateDebugText();
+#endif
     }
 
-#region Debug
+#if UNITY_EDITOR
+    private TextMesh[,] m_debugTexts;
+
     /// <summary>
     /// 디버그 목적으로 그리드 셀 중앙에 텍스트를 표시합니다.
     /// </summary>
@@ -63,10 +113,25 @@ namespace Minimax.GamePlay.GridSystem
           var text = DebugWrapper.CreateText($"{x}, {y}", parent, 
             GetWorldPosFromCoord(x, y), textScale, Define.MapOverlay);
           text.name = $"({x}, {y})";
+          m_debugTexts[x, y] = text;
         }
       }
     }
-#endregion
+    
+    private void UpdateDebugText()
+    {
+      for (int x = 0; x < m_cells.GetLength(0); x++)
+      {
+        for (int y = 0; y < m_cells.GetLength(1); y++)
+        {
+          var rotatedCoord = GetRotatedCoord(x, y);
+          var text = m_debugTexts[rotatedCoord.x, rotatedCoord.y];
+          text.transform.position = GetWorldPosFromCoord(x, y);
+          text.name = $"({x}, {y})";
+        }
+      }
+    }
+#endif
 
     /// <summary>
     /// grid x, y 좌표가 grid 내에 있는지 확인합니다.
@@ -75,7 +140,7 @@ namespace Minimax.GamePlay.GridSystem
     {
       return x >= 0 && y >= 0 && x < m_width && y < m_height;
     }
-
+  
     /// <summary>
     /// cartesian 좌표를 isometric 좌표로 변환합니다.
     /// </summary>
@@ -106,21 +171,7 @@ namespace Minimax.GamePlay.GridSystem
       Vector2 xyIsometric = CartesianToIso(x, y);
       return xyIsometric + m_originPos;
     }
-
-    /// <summary>
-    /// world isometric 좌표를 grid x, y 좌표로 변환합니다.
-    /// </summary>
-    private Vector2Int WorldIsoToGridCoord(Vector2 worldIsoMetricPos)
-    {
-      var isoMetricPos = worldIsoMetricPos - m_originPos;
-      var cartesianPos = IsoToCartesian(isoMetricPos.x, isoMetricPos.y);
-      return new Vector2Int
-      (
-        Mathf.FloorToInt(cartesianPos.x / (m_cellSize.x * 0.5f)),
-        Mathf.FloorToInt(cartesianPos.y / (m_cellSize.x * 0.5f))
-      );
-    }
-    
+        
     /// <summary>
     /// 그리드의 중심에 해당하는 world cartesian 좌표를 반환합니다.
     /// </summary>
@@ -132,11 +183,28 @@ namespace Minimax.GamePlay.GridSystem
       var factor = 0.5f * m_cellSize.x;
       return CartesianToWorldIso(centerX * factor, centerY * factor);
     }
+
+    /// <summary>
+    /// world isometric 좌표를 grid x, y 좌표로 변환합니다.
+    /// </summary>
+    private Vector2Int WorldIsoToGridCoord(Vector2 worldIsoMetricPos)
+    {
+      var isoMetricPos = worldIsoMetricPos - m_originPos;
+      var cartesianPos = IsoToCartesian(isoMetricPos.x, isoMetricPos.y);
+      var coord =  new Vector2Int
+      (
+        Mathf.FloorToInt(cartesianPos.x / (m_cellSize.x * 0.5f)),
+        Mathf.FloorToInt(cartesianPos.y / (m_cellSize.x * 0.5f))
+      );
+      return GetRotatedCoord(coord.x, coord.y);
+    }
     
     public Vector2 GetWorldPosFromCoord(int x, int y)
     {
+      Vector2Int rotatedCoord = GetRotatedCoord(x, y);
+      // seems like cell unit is half of the unity unit
       var factor = 0.5f * m_cellSize.x;
-      return CartesianToWorldIso((x + 0.5f) * factor, (y + 0.5f) * factor);
+      return CartesianToWorldIso((rotatedCoord.x + 0.5f) * factor, (rotatedCoord.y + 0.5f) * factor);
     }
 
     /// <summary>
@@ -182,7 +250,7 @@ namespace Minimax.GamePlay.GridSystem
       if (IsWithinGridBounds(x, y))
       {
         m_cells[x, y] = value;
-        TriggerObjectChanged(x, y);
+        TriggerCellChanged(x, y);
       }
       else
       {
@@ -190,9 +258,9 @@ namespace Minimax.GamePlay.GridSystem
       }
     }
     
-    private void TriggerObjectChanged(int x, int y)
+    private void TriggerCellChanged(int x, int y)
     {
-        OnGridValueChanged?.Invoke(x, y);
+      OnGridCellChanged?.Invoke(x, y);
     }
   }
 }
