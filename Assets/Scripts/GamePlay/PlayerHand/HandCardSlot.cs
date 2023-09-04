@@ -23,7 +23,7 @@ namespace Minimax.GamePlay.PlayerHand
         
         [field: SerializeField] public HandCardView HandCardView { get; private set; }
         [field: SerializeField] public HandCardSlotSettingSO HandCardSlotSettings { get; private set; }
-        public ClientPlayerHandManager HandManager { get; private set; }
+        public ClientMyHandManager HandManager { get; private set; }
         public int CardUID { get; private set; }
 
         // States
@@ -32,7 +32,7 @@ namespace Minimax.GamePlay.PlayerHand
         public HoverState HoverState { get; private set; }
         public DraggingState DraggingState { get; private set; }
         
-        public void Init(ClientPlayerHandManager handManager, int index, int cardUID)
+        public void Init(ClientMyHandManager handManager, int index, int cardUID)
         {
             HandManager = handManager;
             Index = index;

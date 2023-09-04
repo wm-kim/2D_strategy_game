@@ -4,6 +4,7 @@ using Minimax.GamePlay.PlayerHand;
 using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Minimax.GamePlay.Logic
 {
@@ -17,8 +18,8 @@ namespace Minimax.GamePlay.Logic
         [SerializeField] private ServerPlayersHandManager m_serverPlayersHand;
         
         [Header("Client References")]
-        [SerializeField] private ClientPlayerDeckManager m_clientPlayerDeck;
-        [SerializeField] private ClientPlayerHandManager m_clientPlayerHand;
+        [SerializeField] private ClientMyDeckManager m_clientMyDeck;
+        [SerializeField] private ClientMyHandManager m_clientMyHand;
         
         public void DrawAllPlayerInitialCards()
         {
@@ -63,7 +64,7 @@ namespace Minimax.GamePlay.Logic
         [ClientRpc]
         private void DrawACardClientRpc(int cardUID, ClientRpcParams clientRpcParams = default)
         {
-            new DrawACardCommand(cardUID, m_clientPlayerHand, m_clientPlayerDeck).AddToQueue();
+            new DrawACardCommand(cardUID, m_clientMyHand, m_clientMyDeck).AddToQueue();
         }
     }
 }

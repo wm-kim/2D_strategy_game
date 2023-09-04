@@ -16,6 +16,11 @@ namespace Minimax.GamePlay.GridSystem
     /// 그리드 셀의 값이 변경되었을 때 발생하는 이벤트
     /// </summary>
     public event Action<int, int> OnGridCellChanged;
+    
+    /// <summary>
+    /// 그리드의 회전이 변경되었을 때 발생하는 이벤트
+    /// </summary>
+    public event Action<GridRotation> OnGridRotationChanged;
 
     private int m_width;
     private int m_height;
@@ -91,6 +96,7 @@ namespace Minimax.GamePlay.GridSystem
     public void SetRotation(GridRotation rotation)
     {
       m_rotation = rotation;
+      OnGridRotationChanged?.Invoke(rotation);
       
 #if UNITY_EDITOR
       UpdateDebugText();

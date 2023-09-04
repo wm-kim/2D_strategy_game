@@ -15,7 +15,7 @@ namespace Minimax
     /// <summary>
     /// This class is responsible for visualizing the client player's deck.
     /// </summary>
-    public class ClientPlayerDeckManager : NetworkBehaviour
+    public class ClientMyDeckManager : NetworkBehaviour
     {
         [Header("References")]
         [SerializeField] private CardDBManager m_cardDBManager;

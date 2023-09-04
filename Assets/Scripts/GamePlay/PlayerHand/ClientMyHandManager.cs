@@ -13,7 +13,7 @@ namespace Minimax.GamePlay.PlayerHand
     /// <summary>
     /// Only responsible for visualizing the player's hand.
     /// </summary>
-    public class ClientPlayerHandManager : MonoBehaviour
+    public class ClientMyHandManager : MonoBehaviour
     {
         [BoxGroup("References")] [SerializeField]
         private HandCardSlot m_cardPrefab;
@@ -23,8 +23,8 @@ namespace Minimax.GamePlay.PlayerHand
         public Transform CardParent => m_cardParent;
         
         [BoxGroup("References")] [SerializeField]
-        private Camera m_uiCamera;
-        public Camera UICamera => m_uiCamera;
+        private Canvas m_canvas;
+        public Canvas Canvas => m_canvas;
         
         [BoxGroup("References")] [SerializeField]
         private Map m_map;
@@ -70,7 +70,7 @@ namespace Minimax.GamePlay.PlayerHand
         // SelectedIndex is set when the player drags a card
         private int m_selectedIndex = -1;
         public bool IsSelecting => m_selectedIndex != -1;
-
+        
         private void Awake()
         {
             // Object Pooling

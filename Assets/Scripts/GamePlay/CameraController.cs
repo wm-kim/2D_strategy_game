@@ -3,6 +3,7 @@ using Minimax.CoreSystems;
 using Minimax.GamePlay.PlayerHand;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
@@ -13,7 +14,7 @@ namespace Minimax.GamePlay
         [Header("References")]
         [SerializeField] Camera m_camera;
         [SerializeField] 
-        private ClientPlayerHandManager m_clientPlayerHandManager;
+        private ClientMyHandManager m_clientMyHandManager;
         
         [Header("Settings")]
         [SerializeField, Range(0, 2)] 
@@ -76,13 +77,13 @@ namespace Minimax.GamePlay
                 return; 
             }
             
-            if (m_clientPlayerHandManager.IsHovering && !m_clientPlayerHandManager.IsSelecting)
+            if (m_clientMyHandManager.IsHovering && !m_clientMyHandManager.IsSelecting)
             {
                 return;
             }
             
             // If the player is selecting a card, do not proceed with camera movement
-            if (m_clientPlayerHandManager.IsSelecting)
+            if (m_clientMyHandManager.IsSelecting)
             {
                 return;
             }

@@ -18,7 +18,7 @@ namespace Minimax.GamePlay
     {
         [Header("References")]
         [SerializeField] private CardDBManager m_cardDBManager;
-        [SerializeField] private ClientPlayerDeckManager m_clientPlayerDeckManager;
+        [SerializeField] private ClientMyDeckManager m_clientMyDeckManager;
         
         private NetworkManager m_networkManager => NetworkManager.Singleton;
         
@@ -58,7 +58,7 @@ namespace Minimax.GamePlay
                         copiedCardIds[i] = copiedCardLogicList[i].Data.CardId;
                     }
                     
-                    m_clientPlayerDeckManager.SetupPlayerDeckClientRpc(copiedCardUniqueIds,copiedCardIds, clientRpcParams);
+                    m_clientMyDeckManager.SetupPlayerDeckClientRpc(copiedCardUniqueIds,copiedCardIds, clientRpcParams);
                 }
             }
         }

@@ -9,7 +9,7 @@ namespace Minimax
     public class CardListView : UIFader
     {
         [Header("References")]
-        [SerializeField] private ClientPlayerDeckManager m_clientPlayerDeckManager;
+        [SerializeField] private ClientMyDeckManager m_clientPlayerDeckManager;
         [SerializeField] private CardVisual m_cardListItemViewPrefab;
         [SerializeField] private Transform m_parentTransform;
 

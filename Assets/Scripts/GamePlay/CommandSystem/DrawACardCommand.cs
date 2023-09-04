@@ -5,23 +5,23 @@ namespace Minimax.GamePlay.CommandSystem
     public class DrawACardCommand : Command
     {
         private int m_cardUID;
-        private ClientPlayerHandManager m_clientPlayerHand;
-        private ClientPlayerDeckManager m_clientPlayerDeck;
+        private ClientMyHandManager m_clientMyHand;
+        private ClientMyDeckManager m_clientMyDeck;
         
         public DrawACardCommand(int cardUID,
-            ClientPlayerHandManager clientPlayerHand, 
-            ClientPlayerDeckManager clientPlayerDeck)
+            ClientMyHandManager clientMyHand, 
+            ClientMyDeckManager clientMyDeck)
         {
             m_cardUID = cardUID;
-            m_clientPlayerHand = clientPlayerHand;
-            m_clientPlayerDeck = clientPlayerDeck;
+            m_clientMyHand = clientMyHand;
+            m_clientMyDeck = clientMyDeck;
         }
 
         public override void StartExecute()
         {
             base.StartExecute();
-            m_clientPlayerDeck.RemoveCard(m_cardUID);
-            m_clientPlayerHand.AddCard(m_cardUID);
+            m_clientMyDeck.RemoveCard(m_cardUID);
+            m_clientMyHand.AddCard(m_cardUID);
         }
     }
 }

@@ -14,6 +14,11 @@ namespace Minimax.GamePlay.PlayerHand
         /// </summary>
         private int m_contactCount = 0;
 
+        // caching variables
+        private Camera m_camera;
+        private float m_frustumSize = 0;
+        private float m_zdepth = 0;
+
         public HoverState(HandCardSlot slot)
         {
             m_slot = slot;
@@ -23,6 +28,7 @@ namespace Minimax.GamePlay.PlayerHand
         {
             // Reset the first touch flag
             m_contactCount = 0;
+            CalculateFrustum();
             
             // Subscribe to the input events
             var inputManager = GlobalManagers.Instance.Input;
@@ -49,9 +55,10 @@ namespace Minimax.GamePlay.PlayerHand
         private void CheckForSecondTouch(EnhancedTouch.Touch touch)
         {
             var cardViewRect = m_slot.HandCardView.GetComponent<RectTransform>();
+            var camera = m_slot.HandManager.Canvas.worldCamera;
             bool isInsideCardDisplayMenu =
                 RectTransformUtility.RectangleContainsScreenPoint(cardViewRect, touch.screenPosition,
-                    m_slot.HandManager.UICamera);
+                    camera);
 
             if (!isInsideCardDisplayMenu)
             {
@@ -86,11 +93,27 @@ namespace Minimax.GamePlay.PlayerHand
             }
         }
         
+        /// <summary>
+        /// Calculates the clipping size of the canvas
+        /// </summary>
+        private void CalculateFrustum()
+        {
+            if (m_camera == null)
+            {
+                var canvas = m_slot.HandManager.Canvas;
+                m_zdepth = canvas.transform.position.z;
+                m_camera = canvas.worldCamera;
+                var planeDistance =  canvas.planeDistance;
+                m_frustumSize = m_camera.CalculateFrustumSize(planeDistance).y * 0.5f;
+            }
+        }
+        
         public override void MoveCardView()
         {
-            var cameraBottomY = m_slot.HandManager.UICamera.ViewportToWorldPoint(Vector3.zero).y;
-            Vector3 targetPosition = new Vector3(m_slot.transform.position.x, cameraBottomY, 0) +
-                                     (Vector3)m_slot.HandCardSlotSettings.HoverOffset;
+            var cameraBottomY = m_camera.transform.position.y - m_frustumSize;
+            Vector3 targetPosition = new Vector3(m_slot.transform.position.x, cameraBottomY, m_zdepth) +
+                                     (Vector3)(m_slot.HandCardSlotSettings.HoverOffset * m_frustumSize);
+                                     
             if (Vector3.Distance(m_slot.HandCardView.transform.position, targetPosition) > m_positionThreshold)
             {
                 Vector3 targetRotation = Vector3.zero;

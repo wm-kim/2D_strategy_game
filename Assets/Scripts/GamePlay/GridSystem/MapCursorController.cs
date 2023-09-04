@@ -11,7 +11,7 @@ namespace Minimax
     public class MapCursorController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private ClientPlayerHandManager m_playerHandManager;
+        [SerializeField] private ClientMyHandManager m_playerHandManager;
         [SerializeField] private Map m_map;
         [SerializeField] private SpriteRenderer m_hoverOverlay;
         [SerializeField] private SpriteRenderer m_selectOverlay;

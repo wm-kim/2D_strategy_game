@@ -44,7 +44,5 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
         {
             KillTweens();
         }
-        
-       
     }
 }

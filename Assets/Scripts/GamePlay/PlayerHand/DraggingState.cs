@@ -1,5 +1,6 @@
 using DG.Tweening;
 using Minimax.CoreSystems;
+using Minimax.Utilities;
 using UnityEngine;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
@@ -10,8 +11,15 @@ namespace Minimax.GamePlay.PlayerHand
     {
         public DraggingState(HandCardSlot slot) => m_slot = slot;
         
+        // caching variables
+        private Camera m_camera;
+        private float m_frustumSize = 0;
+        private float m_zdepth = 0;
+        private Vector3 cachedTargetPosition = Vector3.zero;
+        
         public override void Enter()
         {
+            CalculateFrustumSize();
             m_slot.HandManager.SelectCard(m_slot.Index);
             GlobalManagers.Instance.Input.OnTouch += MoveCardViewToTouchPosition;
         }
@@ -21,28 +29,44 @@ namespace Minimax.GamePlay.PlayerHand
             GlobalManagers.Instance.Input.OnTouch -= MoveCardViewToTouchPosition;
         }
         
+        /// <summary>
+        /// Calculates the clipping size of the canvas
+        /// </summary>
+        private void CalculateFrustumSize()
+        {
+            if (m_camera == null)
+            {
+                var canvas = m_slot.HandManager.Canvas;
+                m_zdepth = canvas.transform.position.z;
+                m_camera = canvas.worldCamera;
+                var planeDistance =  canvas.planeDistance;
+                m_frustumSize = m_camera.CalculateFrustumSize(planeDistance).y * 0.5f;
+            }
+        }
+        
         private void MoveCardViewToTouchPosition(EnhancedTouch.Touch touch)
         {
-            if (touch.phase is TouchPhase.Moved or TouchPhase.Began or TouchPhase.Stationary)
+            if (touch.phase is TouchPhase.Moved || touch.phase is TouchPhase.Began || touch.phase is TouchPhase.Stationary)
             {
-                var camera = m_slot.HandManager.UICamera;
-                var touchWorldPosition = camera.ScreenToWorldPoint(touch.screenPosition);
-                Vector3 targetPosition = new Vector3(touchWorldPosition.x, touchWorldPosition.y, 0)
-                                         + (Vector3) m_slot.HandCardSlotSettings.DraggingOffset;
+                Ray ray = m_camera.ScreenPointToRay(touch.screenPosition);
+                Plane plane = new Plane(Vector3.forward, new Vector3(0, 0, m_zdepth));
 
-                if (Vector3.Distance(m_slot.HandCardView.transform.position, targetPosition) > m_positionThreshold)
+                if (plane.Raycast(ray, out float enter))
                 {
-                    m_slot.HandCardView.KillTweens();
+                    Vector3 hitPoint = ray.GetPoint(enter);
                     
-                    m_slot.HandCardView.transform.position = 
-                        Vector3.Lerp(m_slot.HandCardView.transform.position, targetPosition, 
+                    // 거리 비교를 위한 제곱값 계산
+                    float sqrDist = (m_slot.HandCardView.transform.position - hitPoint).sqrMagnitude;
+                    if (sqrDist > m_positionThreshold * m_positionThreshold)
+                    {
+                        m_slot.HandCardView.KillTweens();
+                
+                        // Lerp 연산으로 캐시된 위치와 실제 위치를 보간
+                        cachedTargetPosition = Vector3.Lerp(m_slot.HandCardView.transform.position, hitPoint,
                             Time.deltaTime * m_slot.HandCardSlotSettings.DraggingSpeed);
-
-                    m_slot.HandCardView.RotTween = m_slot.HandCardView.transform.DORotate(Vector3.zero,
-                        m_slot.HandCardSlotSettings.DraggingTweenDuration);
-                    
-                    m_slot.HandCardView.ScaleTween = m_slot.HandCardView.transform.DOScale(1f,
-                        m_slot.HandCardSlotSettings.DraggingTweenDuration);
+                
+                        m_slot.HandCardView.transform.position = cachedTargetPosition;
+                    }
                 }
             }
             if (touch.phase == TouchPhase.Ended)

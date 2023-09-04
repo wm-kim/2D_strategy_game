@@ -687,7 +687,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IgnoreReversedGraphics: 1
+  m_IgnoreReversedGraphics: 0
   m_BlockingObjects: 0
   m_BlockingMask:
     serializedVersion: 2
@@ -726,7 +726,7 @@ Canvas:
   serializedVersion: 3
   m_RenderMode: 1
   m_Camera: {fileID: 1990166590}
-  m_PlaneDistance: 100
+  m_PlaneDistance: 250
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
   m_OverrideSorting: 0
@@ -940,7 +940,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_camera: {fileID: 1985358684}
-  m_clientPlayerHandManager: {fileID: 1441576941}
+  m_clientMyHandManager: {fileID: 1441576941}
   m_panSpeed: 1
   m_panSmoothTime: 0.25
   m_bounadryScaleX: 1.3
@@ -1337,7 +1337,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cardDBManager: {fileID: 1369397484}
-  m_clientPlayerDeckManager: {fileID: 792051784}
+  m_clientMyDeckManager: {fileID: 792051784}
 --- !u!114 &792051784
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1525,7 +1525,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 373.2, y: -69.900024}
+  m_AnchoredPosition: {x: 373.1875, y: -69.900024}
   m_SizeDelta: {x: 90, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &865846263
@@ -1831,8 +1831,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_serverPlayersDeck: {fileID: 792051783}
   m_serverPlayersHand: {fileID: 1441576942}
-  m_clientPlayerDeck: {fileID: 792051784}
-  m_clientPlayerHand: {fileID: 1441576941}
+  m_clientMyDeck: {fileID: 792051784}
+  m_clientMyHand: {fileID: 1441576941}
 --- !u!114 &946061053
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1888,7 +1888,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 268.40002, y: -69.900024}
+  m_AnchoredPosition: {x: 268.375, y: -69.900024}
   m_SizeDelta: {x: 90, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &994700713
@@ -2217,7 +2217,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 373.2, y: 58.69995}
+  m_AnchoredPosition: {x: 373.1875, y: 58.69995}
   m_SizeDelta: {x: 90, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1035385624
@@ -2858,6 +2858,7 @@ GameObject:
   - component: {fileID: 1441576940}
   - component: {fileID: 1441576941}
   - component: {fileID: 1441576942}
+  - component: {fileID: 1441576943}
   m_Layer: 0
   m_Name: PlayersHandManager
   m_TagString: Untagged
@@ -2894,7 +2895,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_cardPrefab: {fileID: 3918943217404332006, guid: 5931730aab95b3343a60de3584e1d0ac, type: 3}
   m_cardParent: {fileID: 1034621258}
-  m_uiCamera: {fileID: 1990166590}
+  m_canvas: {fileID: 419028561}
   m_map: {fileID: 273055804}
   m_curvRadius: 1800
   m_curvAngle: 25
@@ -2916,6 +2917,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e10c8ae2e908c2a4c86b361671b5fa92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1441576943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1441576939}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2228064393
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &1506027589
 GameObject:
   m_ObjectHideFlags: 0
@@ -3480,7 +3501,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 268.4, y: 58.69995}
+  m_AnchoredPosition: {x: 268.375, y: 58.69995}
   m_SizeDelta: {x: 90, y: 90}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1897363086
@@ -5575,8 +5596,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0
-  far clip plane: 100
+  near clip plane: -1000
+  far clip plane: 1000
   field of view: 60
   orthographic: 1
   orthographic size: 5
@@ -5741,10 +5762,10 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0
-  far clip plane: 100
-  field of view: 60
-  orthographic: 1
+  near clip plane: 100
+  far clip plane: 1000
+  field of view: 80
+  orthographic: 0
   orthographic size: 1000
   m_Depth: 0
   m_CullingMask:
@@ -5814,7 +5835,7 @@ Transform:
   m_GameObject: {fileID: 1990166589}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -50}
+  m_LocalPosition: {x: 0, y: 0, z: -500}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
