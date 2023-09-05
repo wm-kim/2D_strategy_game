@@ -28,6 +28,9 @@ namespace Minimax
         [SerializeField, Range(0, 1)] private float m_deckViewFadeDuration = 0.2f;
         private Tween m_deckViewFadeTween;
         
+        /// <summary>
+        /// collection that stores all the ClientCards in the deck. Key is the card's UID.
+        /// </summary>
         private Dictionary<int, ClientCard> m_cardsInDeck = new Dictionary<int, ClientCard>();
 
         public event Action<int> OnCardRemovedFromDeck;
@@ -44,13 +47,13 @@ namespace Minimax
         /// This method is called by the server to setup the client player's deck.
         /// </summary>
         [ClientRpc]
-        public void SetupPlayerDeckClientRpc(int[] cardUIds, int[] cardIds, ClientRpcParams clientRpcParams = default)
+        public void SetupMyDeckClientRpc(int[] cardUIds, int[] cardIds, ClientRpcParams clientRpcParams = default)
         {
             for (int i = 0; i < cardUIds.Length; i++)
             {
                 var cardData = Instantiate(m_cardDBManager.GetCardData(cardIds[i]));
-                var clientCardLogic = new ClientCard(cardUIds[i], cardData);
-                m_cardsInDeck.Add(cardUIds[i], clientCardLogic);
+                var clientCard = new ClientCard(cardUIds[i], cardData);
+                m_cardsInDeck.Add(cardUIds[i], clientCard);
             }
             
             m_deckViewFader.Init(cardUIds);

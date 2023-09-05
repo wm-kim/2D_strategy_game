@@ -98,9 +98,25 @@ namespace Minimax.GamePlay.PlayerHand
             m_map.OnTouchOverMap += OnTouchOverMapMap;
             m_map.OnTouchOutsideOfMap += OnUnHoverMap;
         }
+        
+        public void AddInitialCardsAndTween(int[] cardUIDs)
+        {
+            foreach (var cardUID in cardUIDs)
+            {
+                AddCard(cardUID);
+            }
+            UpdateSlotTransforms();
+            TweenHandSlots();
+        }
 
-        // 아직 덱이 구현이 안되어 있어서 임시로 만들어 놓은 함수
-        public void AddCard(int cardUID)
+        public void AddCardAndTween(int cardUID)
+        {
+            AddCard(cardUID);
+            UpdateSlotTransforms();
+            TweenHandSlots();
+        }
+        
+        private void AddCard(int cardUID)
         {
             if (CardCount >= Define.MaxHandCardCount)
             {
@@ -111,12 +127,9 @@ namespace Minimax.GamePlay.PlayerHand
             var cardSlot = m_cardSlotPool.Get();
             cardSlot.Init(this, CardCount, cardUID);
             m_slotList.Add(cardSlot);
-
-            UpdateSlotTransforms();
-            TweenHandSlots();
         }
-
-        public void RemoveCard(int index)
+        
+        public void RemoveCardAndTween(int index)
         {
             if (!IsValidIndex(index)) return;
 
@@ -164,15 +177,22 @@ namespace Minimax.GamePlay.PlayerHand
         /// </summary>
         private void TweenHandSlots()
         {
+            // sequence auto play when it get out of scope just like IDisposable
+            Sequence sequence = DOTween.Sequence();
+            
             for (int i = 0; i < CardCount; i++)
             {
                 m_slotList[i].KillTweens();
-                m_slotList[i].PosTween = m_slotList[i].transform.DOLocalMove(m_slotPositionList[i], m_tweenDuration)
-                    .OnComplete(Command.ExecutionComplete);
-                
+                m_slotList[i].PosTween = m_slotList[i].transform.DOLocalMove(m_slotPositionList[i], m_tweenDuration);
                 m_slotList[i].RotTween = m_slotList[i].transform
                 .DOLocalRotateQuaternion(m_slotRotationList[i], m_tweenDuration);
+                
+                sequence.Join(m_slotList[i].PosTween);
+                sequence.Join(m_slotList[i].RotTween);
             }
+
+            sequence.Play();
+            sequence.OnComplete(Command.ExecutionComplete);
         }
 
         private bool IsValidIndex(int index)

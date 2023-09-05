@@ -6,6 +6,9 @@ using UnityEngine;
 
 namespace Minimax.UI.View.ComponentViews.GamePlay
 {
+    /// <summary>
+    /// This class is responsible for tweening the hand card view and the card visual.
+    /// </summary>
     public class HandCardView : MonoBehaviour
     {
         public Tween PosTween { get; set; }
@@ -23,7 +26,9 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
         
         public void Init(int cardUID)
         {
-            var cardData = ClientCard.CardsCreatedThisGame[cardUID].Data;
+            var card = ClientCard.CardsCreatedThisGame[cardUID];
+            // card data could be null
+            var cardData = card.Data;
             m_cardVisual.Init(cardData);
         }
         

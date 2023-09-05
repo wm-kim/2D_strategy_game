@@ -77,7 +77,7 @@ namespace Minimax.GamePlay
             {
                 await m_serverPlayersDeckManager.SetupPlayersDeck();
                 m_profileManager.SetPlayerNames();
-                m_cardDrawingLogic.DrawAllPlayerInitialCards();
+                m_cardDrawingLogic.CommandDrawAllPlayerInitialCards();
                 m_turnManager.StartInitialTurn();
                 
                 StartGame();

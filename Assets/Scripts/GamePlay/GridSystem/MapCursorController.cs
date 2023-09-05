@@ -19,6 +19,8 @@ namespace Minimax
         [Header("Settings")]
         [SerializeField, Range(0, 1)]
         private float m_hoverOverlayFadeDuration = 0.2f;
+        [SerializeField, Range(0, 1)]
+        private float m_targetAlpha = 0.20f;
         
         private void Awake()
         {
@@ -79,7 +81,7 @@ namespace Minimax
             
             // Tween alpha
             DOTween.ToAlpha(() => m_selectOverlay.color, 
-                x => m_selectOverlay.color = x, 0.25f, m_hoverOverlayFadeDuration);
+                x => m_selectOverlay.color = x, m_targetAlpha, m_hoverOverlayFadeDuration);
             
             m_selectOverlay.transform.position = cell.WorldPos;
         }

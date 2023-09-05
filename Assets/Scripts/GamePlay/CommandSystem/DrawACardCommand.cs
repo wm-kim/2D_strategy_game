@@ -21,7 +21,7 @@ namespace Minimax.GamePlay.CommandSystem
         {
             base.StartExecute();
             m_clientMyDeck.RemoveCard(m_cardUID);
-            m_clientMyHand.AddCard(m_cardUID);
+            m_clientMyHand.AddCardAndTween(m_cardUID);
         }
     }
 }

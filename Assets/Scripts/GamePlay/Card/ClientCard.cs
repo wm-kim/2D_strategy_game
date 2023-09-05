@@ -7,8 +7,11 @@ namespace Minimax.GamePlay
     public class ClientCard : IIdentifiable
     {
         public int UniqueID;
-        
-        public CardBaseData Data;
+
+        /// <summary>
+        /// This could be null if this card is opponent's card and we don't have the data of it
+        /// </summary>
+        public CardBaseData Data = null;
         
         public int UID => UniqueID;
         
@@ -24,7 +27,7 @@ namespace Minimax.GamePlay
             CardsCreatedThisGame.Clear();
         }
         
-        public ClientCard(int uid, CardBaseData data)
+        public ClientCard(int uid, CardBaseData data = null)
         {
             UniqueID = uid;
             Data = data;

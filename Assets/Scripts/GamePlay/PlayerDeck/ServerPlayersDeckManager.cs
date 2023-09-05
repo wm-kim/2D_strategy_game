@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Cysharp.Threading.Tasks;
 using Minimax.CoreSystems;
 using Minimax.GamePlay.PlayerHand;
@@ -19,11 +20,13 @@ namespace Minimax.GamePlay
         [Header("References")]
         [SerializeField] private CardDBManager m_cardDBManager;
         [SerializeField] private ClientMyDeckManager m_clientMyDeckManager;
+        [SerializeField] private ClientOpponentDeckManager m_clientOpponentDeckManager;
         
         private NetworkManager m_networkManager => NetworkManager.Singleton;
         
         /// <summary>
         /// Stores the deck list fetched from cloud. Key: playerNumber, Value: DeckDTO
+        /// the reason why clientId is not used as key is because it can be changed when the player reconnects.
         /// </summary>
         private Dictionary<int, DeckDTO> m_playersDeckList = new Dictionary<int, DeckDTO>();
 
@@ -38,27 +41,35 @@ namespace Minimax.GamePlay
                 ShufflePlayersDeckList();
                 GeneratePlayersDeck();
                 
-                // send player deck list to clients
                 var connectionManager = GlobalManagers.Instance.Connection;
-                foreach (var clientId in m_networkManager.ConnectedClientsIds)
+                var clientIds = m_networkManager.ConnectedClientsIds;
+                var copiedPlayersDeck = m_playersDeck.ToDictionary(playerDeck => playerDeck.Key,
+                    playerDeck => new List<ServerCard>(playerDeck.Value));
+
+                var copiedCardUniqueIds = new Dictionary<int, int[]>();
+                var copiedCardIds = new Dictionary<int, int[]>();
+                
+                // shuffle the copied deck list for prevent player from knowing the deck order
+                foreach (var playerDeck in copiedPlayersDeck)
                 {
-                    var clientRpcParams = connectionManager.ClientRpcParams[clientId];
-                    var playerNumber = connectionManager.GetPlayerNumber(clientId);
-                    
-                    // copy the deck list and shuffle it again for prevent player from knowing the deck order
-                    var copiedCardLogicList = new List<ServerCard>(m_playersDeck[playerNumber]);
-                    copiedCardLogicList.Shuffle();
-                    
-                    int[] copiedCardUniqueIds = new int[copiedCardLogicList.Count];
-                    int[] copiedCardIds = new int[copiedCardLogicList.Count];
-                    
-                    for (int i = 0; i < copiedCardLogicList.Count; i++)
+                    playerDeck.Value.Shuffle();
+                    copiedCardUniqueIds.Add(playerDeck.Key, new int[playerDeck.Value.Count]);
+                    copiedCardIds.Add(playerDeck.Key, new int[playerDeck.Value.Count]);
+                    for (int i = 0; i < playerDeck.Value.Count; i++)
                     {
-                        copiedCardUniqueIds[i] = copiedCardLogicList[i].UID;
-                        copiedCardIds[i] = copiedCardLogicList[i].Data.CardId;
+                        copiedCardUniqueIds[playerDeck.Key][i] = playerDeck.Value[i].UniqueCardID;
+                        copiedCardIds[playerDeck.Key][i] = playerDeck.Value[i].Data.CardId;
                     }
+                }
+                
+                foreach (var clientId in clientIds)
+                {
+                    var clientRpcParam = connectionManager.ClientRpcParams[clientId];
+                    var playerNumber = connectionManager.GetPlayerNumber(clientId);
+                    m_clientMyDeckManager.SetupMyDeckClientRpc(copiedCardUniqueIds[playerNumber],copiedCardIds[playerNumber], clientRpcParam);
                     
-                    m_clientMyDeckManager.SetupPlayerDeckClientRpc(copiedCardUniqueIds,copiedCardIds, clientRpcParams);
+                    var opponentNumber = connectionManager.GetOpponentPlayerNumber(clientId);
+                    m_clientOpponentDeckManager.SetupOpponentDeckClientRpc(copiedCardUniqueIds[opponentNumber], clientRpcParam);
                 }
             }
         }
@@ -151,6 +162,10 @@ namespace Minimax.GamePlay
             }
         }
         
-        public List<ServerCard> GetPlayerDeck(int playerNumber) => m_playersDeck[playerNumber];
+        public List<ServerCard> GetPlayerDeck(ulong clientId)
+        {
+            var playerNumber = GlobalManagers.Instance.Connection.GetPlayerNumber(clientId);
+            return m_playersDeck[playerNumber];
+        }
     }
 }

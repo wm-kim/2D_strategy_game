@@ -257,26 +257,22 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 return playerData.Value.PlayerNumber;
             }
             
-            // this should never happen
-            return -1;
+            // this should never happen, throw an exception
+            throw new Exception($"Player Number data not found for client {clientId}");
         }
-        
-        public ClientRpcParams GetClientRpcParams(int playerNumber)
+
+        public int GetOpponentPlayerNumber(ulong clientId)
         {
-            foreach (var clientId in NetworkManager.ConnectedClientsIds)
+            var playerNumber = GetPlayerNumber(clientId);
+            
+            if (NetworkManager.ConnectedClientsIds.Count == 1)
             {
-                var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
-                if (playerData.HasValue)
-                {
-                    if (playerData.Value.PlayerNumber == playerNumber)
-                    {
-                        return ClientRpcParams[clientId];
-                    }
-                }
+                // if there is only one player, throw an exception
+                throw new Exception($"There is only one player in the game. Client {clientId} is the only player.");
             }
             
-            // this should never happen
-            return default;
+            var opponentPlayerNumber = playerNumber == 0 ? 1 : 0;
+            return opponentPlayerNumber;
         }
 
         [ServerRpc(RequireOwnership = false)]
