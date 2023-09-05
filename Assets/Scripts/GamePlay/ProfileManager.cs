@@ -19,7 +19,7 @@ namespace Minimax.GamePlay
             else m_opponentPlayerNameText.text = playerName;
         }
         
-        public void SetPlayerNames()
+        public void SetPlayersName()
         {
             if (!IsServer) return;
             

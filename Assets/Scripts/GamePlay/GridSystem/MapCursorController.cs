@@ -12,7 +12,7 @@ namespace Minimax
     {
         [Header("References")]
         [SerializeField] private ClientMyHandManager m_playerHandManager;
-        [SerializeField] private Map m_map;
+        [SerializeField] private ClientMap m_map;
         [SerializeField] private SpriteRenderer m_hoverOverlay;
         [SerializeField] private SpriteRenderer m_selectOverlay;
         
@@ -33,7 +33,7 @@ namespace Minimax
         {
             m_map.OnTouchOverMap += OnTouchOverMap;
             m_map.OnTouchOutsideOfMap += OnTouchOutsideOfMap;
-            m_map.OnTouchEndOverMap += OnTouchEndOverMap;
+            m_map.OnTouchEndOverMap += OnTouchEndOverClientMap;
             m_map.OnTap += OnTap;
         }
         
@@ -41,7 +41,7 @@ namespace Minimax
         {
             m_map.OnTouchOverMap -= OnTouchOverMap;
             m_map.OnTouchOutsideOfMap -= OnTouchOutsideOfMap;
-            m_map.OnTouchEndOverMap -= OnTouchEndOverMap;
+            m_map.OnTouchEndOverMap -= OnTouchEndOverClientMap;
             m_map.OnTap -= OnTap;
         }
 
@@ -64,7 +64,7 @@ namespace Minimax
             }
         }
         
-        private void OnTouchEndOverMap(Cell cell)
+        private void OnTouchEndOverClientMap(Cell cell)
         {
             if (m_hoverOverlay.gameObject.activeSelf)
             {

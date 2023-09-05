@@ -27,7 +27,7 @@ namespace Minimax.GamePlay.PlayerHand
         public Canvas Canvas => m_canvas;
         
         [BoxGroup("References")] [SerializeField]
-        private Map m_map;
+        private ClientMap m_map;
         
         [BoxGroup("Card Settings")] [SerializeField, Tooltip("카드가 놓일 곡선의 반지름")] [Range(0, 10000)]
         private float m_curvRadius = 2000f;

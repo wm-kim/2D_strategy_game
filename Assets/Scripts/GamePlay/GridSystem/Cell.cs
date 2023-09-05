@@ -23,9 +23,9 @@ namespace Minimax
         /// </summary>
         private Vector2 m_worldPosition;
 
-        public Vector2 WorldPos => m_worldPosition;
+        public Vector2 WorldPos { get => m_worldPosition; set => m_worldPosition = value; }
         
-        public Vector2 OffsetCoord { get => m_offsetCoord; set => m_offsetCoord = value; }
+        public Vector2 OffsetCoord => m_offsetCoord;
         
         public Cell(int x, int y, Vector2 worldPosition)
         {

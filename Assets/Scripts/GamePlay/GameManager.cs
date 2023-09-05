@@ -1,5 +1,6 @@
 using System;
 using Minimax.CoreSystems;
+using Minimax.GamePlay.GridSystem;
 using Minimax.GamePlay.Logic;
 using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;
@@ -20,6 +21,7 @@ namespace Minimax.GamePlay
         [SerializeField] private ServerPlayersDeckManager m_serverPlayersDeckManager;
         [SerializeField] private TurnManager m_turnManager;
         [SerializeField] private ProfileManager m_profileManager;
+        [SerializeField] private ClientMap m_clientMap;
         
         [Header("Game Logics")]
         [SerializeField] private CardDrawingLogic m_cardDrawingLogic;
@@ -76,10 +78,10 @@ namespace Minimax.GamePlay
             if (IsServer)
             {
                 await m_serverPlayersDeckManager.SetupPlayersDeck();
-                m_profileManager.SetPlayerNames();
+                m_profileManager.SetPlayersName();
+                m_clientMap.SetPlayersMapRotation();
                 m_cardDrawingLogic.CommandDrawAllPlayerInitialCards();
                 m_turnManager.StartInitialTurn();
-                
                 StartGame();
             }
         }
