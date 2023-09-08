@@ -26,8 +26,7 @@ namespace Minimax.GamePlay.Logic
         {
             DebugWrapper.Log("Server is drawing initial cards for all players");
             var connectedClientIds = NetworkManager.Singleton.ConnectedClientsIds;
-            try
-            {
+            
                 Dictionary<int, int[]> cardUIDs = new Dictionary<int, int[]>();
                 
                 foreach (var clientId in connectedClientIds)
@@ -36,7 +35,7 @@ namespace Minimax.GamePlay.Logic
                     cardUIDs.Add(playerNumber, new int[Define.InitialHandCardCount]);
                     for (int i = 0; i < Define.InitialHandCardCount; i++)
                     {
-                        var cardUID = DrawACard(clientId);
+                        var cardUID = DrawACard(playerNumber);
                         cardUIDs[playerNumber][i] = cardUID;
                     }
                 }
@@ -48,11 +47,7 @@ namespace Minimax.GamePlay.Logic
                     var opponentNumber = GlobalManagers.Instance.Connection.GetOpponentPlayerNumber(clientId);
                     DrawAllPlayerInitialCardsClientRpc(cardUIDs[playerNumber], cardUIDs[opponentNumber], clientRpcParam[clientId]);
                 }
-            }
-            catch (Exception e)
-            {
-                DebugWrapper.LogError(e.Message);
-            }
+            
         }
         
         public void CommandDrawACardFromDeck(ulong clientId)
@@ -60,10 +55,13 @@ namespace Minimax.GamePlay.Logic
             try
             {
                 DebugWrapper.Log($"Drawing a card for client {clientId}");
-                var cardUID = DrawACard(clientId);
+                var connection = GlobalManagers.Instance.Connection;
+                var playerNumber = connection.GetPlayerNumber(clientId);
+                var opponentNumber = connection.GetOpponentPlayerNumber(clientId);
+                var cardUID = DrawACard(playerNumber);
                 
-                var clientRpcParam = GlobalManagers.Instance.Connection.ClientRpcParams[clientId];
-                DrawACardClientRpc(cardUID, clientRpcParam);
+                DrawMyCardClientRpc(cardUID, connection.ClientRpcParams[playerNumber]);
+                DrawOpponentCardClientRpc(cardUID, connection.ClientRpcParams[opponentNumber]);
             }
             catch (Exception e)
             {
@@ -71,17 +69,16 @@ namespace Minimax.GamePlay.Logic
             }
         }
 
-        private int DrawACard(ulong clientId)
+        private int DrawACard(int playerNumber)
         {
-            var playerDeck = m_serverPlayersDeck.GetPlayerDeck(clientId);
+            var playerDeck = m_serverPlayersDeck.GetPlayerDeck(playerNumber);
             if (playerDeck.Count == 0)
             {
-                throw new Exception($"client {clientId} has no more cards in deck.");
+                throw new Exception($"Player {playerNumber} has no more cards in deck.");
             }
 
-            var card = playerDeck[0];
-            var cardUID = card.UID;
-            m_serverPlayersHand.AddCardToHand(card);
+            var cardUID = playerDeck[0];
+            m_serverPlayersHand.AddCardToHand(playerNumber, cardUID);
             playerDeck.RemoveAt(0);
 
             return cardUID;
@@ -94,9 +91,15 @@ namespace Minimax.GamePlay.Logic
         /// <param name="cardUID"></param>
         /// <param name="clientRpcParams"></param>
         [ClientRpc]
-        private void DrawACardClientRpc(int cardUID, ClientRpcParams clientRpcParams = default)
+        private void DrawMyCardClientRpc(int cardUID, ClientRpcParams clientRpcParams = default)
         {
-            new DrawACardCommand(cardUID, m_clientMyHand, m_clientMyDeck).AddToQueue();
+            new DrawMyCardCommand(cardUID, m_clientMyHand, m_clientMyDeck).AddToQueue();
+        }
+        
+        [ClientRpc]
+        private void DrawOpponentCardClientRpc(int cardUID, ClientRpcParams clientRpcParams = default)
+        {
+            new DrawOpponentCardCommand(cardUID, m_clientOpponentHand, m_clientOpponentDeck).AddToQueue();
         }
         
         [ClientRpc]

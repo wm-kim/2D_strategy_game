@@ -73,6 +73,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 #if DEDICATED_SERVER
         public string BackfillTicketId { get; set; }
         public PayloadAllocation PayloadAllocation { get; set; }
+        
+        
         public string ServerBearerToken { get; set; }
         
         public async void DeleteBackfillTicket()

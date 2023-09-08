@@ -11,7 +11,7 @@ namespace Minimax.GamePlay.CommandSystem
         public static Queue<Command> CommandQueue = new Queue<Command>();
         public static bool IsExecuting = false;
         
-        public virtual void AddToQueue()
+        public void AddToQueue()
         {
             CommandQueue.Enqueue(this);
             if (!IsExecuting)

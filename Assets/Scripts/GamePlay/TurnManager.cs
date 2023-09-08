@@ -52,7 +52,6 @@ namespace Minimax.GamePlay
             if (!IsServer) return;
             
             m_whosTurn.Value = m_whosTurn.Value == 0 ? 1 : 0;
-            DebugWrapper.Log($"Player {m_whosTurn.Value} turn starts");
             m_networkTimer.StartTimer();
             BroadCastCurrentTurnToClients();
         }

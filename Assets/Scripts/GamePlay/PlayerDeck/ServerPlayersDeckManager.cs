@@ -30,7 +30,7 @@ namespace Minimax.GamePlay
         /// </summary>
         private Dictionary<int, DeckDTO> m_playersDeckList = new Dictionary<int, DeckDTO>();
 
-        private Dictionary<int, List<ServerCard>> m_playersDeck = new Dictionary<int, List<ServerCard>>();
+        private Dictionary<int, List<int>> m_playersDeck = new Dictionary<int, List<int>>();
 
         public async UniTask SetupPlayersDeck()
         {
@@ -44,21 +44,21 @@ namespace Minimax.GamePlay
                 var connectionManager = GlobalManagers.Instance.Connection;
                 var clientIds = m_networkManager.ConnectedClientsIds;
                 var copiedPlayersDeck = m_playersDeck.ToDictionary(playerDeck => playerDeck.Key,
-                    playerDeck => new List<ServerCard>(playerDeck.Value));
+                    playerDeck => new List<int>(playerDeck.Value));
 
-                var copiedCardUniqueIds = new Dictionary<int, int[]>();
+                var copiedCardUIDs = new Dictionary<int, int[]>();
                 var copiedCardIds = new Dictionary<int, int[]>();
                 
                 // shuffle the copied deck list for prevent player from knowing the deck order
                 foreach (var playerDeck in copiedPlayersDeck)
                 {
                     playerDeck.Value.Shuffle();
-                    copiedCardUniqueIds.Add(playerDeck.Key, new int[playerDeck.Value.Count]);
+                    copiedCardUIDs.Add(playerDeck.Key, new int[playerDeck.Value.Count]);
                     copiedCardIds.Add(playerDeck.Key, new int[playerDeck.Value.Count]);
                     for (int i = 0; i < playerDeck.Value.Count; i++)
                     {
-                        copiedCardUniqueIds[playerDeck.Key][i] = playerDeck.Value[i].UniqueCardID;
-                        copiedCardIds[playerDeck.Key][i] = playerDeck.Value[i].Data.CardId;
+                        copiedCardUIDs[playerDeck.Key][i] = playerDeck.Value[i];
+                        copiedCardIds[playerDeck.Key][i] = ServerCard.CardsCreatedThisGame[playerDeck.Value[i]].Data.CardId;
                     }
                 }
                 
@@ -66,10 +66,10 @@ namespace Minimax.GamePlay
                 {
                     var clientRpcParam = connectionManager.ClientRpcParams[clientId];
                     var playerNumber = connectionManager.GetPlayerNumber(clientId);
-                    m_clientMyDeckManager.SetupMyDeckClientRpc(copiedCardUniqueIds[playerNumber],copiedCardIds[playerNumber], clientRpcParam);
+                    m_clientMyDeckManager.SetupMyDeckClientRpc(copiedCardUIDs[playerNumber],copiedCardIds[playerNumber], clientRpcParam);
                     
                     var opponentNumber = connectionManager.GetOpponentPlayerNumber(clientId);
-                    m_clientOpponentDeckManager.SetupOpponentDeckClientRpc(copiedCardUniqueIds[opponentNumber], clientRpcParam);
+                    m_clientOpponentDeckManager.SetupOpponentDeckClientRpc(copiedCardUIDs[opponentNumber], clientRpcParam);
                 }
             }
         }
@@ -81,18 +81,18 @@ namespace Minimax.GamePlay
         {
             foreach (var pair in m_playersDeckList)
             {
-                var deck = new List<ServerCard>();
+                var deck = new List<int>();
                 var playerNumber = pair.Key;
                 
                 foreach (var cardId in pair.Value.CardIds)
                 {
                     // create instance of card data from card id
                     var cardData = Instantiate(m_cardDBManager.GetCardData(cardId));
-                    var serverCardLogic = new ServerCard(cardData)
+                    var serverCard = new ServerCard(cardData)
                     {
                         Owner = playerNumber
                     };
-                    deck.Add(serverCardLogic);
+                    deck.Add(serverCard.UID);
                 }
                 m_playersDeck.Add(playerNumber, deck);
             }
@@ -121,16 +121,19 @@ namespace Minimax.GamePlay
                         {
                             { "playerIds", connectedPlayerIds }
                         });
-#elif UNITY_EDITOR
+                
+                
+#else
                 var playerDecks = await CloudCodeService.Instance.CallModuleEndpointAsync("Deck", "GetPlayerDecks",
                     new Dictionary<string, object>
                     {
                         { "playerIds", connectedPlayerIds }
                     });
+                
                 DebugWrapper.Log($"Fetched player deck list from cloud: {playerDecks}");
                 var playerDeckLists = JsonConvert.DeserializeObject<List<DeckDTO>>(playerDecks);
 #endif
-
+                
                 // Store the deck list fetched from cloud
                 var connectionManager = GlobalManagers.Instance.Connection;
                 for (int i = 0; i < m_networkManager.ConnectedClientsIds.Count; i++)
@@ -162,9 +165,8 @@ namespace Minimax.GamePlay
             }
         }
         
-        public List<ServerCard> GetPlayerDeck(ulong clientId)
+        public List<int> GetPlayerDeck(int playerNumber)
         {
-            var playerNumber = GlobalManagers.Instance.Connection.GetPlayerNumber(clientId);
             return m_playersDeck[playerNumber];
         }
     }

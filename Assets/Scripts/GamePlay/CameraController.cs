@@ -1,6 +1,7 @@
 using System;
 using Minimax.CoreSystems;
 using Minimax.GamePlay.PlayerHand;
+using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
@@ -36,14 +37,6 @@ namespace Minimax.GamePlay
         private Vector2 m_panSmoothVelocity;
         private Rect m_panBound;
         
-
-        private void Start()
-        {
-            m_currentFocusPosition = m_camera.transform.position;
-            m_targetPosition = m_currentFocusPosition;
-            
-        }
-
         private void OnEnable()
         {
             GlobalManagers.Instance.Input.OnTouch += MoveCamera;
@@ -51,7 +44,7 @@ namespace Minimax.GamePlay
         
         private void OnDisable()
         {
-            if (GlobalManagers.Instance != null && GlobalManagers.Instance.Input != null)
+            if (GlobalManagers.IsAvailable && GlobalManagers.Instance.Input != null)
             {
                 GlobalManagers.Instance.Input.OnTouch -= MoveCamera;
             }
@@ -99,10 +92,12 @@ namespace Minimax.GamePlay
         }
         
         
-        public void SetCameraBoundary(Vector3 center, Vector2 size)
+        public void SetCameraPositionAndBoundary(Vector3 center, Vector2 size)
         {
+            DebugWrapper.Log($"SetCameraPositionAndBoundary: center: {center}, size: {size}");
             m_camera.transform.position = center;
             m_currentFocusPosition = center;
+            m_targetPosition = center;
             m_panBound = new Rect(
                 (center.x - size.x) * 0.5f * this.m_bounadryScaleX, 
                 center.y - size.y * 0.5f * this.m_bounadryScaleY,

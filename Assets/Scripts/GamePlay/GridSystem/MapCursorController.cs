@@ -4,15 +4,20 @@ using System.Collections.Generic;
 using DG.Tweening;
 using Minimax.GamePlay.GridSystem;
 using Minimax.GamePlay.PlayerHand;
+using Minimax.GamePlay.Unit;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Minimax
 {
     public class MapCursorController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private ClientMyHandManager m_playerHandManager;
-        [SerializeField] private ClientMap m_map;
+        [SerializeField] private ClientMyHandManager m_clientMyHand;
+        [SerializeField] private ClientMap m_clientMap;
+        [SerializeField] private ClientUnitManager m_clientUnitManager;
+        
+        [Header("Visuals")]
         [SerializeField] private SpriteRenderer m_hoverOverlay;
         [SerializeField] private SpriteRenderer m_selectOverlay;
         
@@ -31,59 +36,42 @@ namespace Minimax
 
         private void OnEnable()
         {
-            m_map.OnTouchOverMap += OnTouchOverMap;
-            m_map.OnTouchOutsideOfMap += OnTouchOutsideOfMap;
-            m_map.OnTouchEndOverMap += OnTouchEndOverClientMap;
-            m_map.OnTap += OnTap;
+            m_clientMap.OnTouchOverMap += OnTouchOverMap;
+            m_clientMap.OnTouchOutsideOfMap += OnTouchOutsideOfMap;
+            m_clientMap.OnTouchEndOverMap += OnTouchEndOverClientMap;
+            m_clientMap.OnTapMap += OnTapMap;
+            m_clientUnitManager.OnUnitSpawned += OnUnitSpawned;
         }
         
         private void OnDisable()
         {
-            m_map.OnTouchOverMap -= OnTouchOverMap;
-            m_map.OnTouchOutsideOfMap -= OnTouchOutsideOfMap;
-            m_map.OnTouchEndOverMap -= OnTouchEndOverClientMap;
-            m_map.OnTap -= OnTap;
+            m_clientMap.OnTouchOverMap -= OnTouchOverMap;
+            m_clientMap.OnTouchOutsideOfMap -= OnTouchOutsideOfMap;
+            m_clientMap.OnTouchEndOverMap -= OnTouchEndOverClientMap;
+            m_clientMap.OnTapMap -= OnTapMap;
+            m_clientUnitManager.OnUnitSpawned -= OnUnitSpawned;
         }
 
-        private void OnTouchOverMap(Cell cell)
+        private void OnTouchOverMap(ClientCell clientCell)
         {
             // Show hover overlay only when Player Select a card to play
-            if(!m_playerHandManager.IsSelecting) return;
-            
-            if (!m_hoverOverlay.gameObject.activeSelf) 
-                m_hoverOverlay.gameObject.SetActive(true);
-            
-            m_hoverOverlay.transform.position = cell.WorldPos;
+            if(!m_clientMyHand.IsSelecting) return;
+            ShowHoverOverlay(clientCell.transform.position);
         }
         
         private void OnTouchOutsideOfMap()
         {
-            if (m_hoverOverlay.gameObject.activeSelf)
-            {
-                m_hoverOverlay.gameObject.SetActive(false);
-            }
+            HideHoverOverlay();
         }
         
-        private void OnTouchEndOverClientMap(Cell cell)
+        private void OnTouchEndOverClientMap(ClientCell clientCell)
         {
-            if (m_hoverOverlay.gameObject.activeSelf)
-            {
-                m_hoverOverlay.gameObject.SetActive(false);
-            }
+            HideHoverOverlay();
         }
 
-        private void OnTap(Cell cell)
+        private void OnTapMap(ClientCell clientCell)
         {
-            if(!m_selectOverlay.gameObject.activeSelf) 
-                m_selectOverlay.gameObject.SetActive(true);
-            
-            SetSelectOverlayAlpha(0);
-            
-            // Tween alpha
-            DOTween.ToAlpha(() => m_selectOverlay.color, 
-                x => m_selectOverlay.color = x, m_targetAlpha, m_hoverOverlayFadeDuration);
-            
-            m_selectOverlay.transform.position = cell.WorldPos;
+            ShowSelectOverlay(clientCell.transform.position);
         }
         
         private void SetSelectOverlayAlpha(float alpha)
@@ -91,6 +79,44 @@ namespace Minimax
             Color temp = m_selectOverlay.color;
             temp.a = alpha;
             m_selectOverlay.color = temp;
+        }
+        
+        private void OnUnitSpawned(ClientCell clientCell)
+        {
+            var unitUID = m_clientMap[clientCell.Coord].CurrentUnitUID;
+            var clientUnit = ClientUnit.UnitsCreatedThisGame[unitUID];
+            if (!clientUnit.IsMine) return;
+            
+            ShowSelectOverlay(clientCell.transform.position);
+        }
+        
+        private void HideHoverOverlay()
+        {
+            if (m_hoverOverlay.gameObject.activeSelf)
+            {
+                m_hoverOverlay.gameObject.SetActive(false);
+            }
+        }
+        
+        private void ShowHoverOverlay(Vector3 targetPosition)
+        {
+            if (!m_hoverOverlay.gameObject.activeSelf) 
+                m_hoverOverlay.gameObject.SetActive(true);
+            
+            m_hoverOverlay.transform.position = targetPosition;
+        }
+
+        private void ShowSelectOverlay(Vector3 targetPosition)
+        {
+            if(!m_selectOverlay.gameObject.activeSelf) 
+                m_selectOverlay.gameObject.SetActive(true);
+            
+            SetSelectOverlayAlpha(0);
+            
+            DOTween.ToAlpha(() => m_selectOverlay.color, 
+                x => m_selectOverlay.color = x, m_targetAlpha, m_hoverOverlayFadeDuration);
+            
+            m_selectOverlay.transform.position = targetPosition;
         }
     }
 }

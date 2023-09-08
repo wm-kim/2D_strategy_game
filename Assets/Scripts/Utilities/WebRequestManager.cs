@@ -130,12 +130,22 @@ namespace Minimax
             };
             
             string jsonBodyString = JsonConvert.SerializeObject(jsonBody);
-            return await RequestAsync<T>(url, SendType.POST, headers, jsonBodyString);
+            OutputClass<T> outputClass = await RequestAsync<OutputClass<T>>(url, SendType.POST, headers, jsonBodyString);
+            return outputClass.output;
         }
         
         public static async UniTask ServerRunCloudCodeModuleEndpointAsync(string moduleName, string functionName, Dictionary<string, object> args = null)
         {
             await ServerRunCloudCodeModuleEndpointAsync<object>(moduleName, functionName, args);
+        }
+
+        /// <summary>
+        /// UGS web doc에 따르면 출력 값이 output 필드에 담겨서 나온다고 합니다.
+        /// https://services.docs.unity.com/cloud-code/v1/index.html#tag/Cloud-Code/operation/runScript
+        /// </summary>
+        private class OutputClass<T>
+        {
+            public T output;
         }
 #endif
     }

@@ -12,8 +12,8 @@ namespace Minimax
 #if DEDICATED_SERVER
         private async void Start()
         {
-            GlobalManagers.Instance.Connection.StartServer();
             await ServerAuthentication();
+            GlobalManagers.Instance.Connection.StartServer();
         }
 
         private async UniTask ServerAuthentication()

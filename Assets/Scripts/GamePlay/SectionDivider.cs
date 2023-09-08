@@ -32,7 +32,7 @@ namespace Minimax.GamePlay
 
         private void OnDisable()
         {
-            if (GlobalManagers.Instance == null) return;
+            if (!GlobalManagers.IsAvailable) return;
             
             if (GlobalManagers.Instance.Input != null)
             {

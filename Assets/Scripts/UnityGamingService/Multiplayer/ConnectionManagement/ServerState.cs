@@ -1,13 +1,15 @@
-using System.Collections.Generic;
-using Minimax.CoreSystems;
-using Minimax.SceneManagement;
 using Minimax.Utilities;
 using Newtonsoft.Json;
 using Unity.Netcode;
+using UnityEngine;
+#if DEDICATED_SERVER
+using System.Collections.Generic;
+using Minimax.CoreSystems;
+using Minimax.SceneManagement;
 using Unity.Services.Matchmaker;
 using Unity.Services.Matchmaker.Models;
 using Unity.Services.Multiplay;
-using UnityEngine;
+#endif
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
@@ -92,7 +94,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             m_connectionManager.ShutDownApplication();
         }
         
-        // [TODO] Need to authenticate your user against an UGS' auth service, send auth token to dedicated server
+        // TODO : Need to authenticate your user against an UGS' auth service, send auth token to dedicated server
         public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request,
             NetworkManager.ConnectionApprovalResponse response)
         {

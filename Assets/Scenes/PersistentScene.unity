@@ -189,7 +189,7 @@ MonoBehaviour:
         <PacketJitterMs>k__BackingField: 12
         <PacketLossInterval>k__BackingField: 0
         <PacketLossPercent>k__BackingField: 2
---- !u!1 &1129582795
+--- !u!1 &935482724
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -197,28 +197,28 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1129582796}
+  - component: {fileID: 935482725}
   m_Layer: 0
-  m_Name: ///Setups
+  m_Name: ClientRpcParamManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1129582796
+--- !u!4 &935482725
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1129582795}
+  m_GameObject: {fileID: 935482724}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 5095178001822900288}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1149659465
 GameObject:
@@ -2527,6 +2527,7 @@ Transform:
   - {fileID: 6432574738680464055}
   - {fileID: 6154119887601795170}
   - {fileID: 1884383718}
+  - {fileID: 935482725}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!224 &5164388035046168940
@@ -4305,7 +4306,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 8294463037909126894}
   m_Direction: 2
   m_Value: 0
-  m_Size: 0.96266145
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4880,7 +4881,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.000030517578}
+  m_AnchoredPosition: {x: 0, y: 0.000076293945}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &8294627573717370934
@@ -5377,4 +5378,3 @@ SceneRoots:
   - {fileID: 5095178001822900288}
   - {fileID: 2933059330267743583}
   - {fileID: 1546058180837130262}
-  - {fileID: 1129582796}

@@ -39,6 +39,7 @@ namespace Minimax.Utilities
 #endregion
 
 #region GamePlay
+        public static readonly int MapSize = 11;
         public static readonly int MaxHandCardCount = 10;
         public static readonly int InitialHandCardCount = 3;
 #endregion

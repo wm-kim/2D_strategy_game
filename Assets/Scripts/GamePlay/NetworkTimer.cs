@@ -75,7 +75,6 @@ namespace Minimax.GamePlay
             m_time.Value = 0f;
             m_isTimerFinished = true;
             
-            DebugWrapper.Log("Time Finished");
             m_onServerTimerComplete?.Invoke();
             TimerFinishedClientRpc();
         }
@@ -84,7 +83,6 @@ namespace Minimax.GamePlay
         {
             if (!IsServer) return;
             
-            DebugWrapper.Log($"StartTimer, duration: {m_duration}");
             m_isTimerFinished = false;
             m_time.Value = m_duration;
         }

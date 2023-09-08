@@ -2,13 +2,13 @@ using Minimax.GamePlay.PlayerHand;
 
 namespace Minimax.GamePlay.CommandSystem
 {
-    public class DrawACardCommand : Command
+    public class DrawMyCardCommand : Command
     {
         private int m_cardUID;
         private ClientMyHandManager m_clientMyHand;
         private ClientMyDeckManager m_clientMyDeck;
         
-        public DrawACardCommand(int cardUID,
+        public DrawMyCardCommand(int cardUID,
             ClientMyHandManager clientMyHand, 
             ClientMyDeckManager clientMyDeck)
         {

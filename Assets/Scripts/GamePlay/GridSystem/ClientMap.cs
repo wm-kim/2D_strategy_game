@@ -5,6 +5,7 @@ using Minimax.CoreSystems;
 using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
@@ -21,19 +22,17 @@ namespace Minimax.GamePlay.GridSystem
 #endif
         
         [Header("References")]
+        [SerializeField] private ClientCell m_clientCellPrefab;
         [SerializeField] private Tilemap m_tilemap;
         [SerializeField] private CameraController m_cameraController;
         
-        [Header("Settings")]
-        [SerializeField] private int m_mapSize = 11;
-        
-        public Cell SelectedCell { get; private set; }
+        public ClientCell SelectedClientCell { get; private set; }
 
 #region Events
         /// <summary>
         /// Invoked when the touch is over the map
         /// </summary>
-        public event Action<Cell> OnTouchOverMap;
+        public event Action<ClientCell> OnTouchOverMap;
         
         /// <summary>
         /// Invoked when the touch is outside the map
@@ -43,26 +42,12 @@ namespace Minimax.GamePlay.GridSystem
         /// <summary>
         /// Invoked when the touch is over the map and ended
         /// </summary>
-        public event Action<Cell> OnTouchEndOverMap;
+        public event Action<ClientCell> OnTouchEndOverMap;
         
-        public event Action<Cell> OnTap;
+        public event Action<ClientCell> OnTapMap;
 #endregion
 
         private IsoGrid m_isoGrid;
-        
-        private void Awake()
-        {
-            m_isoGrid = new IsoGrid(m_mapSize, m_mapSize, m_tilemap.cellSize, Vector3.zero,
-                (grid, x, y) =>
-                    new Cell(x, y, grid.GetWorldPosFromCoord(x, y)));
-            
-            // Set Camera boundary
-            m_cameraController.SetCameraBoundary(m_isoGrid.GetGridCenterPos(), m_isoGrid.GetSize());
-            
-#if UNITY_EDITOR
-            m_isoGrid.DebugCoord(m_coordTexts, m_debugTextScale);
-#endif
-        }
         
         private void OnEnable()
         {
@@ -72,30 +57,42 @@ namespace Minimax.GamePlay.GridSystem
 
         private void OnDisable()
         {
-            if (GlobalManagers.Instance != null && GlobalManagers.Instance.Input != null)
+            if (GlobalManagers.IsAvailable && GlobalManagers.Instance.Input != null)
             {
                 GlobalManagers.Instance.Input.OnTouch -= HoverCell;
                 GlobalManagers.Instance.Input.OnTap -= SelectCell;
             }
         }
         
-        public void SetPlayersMapRotation()
+        [ClientRpc]
+        public void GenerateMapClientRpc(int mapSize, GridRotation rotation, ClientRpcParams clientRpcParams = default)
         {
-            if (!IsServer) return;
-
-            foreach (var clientId in NetworkManager.Singleton.ConnectedClientsIds)
-            {
-                var playerNumber = GlobalManagers.Instance.Connection.GetPlayerNumber(clientId);
-                var clientRpcParam = GlobalManagers.Instance.Connection.ClientRpcParams[clientId];
-                if (playerNumber == 0) SetRotationClientRpc(GridRotation.Default, clientRpcParam);
-                else if (playerNumber == 1) SetRotationClientRpc(GridRotation.Rotate180, clientRpcParam);
-            }
+            m_isoGrid = new IsoGrid(mapSize, mapSize, m_tilemap.cellSize, Vector3.zero,
+                (grid, x, y) =>
+                {
+                    var cell = Instantiate(m_clientCellPrefab, grid.GetWorldPosFromCoord(x, y), Quaternion.identity, transform);
+                    cell.Init(x, y);
+                    return cell;
+                });
+            
+#if UNITY_EDITOR
+            m_isoGrid.GenerateDebugCoord(m_coordTexts, m_debugTextScale);
+#endif
+            
+            // Set Rotation, need to be set after generating grid and debug coords
+            SetRotation(rotation);
+            
+            // Set Camera boundary
+            m_cameraController.SetCameraPositionAndBoundary(m_isoGrid.GetGridCenterPos(), m_isoGrid.GetSize());
         }
         
-        [ClientRpc]
-        private void SetRotationClientRpc(GridRotation rotation, ClientRpcParams clientRpcParams = default)
+        private void SetRotation(GridRotation rotation) => m_isoGrid.SetRotation(rotation);
+
+        public ClientCell this[Vector2Int coord] => m_isoGrid.Cells[coord.x, coord.y];
+        
+        public void PlaceUnitOnMap(int unitId, Vector2Int coord)
         {
-            m_isoGrid.SetRotation(rotation);
+            m_isoGrid.Cells[coord.x, coord.y].PlaceUnit(unitId);
         }
         
         private void HoverCell(Touch touch)
@@ -129,8 +126,8 @@ namespace Minimax.GamePlay.GridSystem
             if (m_isoGrid.TryGetGridCellFromWorldIso(worldPos, out var cell))
             {
                 DebugWrapper.Log($"Selected Cell: {cell}");
-                SelectedCell = cell;
-                OnTap?.Invoke(cell);
+                SelectedClientCell = cell;
+                OnTapMap?.Invoke(cell);
             }
         }
     }

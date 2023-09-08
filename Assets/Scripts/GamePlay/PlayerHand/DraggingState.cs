@@ -71,7 +71,7 @@ namespace Minimax.GamePlay.PlayerHand
             }
             if (touch.phase == TouchPhase.Ended)
             {
-                m_slot.HandManager.DeselectCard();
+                m_slot.HandManager.ReleaseSelectingCard();
                 m_slot.ChangeState(m_slot.DefaultState);
             }
         }
@@ -96,7 +96,7 @@ namespace Minimax.GamePlay.PlayerHand
         
         public override void OnPointerUp()
         {
-            m_slot.HandManager.DeselectCard();
+            m_slot.HandManager.ReleaseSelectingCard();
             m_slot.ChangeState(m_slot.DefaultState);
         }
     }

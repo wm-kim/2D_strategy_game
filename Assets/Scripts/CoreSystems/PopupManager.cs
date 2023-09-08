@@ -1,15 +1,10 @@
 using System;
 using System.Collections.Generic;
-using DG.Tweening;
 using Minimax.UI.View.Popups;
 using Minimax.Utilities;
-using UnityEditor.VersionControl;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Assertions;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
-using UnityEngine.Serialization;
 
 namespace Minimax.CoreSystems
 {

@@ -47,7 +47,6 @@ namespace Minimax.Utilities
             UnityEngine.Debug.LogException(exception);
         }
         
-        
         public static TextMesh CreateText(string text, Transform parent = null, Vector3 localPosition = default, float scale = 1f, string sortingLayerName = "Default")
         {
             var textObject = new GameObject("Text");

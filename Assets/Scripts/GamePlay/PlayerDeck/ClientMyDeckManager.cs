@@ -28,10 +28,7 @@ namespace Minimax
         [SerializeField, Range(0, 1)] private float m_deckViewFadeDuration = 0.2f;
         private Tween m_deckViewFadeTween;
         
-        /// <summary>
-        /// collection that stores all the ClientCards in the deck. Key is the card's UID.
-        /// </summary>
-        private Dictionary<int, ClientCard> m_cardsInDeck = new Dictionary<int, ClientCard>();
+        private HashSet<int> m_cardsInDeck = new HashSet<int>();
 
         public event Action<int> OnCardRemovedFromDeck;
         
@@ -51,9 +48,10 @@ namespace Minimax
         {
             for (int i = 0; i < cardUIds.Length; i++)
             {
+                // create copy of the scriptable object
                 var cardData = Instantiate(m_cardDBManager.GetCardData(cardIds[i]));
-                var clientCard = new ClientCard(cardUIds[i], cardData);
-                m_cardsInDeck.Add(cardUIds[i], clientCard);
+                new ClientCard(cardUIds[i], true, cardData);
+                m_cardsInDeck.Add(cardUIds[i]);
             }
             
             m_deckViewFader.Init(cardUIds);
@@ -61,7 +59,7 @@ namespace Minimax
         
         public void RemoveCard(int cardUID)
         {
-            if (m_cardsInDeck.ContainsKey(cardUID))
+            if (m_cardsInDeck.Contains(cardUID))
             {
                 m_cardsInDeck.Remove(cardUID);
                 OnCardRemovedFromDeck?.Invoke(cardUID);

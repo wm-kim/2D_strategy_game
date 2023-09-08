@@ -67,7 +67,7 @@ namespace Minimax.Utilities
         }
         
         // 인스턴스가 초기화되었는지 확인
-        public static bool IsInitialized => s_instance != null;
+        public static bool IsAvailable => s_instance != null;
 
         private void OnApplicationQuit()
         {

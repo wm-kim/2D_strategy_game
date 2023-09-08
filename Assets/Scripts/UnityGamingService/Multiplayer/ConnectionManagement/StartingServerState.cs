@@ -1,6 +1,7 @@
+using Minimax.Utilities;
+#if DEDICATED_SERVER
 using System;
 using Cysharp.Threading.Tasks;
-using Minimax.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Core;
@@ -8,6 +9,7 @@ using Unity.Services.Matchmaker;
 using Unity.Services.Matchmaker.Models;
 using Unity.Services.Multiplay;
 using UnityEngine;
+#endif
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {

@@ -8,15 +8,18 @@ namespace Minimax
 {
     public class ClientOpponentDeckManager : NetworkBehaviour
     {
-        private Dictionary<int, ClientCard> m_cardsInDeck = new Dictionary<int, ClientCard>();
+        /// <summary>
+        /// In clients deck card order does not matter, stores cardUIDs
+        /// </summary>
+        private HashSet<int> m_cardsInDeck = new HashSet<int>();
 
         [ClientRpc]
         public void SetupOpponentDeckClientRpc(int[] cardUIds, ClientRpcParams clientRpcParams = default)
         {
             for (int i = 0; i < cardUIds.Length; i++)
             {
-                var clientCard = new ClientCard(cardUIds[i], null);
-                m_cardsInDeck.Add(cardUIds[i], clientCard);
+                new ClientCard(cardUIds[i], false, null);
+                m_cardsInDeck.Add(cardUIds[i]);
             }
         }
         

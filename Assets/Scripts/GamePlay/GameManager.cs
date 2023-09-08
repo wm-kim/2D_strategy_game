@@ -2,11 +2,15 @@ using System;
 using Minimax.CoreSystems;
 using Minimax.GamePlay.GridSystem;
 using Minimax.GamePlay.Logic;
+using Minimax.GamePlay.Unit;
 using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+#if DEDICATED_SERVER
+using Unity.Services.Multiplay;
 using UnityEngine.Serialization;
+#endif
 
 namespace Minimax.GamePlay
 {
@@ -21,7 +25,7 @@ namespace Minimax.GamePlay
         [SerializeField] private ServerPlayersDeckManager m_serverPlayersDeckManager;
         [SerializeField] private TurnManager m_turnManager;
         [SerializeField] private ProfileManager m_profileManager;
-        [SerializeField] private ClientMap m_clientMap;
+        [SerializeField] private ServerMap m_serverMap;
         
         [Header("Game Logics")]
         [SerializeField] private CardDrawingLogic m_cardDrawingLogic;
@@ -60,10 +64,20 @@ namespace Minimax.GamePlay
         public override void OnNetworkDespawn()
         {
             m_networkManager.SceneManager.OnSceneEvent -= GameManager_OnSceneEvent;
-            
-            // clear the cached client rpc params
-            IDFactory.ResetIDs();
-            GlobalManagers.Instance.Connection.ClientRpcParams.Clear();
+
+            if (IsServer)
+            {
+                IDFactory.ResetIDs();
+                GlobalManagers.Instance.Connection.ClientRpcParams.Clear();
+                ServerCard.CardsCreatedThisGame.Clear();
+                ServerUnit.UnitsCreatedThisGame.Clear();
+            }
+
+            if (IsClient)
+            {
+                ClientCard.CardsCreatedThisGame.Clear();
+                ClientUnit.UnitsCreatedThisGame.Clear();
+            }
             base.OnNetworkDespawn();
         }
         
@@ -78,8 +92,8 @@ namespace Minimax.GamePlay
             if (IsServer)
             {
                 await m_serverPlayersDeckManager.SetupPlayersDeck();
+                m_serverMap.GenerateMap(Define.MapSize);
                 m_profileManager.SetPlayersName();
-                m_clientMap.SetPlayersMapRotation();
                 m_cardDrawingLogic.CommandDrawAllPlayerInitialCards();
                 m_turnManager.StartInitialTurn();
                 StartGame();

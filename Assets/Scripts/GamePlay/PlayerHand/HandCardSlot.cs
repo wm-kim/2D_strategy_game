@@ -24,8 +24,7 @@ namespace Minimax.GamePlay.PlayerHand
         [field: SerializeField] public HandCardView HandCardView { get; private set; }
         [field: SerializeField] public HandCardSlotSettingSO HandCardSlotSettings { get; private set; }
         public ClientMyHandManager HandManager { get; private set; }
-        public int CardUID { get; private set; }
-
+        
         // States
         [ReadOnly] private HandCardSlotState m_currentState;
         public DefaultState DefaultState { get; private set; }
@@ -37,7 +36,6 @@ namespace Minimax.GamePlay.PlayerHand
             HandManager = handManager;
             Index = index;
             gameObject.name = $"HandCardSlot_{index}";
-            CardUID = cardUID;
             HandCardView.Init(cardUID);
             
             // Init states

@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using DG.Tweening;
 using Minimax.GamePlay.CommandSystem;
 using Minimax.GamePlay.GridSystem;
+using Minimax.GamePlay.Logic;
 using Minimax.Utilities;
+using QFSW.QC;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Pool;
@@ -29,6 +31,9 @@ namespace Minimax.GamePlay.PlayerHand
         [BoxGroup("References")] [SerializeField]
         private ClientMap m_map;
         
+        [BoxGroup("Game Logics")] [SerializeField]
+        private CardPlayingLogic m_cardPlayingLogic;
+        
         [BoxGroup("Card Settings")] [SerializeField, Tooltip("카드가 놓일 곡선의 반지름")] [Range(0, 10000)]
         private float m_curvRadius = 2000f;
 
@@ -52,11 +57,17 @@ namespace Minimax.GamePlay.PlayerHand
         
         [BoxGroup("Animation Settings")] [SerializeField, Tooltip("선택한 카드 Fade Alpha")] [Range(0, 1)]
         private float m_cardFadeAlpha = 0.20f;
-
+        
         // Object Pooling HandCardSlot
         private IObjectPool<HandCardSlot> m_cardSlotPool;
 
         private List<HandCardSlot> m_slotList = new List<HandCardSlot>();
+        
+        /// <summary>
+        /// for keeping track of the index of card uids in my player's hand.
+        /// </summary>
+        private List<int> m_cardUIDs = new List<int>();
+        
         private List<Vector3> m_slotPositionList = new List<Vector3>();
         private List<Quaternion> m_slotRotationList = new List<Quaternion>();
 
@@ -71,6 +82,11 @@ namespace Minimax.GamePlay.PlayerHand
         private int m_selectedIndex = -1;
         public bool IsSelecting => m_selectedIndex != -1;
         
+        /// <summary>
+        /// Is the player targeting a cell to play a card
+        /// </summary>
+        public bool IsTargeting { get; private set; } = false;
+
         private void Awake()
         {
             // Object Pooling
@@ -93,10 +109,20 @@ namespace Minimax.GamePlay.PlayerHand
             }
         }
 
-        private void Start()
+        private void OnEnable()
         {
-            m_map.OnTouchOverMap += OnTouchOverMapMap;
+            m_map.OnTouchOverMap += OnTouchOverMap;
             m_map.OnTouchOutsideOfMap += OnUnHoverMap;
+            m_map.OnTouchEndOverMap += OnTouchEndOverMap;
+        }
+        
+        private void OnDisable()
+        {
+            if (m_map == null) return;
+            
+            m_map.OnTouchOverMap -= OnTouchOverMap;
+            m_map.OnTouchOutsideOfMap -= OnUnHoverMap;
+            m_map.OnTouchEndOverMap -= OnTouchEndOverMap;
         }
         
         public void AddInitialCardsAndTween(int[] cardUIDs)
@@ -116,6 +142,9 @@ namespace Minimax.GamePlay.PlayerHand
             TweenHandSlots();
         }
         
+        /// <summary>
+        /// Add Card To Rightmost side of the hand
+        /// </summary>
         private void AddCard(int cardUID)
         {
             if (CardCount >= Define.MaxHandCardCount)
@@ -125,22 +154,48 @@ namespace Minimax.GamePlay.PlayerHand
             }
             
             var cardSlot = m_cardSlotPool.Get();
+            
+            // passing on cardUID to the cardSlot for visualizing the card
             cardSlot.Init(this, CardCount, cardUID);
             m_slotList.Add(cardSlot);
+            m_cardUIDs.Add(cardUID);
         }
         
-        public void RemoveCardAndTween(int index)
+        public void PlayCardAndTween(int cardUID)
         {
-            if (!IsValidIndex(index)) return;
+            try
+            {
+                RemoveCard(cardUID);
+                UpdateSlotTransforms();
+                TweenHandSlots();
+            }
+            catch (Exception e)
+            {
+                DebugWrapper.LogError(e.Message);
+            }
+        }
 
+        private void RemoveCard(int cardUID)
+        {
+            int index = FindIndexOfCardUID(cardUID);
             m_cardSlotPool.Release(m_slotList[index]);
             m_slotList.RemoveAt(index);
+            m_cardUIDs.RemoveAt(index);
             
+            if (IsSelecting && m_selectedIndex == index) m_selectedIndex = -1;
+
             // Update Indexes
             for (int i = 0; i < m_slotList.Count; i++) m_slotList[i].Index = i;
-
-            UpdateSlotTransforms();
-            TweenHandSlots();
+        }
+        
+        private int FindIndexOfCardUID(int cardUID)
+        {
+            for (int i = 0; i < CardCount; i++)
+            {
+                if (m_cardUIDs[i] == cardUID) return i;
+            }
+            
+            throw new Exception($"CardUID {cardUID} not found in Hand");
         }
 
         /// <summary>
@@ -210,9 +265,9 @@ namespace Minimax.GamePlay.PlayerHand
         
         public void SelectCard(int index) => m_selectedIndex = index;
 
-        public void DeselectCard()
+        public void ReleaseSelectingCard()
         {
-            if (!IsSelecting) return;
+            if (!IsSelecting || IsTargeting) return;
             
             m_slotList[m_selectedIndex].HandCardView.FadeView(1f, m_cardFadeDuration);
             m_selectedIndex = -1;
@@ -221,16 +276,39 @@ namespace Minimax.GamePlay.PlayerHand
         // I think it is inefficient to add/remove this listener function
         // to Map's OnTouchOverMap event whenever player select/deselect a card.
         // instead, I can just check if the player is selecting a card or not, inside the listeners
-        private void OnTouchOverMapMap(Cell cell)
+        private void OnTouchOverMap(ClientCell clientCell)
         {
             if (!IsSelecting) return;
+            IsTargeting = true;
             m_slotList[m_selectedIndex].HandCardView.FadeView(m_cardFadeAlpha, m_cardFadeDuration);
         }
 
         private void OnUnHoverMap()
         {
             if (!IsSelecting) return;
+            IsTargeting = false;
             m_slotList[m_selectedIndex].HandCardView.FadeView(1f, m_cardFadeDuration);
         }
+        
+        private void OnTouchEndOverMap(ClientCell clientCell)
+        {
+            if (!IsSelecting) return;
+            
+            var cardUID = m_cardUIDs[m_selectedIndex];
+            DebugWrapper.Log($"Play Card UID {cardUID} on Cell {clientCell.Coord}");
+            IsTargeting = false;
+            m_cardPlayingLogic.CommandPlayACardFromHandServerRpc(cardUID, clientCell.Coord);
+        }
+        
+#if UNITY_EDITOR
+        [Command("Client.Hand.PrintAll", MonoTargetType.All)]
+        public void PrintAllPlayerHands()
+        {
+            foreach (var cardUID in m_cardUIDs)
+            {
+                DebugWrapper.Log($"Card UID: {cardUID}, Card ID {ClientCard.CardsCreatedThisGame[cardUID].Data.CardId}");
+            }
+        }
+#endif
     }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using Minimax.GamePlay.CommandSystem;
+using Minimax.GamePlay.INetworkSerialize;
 using Minimax.UI.View.ComponentViews.GamePlay;
 using Minimax.Utilities;
 using Sirenix.OdinInspector;
@@ -44,6 +45,13 @@ namespace Minimax
         private float m_tweenDuration = 0.5f;
         
         private List<HandCardView> m_handCards = new List<HandCardView>();
+        
+        /// <summary>
+        /// for keeping track of the index of card uids in the opponent's hand.
+        /// </summary>
+        private List<int> m_cardUIDs = new List<int>();
+        
+        
         private List<Vector3> m_handCardPositions = new List<Vector3>();
         private List<Quaternion> m_handCardRotations = new List<Quaternion>();
         
@@ -69,6 +77,52 @@ namespace Minimax
             UpdateCardTransforms();
             TweenHandCards();
         }
+        
+        public void AddCardAndTween(int cardUID)
+        {
+            AddCard(cardUID);
+            UpdateCardTransforms();
+            TweenHandCards();
+        }
+
+        public void PlayCardAndTween(int cardUID)
+        {
+            try 
+            {
+                var card = RemoveCard(cardUID);
+                // TODO : animate the card revealing, just for now destroy it.
+                Destroy(card.gameObject);
+                
+                UpdateCardTransforms();
+                TweenHandCards();
+            }
+            catch (Exception e)
+            {
+                DebugWrapper.LogError(e.Message);
+            }
+        }
+
+        private HandCardView RemoveCard(int cardUID)
+        { 
+            int index = FindIndexOfCardUID(cardUID);
+            var card = m_handCards[index];
+            m_handCards.RemoveAt(index);
+            m_cardUIDs.RemoveAt(index);
+            return card;
+        }
+
+        private int FindIndexOfCardUID(int cardUID)
+        {
+            for (int i = 0; i < CardCount; i++)
+            {
+                if (m_cardUIDs[i] == cardUID)
+                {
+                    return i;
+                }
+            }
+            
+            throw new Exception($"Cannot find card with UID {cardUID} in opponent's hand.");
+        }
 
         private void AddCard(int cardUID)
         {
@@ -82,6 +136,7 @@ namespace Minimax
                 Quaternion.Euler(m_cardInitialRotation), m_cardParent);
             
             card.Init(cardUID);
+            m_cardUIDs.Add(cardUID);
             m_handCards.Add(card);
         }
 

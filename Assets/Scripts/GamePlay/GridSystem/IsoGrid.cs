@@ -37,29 +37,28 @@ namespace Minimax.GamePlay.GridSystem
     public int Width => m_width;
     public int Height => m_height;
     
-    public Vector2 GetSize() => 
-      new Vector2(m_width * m_cellSize.x * 0.5f, m_height * m_cellSize.y * 0.5f);
-    
-    private Cell[,] m_cells;
+    public ClientCell[,] Cells { get; private set; }
     private Vector2 m_originPos;
     
     private GridRotation m_rotation = GridRotation.Default;
 
+    public Vector2 GetSize() => new(m_width * m_cellSize.x * 0.5f, m_height * m_cellSize.y * 0.5f);
+
     public IsoGrid(int width, int height, Vector3 cellSize, Vector2 originPos,
-      Func<IsoGrid, int, int, Cell> createGridObject, GridRotation rotation = GridRotation.Default)
+      Func<IsoGrid, int, int, ClientCell> createGridObject, GridRotation rotation = GridRotation.Default)
     {
       m_width = width;
       m_height = height;
       m_cellSize = cellSize;
       m_originPos = originPos;
 
-      m_cells = new Cell[width, height];
+      Cells = new ClientCell[width, height];
 
-      for (int x = 0; x < m_cells.GetLength(0); x++)
+      for (int x = 0; x < Cells.GetLength(0); x++)
       {
-        for (int y = 0; y < m_cells.GetLength(1); y++)
+        for (int y = 0; y < Cells.GetLength(1); y++)
         {
-          m_cells[x, y] = createGridObject(this, x, y);
+          Cells[x, y] = createGridObject(this, x, y);
         }
       }
       
@@ -96,11 +95,11 @@ namespace Minimax.GamePlay.GridSystem
     public void SetRotation(GridRotation rotation)
     {
       m_rotation = rotation;
-      for (int x = 0; x < m_cells.GetLength(0); x++)
+      for (int x = 0; x < Cells.GetLength(0); x++)
       {
-        for (int y = 0; y < m_cells.GetLength(1); y++)
+        for (int y = 0; y < Cells.GetLength(1); y++)
         {
-          m_cells[x, y].WorldPos = GetWorldPosFromCoord(x, y);
+          Cells[x, y].transform.position = GetWorldPosFromCoord(x, y);
         }
       }
       DebugWrapper.Log($"Grid Rotation Changed to {rotation}");
@@ -117,11 +116,11 @@ namespace Minimax.GamePlay.GridSystem
     /// <summary>
     /// 디버그 목적으로 그리드 셀 중앙에 텍스트를 표시합니다.
     /// </summary>
-    public void DebugCoord(Transform parent, float textScale)
+    public void GenerateDebugCoord(Transform parent, float textScale)
     {
-      for (int x = 0; x < m_cells.GetLength(0); x++)
+      for (int x = 0; x < Cells.GetLength(0); x++)
       {
-        for (int y = 0; y < m_cells.GetLength(1); y++)
+        for (int y = 0; y < Cells.GetLength(1); y++)
         {
           // seems like cell unit is half of the unity unit
           var text = DebugWrapper.CreateText($"{x}, {y}", parent, 
@@ -134,9 +133,9 @@ namespace Minimax.GamePlay.GridSystem
     
     private void UpdateDebugText()
     {
-      for (int x = 0; x < m_cells.GetLength(0); x++)
+      for (int x = 0; x < Cells.GetLength(0); x++)
       {
-        for (int y = 0; y < m_cells.GetLength(1); y++)
+        for (int y = 0; y < Cells.GetLength(1); y++)
         {
           Vector2Int rotatedCoord = GetRotatedCoord(x, y);
           Vector2 worldPos = GetWorldPosFromCoord(rotatedCoord.x, rotatedCoord.y);
@@ -224,25 +223,25 @@ namespace Minimax.GamePlay.GridSystem
     /// <summary>
     /// world isometric 좌표에 있는 grid cell을 반환합니다.
     /// </summary>
-    public bool TryGetGridCellFromWorldIso(Vector2 worldIsoPos, out Cell gridCell)
+    public bool TryGetGridCellFromWorldIso(Vector2 worldIsoPos, out ClientCell gridClientCell)
     {
       Vector2Int xy = WorldIsoToGridCoord(worldIsoPos);
-      return GetGridCellFromGridCoord(xy.x, xy.y, out gridCell);
+      return GetGridCellFromGridCoord(xy.x, xy.y, out gridClientCell);
     }
 
     /// <summary>
     /// grid x, y 좌표에 있는 grid cell을 반환합니다.
     /// </summary>
-    public bool GetGridCellFromGridCoord(int x, int y, out Cell gridCell)
+    public bool GetGridCellFromGridCoord(int x, int y, out ClientCell gridClientCell)
     {
       if (IsWithinGridBounds(x, y))
       {
-        gridCell = m_cells[x, y];
+        gridClientCell = Cells[x, y];
         return true;
       }
       else
       {
-        gridCell = default(Cell);
+        gridClientCell = default(ClientCell);
         return false;
       }
     }
@@ -250,7 +249,7 @@ namespace Minimax.GamePlay.GridSystem
     /// <summary>
     /// world isometric 좌표에 있는 grid cell의 값을 value로 설정합니다.
     /// </summary>
-    public void SetGridCellFromWorldIso(Vector2 worldIsoPos, Cell value)
+    public void SetGridCellFromWorldIso(Vector2 worldIsoPos, ClientCell value)
     {
       Vector2Int xy = WorldIsoToGridCoord(worldIsoPos);
       SetGridCellFromGridCoord(xy.x, xy.y, value);
@@ -259,11 +258,11 @@ namespace Minimax.GamePlay.GridSystem
     /// <summary>
     /// grid x, y 좌표에 있는 grid cell을 value로 설정합니다.
     /// </summary>
-    public void SetGridCellFromGridCoord(int x, int y, Cell value)
+    public void SetGridCellFromGridCoord(int x, int y, ClientCell value)
     {
       if (IsWithinGridBounds(x, y))
       {
-        m_cells[x, y] = value;
+        Cells[x, y] = value;
         TriggerCellChanged(x, y);
       }
       else
