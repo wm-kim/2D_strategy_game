@@ -32,7 +32,7 @@ namespace Minimax.SceneManagement
             m_netManager.SceneManager != null &&
             m_netManager.NetworkConfig.EnableSceneManagement;
 
-        private void Start()
+        private void OnEnable()
         {
             NetworkManager.OnServerStarted += OnNetworkingSessionStarted;
             NetworkManager.OnClientStarted += OnNetworkingSessionStarted;
@@ -40,7 +40,7 @@ namespace Minimax.SceneManagement
             NetworkManager.OnClientStopped += OnNetworkingSessionEnded;
         }
         
-        public override void OnDestroy()
+        public void OnDisable()
         {
 
             if (NetworkManager != null)
@@ -50,7 +50,6 @@ namespace Minimax.SceneManagement
                 NetworkManager.OnServerStopped -= OnNetworkingSessionEnded;
                 NetworkManager.OnClientStopped -= OnNetworkingSessionEnded;
             }
-            base.OnDestroy();
         }
         
 #if UNITY_EDITOR

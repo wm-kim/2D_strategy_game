@@ -13,7 +13,7 @@ namespace Minimax.GamePlay
         {
             public ulong ClientId;
 
-            private FixedPlayerName m_playerName;
+            private NetworkString m_playerName;
 
             public string PlayerName
             {
@@ -25,7 +25,7 @@ namespace Minimax.GamePlay
             {
                 ClientId = clientId;
 
-                m_playerName = new FixedPlayerName();
+                m_playerName = new NetworkString();
                 m_playerName = name;
             }
 

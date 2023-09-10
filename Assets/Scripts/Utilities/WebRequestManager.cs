@@ -120,7 +120,7 @@ namespace Minimax
             var url = $"{baseUrl}/{moduleName}/{functionName}";
             Dictionary<string, string> headers = new Dictionary<string, string>
             {
-                {"Authorization", $"Bearer {GlobalManagers.Instance.Connection.ServerBearerToken}"},
+                {"Authorization", $"Bearer {GlobalManagers.Instance.Connection.DedicatedServer.ServerBearerToken}"},
                 {"Content-Type", "application/json"},
             };
             

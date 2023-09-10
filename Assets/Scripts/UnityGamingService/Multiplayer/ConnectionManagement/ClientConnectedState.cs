@@ -1,5 +1,6 @@
 using Minimax.CoreSystems;
 using Minimax.SceneManagement;
+using Minimax.UI.View.Popups;
 using Minimax.Utilities;
 using UnityEngine;
 
@@ -18,10 +19,10 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             m_connectionManager.RequestShutdownServerRpc();
         }
 
-        public override void OnClientDisconnect(ulong _)
+        public override void OnClientDisconnect(ulong clientId)
         {
             var disconnectReason = m_connectionManager.NetworkManager.DisconnectReason;
-            DebugWrapper.Log("Client disconnected");
+            DebugWrapper.Log($"Client {clientId} disconnected");
             
             if (string.IsNullOrEmpty(disconnectReason))
             {
@@ -34,9 +35,17 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 m_connectionManager.ConnectStatusChannel.Publish(connectStatus);
                 
                 DebugWrapper.Log($"Disconnected reason: {connectStatus.ToString()}");
-                
-                GlobalManagers.Instance.Scene.LoadScene(SceneType.MenuScene);
                 m_connectionManager.ChangeState(m_connectionManager.Offline);
+
+                // if (clientId == m_connectionManager.NetworkManager.LocalClientId)
+                // {
+                //     PopupManager.Instance.RegisterPopupToQueue(PopupType.LosePopup);
+                // }
+                // else
+                // {
+                //     PopupManager.Instance.RegisterPopupToQueue(PopupType.WinPopup);
+                // }                    
+                // GlobalManagers.Instance.Scene.LoadScene(SceneType.MenuScene);
             }
         }
     }

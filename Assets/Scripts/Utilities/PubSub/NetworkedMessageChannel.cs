@@ -68,7 +68,7 @@ namespace Minimax.Utilities.PubSub
                 Debug.LogError("Only a server can publish in a NetworkedMessageChannel");
             }
         }
-        
+
         private void SendMessageThroughNetwork(T message)
         {
             using var writer = new FastBufferWriter(FastBufferWriter.GetWriteSize<T>(), Allocator.Temp);

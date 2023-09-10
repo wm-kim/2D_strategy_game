@@ -121,33 +121,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6128333548164800052}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11400000, guid: 82184ca721492e748b0933d714756021, type: 2}
-        m_TargetAssemblyTypeName: Minimax.ScriptableObjects.Events.LoadSceneEventSO,
-          Assembly-CSharp
-        m_MethodName: LoadScene
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 8905850318998413062}
-          m_ObjectArgumentAssemblyTypeName: Minimax.SceneTypeSelector, Assembly-CSharp
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 11400000, guid: fcb12f856a470ed44950b1b999d8a7e5, type: 2}
-        m_TargetAssemblyTypeName: Minimax.ScriptableObjects.Events.PopupEventSO,
-          Assembly-CSharp
-        m_MethodName: HidePopup
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &8905850318998413062
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -686,6 +660,7 @@ MonoBehaviour:
   <Type>k__BackingField: -1
   m_showAnimationSequencer: {fileID: 2958029448231227181}
   m_hideAnimationSequencer: {fileID: 8227841965450824742}
+  m_confirmButton: {fileID: 4846224420714361280}
 --- !u!1 &6907427384464425906
 GameObject:
   m_ObjectHideFlags: 0

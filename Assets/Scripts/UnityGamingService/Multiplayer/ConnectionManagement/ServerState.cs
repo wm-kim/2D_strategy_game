@@ -22,7 +22,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         public override async void Enter()
         {
 #if DEDICATED_SERVER
-            Debug.Log("Ready server for accepting players");
+            DebugWrapper.Log("Ready server for accepting players");
             await MultiplayService.Instance.ReadyServerForPlayersAsync();
 #endif
         }
@@ -44,7 +44,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 });
             
 #if DEDICATED_SERVER
-            HandleUpdateBackfillTickets();
+            var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
+            m_connectionManager.DedicatedServer.UserJoinedServer(playerId);
             
             // check if server reached max players and if so, start the game
             var currentScene = GlobalManagers.Instance.Scene.CurrentlyLoadedScene;
@@ -61,29 +62,27 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         
         public override void OnClientDisconnect(ulong clientId)
         {
-            if (clientId != m_connectionManager.NetworkManager.LocalClientId)
+            var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
+            
+            if (playerId != null)
             {
-                var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
-                if (playerId != null)
+                var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
+                if (sessionData.HasValue)
                 {
-                    var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
-                    if (sessionData.HasValue)
-                    {
-                        m_connectionManager.ConnectionEventChannel.Publish(
-                            new ConnectionEventMessage()
-                            {
-                                ConnectStatus = ConnectStatus.GenericDisconnect,
-                                PlayerName = sessionData.Value.PlayerName
-                            });
-                    }
-                    
-                    SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
-                    m_connectionManager.ClientRpcParams.Remove(clientId);
+                    m_connectionManager.ConnectionEventChannel.Publish(
+                        new ConnectionEventMessage()
+                        {
+                            ConnectStatus = ConnectStatus.GenericDisconnect,
+                            PlayerName = sessionData.Value.PlayerName
+                        });
                 }
+
+                SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
+                m_connectionManager.ClientRpcParams.Remove(clientId);
             }
- 
+
 #if DEDICATED_SERVER
-            HandleUpdateBackfillTickets();
+            m_connectionManager.DedicatedServer.UserLeft(playerId);
 #endif
         }
         
@@ -91,7 +90,6 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         {
             m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.GenericDisconnect);
             m_connectionManager.ChangeState(m_connectionManager.Offline);
-            m_connectionManager.ShutDownApplication();
         }
         
         // TODO : Need to authenticate your user against an UGS' auth service, send auth token to dedicated server
@@ -135,41 +133,5 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             // On the client-side, NetworkManager.DisconnectReason will be populated with this message via DisconnectReasonMessage
             response.Reason = JsonUtility.ToJson(gameReturnStatus);
         }
-        
-#if DEDICATED_SERVER
-        private async void HandleUpdateBackfillTickets() {
-            if (m_connectionManager.BackfillTicketId != null 
-                && m_connectionManager.PayloadAllocation != null 
-                && m_connectionManager.HasAvailablePlayerSlot()) {
-                
-                DebugWrapper.Log("HandleUpdateBackfillTickets");
-
-                List<Unity.Services.Matchmaker.Models.Player> playerList = new List<Unity.Services.Matchmaker.Models.Player>();
-
-                var connectedClientIds = m_connectionManager.NetworkManager.ConnectedClientsIds;
-                foreach(var clientId in connectedClientIds)
-                {
-                    var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
-                    playerList.Add(new Unity.Services.Matchmaker.Models.Player(playerId));
-                }
-
-                var payloadAllocation = m_connectionManager.PayloadAllocation;
-                MatchProperties matchProperties = new MatchProperties(
-                    payloadAllocation.MatchProperties.Teams, 
-                    playerList, 
-                    payloadAllocation.MatchProperties.Region, 
-                    payloadAllocation.MatchProperties.BackfillTicketId
-                );
-
-                try {
-                    await MatchmakerService.Instance.UpdateBackfillTicketAsync(payloadAllocation.BackfillTicketId,
-                        new BackfillTicket(m_connectionManager.BackfillTicketId, properties: new BackfillTicketProperties(matchProperties))
-                    );
-                } catch (MatchmakerServiceException e) {
-                    DebugWrapper.Log("Error: " + e);
-                }
-            }
-        }
-#endif
     }
 }

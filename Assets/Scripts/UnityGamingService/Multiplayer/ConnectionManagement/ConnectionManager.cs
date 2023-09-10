@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Minimax.CoreSystems;
 using Minimax.SceneManagement;
 using Minimax.ScriptableObjects.Events;
+using Minimax.UI.View.Popups;
 using Minimax.Utilities;
 using Minimax.Utilities.PubSub;
 using Unity.Netcode;
@@ -49,7 +50,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
     public struct ConnectionEventMessage : INetworkSerializeByMemcpy
     {
         public ConnectStatus ConnectStatus;
-        public FixedPlayerName PlayerName;
+        public NetworkString PlayerName;
     }
     
     public class ConnectionManager : NetworkBehaviour
@@ -69,24 +70,6 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         internal ClientConnectingState ClientConnecting;
         internal ClientReconnectingState ClientReconnecting;
         internal ClientConnectedState ClientConnected;
-
-#if DEDICATED_SERVER
-        public string BackfillTicketId { get; set; }
-        public PayloadAllocation PayloadAllocation { get; set; }
-        
-        
-        public string ServerBearerToken { get; set; }
-        
-        public async void DeleteBackfillTicket()
-        {
-            if (BackfillTicketId != null)
-                await MatchmakerService.Instance.DeleteBackfillTicketAsync(BackfillTicketId);
-            else
-            {
-                DebugWrapper.LogError("BackfillTicketId is null");
-            }
-        }
-#endif
         
         public void Awake()
         {
@@ -103,7 +86,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             ClientConnected = new ClientConnectedState(this);
         }
 
-        private void Start()
+        private void OnEnable()
         {
             m_currentState = Offline;
             NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
@@ -113,13 +96,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             NetworkManager.OnServerStopped += OnServerStopped;
             NetworkManager.ConnectionApprovalCallback += ApprovalCheck;
         }
-
-        private void Update()
-        {
-            m_currentState.OnUpdate();
-        }
-
-        public override void OnDestroy()
+        
+        public void OnDisable()
         {
             if (NetworkManager != null)
             {
@@ -129,10 +107,23 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 NetworkManager.OnTransportFailure += OnTransportFailure;
                 NetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
             }
-            
-            base.OnDestroy();
         }
 
+#if DEDICATED_SERVER
+        // automatically start the server if this is a dedicated server
+        public DedicatedServerManager DedicatedServer { get; set; }
+        private async void Start()
+        {
+            StartServer();
+        }
+#endif
+
+        private void Update()
+        {
+            m_currentState.OnUpdate();
+        }
+
+    
         public void ChangeState(ConnectionState nextState)
         {
             DebugWrapper.Log(
@@ -294,11 +285,20 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             for (var i = NetworkManager.ConnectedClientsIds.Count - 1; i >= 0; i--)
             {
                 var id = NetworkManager.ConnectedClientsIds[i];
+                if (id == clientId) RequestShutDownClientRpc(true, ClientRpcParams[id]);
+                else RequestShutDownClientRpc(false, ClientRpcParams[id]);
                 NetworkManager.DisconnectClient(id, reason);
             }
             
             ChangeState(Offline);
             ShutDownApplication();
+        }
+        
+        [ClientRpc]
+        public void RequestShutDownClientRpc(bool isMyRequest, ClientRpcParams clientRpcParams = default)
+        {
+            if (isMyRequest) PopupManager.Instance.RegisterPopupToQueue(PopupType.LosePopup);
+            else PopupManager.Instance.RegisterPopupToQueue(PopupType.WinPopup);
         }
 
         public void ShutDownApplication()

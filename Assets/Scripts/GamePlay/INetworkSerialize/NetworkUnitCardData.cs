@@ -1,3 +1,4 @@
+using System.Text;
 using Minimax.ScriptableObjects.CardDatas;
 using Unity.Netcode;
 
@@ -26,7 +27,13 @@ namespace Minimax.GamePlay.INetworkSerialize
 
         public override string ToString()
         {
-            return $"CardId: {CardId}, Cost: {Cost}, Attack: {Attack}, Health: {Health}, Movement: {Movement}";
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"CardId: {CardId}");
+            sb.AppendLine($"Cost: {Cost}");
+            sb.AppendLine($"Attack: {Attack}");
+            sb.AppendLine($"Health: {Health}");
+            sb.AppendLine($"Movement: {Movement}");
+            return sb.ToString();
         }
 
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
