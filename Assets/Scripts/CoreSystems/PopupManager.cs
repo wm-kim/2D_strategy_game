@@ -26,7 +26,7 @@ namespace Minimax.CoreSystems
         // 현재 표시되고 있는 popup
         [SerializeField, ReadOnly] private PopupView m_currentPopupView = null;
         private string m_currentPopupKey = string.Empty;
-        private int m_currentPopupPriority = 0;
+        private PopupPriority m_currentPopupPriority = PopupPriority.Low;
 
         [Header("Settings")] 
         [SerializeField, Range(0.0f, 1f)] private float m_fadeInDuration = 0.2f;
@@ -45,6 +45,11 @@ namespace Minimax.CoreSystems
             Assert.IsTrue(m_commonPopupAssetLabel.labelString == Define.CommonPopupAssetLabel);
             
             PreLoadPopups();
+        }
+
+        private void OnDestroy()
+        {
+            Instance = null;
         }
 
         private void PreLoadPopups()
@@ -89,7 +94,7 @@ namespace Minimax.CoreSystems
         /// Popup을 표시합니다. PopupType이 queue안에서 중복되는지 확인하기 위한 key가 됩니다.
         /// </summary>
         public void RegisterPopupToQueue(PopupType key, PopupCommandType commandType = PopupCommandType.Duplicate, 
-            int priority = 0)
+            PopupPriority priority = PopupPriority.Low)
             => RegisterCommandToQueue(new DefaultPopupCommand(key, commandType, priority));
 
         /// <param name="key">queue안에서 중복되는지 확인하기 위한 식별자입니다.</param>
@@ -97,14 +102,14 @@ namespace Minimax.CoreSystems
             string rightButtonText,
             Action leftButtonAction, Action rightButtonAction,
             PopupCommandType commandType = PopupCommandType.Duplicate,
-            int priority = 0
+            PopupPriority priority = PopupPriority.Low
             )
             => RegisterCommandToQueue(new TwoButtonPopupCommand(key, message, leftButtonText, rightButtonText,
                 leftButtonAction, rightButtonAction, commandType, priority));
 
         /// <param name="key">queue안에서 중복되는지 확인하기 위한 식별자입니다.</param>
         public void RegisterOneButtonPopupToQueue(string key, string message, string buttonText, Action buttonAction,
-            PopupCommandType commandType = PopupCommandType.Duplicate, int priority = 0)
+            PopupCommandType commandType = PopupCommandType.Duplicate, PopupPriority priority = PopupPriority.Low)
             => RegisterCommandToQueue(new OneButtonPopupCommand(key, message, buttonText, buttonAction, commandType,
                 priority));
 
@@ -116,12 +121,12 @@ namespace Minimax.CoreSystems
                 leftButtonAction, rightButtonAction, commandType));
 
         /// <param name="key">queue안에서 중복되는지 확인하기 위한 식별자입니다.</param>
-        public void MobileBackButtonPopup(PopupType key, PopupCommandType commandType = PopupCommandType.Duplicate, int priority = 0)
+        public void MobileBackButtonPopup(PopupType key, PopupCommandType commandType = PopupCommandType.Duplicate, PopupPriority priority = PopupPriority.Low)
             => MobileBackCommand(new DefaultPopupCommand(key, commandType, priority));
 
         /// <param name="key">queue안에서 중복되는지 확인하기 위한 식별자입니다.</param>
         public void RegisterLoadingPopupToQueue(string key, string message,
-            PopupCommandType commandType = PopupCommandType.Duplicate, int priority = 0)
+            PopupCommandType commandType = PopupCommandType.Duplicate, PopupPriority priority = PopupPriority.Low)
             => RegisterCommandToQueue(new LoadingPopupCommand(key, message, commandType, priority));
 
         /// <summary>
@@ -130,7 +135,16 @@ namespace Minimax.CoreSystems
         /// </summary>
         private void MobileBackCommand(IPopupCommand command)
         {
-            if (IsPopupShowing) HideCurrentPopup();
+            if (IsPopupShowing)
+            {
+                if (m_currentPopupView as LoadingPopup)
+                {
+                    DebugWrapper.LogWarning("Loading popup is showing. Cannot hide loading popup.");
+                    return;
+                }
+                
+                HideCurrentPopup();
+            }
             else RegisterCommandToQueue(command);
         }
 
@@ -178,10 +192,18 @@ namespace Minimax.CoreSystems
         
         /// <summary>
         /// 현재 표시되고 있는 popup을 숨기고 파괴합니다. 이후 대기열에서 다음 popup을 표시합니다.
+        /// if popupKey is null, hide current popup
         /// </summary>
-        public void HideCurrentPopup()
+        public void HideCurrentPopup(string popupKey = null)
         {
             if (m_currentPopupView == null) return;
+
+            if (!string.IsNullOrEmpty(popupKey) && m_currentPopupKey != popupKey)
+            {
+                DebugWrapper.LogWarning($"Current popup key is not matched with popup key to hide." +
+                                        $" Current : {m_currentPopupKey}, Hide : {popupKey}");
+                return;
+            }
             
             m_popupBackgroundFader.StartHide(m_fadeOutDuration);
             m_currentPopupView.StartHide(m_fadeOutDuration);
@@ -197,7 +219,7 @@ namespace Minimax.CoreSystems
             {
                 m_currentPopupView = null;
                 m_currentPopupKey = null;
-                m_currentPopupPriority = 0;
+                m_currentPopupPriority = PopupPriority.Low;
                 return;
             }
 

@@ -33,8 +33,9 @@ namespace Minimax.GamePlay
         private NetworkManager m_networkManager => NetworkManager.Singleton;
         
         public bool IsGameStarted { get; private set; }
+        
         // Events
-        public event System.Action OnGameStarted;
+        public event Action OnGameStarted;
         
         private async void Start()
         {

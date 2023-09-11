@@ -7,13 +7,13 @@ namespace Minimax.UI.View.Popups
         public string Key { get; }
         public PopupType Type { get; }
         public PopupCommandType CommandType { get; }
-        public int Priority { get; }
+        public PopupPriority Priority { get; }
         public string Message { get; }
         public string ButtonText { get; }
         public Action ButtonAction { get; }
         
         public OneButtonPopupCommand(string key, string message, string buttonText, Action buttonAction, 
-            PopupCommandType commandType = PopupCommandType.Duplicate, int priority = 0)
+            PopupCommandType commandType = PopupCommandType.Duplicate, PopupPriority priority = PopupPriority.Low)
         {
             Key = key;
             Type = PopupType.OneButtonPopup;

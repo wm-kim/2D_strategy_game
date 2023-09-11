@@ -280,7 +280,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 DebugWrapper.Log($"{playerData.Value.PlayerName} requested shutdown."); 
             }
             
-            // disconnect all clients
+            // sending game result to all clients and disconnecting them
             var reason = JsonUtility.ToJson(ConnectStatus.UserRequestedDisconnect);
             for (var i = NetworkManager.ConnectedClientsIds.Count - 1; i >= 0; i--)
             {

@@ -29,7 +29,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
             PopupManager.Instance.RegisterLoadingPopupToQueue(Define.ReconnectingPopup,
                 "Lost connection to the server. Reconnecting...",
-                PopupCommandType.Unique, 1);
+                PopupCommandType.Unique, PopupPriority.Normal);
 
             m_reconnectCoroutine = m_connectionManager.StartCoroutine(ReconnectCoroutine());
         }
@@ -45,6 +45,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         
         public override void OnClientConnected(ulong _)
         {
+            PopupManager.Instance.HideCurrentPopup(Define.ReconnectingPopup);
             m_connectionManager.ChangeState(m_connectionManager.ClientConnected);
         }
         
@@ -88,15 +89,16 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                     m_connectionManager.ConnectStatusChannel.Publish(connectStatus);
                 }
                 
-                // 오프라인 상태로 전환합니다.
+                // 오프라인 상태로 전환합니다. client입장에서는 네트워크 연결이 불안정한 것인지 
+                // 서버가 죽은 것인지 알 수 가 없다.
                 PopupManager.Instance.RegisterOneButtonPopupToQueue(Define.ServerDisconnectedPopup,
-                    "Server unexpectedly disconnected.", "OK", 
+                    "Reconnecting to Server Failed.", "OK", 
                     () =>
                     {
                         GlobalManagers.Instance.Scene.LoadScene(SceneType.MenuScene);
                         PopupManager.Instance.HideCurrentPopup();
                     },
-                    PopupCommandType.Unique, 2);
+                    PopupCommandType.Unique, PopupPriority.High);
                     
                 m_connectionManager.ChangeState(m_connectionManager.Offline);
             }

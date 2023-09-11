@@ -110,6 +110,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             DebugWrapper.Log($"Player {playerId} left. {playerCount} players remaining.");
             if (playerCount <= 0)
             {
+                // TODO : Should wait for user to reconnect in server side
                 CloseServer().Forget();
                 return;
             }

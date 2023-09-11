@@ -25,11 +25,12 @@ namespace Minimax.Utilities
         public static readonly string SelectDeckPopup = "selectDeck";
         public static readonly string DeleteDeckPopup = "deleteDeck";
         public static readonly string ReconnectingPopup = "reconnecting";
+        public static readonly string PlayerLostConnectionPopup = "playerLostConnection";
         public static readonly string ServerDisconnectedPopup = "serverDisconnected";
 #endregion
 
 #region NETWORK_SETTINGS
-        public static readonly int TimeOutSeconds = 30;
+        public static readonly int WebTimeOutSeconds = 30;
         public static readonly int MaxConnectPayloadSize = 1024;
         public static readonly int TimeBeforeFirstAttempt = 1;
         public static readonly int TimeBetweenReconnectionAttempts = 5;

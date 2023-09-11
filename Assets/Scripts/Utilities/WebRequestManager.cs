@@ -37,7 +37,7 @@ namespace Minimax
     
             // time out 설정
             var cts = new CancellationTokenSource();
-            cts.CancelAfterSlim(TimeSpan.FromSeconds(Define.TimeOutSeconds));
+            cts.CancelAfterSlim(TimeSpan.FromSeconds(Define.WebTimeOutSeconds));
 
             // 웹 요청 생성
             UnityWebRequest request = new UnityWebRequest(url, sendType.ToString());
