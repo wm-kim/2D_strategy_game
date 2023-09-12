@@ -1,3 +1,5 @@
+using System.Collections;
+using System.Collections.Generic;
 using Minimax.Utilities;
 using Newtonsoft.Json;
 using Unity.Netcode;
@@ -15,6 +17,15 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
     public class ServerState : OnlineState
     {
+        /// <summary>
+        /// key is playerNumber, value is the remain time for client reconnection
+        /// </summary>
+        private Dictionary<int, float> m_remainTimeForClientReconnect = new Dictionary<int, float>();
+        /// <summary>
+        /// key is playerId, value is the coroutine for waiting client reconnection
+        /// </summary>
+        private Dictionary<int, Coroutine> m_coroutines = new Dictionary<int, Coroutine>();
+
         public ServerState(ConnectionManager connectionManager) : base(connectionManager)
         {
         }
@@ -29,24 +40,43 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public override void Exit()
         {
-            SessionManager<SessionPlayerData>.Instance.OnServerEnded();
+            // stop all the coroutines if exist
+            foreach (var coroutine in m_coroutines)
+                m_connectionManager.StopCoroutine(coroutine.Value);
+            
+            SessionPlayerManager.Instance.OnServerEnded();
         }
 
         public override void OnClientConnected(ulong clientId)
         {
             DebugWrapper.Log($"Client {clientId} connected");
+            var sessionPlayers = SessionPlayerManager.Instance;
+            var playerNumber = sessionPlayers.GetPlayerNumber(clientId);
             
             m_connectionManager.ConnectionEventChannel.Publish(
                 new ConnectionEventMessage()
                 {
                     ConnectStatus = ConnectStatus.Success,
-                    PlayerName = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId)?.PlayerName
+                    PlayerName = sessionPlayers.GetPlayerData(clientId)?.PlayerName
                 });
             
-#if DEDICATED_SERVER
-            var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
-            m_connectionManager.DedicatedServer.UserJoinedServer(playerId);
+            // if this is a reconnection, stop the coroutine
+            if (m_coroutines.ContainsKey(playerNumber))
+            {
+                m_connectionManager.StopCoroutine(m_coroutines[playerNumber]);
+                m_coroutines.Remove(playerNumber);
+                
+                // TODO : 재연결에 성공했지만 다른 플레이어가 연결이 끊어진 상태라면, 그 플레이어가 재연결 할 때까지 기다립니다.
+                
+            }
+            else 
+            {
+                m_remainTimeForClientReconnect[playerNumber] = Define.ServerWaitMsForClientReconnect;
+            }
             
+#if DEDICATED_SERVER
+            m_connectionManager.DedicatedServer.UserJoinedServer(playerId);
+
             // check if server reached max players and if so, start the game
             var currentScene = GlobalManagers.Instance.Scene.CurrentlyLoadedScene;
             if (currentScene != SceneType.GamePlayScene.ToString())
@@ -62,29 +92,49 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         
         public override void OnClientDisconnect(ulong clientId)
         {
-            var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
-            
-            if (playerId != null)
+            var sessionPlayers = SessionPlayerManager.Instance;
+            var playerId = sessionPlayers.GetPlayerId(clientId);
+            var playerNumber = sessionPlayers.GetPlayerNumber(clientId);
+            var sessionData = sessionPlayers.GetPlayerData(playerId);
+            if (sessionData.HasValue)
             {
-                var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
-                if (sessionData.HasValue)
-                {
-                    m_connectionManager.ConnectionEventChannel.Publish(
-                        new ConnectionEventMessage()
-                        {
-                            ConnectStatus = ConnectStatus.GenericDisconnect,
-                            PlayerName = sessionData.Value.PlayerName
-                        });
-                }
-
-                SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
-                m_connectionManager.ClientRpcParams.Remove(clientId);
+                // for notifying other connected clients that clientId has disconnected
+                m_connectionManager.ConnectionEventChannel.Publish(
+                    new ConnectionEventMessage()
+                    {
+                        ConnectStatus = ConnectStatus.GenericDisconnect,
+                        PlayerName = sessionData.Value.PlayerName
+                    });
+                
+                // always start a coroutine for waiting client reconnection no matter what the reason is
+                // because if the reason leads to server shutdown, all the coroutines will be stopped
+                m_coroutines[playerNumber] =  
+                    m_connectionManager.StartCoroutine(WaitPlayerReconnection(playerNumber));
             }
-
+            
+            sessionPlayers.DisconnectClient(clientId);
+            sessionPlayers.ClientRpcParams.Remove(clientId);
 #if DEDICATED_SERVER
             m_connectionManager.DedicatedServer.UserLeft(playerId);
 #endif
         }
+        
+        private IEnumerator WaitPlayerReconnection(int playerNumber)
+        {
+            DebugWrapper.Log($"Wait for player {playerNumber.ToString()} reconnection...\n" +
+                             $"Remain time : {m_remainTimeForClientReconnect[playerNumber].ToString("F1")}");
+            
+            while (m_remainTimeForClientReconnect[playerNumber] > 0)
+            {
+                m_remainTimeForClientReconnect[playerNumber] -= m_connectionManager.NetworkManager.ServerTime.TimeAsFloat;
+                yield return null;
+            }
+            
+            DebugWrapper.Log($"player {playerNumber.ToString()} reconnection Timeout");
+            var reason = JsonUtility.ToJson(ConnectStatus.ServerEndedSession);
+            m_connectionManager.SendGameResultAndShutdown(playerNumber, reason);
+        }
+
         
         public override void OnServerStopped()
         {
@@ -108,8 +158,9 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             
             var payload = System.Text.Encoding.UTF8.GetString(connectionData);
             var connectionPayload = JsonConvert.DeserializeObject<ConnectionPayload>(payload);
+            var sessionPlayers = SessionPlayerManager.Instance;
             var gameReturnStatus = m_connectionManager.GetConnectStatus(connectionPayload);
-            int playerNumber = m_connectionManager.GetAvailablePlayerNumber();
+            int playerNumber = sessionPlayers.GetAvailablePlayerNumber();
             
             bool isConnectSuccess = gameReturnStatus == ConnectStatus.Success;
             bool isPlayerNumberValid = playerNumber != -1;
@@ -119,7 +170,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 DebugWrapper.Log($"Client {clientId} approved");
                 DebugWrapper.Log($"Player {connectionPayload.playerName} assigned to player number {playerNumber}");
                 
-                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
+                sessionPlayers.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
                     new SessionPlayerData(clientId, connectionPayload.playerName, playerNumber, true));
                 
                 response.Approved = true;

@@ -20,16 +20,17 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
     {
         public ClientReconnectingState(ConnectionManager connectionManager) : base(connectionManager) { }
 
-        Coroutine m_reconnectCoroutine;
+        private Coroutine m_reconnectCoroutine;
         private int m_attempts;
         
         public override void Enter()
         {
             m_attempts = 0;
-
+            
+            // TODO : Make Reconnecting Channel
             PopupManager.Instance.RegisterLoadingPopupToQueue(Define.ReconnectingPopup,
                 "Lost connection to the server. Reconnecting...",
-                PopupCommandType.Unique, PopupPriority.Normal);
+                PopupCommandType.Unique, PopupPriority.High);
 
             m_reconnectCoroutine = m_connectionManager.StartCoroutine(ReconnectCoroutine());
         }
@@ -66,6 +67,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                     var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
                     switch (connectStatus)
                     {
+                        case ConnectStatus.ServerEndedSession:
                         case ConnectStatus.UserRequestedDisconnect:
                         case ConnectStatus.ServerFull:
                             m_connectionManager.ChangeState(m_connectionManager.Offline);
@@ -98,7 +100,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                         GlobalManagers.Instance.Scene.LoadScene(SceneType.MenuScene);
                         PopupManager.Instance.HideCurrentPopup();
                     },
-                    PopupCommandType.Unique, PopupPriority.High);
+                    PopupCommandType.Unique, PopupPriority.Critical);
                     
                 m_connectionManager.ChangeState(m_connectionManager.Offline);
             }

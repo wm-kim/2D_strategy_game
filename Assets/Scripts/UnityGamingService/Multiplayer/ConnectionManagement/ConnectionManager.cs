@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Minimax.CoreSystems;
+using Minimax.GamePlay;
 using Minimax.SceneManagement;
 using Minimax.ScriptableObjects.Events;
 using Minimax.UI.View.Popups;
@@ -56,10 +57,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
     public class ConnectionManager : NetworkBehaviour
     {
         public NetworkManager NetworkManager => NetworkManager.Singleton;
-
         public IMessageChannel<ConnectStatus> ConnectStatusChannel { get; private set; } 
         public IMessageChannel<ConnectionEventMessage> ConnectionEventChannel { get; private set; }
-        public ClientRpcParamManager ClientRpcParams { get; private set; } = new ClientRpcParamManager();
         
         private ConnectionState m_currentState;
         internal OfflineState Offline;
@@ -123,7 +122,6 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             m_currentState.OnUpdate();
         }
 
-    
         public void ChangeState(ConnectionState nextState)
         {
             DebugWrapper.Log(
@@ -206,107 +204,48 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 return ConnectStatus.ServerFull;
             }
             
-            return SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(connectionPayload.playerId) ?
+            return SessionPlayerManager.Instance.IsDuplicateConnection(connectionPayload.playerId) ?
                 ConnectStatus.LoggedInAgain : ConnectStatus.Success;
         }
 
-        public int GetAvailablePlayerNumber()
-        {
-            for (var i = 0; i < Define.MaxConnectedPlayers; i++)
-            {
-                if (IsPlayerNumberAvailable(i))
-                {
-                    return i;
-                }
-            }
-            
-            // Server is full
-            return -1;
-        }
-
-        private bool IsPlayerNumberAvailable(int playerNumber)
-        {
-            var connectedClients = NetworkManager.ConnectedClientsIds;
-            foreach (var clientId in connectedClients)
-            {
-                var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
-                if (playerData.HasValue)
-                {
-                    if (playerData.Value.PlayerNumber == playerNumber)
-                    {
-                        return false;
-                    }
-                }
-            }
-            
-            return true;
-        }
-        
-        public int GetPlayerNumber(ulong clientId)
-        {
-            var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
-            if (playerData.HasValue)
-            {
-                return playerData.Value.PlayerNumber;
-            }
-            
-            // this should never happen, throw an exception
-            throw new Exception($"Player Number data not found for client {clientId}");
-        }
-
-        public int GetOpponentPlayerNumber(ulong clientId)
-        {
-            var playerNumber = GetPlayerNumber(clientId);
-            
-            if (NetworkManager.ConnectedClientsIds.Count == 1)
-            {
-                // if there is only one player, throw an exception
-                throw new Exception($"There is only one player in the game. Client {clientId} is the only player.");
-            }
-            
-            var opponentPlayerNumber = playerNumber == 0 ? 1 : 0;
-            return opponentPlayerNumber;
-        }
-
+        /// <summary>
+        /// Called when client wants to disconnect from the server.
+        /// </summary>
         [ServerRpc(RequireOwnership = false)]
         public void RequestShutdownServerRpc(ServerRpcParams serverRpcParams = default)
         {
             if (!IsServer) return;
             
-            var clientId = serverRpcParams.Receive.SenderClientId;
-            var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
-            if (playerData.HasValue)
-            {
-                DebugWrapper.Log($"{playerData.Value.PlayerName} requested shutdown."); 
-            }
-            
-            // sending game result to all clients and disconnecting them
+            var senderClientId = serverRpcParams.Receive.SenderClientId;
+            var playerNumber = SessionPlayerManager.Instance.GetPlayerNumber(senderClientId);
             var reason = JsonUtility.ToJson(ConnectStatus.UserRequestedDisconnect);
-            for (var i = NetworkManager.ConnectedClientsIds.Count - 1; i >= 0; i--)
+            SendGameResultAndShutdown(playerNumber, reason);
+        }
+        
+        /// <summary>
+        /// Sends the game result to all clients and disconnects them. If the other client is disconnected,
+        /// it won't be notified of the game result.
+        /// </summary>
+        /// <param name="loserPlayerNumber">the client id of the player who lost</param>
+        /// <param name="reason">the reason for disconnecting</param>
+        public void SendGameResultAndShutdown(int loserPlayerNumber, string reason)
+        {
+            GlobalManagers.Instance.GameStatus.EndGameWithResult(loserPlayerNumber);
+            foreach (var clientId in NetworkManager.ConnectedClientsIds)
             {
-                var id = NetworkManager.ConnectedClientsIds[i];
-                if (id == clientId) RequestShutDownClientRpc(true, ClientRpcParams[id]);
-                else RequestShutDownClientRpc(false, ClientRpcParams[id]);
-                NetworkManager.DisconnectClient(id, reason);
+                NetworkManager.DisconnectClient(clientId, reason);
             }
             
             ChangeState(Offline);
             ShutDownApplication();
-        }
-        
-        [ClientRpc]
-        public void RequestShutDownClientRpc(bool isMyRequest, ClientRpcParams clientRpcParams = default)
-        {
-            if (isMyRequest) PopupManager.Instance.RegisterPopupToQueue(PopupType.LosePopup);
-            else PopupManager.Instance.RegisterPopupToQueue(PopupType.WinPopup);
         }
 
         public void ShutDownApplication()
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
-#else 
-            Application.Quit();
+#elif DEDICATED_SERVER
+            DedicatedServer.CloseServer().Forget();
 #endif
         }
     }

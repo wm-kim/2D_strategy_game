@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Minimax.CoreSystems;
 using Minimax.GamePlay.CommandSystem;
 using Minimax.GamePlay.PlayerHand;
+using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -26,27 +27,28 @@ namespace Minimax.GamePlay.Logic
         {
             DebugWrapper.Log("Server is drawing initial cards for all players");
             var connectedClientIds = NetworkManager.Singleton.ConnectedClientsIds;
+            var sessionPlayers = SessionPlayerManager.Instance;
+            var clientRpcParams = sessionPlayers.ClientRpcParams;
             
-                Dictionary<int, int[]> cardUIDs = new Dictionary<int, int[]>();
-                
-                foreach (var clientId in connectedClientIds)
+            Dictionary<int, int[]> cardUIDs = new Dictionary<int, int[]>();
+            
+            foreach (var clientId in connectedClientIds)
+            {
+                var playerNumber = sessionPlayers.GetPlayerNumber(clientId);
+                cardUIDs.Add(playerNumber, new int[Define.InitialHandCardCount]);
+                for (int i = 0; i < Define.InitialHandCardCount; i++)
                 {
-                    var playerNumber = GlobalManagers.Instance.Connection.GetPlayerNumber(clientId);
-                    cardUIDs.Add(playerNumber, new int[Define.InitialHandCardCount]);
-                    for (int i = 0; i < Define.InitialHandCardCount; i++)
-                    {
-                        var cardUID = DrawACard(playerNumber);
-                        cardUIDs[playerNumber][i] = cardUID;
-                    }
+                    var cardUID = DrawACard(playerNumber);
+                    cardUIDs[playerNumber][i] = cardUID;
                 }
-                
-                var clientRpcParam = GlobalManagers.Instance.Connection.ClientRpcParams;
-                foreach (var clientId in connectedClientIds)
-                {
-                    var playerNumber = GlobalManagers.Instance.Connection.GetPlayerNumber(clientId);
-                    var opponentNumber = GlobalManagers.Instance.Connection.GetOpponentPlayerNumber(clientId);
-                    DrawAllPlayerInitialCardsClientRpc(cardUIDs[playerNumber], cardUIDs[opponentNumber], clientRpcParam[clientId]);
-                }
+            }
+            
+            foreach (var clientId in connectedClientIds)
+            {
+                var playerNumber = sessionPlayers.GetPlayerNumber(clientId);
+                var opponentNumber = sessionPlayers.GetOpponentPlayerNumber(clientId);
+                DrawAllPlayerInitialCardsClientRpc(cardUIDs[playerNumber], cardUIDs[opponentNumber], clientRpcParams[clientId]);
+            }
             
         }
         
@@ -55,13 +57,14 @@ namespace Minimax.GamePlay.Logic
             try
             {
                 DebugWrapper.Log($"Drawing a card for client {clientId}");
-                var connection = GlobalManagers.Instance.Connection;
-                var playerNumber = connection.GetPlayerNumber(clientId);
-                var opponentNumber = connection.GetOpponentPlayerNumber(clientId);
+                var sessionPlayers = SessionPlayerManager.Instance;
+                var clientRpcParams = sessionPlayers.ClientRpcParams;
+                var playerNumber = sessionPlayers.GetPlayerNumber(clientId);
+                var opponentNumber = sessionPlayers.GetOpponentPlayerNumber(clientId);
                 var cardUID = DrawACard(playerNumber);
                 
-                DrawMyCardClientRpc(cardUID, connection.ClientRpcParams[playerNumber]);
-                DrawOpponentCardClientRpc(cardUID, connection.ClientRpcParams[opponentNumber]);
+                DrawMyCardClientRpc(cardUID, clientRpcParams[playerNumber]);
+                DrawOpponentCardClientRpc(cardUID, clientRpcParams[opponentNumber]);
             }
             catch (Exception e)
             {

@@ -44,7 +44,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 DebugWrapper.Log("Approving self as host");
                 DebugWrapper.Log($"Player {connectionPayload.playerName} assigned to player number {playerNumber}");
 
-                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId,
+                SessionPlayerManager.Instance.SetupConnectingPlayerSessionData(clientId,
                     connectionPayload.playerId,
                     new SessionPlayerData(clientId, connectionPayload.playerName, playerNumber, true));
 

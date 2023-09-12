@@ -108,12 +108,11 @@ namespace Minimax.UnityGamingService.Multiplayer
             m_multiplayServerQueryService.RemovePlayer();
             
             DebugWrapper.Log($"Player {playerId} left. {playerCount} players remaining.");
-            if (playerCount <= 0)
-            {
-                // TODO : Should wait for user to reconnect in server side
-                CloseServer().Forget();
-                return;
-            }
+            // if (playerCount <= 0)
+            // {
+            //     CloseServer().Forget();
+            //     return;
+            // }
             
             if (m_backfiller.NeedsPlayers() && !m_backfiller.Backfilling)
             {
@@ -121,7 +120,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             }
         }
 
-        private async UniTask CloseServer()
+        public async UniTask CloseServer()
         {
             DebugWrapper.Log("Closing server...");
             await m_backfiller.StopBackfill();

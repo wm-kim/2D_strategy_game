@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Minimax.CoreSystems;
 using Minimax.ScriptableObjects.CardDatas;
+using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;
 using QFSW.QC;
 using Unity.Netcode;
@@ -21,7 +22,7 @@ namespace Minimax.GamePlay.PlayerHand
             
             foreach (var clientId in NetworkManager.Singleton.ConnectedClientsIds)
             {
-                var playerNumber = GlobalManagers.Instance.Connection.GetPlayerNumber(clientId);
+                var playerNumber = SessionPlayerManager.Instance.GetPlayerNumber(clientId);
                 m_plyersCardInHand.Add(playerNumber, new List<int>());
             }
             

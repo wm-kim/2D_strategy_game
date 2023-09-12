@@ -25,7 +25,7 @@ namespace Minimax.GamePlay
             
             foreach (var clientId in m_networkManager.ConnectedClientsIds)
             {
-                var playerData = UnityGamingService.Multiplayer.SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
+                var playerData = SessionPlayerManager.Instance.GetPlayerData(clientId);
                 if (!playerData.HasValue) return;
                 var playerName = playerData.Value.PlayerName;
                 SetMyPlayerNameClientRpc(clientId, playerName);

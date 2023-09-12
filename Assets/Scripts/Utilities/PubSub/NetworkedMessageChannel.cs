@@ -65,7 +65,7 @@ namespace Minimax.Utilities.PubSub
             }
             else
             {
-                Debug.LogError("Only a server can publish in a NetworkedMessageChannel");
+                DebugWrapper.LogError("Only a server can publish in a NetworkedMessageChannel");
             }
         }
 
@@ -74,6 +74,13 @@ namespace Minimax.Utilities.PubSub
             using var writer = new FastBufferWriter(FastBufferWriter.GetWriteSize<T>(), Allocator.Temp);
             writer.WriteValueSafe(message);
             m_NetworkManager.CustomMessagingManager.SendNamedMessageToAll(m_Name, writer);
+        }
+        
+        private void SendMessageThroughNetwork(T message, ulong clientId)
+        {
+            using var writer = new FastBufferWriter(FastBufferWriter.GetWriteSize<T>(), Allocator.Temp);
+            writer.WriteValueSafe(message);
+            m_NetworkManager.CustomMessagingManager.SendNamedMessage(m_Name, clientId, writer);
         }
         
         private void ReceiveMessageThroughNetwork(ulong clientID, FastBufferReader reader)

@@ -10,9 +10,20 @@ namespace Minimax.UnityGamingService.Multiplayer
         void Reinitialize();
     }
     
+    /// <summary>
+    /// This class uses a unique player ID to bind a player to a session. Once that player connects to a host, the host
+    /// associates the current ClientID to the player's unique ID. If the player disconnects and reconnects to the same
+    /// host, the session is preserved.
+    /// </summary>
+    /// <remarks>
+    /// Using a client-generated player ID and sending it directly could be problematic, as a malicious user could
+    /// intercept it and reuse it to impersonate the original user. We are currently investigating this to offer a
+    /// solution that handles security better.
+    /// </remarks>
+    /// <typeparam name="T"></typeparam>
     public class SessionManager<T> where T : struct, ISessionPlayerData
     {
-        SessionManager()
+        protected SessionManager()
         {
             m_ClientData = new Dictionary<string, T>();
             m_ClientIDToPlayerId = new Dictionary<ulong, string>();
@@ -213,7 +224,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             m_HasSessionStarted = false;
         }
 
-        void ReinitializePlayersData()
+        private void ReinitializePlayersData()
         {
             foreach (var id in m_ClientIDToPlayerId.Keys)
             {
@@ -224,7 +235,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             }
         }
 
-        void ClearDisconnectedPlayersData()
+        private void ClearDisconnectedPlayersData()
         {
             List<ulong> idsToClear = new List<ulong>();
             foreach (var id in m_ClientIDToPlayerId.Keys)

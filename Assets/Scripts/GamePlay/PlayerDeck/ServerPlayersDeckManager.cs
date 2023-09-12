@@ -41,7 +41,6 @@ namespace Minimax.GamePlay
                 ShufflePlayersDeckList();
                 GeneratePlayersDeck();
                 
-                var connectionManager = GlobalManagers.Instance.Connection;
                 var clientIds = m_networkManager.ConnectedClientsIds;
                 var copiedPlayersDeck = m_playersDeck.ToDictionary(playerDeck => playerDeck.Key,
                     playerDeck => new List<int>(playerDeck.Value));
@@ -62,13 +61,14 @@ namespace Minimax.GamePlay
                     }
                 }
                 
+                var sessionPlayers = SessionPlayerManager.Instance;
                 foreach (var clientId in clientIds)
                 {
-                    var clientRpcParam = connectionManager.ClientRpcParams[clientId];
-                    var playerNumber = connectionManager.GetPlayerNumber(clientId);
+                    var clientRpcParam = sessionPlayers.ClientRpcParams[clientId];
+                    var playerNumber = sessionPlayers.GetPlayerNumber(clientId);
                     m_clientMyDeckManager.SetupMyDeckClientRpc(copiedCardUIDs[playerNumber],copiedCardIds[playerNumber], clientRpcParam);
                     
-                    var opponentNumber = connectionManager.GetOpponentPlayerNumber(clientId);
+                    var opponentNumber = sessionPlayers.GetOpponentPlayerNumber(clientId);
                     m_clientOpponentDeckManager.SetupOpponentDeckClientRpc(copiedCardUIDs[opponentNumber], clientRpcParam);
                 }
             }
@@ -107,7 +107,7 @@ namespace Minimax.GamePlay
             
             foreach (var clientId in m_networkManager.ConnectedClientsIds)
             {
-                var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
+                var playerId = SessionPlayerManager.Instance.GetPlayerId(clientId);
                 connectedPlayerIds.Add(playerId);
             }
 
@@ -135,10 +135,9 @@ namespace Minimax.GamePlay
 #endif
                 
                 // Store the deck list fetched from cloud
-                var connectionManager = GlobalManagers.Instance.Connection;
                 for (int i = 0; i < m_networkManager.ConnectedClientsIds.Count; i++)
                 {
-                    var playerNumber = connectionManager.GetPlayerNumber(m_networkManager.ConnectedClientsIds[i]);
+                    var playerNumber = SessionPlayerManager.Instance.GetPlayerNumber(m_networkManager.ConnectedClientsIds[i]);
                     m_playersDeckList.Add(playerNumber, playerDeckLists[i]);
                 }
                 

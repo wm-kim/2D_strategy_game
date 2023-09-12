@@ -1,4 +1,5 @@
 using Minimax.CoreSystems;
+using Minimax.UnityGamingService.Multiplayer;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -24,11 +25,11 @@ namespace Minimax.GamePlay.GridSystem
                 }
             }
             
-            var connection = GlobalManagers.Instance.Connection;
+            var sessionPlayers = SessionPlayerManager.Instance;
             foreach (var clientId in NetworkManager.Singleton.ConnectedClientsIds)
             {
-                var playerNumber = connection.GetPlayerNumber(clientId);
-                var clientRpcParam = connection.ClientRpcParams[clientId];
+                var playerNumber = sessionPlayers.GetPlayerNumber(clientId);
+                var clientRpcParam = sessionPlayers.ClientRpcParams[clientId];
 
                 if (playerNumber == 0) m_clientMap.GenerateMapClientRpc(mapSize, GridRotation.Default, clientRpcParam);
                 else if (playerNumber == 1) m_clientMap.GenerateMapClientRpc(mapSize, GridRotation.Rotate180, clientRpcParam);

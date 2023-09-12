@@ -56,7 +56,7 @@ namespace Minimax.UnityGamingService.Multiplayer
                     }
                     else
                     {
-                        var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
+                        var playerData = SessionPlayerManager.Instance.GetPlayerData(clientId);
                         if (playerData.HasValue && playerData.Value.PlayerNumber == playerNumber)
                         {
                             m_cachedPlayerNumbers.Add(clientId, playerNumber);

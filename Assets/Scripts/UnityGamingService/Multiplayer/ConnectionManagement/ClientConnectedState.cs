@@ -36,16 +36,6 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 
                 DebugWrapper.Log($"Disconnected reason: {connectStatus.ToString()}");
                 m_connectionManager.ChangeState(m_connectionManager.Offline);
-
-                // if (clientId == m_connectionManager.NetworkManager.LocalClientId)
-                // {
-                //     PopupManager.Instance.RegisterPopupToQueue(PopupType.LosePopup);
-                // }
-                // else
-                // {
-                //     PopupManager.Instance.RegisterPopupToQueue(PopupType.WinPopup);
-                // }                    
-                // GlobalManagers.Instance.Scene.LoadScene(SceneType.MenuScene);
             }
         }
     }

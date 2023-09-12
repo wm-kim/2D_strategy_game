@@ -25,7 +25,7 @@ namespace Minimax
             if (state == PlayModeStateChange.ExitingPlayMode)
             {
                 NetworkManager.Singleton.Shutdown();
-                UnityGamingService.Multiplayer.SessionManager<SessionPlayerData>.Instance.OnServerEnded();
+                SessionPlayerManager.Instance.OnServerEnded();
             }
         }
     }

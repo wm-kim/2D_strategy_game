@@ -6,6 +6,7 @@ using Minimax.GamePlay.INetworkSerialize;
 using Minimax.GamePlay.PlayerHand;
 using Minimax.GamePlay.Unit;
 using Minimax.ScriptableObjects.CardDatas;
+using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -28,10 +29,11 @@ namespace Minimax.GamePlay.Logic
         public void CommandPlayACardFromHandServerRpc(int cardUID, Vector2Int coord, ServerRpcParams serverRpcParams = default)
         {
             var senderClientId = serverRpcParams.Receive.SenderClientId;
-            var clientRpcParams = GlobalManagers.Instance.Connection.ClientRpcParams;
+            var sessionPlayers = SessionPlayerManager.Instance;
+            var clientRpcParams = sessionPlayers.ClientRpcParams;
             
-            var playerNumber = GlobalManagers.Instance.Connection.GetPlayerNumber(senderClientId);
-            var opponentPlayerNumber = GlobalManagers.Instance.Connection.GetOpponentPlayerNumber(senderClientId);
+            var playerNumber = sessionPlayers.GetPlayerNumber(senderClientId);
+            var opponentPlayerNumber = sessionPlayers.GetOpponentPlayerNumber(senderClientId);
             
             m_serverPlayersHand.RemoveCardFromHand(playerNumber, cardUID);
             var serverUnit = new ServerUnit(cardUID);

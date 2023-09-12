@@ -1,6 +1,8 @@
 using Minimax.CoreSystems;
+using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
@@ -61,13 +63,13 @@ namespace Minimax.GamePlay
             if (IsServer)
             {
                 var connectedClientIds = m_networkManager.ConnectedClientsIds;
-                var connectionManager = GlobalManagers.Instance.Connection;
+                var sessionPlayers = SessionPlayerManager.Instance;
             
                 foreach (var clientId in connectedClientIds)
                 {
-                    int playerNumber = connectionManager.GetPlayerNumber(clientId);
+                    int playerNumber = sessionPlayers.GetPlayerNumber(clientId);
                     bool isMyTurn = playerNumber == m_whosTurn.Value;
-                    var clientRpcParam = connectionManager.ClientRpcParams[clientId];
+                    var clientRpcParam = sessionPlayers.ClientRpcParams[clientId];
                     OnTurnStartClientRpc(isMyTurn, clientRpcParam);
                 }
             }
@@ -83,7 +85,7 @@ namespace Minimax.GamePlay
         private void EndTurnServerRpc(ServerRpcParams serverRpcParams = default)
         {
             // check if it's the player's turn
-            var playerNumber = GlobalManagers.Instance.Connection.GetPlayerNumber(serverRpcParams.Receive.SenderClientId);
+            var playerNumber = SessionPlayerManager.Instance.GetPlayerNumber(serverRpcParams.Receive.SenderClientId);
             if (playerNumber != m_whosTurn.Value)
             {
                 DebugWrapper.LogError($"Player request denied to end turn");

@@ -15,10 +15,10 @@ using UnityEngine.Serialization;
 namespace Minimax.GamePlay
 {
     /// <summary>
-    /// 게임의 전반적인 흐름을 관리합니다.
+    /// 게임
     /// 게임을 시작하기 전에 필요한 설정들을 하고, 모든 플레이어가 준비되면 게임을 시작합니다.
     /// </summary>
-    public class GameManager : NetworkBehaviour
+    public class GameInitializer : NetworkBehaviour
     {
         [Header("References")]
         [SerializeField] private CardDBManager m_cardDBManager;
@@ -32,14 +32,10 @@ namespace Minimax.GamePlay
 
         private NetworkManager m_networkManager => NetworkManager.Singleton;
         
-        public bool IsGameStarted { get; private set; }
-        
-        // Events
-        public event Action OnGameStarted;
-        
         private async void Start()
         {
 #if DEDICATED_SERVER
+            // let Game Server Hosting know that a game server is no longer ready to receive players
             await MultiplayService.Instance.UnreadyServerAsync();
             
             // just for clearing logs
@@ -54,7 +50,7 @@ namespace Minimax.GamePlay
             if (IsServer)
             {
                 // Marks the current session as started, so from now on we keep the data of disconnected players.
-                UnityGamingService.Multiplayer.SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
+                SessionPlayerManager.Instance.OnSessionStarted();
                 DebugWrapper.Log("Session started");
             }
             
@@ -68,7 +64,7 @@ namespace Minimax.GamePlay
             if (IsServer)
             {
                 IDFactory.ResetIDs();
-                GlobalManagers.Instance.Connection.ClientRpcParams.Clear();
+                SessionPlayerManager.Instance.ClientRpcParams.Clear();
                 ServerCard.CardsCreatedThisGame.Clear();
                 ServerUnit.UnitsCreatedThisGame.Clear();
             }
@@ -96,15 +92,8 @@ namespace Minimax.GamePlay
                 m_profileManager.SetPlayersName();
                 m_cardDrawingLogic.CommandDrawAllPlayerInitialCards();
                 m_turnManager.StartInitialTurn();
-                StartGame();
+                GlobalManagers.Instance.GameStatus.StartGame();
             }
-        }
-        
-        private void StartGame()
-        {
-            if (IsGameStarted) return;
-            IsGameStarted = true;
-            OnGameStarted?.Invoke();
         }
     }
 }
