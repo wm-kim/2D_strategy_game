@@ -21,7 +21,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         
         public virtual void OnTransportFailure() { }
         
-        public virtual void OnUserRequestedShutdown() { }
+        public virtual void OnPlayerRequestedShutdown() { }
         
         public virtual void StartClient() { }
         

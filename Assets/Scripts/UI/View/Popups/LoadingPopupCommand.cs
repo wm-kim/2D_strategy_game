@@ -10,7 +10,7 @@ namespace Minimax.UI.View.Popups
         
         public LoadingPopupCommand(string key, string message, PopupCommandType commandType = PopupCommandType.Duplicate, PopupPriority priority = PopupPriority.Low)
         {
-            key = key;
+            Key = key;
             Type = PopupType.LoadingPopup;
             CommandType = commandType;
             Priority = priority;

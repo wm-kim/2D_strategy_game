@@ -1,3 +1,4 @@
+#if DEDICATED_SERVER
 using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -147,3 +148,4 @@ namespace Minimax.UnityGamingService.Multiplayer
         }
     }
 }
+#endif

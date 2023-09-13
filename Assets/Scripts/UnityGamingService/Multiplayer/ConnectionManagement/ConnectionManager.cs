@@ -57,18 +57,20 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
     public class ConnectionManager : NetworkBehaviour
     {
         public NetworkManager NetworkManager => NetworkManager.Singleton;
+        public NetworkDisconnectRelay DisconnectRelay { get; private set; } = new NetworkDisconnectRelay();
         public IMessageChannel<ConnectStatus> ConnectStatusChannel { get; private set; } 
         public IMessageChannel<ConnectionEventMessage> ConnectionEventChannel { get; private set; }
         
         private ConnectionState m_currentState;
-        internal OfflineState Offline;
-        internal StartingHostState StartingHost;
-        internal HostingState Hosting;
-        internal StartingServerState StartingServer;
-        internal ServerState Server;
-        internal ClientConnectingState ClientConnecting;
-        internal ClientReconnectingState ClientReconnecting;
-        internal ClientConnectedState ClientConnected;
+        public OfflineState Offline;
+        public StartingHostState StartingHost;
+        public HostingState Hosting;
+        public StartingServerState StartingServer;
+        public ServerState Server;
+        public GameStartedState GameStarted;
+        public ClientConnectingState ClientConnecting;
+        public ClientReconnectingState ClientReconnecting;
+        public ClientConnectedState ClientConnected;
         
         public void Awake()
         {
@@ -80,6 +82,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             Hosting = new HostingState(this);
             StartingServer = new StartingServerState(this);
             Server = new ServerState(this);
+            GameStarted = new GameStartedState(this);
             ClientConnecting = new ClientConnectingState(this);
             ClientReconnecting = new ClientReconnectingState(this);
             ClientConnected = new ClientConnectedState(this);
@@ -179,7 +182,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         
         public void RequestShutdown()
         {
-            m_currentState.OnUserRequestedShutdown();
+            m_currentState.OnPlayerRequestedShutdown();
         }
         
         // we don't need this parameter as the ConnectionState already carries the relevant information
@@ -187,6 +190,9 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         {
             m_currentState.OnServerStopped();
         }
+        
+        
+        
 
         /// <summary>
         /// Returns true if there is a player slot available for a new player to join the game.
@@ -212,30 +218,18 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         /// Called when client wants to disconnect from the server.
         /// </summary>
         [ServerRpc(RequireOwnership = false)]
-        public void RequestShutdownServerRpc(ServerRpcParams serverRpcParams = default)
+        public void PlayerRequestShutdownServerRpc(ServerRpcParams serverRpcParams = default)
         {
             if (!IsServer) return;
             
             var senderClientId = serverRpcParams.Receive.SenderClientId;
             var playerNumber = SessionPlayerManager.Instance.GetPlayerNumber(senderClientId);
-            var reason = JsonUtility.ToJson(ConnectStatus.UserRequestedDisconnect);
-            SendGameResultAndShutdown(playerNumber, reason);
+            DisconnectAllAndShutdown(playerNumber, ConnectStatus.UserRequestedDisconnect);
         }
         
-        /// <summary>
-        /// Sends the game result to all clients and disconnects them. If the other client is disconnected,
-        /// it won't be notified of the game result.
-        /// </summary>
-        /// <param name="loserPlayerNumber">the client id of the player who lost</param>
-        /// <param name="reason">the reason for disconnecting</param>
-        public void SendGameResultAndShutdown(int loserPlayerNumber, string reason)
+        public void DisconnectAllAndShutdown(int originPlayerNumber, ConnectStatus disconnectReason)
         {
-            GlobalManagers.Instance.GameStatus.EndGameWithResult(loserPlayerNumber);
-            foreach (var clientId in NetworkManager.ConnectedClientsIds)
-            {
-                NetworkManager.DisconnectClient(clientId, reason);
-            }
-            
+            DisconnectRelay.DisconnectAll(originPlayerNumber, disconnectReason);
             ChangeState(Offline);
             ShutDownApplication();
         }
@@ -245,7 +239,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #elif DEDICATED_SERVER
-            DedicatedServer.CloseServer().Forget();
+            DedicatedServer.CloseServer();
 #endif
         }
     }

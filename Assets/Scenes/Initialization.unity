@@ -221,6 +221,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NetworkManager
       objectReference: {fileID: 0}
+    - target: {fileID: 8532609924324111869, guid: c46cb407e0b40ab4d8e0ef412d8944ee, type: 3}
+      propertyPath: m_MaxConnectAttempts
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

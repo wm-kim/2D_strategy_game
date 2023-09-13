@@ -14,9 +14,9 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public override void Exit() { }
 
-        public override void OnUserRequestedShutdown()
+        public override void OnPlayerRequestedShutdown()
         {
-            m_connectionManager.RequestShutdownServerRpc();
+            m_connectionManager.PlayerRequestShutdownServerRpc();
         }
 
         public override void OnClientDisconnect(ulong clientId)

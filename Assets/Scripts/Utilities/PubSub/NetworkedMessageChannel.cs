@@ -68,6 +68,19 @@ namespace Minimax.Utilities.PubSub
                 DebugWrapper.LogError("Only a server can publish in a NetworkedMessageChannel");
             }
         }
+        
+        public void Publish(T message, ulong clientId)
+        {
+            if (m_NetworkManager.IsServer)
+            {
+                SendMessageThroughNetwork(message, clientId);
+            }
+            else
+            {
+                DebugWrapper.LogError("Only a server can publish in a NetworkedMessageChannel");
+            }
+        }
+        
 
         private void SendMessageThroughNetwork(T message)
         {

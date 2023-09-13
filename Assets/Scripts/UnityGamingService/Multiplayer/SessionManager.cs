@@ -10,17 +10,6 @@ namespace Minimax.UnityGamingService.Multiplayer
         void Reinitialize();
     }
     
-    /// <summary>
-    /// This class uses a unique player ID to bind a player to a session. Once that player connects to a host, the host
-    /// associates the current ClientID to the player's unique ID. If the player disconnects and reconnects to the same
-    /// host, the session is preserved.
-    /// </summary>
-    /// <remarks>
-    /// Using a client-generated player ID and sending it directly could be problematic, as a malicious user could
-    /// intercept it and reuse it to impersonate the original user. We are currently investigating this to offer a
-    /// solution that handles security better.
-    /// </remarks>
-    /// <typeparam name="T"></typeparam>
     public class SessionManager<T> where T : struct, ISessionPlayerData
     {
         protected SessionManager()
@@ -28,7 +17,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             m_ClientData = new Dictionary<string, T>();
             m_ClientIDToPlayerId = new Dictionary<ulong, string>();
         }
-
+        
         public static SessionManager<T> Instance => s_Instance ??= new SessionManager<T>();
 
         static SessionManager<T> s_Instance;
@@ -36,14 +25,14 @@ namespace Minimax.UnityGamingService.Multiplayer
         /// <summary>
         /// Maps a given client player id to the data for a given client player.
         /// </summary>
-        Dictionary<string, T> m_ClientData;
+        private Dictionary<string, T> m_ClientData;
 
         /// <summary>
         /// Map to allow us to cheaply map from player id to player data.
         /// </summary>
-        Dictionary<ulong, string> m_ClientIDToPlayerId;
+        private Dictionary<ulong, string> m_ClientIDToPlayerId;
 
-        bool m_HasSessionStarted;
+        private bool m_HasSessionStarted;
 
         /// <summary>
         /// Handles client disconnect."
@@ -118,6 +107,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             // Reconnecting. Give data from old player to new player
             if (isReconnecting)
             {
+                Debug.Log($"Player ID {playerId} is reconnecting. Giving them their old data.");
                 // Update player session data
                 sessionPlayerData = m_ClientData[playerId];
                 sessionPlayerData.ClientID = clientId;
@@ -125,6 +115,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             }
 
             //Populate our dictionaries with the SessionPlayerData
+            Debug.Log($"Adding player ID {playerId} and data to session");
             m_ClientIDToPlayerId[clientId] = playerId;
             m_ClientData[playerId] = sessionPlayerData;
         }

@@ -1,3 +1,4 @@
+#if DEDICATED_SERVER
 using System;
 using Cysharp.Threading.Tasks;
 using Minimax.CoreSystems;
@@ -120,7 +121,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             }
         }
 
-        public async UniTask CloseServer()
+        public async void CloseServer()
         {
             DebugWrapper.Log("Closing server...");
             await m_backfiller.StopBackfill();
@@ -159,3 +160,4 @@ namespace Minimax.UnityGamingService.Multiplayer
         }
     }
 }
+#endif

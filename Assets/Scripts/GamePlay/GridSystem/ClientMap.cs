@@ -130,5 +130,14 @@ namespace Minimax.GamePlay.GridSystem
                 OnTapMap?.Invoke(cell);
             }
         }
+        
+        private void HighlightReachableCells(int range, Vector2Int coord)
+        {
+            var reachableCells = m_isoGrid.GetReachableCells(range, coord);
+            foreach (var cell in reachableCells)
+            {
+                cell.SetOverlayColor(Color.green);
+            }
+        }
     }
 }

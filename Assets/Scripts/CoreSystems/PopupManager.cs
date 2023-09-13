@@ -207,6 +207,11 @@ namespace Minimax.CoreSystems
             
             m_popupBackgroundFader.StartHide(m_fadeOutDuration);
             m_currentPopupView.StartHide(m_fadeOutDuration);
+            
+            m_currentPopupView = null;
+            m_currentPopupKey = null;
+            m_currentPopupPriority = PopupPriority.Low;
+            
             ShowNextPopup();
         }
 
@@ -217,9 +222,7 @@ namespace Minimax.CoreSystems
         {
             if (m_popupQueue.Count == 0)
             {
-                m_currentPopupView = null;
-                m_currentPopupKey = null;
-                m_currentPopupPriority = PopupPriority.Low;
+                DebugWrapper.Log("No more popup to show.");
                 return;
             }
 

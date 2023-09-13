@@ -8,5 +8,4 @@ namespace Minimax.UI
         Disappearing,
         Disappeared
     }
-
 }

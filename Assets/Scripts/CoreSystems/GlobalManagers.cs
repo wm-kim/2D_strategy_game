@@ -20,8 +20,6 @@ namespace Minimax.CoreSystems
         public SceneLoader Scene => m_sceneLoader;
         public CacheManager Cache => m_cacheManager;
         public ConnectionManager Connection => m_connectonManager;
-        
-        public GameStatus GameStatus { get; private set; } = new GameStatus();
         public ServiceLocator ServiceLocator { get; private set; } = new ServiceLocator();
     }
 }

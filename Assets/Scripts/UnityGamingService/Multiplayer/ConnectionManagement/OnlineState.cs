@@ -5,7 +5,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         protected OnlineState(ConnectionManager connectionManager) : base(connectionManager)
         { }
         
-        public override void OnUserRequestedShutdown()
+        public override void OnPlayerRequestedShutdown()
         {
             // This behaviour will be the same for every online state
             m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.UserRequestedDisconnect);

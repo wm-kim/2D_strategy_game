@@ -92,7 +92,9 @@ namespace Minimax.GamePlay
                 m_profileManager.SetPlayersName();
                 m_cardDrawingLogic.CommandDrawAllPlayerInitialCards();
                 m_turnManager.StartInitialTurn();
-                GlobalManagers.Instance.GameStatus.StartGame();
+                
+                var connection = GlobalManagers.Instance.Connection;
+                connection.ChangeState(connection.GameStarted);
             }
         }
     }

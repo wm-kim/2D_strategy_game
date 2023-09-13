@@ -11,7 +11,8 @@ namespace Minimax.UnityGamingService.Multiplayer
         
         public ClientRpcParamManager ClientRpcParams { get; private set; } = new ClientRpcParamManager();
         
-        public new static SessionPlayerManager Instance { get; } = new SessionPlayerManager();
+        private static SessionPlayerManager s_instance;
+        public new static SessionPlayerManager Instance { get; } = s_instance ??= new SessionPlayerManager();
         
         public int GetAvailablePlayerNumber()
         {
@@ -44,8 +45,6 @@ namespace Minimax.UnityGamingService.Multiplayer
             
             return true;
         }
-        
-        public int GetMyPlayerNumber() => GetPlayerNumber(NetworkManager.Singleton.LocalClientId);
         
         public int GetPlayerNumber(ulong clientId)
         {

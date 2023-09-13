@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using Minimax.Utilities;
 using UnityEngine;
@@ -274,6 +275,29 @@ namespace Minimax.GamePlay.GridSystem
     private void TriggerCellChanged(int x, int y)
     {
       OnGridCellChanged?.Invoke(x, y);
+    }
+    
+    /// <summary>
+    /// Returns the neighbors of a cell.
+    /// </summary>
+    public List<ClientCell> GetNeighbors(ClientCell cell)
+    {
+      List<ClientCell> neighbors = new List<ClientCell>();
+      
+      int[] dx = { 0, 0, -1, 1 };
+      int[] dy = { -1, 1, 0, 0 };
+      
+      for (int i = 0; i < dx.Length; i++)
+      {
+        int nx = cell.Coord.x + dx[i];
+        int ny = cell.Coord.y + dy[i];
+        if (IsWithinGridBounds(nx, ny))
+        {
+          neighbors.Add(Cells[nx, ny]);
+        }
+      }
+      
+      return neighbors;
     }
   }
 }
