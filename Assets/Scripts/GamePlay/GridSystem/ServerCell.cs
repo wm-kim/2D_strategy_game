@@ -4,22 +4,34 @@ using UnityEngine;
 
 namespace Minimax.GamePlay.GridSystem
 {
-    public class ServerCell : IEquatable<ServerCell>
+    public class ServerCell : IEquatable<ServerCell>, ICell
     {
         private int m_hash = -1;
         
         public Vector2Int Coord { get; private set; }
-        
+
         public int CurrentUnitUID { get; private set; } = -1;
+        
+        public bool IsWalkable => CurrentUnitUID == -1;
         
         public ServerCell(int x, int y)
         {
             Coord = new Vector2Int(x, y);
         }
         
+        public int GetDistance(ICell other)
+        {
+            return Mathf.Abs(Coord.x - other.Coord.x) + Mathf.Abs(Coord.y - other.Coord.y);
+        }
+        
         public void PlaceUnit(int unitUID)
         {
             CurrentUnitUID = unitUID;
+        }
+        
+        public void RemoveUnit()
+        {
+            CurrentUnitUID = -1;
         }
         
         public bool Equals(ServerCell other)

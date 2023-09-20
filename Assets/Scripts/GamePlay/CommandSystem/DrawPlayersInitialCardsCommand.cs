@@ -3,7 +3,7 @@ using Minimax.GamePlay.PlayerHand;
 
 namespace Minimax.GamePlay.CommandSystem
 {
-    public class DrawAllPlayerInitialCardsCommand : Command
+    public class DrawAllPlayerInitialCardsCmd : Command
     {
         private int[] m_myCardUIDs;
         private int[] m_opponentCardUIDs;
@@ -12,7 +12,7 @@ namespace Minimax.GamePlay.CommandSystem
         private ClientMyDeckManager m_clientMyDeck;
         private ClientOpponentDeckManager m_clientOpponentDeck;
         
-        public DrawAllPlayerInitialCardsCommand(int[] myCardUIDs,
+        public DrawAllPlayerInitialCardsCmd(int[] myCardUIDs,
             int[] opponentCardUIDs,
             ClientMyHandManager clientMyHand, 
             ClientOpponentHandManager clientOpponentHand,

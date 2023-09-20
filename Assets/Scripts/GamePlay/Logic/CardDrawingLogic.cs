@@ -11,6 +11,9 @@ using UnityEngine.Serialization;
 
 namespace Minimax.GamePlay.Logic
 {
+    /// <summary>
+    /// Responsible for generating Card Drawing Commands and sending them to the clients.
+    /// </summary>
     public class CardDrawingLogic : NetworkBehaviour
     {
         [Header("Server References")]
@@ -96,19 +99,19 @@ namespace Minimax.GamePlay.Logic
         [ClientRpc]
         private void DrawMyCardClientRpc(int cardUID, ClientRpcParams clientRpcParams = default)
         {
-            new DrawMyCardCommand(cardUID, m_clientMyHand, m_clientMyDeck).AddToQueue();
+            new DrawMyCardCmd(cardUID, m_clientMyHand, m_clientMyDeck).AddToQueue();
         }
         
         [ClientRpc]
         private void DrawOpponentCardClientRpc(int cardUID, ClientRpcParams clientRpcParams = default)
         {
-            new DrawOpponentCardCommand(cardUID, m_clientOpponentHand, m_clientOpponentDeck).AddToQueue();
+            new DrawOpponentCardCmd(cardUID, m_clientOpponentHand, m_clientOpponentDeck).AddToQueue();
         }
         
         [ClientRpc]
         private void DrawAllPlayerInitialCardsClientRpc(int[] myCardUIDs, int[] opponentCardUIDs, ClientRpcParams clientRpcParams = default)
         {
-            new DrawAllPlayerInitialCardsCommand(myCardUIDs, opponentCardUIDs, m_clientMyHand, m_clientOpponentHand, m_clientMyDeck, m_clientOpponentDeck)
+            new DrawAllPlayerInitialCardsCmd(myCardUIDs, opponentCardUIDs, m_clientMyHand, m_clientOpponentHand, m_clientMyDeck, m_clientOpponentDeck)
                 .AddToQueue();
         }
     }

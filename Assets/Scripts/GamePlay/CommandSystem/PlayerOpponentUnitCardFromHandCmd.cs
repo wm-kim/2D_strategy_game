@@ -4,22 +4,22 @@ using UnityEngine;
 
 namespace Minimax.GamePlay.CommandSystem
 {
-    public class PlayerOpponentUnitCardFromHandCommand : Command
+    public class PlayerOpponentUnitCardFromHandCmd : Command
     {
         private int m_unitUID;
         private int m_cardUID;
         private Vector2Int m_coord;
-        private NetworkUnitCardData m_unitData;
+        private NetworkUnitCardData m_networkUnitData;
         private ClientOpponentHandManager m_clientOpponentHand;
         private ClientUnitManager m_clientUnitManager;
 
-        public PlayerOpponentUnitCardFromHandCommand(int unitUID, int cardUID, Vector2Int coord, NetworkUnitCardData unitData,
+        public PlayerOpponentUnitCardFromHandCmd(int unitUID, int cardUID, Vector2Int coord, NetworkUnitCardData unitData,
             ClientOpponentHandManager clientOpponentHand, ClientUnitManager clientUnitManager)
         {
             m_unitUID = unitUID;
             m_cardUID = cardUID;
             m_coord = coord;
-            m_unitData = unitData;
+            m_networkUnitData = unitData;
             m_clientOpponentHand = clientOpponentHand;
             m_clientUnitManager = clientUnitManager;
         }
@@ -28,9 +28,9 @@ namespace Minimax.GamePlay.CommandSystem
         {
             base.StartExecute();
             
-            // set the card data 
+            // revealing the opponent card
             var clientCard = ClientCard.CardsCreatedThisGame[m_cardUID];
-            var unitBaseData = UnitBaseData.CreateInstance(m_unitData);
+            var unitBaseData = UnitBaseData.CreateInstance(m_networkUnitData);
             clientCard.Data = unitBaseData;
             
             m_clientOpponentHand.PlayCardAndTween(m_cardUID);

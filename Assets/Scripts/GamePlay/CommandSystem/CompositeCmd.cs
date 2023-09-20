@@ -5,13 +5,20 @@ namespace Minimax.GamePlay.CommandSystem
     /// <summary>
     /// A command that is composed of multiple commands
     /// </summary>
-    public class CompositeCommand : Command
+    public class CompositeCmd : Command
     {
         private List<Command> m_subCommands = new List<Command>();
         
-        public CompositeCommand(List<Command> subCommands)
+        public CompositeCmd() { }
+        
+        public CompositeCmd(List<Command> subCommands)
         {
             m_subCommands = subCommands;
+        }
+        
+        public void AddCommand(Command command)
+        {
+            m_subCommands.Add(command);
         }
         
         public override void StartExecute()

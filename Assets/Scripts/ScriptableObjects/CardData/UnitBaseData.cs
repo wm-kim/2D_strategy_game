@@ -1,5 +1,6 @@
 using Minimax.GamePlay.INetworkSerialize;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Minimax.ScriptableObjects.CardDatas
 {
@@ -9,7 +10,7 @@ namespace Minimax.ScriptableObjects.CardDatas
         [Header("Unit Info")]
         public int Attack;
         public int Health;
-        public int Movement;
+        public int MoveRange;
         
         public UnitBaseData()
         {
@@ -24,7 +25,7 @@ namespace Minimax.ScriptableObjects.CardDatas
             instance.Cost = data.Cost;
             instance.Attack = data.Attack;
             instance.Health = data.Health;
-            instance.Movement = data.Movement;
+            instance.MoveRange = data.Movement;
             return instance;
         }
     }

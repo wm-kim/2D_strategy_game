@@ -23,8 +23,8 @@ namespace Minimax.GamePlay
         private bool m_isTimerFinished = false;
 
         private float m_duration = 0f;
-        private System.Action m_onServerTimerComplete;
-        private System.Action m_onClientTimerComplete;
+        private Action m_onServerTimerComplete;
+        private Action m_onClientTimerComplete;
         
         /// <summary>
         /// 타이머가 파괴되었는지 여부를 추적하는 변수, 이미 파괴된 타이머는 더 이상 업데이트하지 않습니다.

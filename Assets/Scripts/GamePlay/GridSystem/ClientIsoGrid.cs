@@ -19,8 +19,12 @@ namespace Minimax.GamePlay.GridSystem
   /// <summary>
   /// Contains the logic for the grid system, have collection of cells
   /// </summary>
-  public class IsoGrid
+  public class ClientIsoGrid : IGrid<ClientCell>
   {
+    public ClientCell[,] Cells { get; private set; }
+    public int Width => m_width;
+    public int Height => m_height;
+    
     /// <summary>
     /// 그리드 셀의 값이 변경되었을 때 발생하는 이벤트
     /// </summary>
@@ -31,25 +35,25 @@ namespace Minimax.GamePlay.GridSystem
     /// </summary>
     public event Action<GridRotation> OnGridRotationChanged;
 
+    /// <summary>
+    /// 그리드의 크기를 반환합니다. 단위는 unity unit입니다.
+    /// </summary>
+    public Vector2 GetSize() => new(m_width * m_cellSize.x * 0.5f, m_height * m_cellSize.y * 0.5f);
+
     private int m_width;
     private int m_height;
     private Vector3 m_cellSize;
-    
-    public int Width => m_width;
-    public int Height => m_height;
-    
-    public ClientCell[,] Cells { get; private set; }
+  
+    private IPathFinding<ClientCell> m_pathFinding;
     private Vector2 m_originPos;
-    
     private GridRotation m_rotation = GridRotation.Default;
-
-    public Vector2 GetSize() => new(m_width * m_cellSize.x * 0.5f, m_height * m_cellSize.y * 0.5f);
-
-    public IsoGrid(int width, int height, Vector3 cellSize, Vector2 originPos,
-      Func<IsoGrid, int, int, ClientCell> createGridObject, GridRotation rotation = GridRotation.Default)
+   
+    public ClientIsoGrid(int width, int height, PathFinding pathfinding, Vector3 cellSize, Vector2 originPos, 
+      Func<ClientIsoGrid, int, int, ClientCell> createGridObject, GridRotation rotation = GridRotation.Default)
     {
       m_width = width;
       m_height = height;
+      m_pathFinding = PathFindingFactory.Create<ClientCell>(pathfinding);
       m_cellSize = cellSize;
       m_originPos = originPos;
 
@@ -298,6 +302,48 @@ namespace Minimax.GamePlay.GridSystem
       }
       
       return neighbors;
+    }
+    
+    public List<ClientCell> GetPath(Vector2Int start, Vector2Int target)
+    {
+      return m_pathFinding.FindPath(Cells[start.x, start.y], Cells[target.x, target.y], this);
+    }
+    
+    // used dfs to find reachable cells
+    public List<ClientCell> GetReachableCells(ClientCell cell, int range)
+    {
+      Stack<ClientCell> stack = new Stack<ClientCell>();
+      HashSet<ClientCell> visited = new HashSet<ClientCell>();
+      List<ClientCell> reachableCells = new List<ClientCell>();
+      Dictionary<ClientCell, int> cellDistances  = new Dictionary<ClientCell, int>();
+
+      stack.Push(cell);
+      visited.Add(cell);
+      cellDistances.Add(cell, 0);
+
+      while (stack.Count > 0)
+      {
+        ClientCell currentCell = stack.Pop();
+        int currentDistance = cellDistances[currentCell];
+        
+        List<ClientCell> neighbors = GetNeighbors(currentCell);
+        foreach (var neighbor in neighbors)
+        {
+          if (!visited.Contains(neighbor) && !neighbor.IsWalkable)
+          {
+            int newDistance = currentDistance + 1;
+            if (newDistance <= range)
+            {
+              cellDistances.Add(neighbor, newDistance);
+              visited.Add(neighbor);
+              stack.Push(neighbor);
+              reachableCells.Add(neighbor);
+            }
+          }
+        }
+      }
+
+      return reachableCells;
     }
   }
 }

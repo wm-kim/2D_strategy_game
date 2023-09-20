@@ -42,7 +42,7 @@ namespace Minimax
                     cardData.Description = "This is a random card";
                     cardData.Attack = Random.Range(1, 10);
                     cardData.Health = Random.Range(1, 10);
-                    cardData.Movement = Random.Range(1, 5);
+                    cardData.MoveRange = Random.Range(1, 5);
                     AssetDatabase.CreateAsset(cardData, $"Assets/ScriptableObjects/CardDatas/{cardData.CardName}.asset");
                 }
                 AssetDatabase.SaveAssets();

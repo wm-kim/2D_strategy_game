@@ -22,7 +22,7 @@ namespace Minimax.GamePlay.INetworkSerialize
             Cost = data.Cost;
             Attack = data.Attack;
             Health = data.Health;
-            Movement = data.Movement;
+            Movement = data.MoveRange;
         }
 
         public override string ToString()
@@ -32,7 +32,7 @@ namespace Minimax.GamePlay.INetworkSerialize
             sb.AppendLine($"Cost: {Cost}");
             sb.AppendLine($"Attack: {Attack}");
             sb.AppendLine($"Health: {Health}");
-            sb.AppendLine($"Movement: {Movement}");
+            sb.AppendLine($"MoveRange: {Movement}");
             return sb.ToString();
         }
 

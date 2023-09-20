@@ -14,6 +14,9 @@ using UnityEngine.Serialization;
 
 namespace Minimax.GamePlay.Logic
 {
+    /// <summary>
+    /// Responsible for generating Card Playing Commands and sending them to the clients.
+    /// </summary>
     public class CardPlayingLogic : NetworkBehaviour
     {
         [Header("Server References")]
@@ -36,16 +39,16 @@ namespace Minimax.GamePlay.Logic
             var opponentPlayerNumber = sessionPlayers.GetOpponentPlayerNumber(senderClientId);
             
             m_serverPlayersHand.RemoveCardFromHand(playerNumber, cardUID);
-            var serverUnit = new ServerUnit(cardUID);
+            var serverUnit = new ServerUnit(cardUID, coord);
             m_serverMap.PlaceUnitOnMap(serverUnit.UID, coord);
             
-            var data = ServerCard.CardsCreatedThisGame[cardUID].Data;
-            switch (data.GetCardType())
+            var cardBaseData = ServerCard.CardsCreatedThisGame[cardUID].Data;
+            switch (cardBaseData.GetCardType())
             {
                 case CardType.Unit:
                     // prepare the unit data to send to opponent
-                    var networkUnitData = new NetworkUnitCardData(data as UnitBaseData);
-                    PlayMyUnitCardFromHandClientRpc(serverUnit.UID, cardUID, coord, clientRpcParams[senderClientId]);
+                    var networkUnitData = new NetworkUnitCardData(cardBaseData as UnitBaseData);
+                    PlayMyUnitCardFromHandClientRpc(serverUnit.UID, cardUID, coord, networkUnitData, clientRpcParams[senderClientId]);
                     PlayOpponentUnitCardFromHandClientRpc(serverUnit.UID, cardUID, coord, networkUnitData, clientRpcParams[opponentPlayerNumber]);
                     break;
                 case CardType.Special:
@@ -57,16 +60,21 @@ namespace Minimax.GamePlay.Logic
         }
         
         [ClientRpc]
-        private void PlayMyUnitCardFromHandClientRpc(int unitUID, int cardUID, Vector2Int coord, ClientRpcParams clientRpcParams = default)
-        {
-            new PlayMyUnitCardFromHandCommand(unitUID, cardUID, coord, m_clientMyHand, m_clientUnitManager).AddToQueue();
-        }
-
-        [ClientRpc]
-        private void PlayOpponentUnitCardFromHandClientRpc(int unitUID, int cardUID, Vector2Int coord, NetworkUnitCardData unitData,
+        private void PlayMyUnitCardFromHandClientRpc(int unitUID, int cardUID, Vector2Int coord, 
+            NetworkUnitCardData unitData,
             ClientRpcParams clientRpcParams = default)
         {
-            new PlayerOpponentUnitCardFromHandCommand(unitUID, cardUID, coord, unitData, m_clientOpponentHand, m_clientUnitManager).AddToQueue();
+            new PlayMyUnitCardFromHandCmd(unitUID, cardUID, coord, unitData, m_clientMyHand, m_clientUnitManager).AddToQueue();
+        }
+
+        // TODO : instead of passing in whole unit data, pass in only card id and let the client fetch the data from card db can be enough
+        // But If there is change in card data on server, it will not be reflected on client so it is better to pass in the whole data
+        [ClientRpc]
+        private void PlayOpponentUnitCardFromHandClientRpc(int unitUID, int cardUID, Vector2Int coord, 
+            NetworkUnitCardData unitData,
+            ClientRpcParams clientRpcParams = default)
+        {
+            new PlayerOpponentUnitCardFromHandCmd(unitUID, cardUID, coord, unitData, m_clientOpponentHand, m_clientUnitManager).AddToQueue();
         } 
     }
 }

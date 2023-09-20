@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Minimax.ScriptableObjects.CardDatas;
+using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.GamePlay.Unit
@@ -21,6 +22,8 @@ namespace Minimax.GamePlay.Unit
         /// </summary>
         public int UID { get; private set; }
         
+        public Vector2Int Coord { get; set; }
+        
         /// <summary>
         /// a static dictionary of all the cards that have been created
         /// key: UniqueCardID, value: ClientUnit
@@ -33,7 +36,7 @@ namespace Minimax.GamePlay.Unit
             UnitsCreatedThisGame.Clear();
         }
         
-        public ClientUnit(int unitUID, int cardUID)
+        public ClientUnit(int unitUID, int cardUID, Vector2Int coord)
         {
             UID = unitUID;
             m_cardUID = cardUID;
@@ -42,15 +45,23 @@ namespace Minimax.GamePlay.Unit
             
             Health = unitData.Health;
             Attack = unitData.Attack;
-            Movement = unitData.Movement;
-            
+            MoveRange = unitData.MoveRange;
+            Coord = coord;
+      
             UnitsCreatedThisGame.Add(UID, this);
+                  
+            DebugWrapper.Log($"ClientUnit {UID} is created\n" +
+                             $"Health: {Health}\n" +
+                             $"Attack: {Attack}\n" +
+                             $"MoveRange: {MoveRange}");
         }
         
-        public int Health { get; private set; }
+        public int Health { get; set; }
         
-        public int Attack { get; private set; }
+        public int Attack { get; set; }
         
-        public int Movement { get; private set; }
+        public int MoveRange { get; set; }
+        
+        public bool IsMovable { get; set; } = true;
     }
 }

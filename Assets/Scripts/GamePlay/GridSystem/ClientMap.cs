@@ -27,6 +27,8 @@ namespace Minimax.GamePlay.GridSystem
         [SerializeField] private CameraController m_cameraController;
         
         public ClientCell SelectedClientCell { get; private set; }
+        
+        private List<ClientCell> m_highlightedCells = new List<ClientCell>();
 
 #region Events
         /// <summary>
@@ -47,7 +49,7 @@ namespace Minimax.GamePlay.GridSystem
         public event Action<ClientCell> OnTapMap;
 #endregion
 
-        private IsoGrid m_isoGrid;
+        private ClientIsoGrid m_isoGrid;
         
         private void OnEnable()
         {
@@ -65,9 +67,9 @@ namespace Minimax.GamePlay.GridSystem
         }
         
         [ClientRpc]
-        public void GenerateMapClientRpc(int mapSize, GridRotation rotation, ClientRpcParams clientRpcParams = default)
+        public void GenerateMapClientRpc(int mapSize, PathFinding pathFinding, GridRotation rotation, ClientRpcParams clientRpcParams = default)
         {
-            m_isoGrid = new IsoGrid(mapSize, mapSize, m_tilemap.cellSize, Vector3.zero,
+            m_isoGrid = new ClientIsoGrid(mapSize, mapSize, pathFinding, m_tilemap.cellSize, Vector3.zero,
                 (grid, x, y) =>
                 {
                     var cell = Instantiate(m_clientCellPrefab, grid.GetWorldPosFromCoord(x, y), Quaternion.identity, transform);
@@ -90,6 +92,10 @@ namespace Minimax.GamePlay.GridSystem
 
         public ClientCell this[Vector2Int coord] => m_isoGrid.Cells[coord.x, coord.y];
         
+        /// <summary>
+        /// Wrapper method for placing unit on the map.
+        /// Also handles overlay visuals, if there is any overlay on the cell, it will be removed.
+        /// </summary>
         public void PlaceUnitOnMap(int unitId, Vector2Int coord)
         {
             m_isoGrid.Cells[coord.x, coord.y].PlaceUnit(unitId);
@@ -131,13 +137,33 @@ namespace Minimax.GamePlay.GridSystem
             }
         }
         
-        private void HighlightReachableCells(int range, Vector2Int coord)
+        public void HighlightReachableCells(ClientCell cell, int range)
         {
-            var reachableCells = m_isoGrid.GetReachableCells(range, coord);
-            foreach (var cell in reachableCells)
+            DisableHighlightCells();
+            m_highlightedCells = m_isoGrid.GetReachableCells(cell, range);
+            DebugWrapper.Log($"Highlighting {m_highlightedCells.Count} cells, range: {range}");
+            foreach (var clientCell in m_highlightedCells)
             {
-                cell.SetOverlayColor(Color.green);
+                clientCell.HighlightAsReachable();
             }
         }
+        
+        public void DisableHighlightCells()
+        {
+            foreach (var clientCell in m_highlightedCells)
+            {
+                clientCell.DisableHighlight();
+            }
+        }
+        
+        public bool IsHighlightedCell(ClientCell cell)
+        {
+            return m_highlightedCells.Contains(cell);
+        }
+        
+        /// <summary>
+        /// Wrapper for <see cref="ClientIsoGrid.GetPath"/>
+        /// </summary>
+        public List<ClientCell> GetPath(Vector2Int start, Vector2Int target) => m_isoGrid.GetPath(start, target);
     }
 }

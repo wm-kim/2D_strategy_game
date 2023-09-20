@@ -47,7 +47,14 @@ namespace Minimax.UI.Controller.PageControllers
         {
             DebugWrapper.Log("Find Match");
 
-            PopupManager.Instance.RegisterLoadingPopupToQueue(Define.FindingMatchPopup,"Finding Match...");
+            PopupManager.Instance.RegisterOneButtonPopupToQueue(Define.FindingMatchPopup,
+                "Finding Match...",
+                "Cancel",
+                () =>
+                {
+                    PopupManager.Instance.HideCurrentPopup();
+                    createTicketResponse = null;
+                });
             
             // create ticket
             createTicketResponse = await MatchmakerService.Instance.CreateTicketAsync(

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: NewCard_2
   m_EditorClassIdentifier: 
   CardId: 2
-  Cost: 2
+  Cost: 3
   CardName: NewCard_2
   Description: This is a random card
-  Attack: 6
-  Health: 2
-  Movement: 1
+  Attack: 7
+  Health: 8
+  MoveRange: 4
