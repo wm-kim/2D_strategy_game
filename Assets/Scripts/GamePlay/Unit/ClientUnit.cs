@@ -10,7 +10,9 @@ namespace Minimax.GamePlay.Unit
     /// </summary>
     public class ClientUnit : IIdentifiable
     {
-        public bool IsMine => ClientCard.CardsCreatedThisGame[m_cardUID].IsMine;
+        public int Owner { get; set; }
+        
+        public bool IsMine => Owner == TurnManager.Instance.MyPlayerNumber;
         
         /// <summary>
         /// for referencing to the card that this unit is created from
@@ -41,6 +43,7 @@ namespace Minimax.GamePlay.Unit
             UID = unitUID;
             m_cardUID = cardUID;
             var clientCard = ClientCard.CardsCreatedThisGame[m_cardUID];
+            Owner = clientCard.Owner;
             var unitData = clientCard.Data as UnitBaseData;
             
             Health = unitData.Health;

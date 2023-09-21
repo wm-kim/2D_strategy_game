@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Minimax.GamePlay;
 using Minimax.GamePlay.GridSystem;
 using Minimax.GamePlay.Logic;
 using Minimax.GamePlay.Unit;
@@ -20,6 +21,7 @@ namespace Minimax
         [SerializeField] private ClientMap m_clientMap;
         [SerializeField] private Transform m_unitContainer;
         [SerializeField] private UnitLogic m_unitLogic;
+        [SerializeField] private TurnManager m_turnManager;
         
         public event Action<ClientCell> OnUnitSpawned;
         
@@ -37,7 +39,7 @@ namespace Minimax
         private void OnDisable()
         {
             m_clientMap.OnTapMap -= OnTabMap;
-        }
+        }   
         
         private void OnTabMap(ClientCell clientCell)
         {
@@ -50,6 +52,7 @@ namespace Minimax
                 bool isHighlightedCell = m_clientMap.IsHighlightedCell(clientCell);
                 if (isHighlightedCell)
                 {
+                    if (!m_turnManager.IsMyTurn) return;
                     if (!CheckIfUnitIsMovable(m_selectedUnitUID)) return;
                     m_unitLogic.CommandMoveUnitServerRpc(m_selectedUnitUID, clientCell.Coord);
                 }
@@ -81,6 +84,7 @@ namespace Minimax
             DebugWrapper.Log($"Unit {m_selectedUnitUID} is tapped");
             var clientUnit = ClientUnit.UnitsCreatedThisGame[m_selectedUnitUID];
             var moveRange = clientUnit.MoveRange;
+            m_clientMap.DisableHighlightCells();
             if (moveRange > 0)
             {
                 m_clientMap.HighlightReachableCells(clientCell, moveRange);
@@ -89,14 +93,23 @@ namespace Minimax
 
         public void SpawnUnit(int unitUID, int cardUID, Vector2Int coord)
         {
-            new ClientUnit(unitUID, cardUID, coord);
-            m_clientMap.PlaceUnitOnMap(unitUID, coord);
+            m_selectedUnitUID = unitUID;
+
+            var clientUnit = new ClientUnit(unitUID, cardUID, coord);
             var clientCell = m_clientMap[coord];
             
+            m_clientMap.PlaceUnitOnMap(unitUID, coord);
+           
             // Instantiate unit visual
             var unitVisual = Instantiate(m_unitVisualPrefab, clientCell.transform.position, 
                 Quaternion.identity, m_unitContainer);
             m_unitVisuals.Add(unitUID, unitVisual);
+            
+            if (clientUnit.IsMine)
+            {
+                m_clientMap.DisableHighlightCells();
+                m_clientMap.HighlightReachableCells(clientCell, clientUnit.MoveRange);
+            }
             
             OnUnitSpawned?.Invoke(clientCell);
         }

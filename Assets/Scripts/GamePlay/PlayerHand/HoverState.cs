@@ -71,25 +71,21 @@ namespace Minimax.GamePlay.PlayerHand
             bool isTouchBegan = touch.phase == TouchPhase.Began;
             bool isTouchMoved = touch.phase == TouchPhase.Moved;
             bool isTouchEnded = touch.phase == TouchPhase.Ended;
+            bool isMyHandSection = currentSection == SectionDivider.Section.MyHand;
+            bool isMyTurn = TurnManager.Instance.IsMyTurn;
             
-            if (isTouchBegan)
+            if (isTouchBegan || isTouchEnded)
             {
-                if (m_contactCount >= 1)
+                m_contactCount++;
+                
+                if (m_contactCount >= 2 && isMyTurn)
                 {
                     m_slot.ChangeState(m_slot.DraggingState);
                 }
-                else
-                {
-                    m_contactCount++;
-                }
             }
-            else if (isTouchMoved && currentSection != SectionDivider.Section.MyHand)
+            else if (isTouchMoved && !isMyHandSection && isMyTurn)
             {
                 m_slot.ChangeState(m_slot.DraggingState);
-            }
-            else if (isTouchEnded)
-            {
-                m_contactCount++;
             }
         }
         

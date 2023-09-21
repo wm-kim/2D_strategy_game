@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Minimax.Utilities;
@@ -288,8 +289,8 @@ namespace Minimax.GamePlay.GridSystem
     {
       List<ClientCell> neighbors = new List<ClientCell>();
       
-      int[] dx = { 0, 0, -1, 1 };
-      int[] dy = { -1, 1, 0, 0 };
+      int[] dx = { 0, 1, -1, 0 };
+      int[] dy = { 1, 0, 0, -1 };
       
       for (int i = 0; i < dx.Length; i++)
       {
@@ -309,34 +310,33 @@ namespace Minimax.GamePlay.GridSystem
       return m_pathFinding.FindPath(Cells[start.x, start.y], Cells[target.x, target.y], this);
     }
     
-    // used dfs to find reachable cells
-    public List<ClientCell> GetReachableCells(ClientCell cell, int range)
-    {
-      Stack<ClientCell> stack = new Stack<ClientCell>();
-      HashSet<ClientCell> visited = new HashSet<ClientCell>();
+    public List<ClientCell> GetReachableCells(ClientCell startCell, int range)
+    { 
+      // BFS를 위한 큐와 거리 맵을 초기화합니다.
+      Queue<ClientCell> queue = new Queue<ClientCell>();
+      queue.Enqueue(startCell);
+      Dictionary<ClientCell, int> distances = new Dictionary<ClientCell, int>();
+      distances[startCell] = 0;
+
+      // 결과를 담을 리스트를 초기화합니다.
       List<ClientCell> reachableCells = new List<ClientCell>();
-      Dictionary<ClientCell, int> cellDistances  = new Dictionary<ClientCell, int>();
 
-      stack.Push(cell);
-      visited.Add(cell);
-      cellDistances.Add(cell, 0);
-
-      while (stack.Count > 0)
+      while (queue.Count > 0)
       {
-        ClientCell currentCell = stack.Pop();
-        int currentDistance = cellDistances[currentCell];
-        
-        List<ClientCell> neighbors = GetNeighbors(currentCell);
-        foreach (var neighbor in neighbors)
+        ClientCell currentCell = queue.Dequeue();
+
+        // 현재 셀의 이웃을 검사합니다.
+        foreach (ClientCell neighbor in GetNeighbors(currentCell))
         {
-          if (!visited.Contains(neighbor) && !neighbor.IsWalkable)
+          // 아직 방문하지 않은 이웃 셀이거나 이동 가능한 셀이면 큐에 추가합니다.
+          if (!distances.ContainsKey(neighbor) && neighbor.IsWalkable)
           {
-            int newDistance = currentDistance + 1;
-            if (newDistance <= range)
+            queue.Enqueue(neighbor);
+            distances[neighbor] = distances[currentCell] + 1;
+
+            // 최대 이동 거리 내에 있는 경우 결과 목록에 추가합니다.
+            if (distances[neighbor] <= range)
             {
-              cellDistances.Add(neighbor, newDistance);
-              visited.Add(neighbor);
-              stack.Push(neighbor);
               reachableCells.Add(neighbor);
             }
           }

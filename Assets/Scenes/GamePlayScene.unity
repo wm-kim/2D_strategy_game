@@ -426,6 +426,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5f716f4d5f308b4bbf34536ca0ec7f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &182772813
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 182772814}
+  m_Layer: 0
+  m_Name: ManaManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &182772814
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 182772813}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 306494741}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &228234035
 GameObject:
   m_ObjectHideFlags: 0
@@ -706,6 +737,7 @@ Transform:
   - {fileID: 792051781}
   - {fileID: 1959353549}
   - {fileID: 604000562}
+  - {fileID: 182772814}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &308215375
@@ -1071,6 +1103,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3daa4d1f2a73402eb160b25d122ad9bc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_turnManager: {fileID: 775888030}
+  m_clientMap: {fileID: 273055804}
+  m_cardDrawingLogic: {fileID: 946061054}
 --- !u!1 &533317567
 GameObject:
   m_ObjectHideFlags: 0
@@ -1290,6 +1325,7 @@ MonoBehaviour:
   m_clientMap: {fileID: 273055804}
   m_unitContainer: {fileID: 1424158096}
   m_unitLogic: {fileID: 1565861079}
+  m_turnManager: {fileID: 775888030}
 --- !u!1 &630725570
 GameObject:
   m_ObjectHideFlags: 0
@@ -1616,7 +1652,6 @@ MonoBehaviour:
   m_networkTimer: {fileID: 775888028}
   m_endTurnButton: {fileID: 533317569}
   m_turnText: {fileID: 1506027591}
-  m_turnDuration: 10
 --- !u!1 &792051780
 GameObject:
   m_ObjectHideFlags: 0
@@ -3145,7 +3180,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1424158096}
   m_Layer: 0
-  m_Name: UnitContainer
+  m_Name: UnitVisualContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3460,7 +3495,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_serverMap: {fileID: 273055806}
+  m_turnManager: {fileID: 775888030}
   m_clientUnit: {fileID: 604000563}
+  m_clientMap: {fileID: 273055804}
   m_mapLogic: {fileID: 447203463}
 --- !u!114 &1565861080
 MonoBehaviour:
@@ -3780,9 +3817,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_serverPlayersHand: {fileID: 1441576942}
   m_serverMap: {fileID: 273055806}
+  m_turnManager: {fileID: 775888030}
   m_clientMyHand: {fileID: 1441576941}
   m_clientOpponentHand: {fileID: 1441576944}
   m_clientUnitManager: {fileID: 604000563}
+  m_mapLogic: {fileID: 447203463}
 --- !u!114 &1759084144
 MonoBehaviour:
   m_ObjectHideFlags: 0

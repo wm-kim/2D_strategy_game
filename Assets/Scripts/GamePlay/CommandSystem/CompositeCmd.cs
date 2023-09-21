@@ -16,7 +16,7 @@ namespace Minimax.GamePlay.CommandSystem
             m_subCommands = subCommands;
         }
         
-        public void AddCommand(Command command)
+        protected void AddSubCommand(Command command)
         {
             m_subCommands.Add(command);
         }

@@ -50,7 +50,8 @@ namespace Minimax
             {
                 // create copy of the scriptable object
                 var cardData = Instantiate(m_cardDBManager.GetCardData(cardIds[i]));
-                new ClientCard(cardUIds[i], true, cardData);
+                var myPlayerNumber = TurnManager.Instance.MyPlayerNumber;
+                new ClientCard(cardUIds[i], myPlayerNumber, cardData);
                 m_cardsInDeck.Add(cardUIds[i]);
             }
             

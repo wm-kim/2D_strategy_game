@@ -18,7 +18,8 @@ namespace Minimax
         {
             for (int i = 0; i < cardUIds.Length; i++)
             {
-                new ClientCard(cardUIds[i], false, null);
+                var opponentPlayerNumber = TurnManager.Instance.OpponentPlayerNumber;   
+                new ClientCard(cardUIds[i], opponentPlayerNumber, null);
                 m_cardsInDeck.Add(cardUIds[i]);
             }
         }

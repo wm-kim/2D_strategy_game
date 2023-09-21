@@ -12,6 +12,10 @@ namespace Minimax.GamePlay.GridSystem
 
         public int CurrentUnitUID { get; private set; } = -1;
         
+        /// <summary>
+        /// Returns true if the cell is walkable.
+        /// Cell이 유닛에 의해 점령되지 않았어도, 이동 불가능한 Cell일 수 있습니다.
+        /// </summary>
         public bool IsWalkable => CurrentUnitUID == -1;
         
         public ServerCell(int x, int y)

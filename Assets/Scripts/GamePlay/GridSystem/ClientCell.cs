@@ -1,4 +1,5 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
 
 namespace Minimax.GamePlay.GridSystem
@@ -12,10 +13,19 @@ namespace Minimax.GamePlay.GridSystem
         
         [SerializeField] private SpriteRenderer m_overlaySpriteRenderer;
         
+        [Header("Settings")]
+        [SerializeField, Range(0, 1)]
+        private float m_overlayAlpha = 0.30f;
+        
+        [SerializeField, Range(0, 1)]
+        private float m_overlayFadeDuration = 0.2f;
+        
         /// <summary>
         /// Coordinates of the cell on the grid.
         /// </summary>
         public Vector2Int Coord { get; private set; }
+        
+        private Tween m_overlayFadeTween;
 
         public int GetDistance(ICell other)
         {
@@ -33,11 +43,11 @@ namespace Minimax.GamePlay.GridSystem
         /// Returns true if the cell is walkable.
         /// Cell이 유닛에 의해 점령되지 않았어도, 이동 불가능한 Cell일 수 있습니다.
         /// </summary>
-        public bool IsWalkable => CurrentUnitUID != -1;
+        public bool IsWalkable => CurrentUnitUID == -1;
 
         private void Awake()
         {
-            m_overlaySpriteRenderer.enabled = false;
+            m_overlaySpriteRenderer.color = new Color(1, 1, 1, 0);
         }
 
         public void Init(int x, int y)
@@ -56,14 +66,16 @@ namespace Minimax.GamePlay.GridSystem
             CurrentUnitUID = -1;
         }
         
-        public void HighlightAsReachable()
+        public void Highlight()
         {
-            m_overlaySpriteRenderer.enabled = true;
+            m_overlayFadeTween?.Kill();
+            m_overlayFadeTween = m_overlaySpriteRenderer.DOFade(m_overlayAlpha, m_overlayFadeDuration);
         }
         
         public void DisableHighlight()
         {
-            m_overlaySpriteRenderer.enabled = false;
+            m_overlayFadeTween?.Kill();
+            m_overlayFadeTween = m_overlaySpriteRenderer.DOFade(0, m_overlayFadeDuration);
         }
         
         public bool Equals(ClientCell other)

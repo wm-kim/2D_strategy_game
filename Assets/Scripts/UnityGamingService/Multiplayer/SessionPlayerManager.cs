@@ -57,6 +57,8 @@ namespace Minimax.UnityGamingService.Multiplayer
             // this should never happen, throw an exception
             throw new Exception($"Player Number data not found for client {clientId}");
         }
+
+        public int GetOpponentPlayerNumber(int playerNumber) => playerNumber == 0 ? 1 : 0;
         
         public int GetOpponentPlayerNumber(ulong clientId)
         {

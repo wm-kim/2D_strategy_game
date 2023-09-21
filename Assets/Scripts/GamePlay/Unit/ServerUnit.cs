@@ -10,6 +10,8 @@ namespace Minimax.GamePlay.Unit
     /// </summary>
     public class ServerUnit : IIdentifiable
     {
+        public int Owner { get; set; }
+        
         /// <summary>
         /// for referencing the card that this unit is created from
         /// </summary>
@@ -39,8 +41,9 @@ namespace Minimax.GamePlay.Unit
             UID = IDFactory.GetUniqueID();
             m_cardUID = cardUID;
             var serverCard = ServerCard.CardsCreatedThisGame[m_cardUID];
-            var unitData = serverCard.Data as UnitBaseData;
+            Owner = serverCard.Owner;   
             
+            var unitData = serverCard.Data as UnitBaseData;
             Health = unitData.Health;
             Attack = unitData.Attack;
             MoveRange = unitData.MoveRange;

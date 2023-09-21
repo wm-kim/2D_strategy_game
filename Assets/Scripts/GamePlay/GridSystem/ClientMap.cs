@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Minimax.CoreSystems;
+using Minimax.GamePlay.Unit;
 using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -94,7 +95,6 @@ namespace Minimax.GamePlay.GridSystem
         
         /// <summary>
         /// Wrapper method for placing unit on the map.
-        /// Also handles overlay visuals, if there is any overlay on the cell, it will be removed.
         /// </summary>
         public void PlaceUnitOnMap(int unitId, Vector2Int coord)
         {
@@ -139,12 +139,23 @@ namespace Minimax.GamePlay.GridSystem
         
         public void HighlightReachableCells(ClientCell cell, int range)
         {
-            DisableHighlightCells();
+            if (!TurnManager.Instance.IsMyTurn) return;
             m_highlightedCells = m_isoGrid.GetReachableCells(cell, range);
             DebugWrapper.Log($"Highlighting {m_highlightedCells.Count} cells, range: {range}");
             foreach (var clientCell in m_highlightedCells)
             {
-                clientCell.HighlightAsReachable();
+                clientCell.Highlight();
+            }
+        }
+        
+        public void HighlightMovingPath(Vector2Int[] pathCoords)
+        {
+            for (int i = 0; i < pathCoords.Length; i++)
+            {
+                var coord = pathCoords[i];
+                var clientCell = m_isoGrid.Cells[coord.x, coord.y];
+                clientCell.Highlight();
+                m_highlightedCells.Add(clientCell);
             }
         }
         

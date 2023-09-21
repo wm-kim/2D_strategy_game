@@ -52,18 +52,16 @@ namespace Minimax.GamePlay.Logic
                 var opponentNumber = sessionPlayers.GetOpponentPlayerNumber(clientId);
                 DrawAllPlayerInitialCardsClientRpc(cardUIDs[playerNumber], cardUIDs[opponentNumber], clientRpcParams[clientId]);
             }
-            
         }
         
-        public void CommandDrawACardFromDeck(ulong clientId)
+        public void CommandDrawACardFromDeck(int playerNumber)
         {
             try
             {
-                DebugWrapper.Log($"Drawing a card for client {clientId}");
+                DebugWrapper.Log($"Drawing a card for player {playerNumber}");
                 var sessionPlayers = SessionPlayerManager.Instance;
                 var clientRpcParams = sessionPlayers.ClientRpcParams;
-                var playerNumber = sessionPlayers.GetPlayerNumber(clientId);
-                var opponentNumber = sessionPlayers.GetOpponentPlayerNumber(clientId);
+                var opponentNumber = sessionPlayers.GetOpponentPlayerNumber(playerNumber);
                 var cardUID = DrawACard(playerNumber);
                 
                 DrawMyCardClientRpc(cardUID, clientRpcParams[playerNumber]);

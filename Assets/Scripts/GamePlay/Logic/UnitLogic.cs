@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Minimax.GamePlay.CommandSystem;
 using Minimax.GamePlay.GridSystem;
 using Minimax.GamePlay.Unit;
@@ -17,9 +18,11 @@ namespace Minimax.GamePlay.Logic
     {
         [Header("Server References")]
         [SerializeField] private ServerMap m_serverMap;
+        [SerializeField] private TurnManager m_turnManager;
         
         [Header("Client References")]
         [SerializeField] private ClientUnitManager m_clientUnit;
+        [SerializeField] private ClientMap m_clientMap;
         
         [Header("Other Logic References")]
         [SerializeField] private MapLogic m_mapLogic;
@@ -28,7 +31,10 @@ namespace Minimax.GamePlay.Logic
         public void CommandMoveUnitServerRpc(int unitUID, Vector2Int destCoord, ServerRpcParams serverRpcParams = default)
         {
             var senderClientId = serverRpcParams.Receive.SenderClientId;
+            m_turnManager.CheckIfPlayerTurn(senderClientId, "MoveUnit");
+            
             var serverUnit = ServerUnit.UnitsCreatedThisGame[unitUID];
+            if (!CheckIsUnitOwner(serverUnit, senderClientId)) return;
             
             // check if the unit is movable
             if (!serverUnit.IsMovable)
@@ -48,25 +54,24 @@ namespace Minimax.GamePlay.Logic
             serverUnit.MoveRange -= path.Count;
             m_serverMap[destCoord].PlaceUnit(unitUID);
             
-            SetUnitMovableClientRpc(unitUID, false);
-            var clientRpcParams = SessionPlayerManager.Instance.ClientRpcParams;
-            m_mapLogic.HideOverlayClientRpc(clientRpcParams[senderClientId]);
-            for (int i = 0; i < path.Count; i++)
-                MoveUnitOneCellClientRpc(unitUID, path[i].Coord);
-            m_mapLogic.HighlightReachableCellsClientRpc(unitUID, clientRpcParams[senderClientId]);
-            SetUnitMovableClientRpc(unitUID, true);
+            // send the command to the clients
+            var pathCoords = path.Select(t => t.Coord).ToList();
+            MoveUnitClientRpc(unitUID, pathCoords.ToArray());
+        }
+        
+        private bool CheckIsUnitOwner(ServerUnit serverUnit, ulong senderClientId)
+        {
+            var sessionPlayers = SessionPlayerManager.Instance;
+            var playerNumber = sessionPlayers.GetPlayerNumber(senderClientId);
+            bool isUnitOwner = serverUnit.Owner == playerNumber;
+            if (!isUnitOwner) DebugWrapper.Log($"Player {playerNumber} is not the owner of unit {serverUnit.UID}");
+            return isUnitOwner;
         }
         
         [ClientRpc]
-        private void SetUnitMovableClientRpc(int unitUID, bool isMovable)
+        private void MoveUnitClientRpc(int unitUID, Vector2Int[] path)
         {
-            new SetUnitMovableCmd(unitUID, isMovable).AddToQueue();
-        }
-        
-        [ClientRpc]
-        private void MoveUnitOneCellClientRpc(int unitUID, Vector2Int destCoord)
-        {
-            new MoveUnitOneCellCmd(unitUID, destCoord, m_clientUnit).AddToQueue();
+            new MoveUnitCmd(unitUID, path, m_clientUnit, m_clientMap).AddToQueue();
         }
     }
 }

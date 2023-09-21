@@ -12,8 +12,13 @@ namespace Minimax.GamePlay
     [System.Serializable]
     public class ClientCard : IIdentifiable
     {
-        public bool IsMine { get; private set; } = false;
-        
+        /// <summary>
+        /// the owner of this card (PlayerNumber)
+        /// </summary>
+        public int Owner { get; set; }
+
+        public bool IsMine => Owner == TurnManager.Instance.MyPlayerNumber;
+
         /// <summary>
         /// Stores the copy of ScriptableObject CardBaseData
         /// This could be null if this card is opponent's card and we don't have the data of it
@@ -38,10 +43,10 @@ namespace Minimax.GamePlay
             CardsCreatedThisGame.Clear();
         }
         
-        public ClientCard(int cardUID, bool isMine, CardBaseData data = null)
+        public ClientCard(int cardUID, int ownerPlayerNumber, CardBaseData data = null)
         {
             UID = cardUID;
-            IsMine = isMine;
+            Owner = ownerPlayerNumber;
             Data = data;
             CardsCreatedThisGame.Add(UID, this);
         }

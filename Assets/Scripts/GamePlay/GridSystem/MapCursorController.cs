@@ -80,9 +80,10 @@ namespace Minimax.GamePlay.GridSystem
         {
             var unitUID = m_clientMap[clientCell.Coord].CurrentUnitUID;
             var clientUnit = ClientUnit.UnitsCreatedThisGame[unitUID];
-            if (!clientUnit.IsMine) return;
-            
-            ShowSelectOverlay(clientCell.transform.position);
+            if (clientUnit.IsMine)
+            {
+                ShowSelectOverlay(clientCell.transform.position);
+            }
         }
         
         private void HideHoverOverlay()

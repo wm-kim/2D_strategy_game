@@ -20,9 +20,9 @@ namespace Minimax.GamePlay.Logic
         }
         
         [ClientRpc]
-        public void HideOverlayClientRpc(ClientRpcParams clientRpcParams = default)
+        public void DisableAllHighlightsClientRpc()
         {
-            new HideMapOverlayCmd(m_clientMap).AddToQueue();
+            new DisableAllHighlightOverlayCmd(m_clientMap).AddToQueue();
         }
     }
 }

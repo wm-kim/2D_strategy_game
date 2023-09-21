@@ -22,22 +22,27 @@ namespace Minimax.GamePlay.Logic
         [Header("Server References")]
         [SerializeField] private ServerPlayersHandManager m_serverPlayersHand;
         [SerializeField] private ServerMap m_serverMap;
+        [SerializeField] private TurnManager m_turnManager;
         
         [Header("Client References")]
         [SerializeField] private ClientMyHandManager m_clientMyHand;
         [SerializeField] private ClientOpponentHandManager m_clientOpponentHand;
         [SerializeField] private ClientUnitManager m_clientUnitManager;
         
+        [Header("Other Logic References")]
+        [SerializeField] private MapLogic m_mapLogic;
+        
         [ServerRpc(RequireOwnership = false)]
         public void CommandPlayACardFromHandServerRpc(int cardUID, Vector2Int coord, ServerRpcParams serverRpcParams = default)
         {
             var senderClientId = serverRpcParams.Receive.SenderClientId;
-            var sessionPlayers = SessionPlayerManager.Instance;
-            var clientRpcParams = sessionPlayers.ClientRpcParams;
+            m_turnManager.CheckIfPlayerTurn(senderClientId, "PlayACardFromHand");
             
+            var sessionPlayers = SessionPlayerManager.Instance;
             var playerNumber = sessionPlayers.GetPlayerNumber(senderClientId);
             var opponentPlayerNumber = sessionPlayers.GetOpponentPlayerNumber(senderClientId);
-            
+            var clientRpcParams = sessionPlayers.ClientRpcParams;
+
             m_serverPlayersHand.RemoveCardFromHand(playerNumber, cardUID);
             var serverUnit = new ServerUnit(cardUID, coord);
             m_serverMap.PlaceUnitOnMap(serverUnit.UID, coord);
