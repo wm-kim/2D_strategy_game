@@ -25,6 +25,7 @@ namespace Minimax.GamePlay
         [SerializeField] private ServerPlayersDeckManager m_serverPlayersDeckManager;
         [SerializeField] private TurnManager m_turnManager;
         [SerializeField] private ProfileManager m_profileManager;
+        [SerializeField] private ManaManager m_manaManager;
         [SerializeField] private ServerMap m_serverMap;
         
         [Header("Game Logics")]
@@ -89,10 +90,11 @@ namespace Minimax.GamePlay
             {
                 await m_serverPlayersDeckManager.SetupPlayersDeck();
                 m_serverMap.GenerateMap(Define.MapSize);
+                m_serverMap.SetPlayersInitialPlaceableArea();
                 m_profileManager.SetPlayersName();
+                m_manaManager.InitPlayersMana();
                 m_cardDrawingLogic.CommandDrawAllPlayerInitialCards();
                 m_turnManager.StartInitialTurn();
-                
                 var connection = GlobalManagers.Instance.Connection;
                 connection.ChangeState(connection.GameStarted);
             }

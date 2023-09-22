@@ -51,10 +51,7 @@ namespace Minimax.GamePlay
         
         public int OpponentPlayerNumber =>
             SessionPlayerManager.Instance.GetOpponentPlayerNumber(MyPlayerNumber);
-
-        /// <summary>
-        /// Used by clients to check if it's their turn
-        /// </summary>
+        
         public bool IsMyTurn => m_whosTurn.Value == MyPlayerNumber;
 
         private void Awake()
@@ -154,7 +151,22 @@ namespace Minimax.GamePlay
         }
         
         /// <summary>
+        /// Used by clients to check if it's their turn, and log if it is not.
+        /// </summary>
+        public bool CheckIfMyTurn(string logMessage = "")
+        {
+            if (!IsMyTurn)
+            {
+                DebugWrapper.LogError($"Player {MyPlayerNumber} request denied to {logMessage}");
+                return false;
+            }
+
+            return true;
+        }
+        
+        /// <summary>
         /// used by server to check if the player is allowed to do something
+        /// and log if it is not.
         /// </summary>
         public bool CheckIfPlayerTurn(ulong clientId, string logMessage = "")
         {

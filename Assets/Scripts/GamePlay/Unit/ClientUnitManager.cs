@@ -53,6 +53,7 @@ namespace Minimax
                 if (isHighlightedCell)
                 {
                     if (!m_turnManager.IsMyTurn) return;
+                    if (!CheckIfIOwnUnit(m_selectedUnitUID)) return;
                     if (!CheckIfUnitIsMovable(m_selectedUnitUID)) return;
                     m_unitLogic.CommandMoveUnitServerRpc(m_selectedUnitUID, clientCell.Coord);
                 }
@@ -63,19 +64,25 @@ namespace Minimax
             }
         }
         
+        private bool CheckIfIOwnUnit(int unitUID)
+        {
+            var clientUnit = ClientUnit.UnitsCreatedThisGame[unitUID];
+            if (!clientUnit.IsMine)
+            {
+                DebugWrapper.Log("You don't own this unit");
+                return false;
+            }
+
+            return true;
+        }
+        
         /// <summary>
-        /// Wrapper for checking if the unit is movable, and log if it is not.
+        /// Wrapper for checking if the unit is movable
         /// </summary>
         private bool CheckIfUnitIsMovable(int unitUID)
         {
             var clientUnit = ClientUnit.UnitsCreatedThisGame[unitUID];
-            if (!clientUnit.IsMovable)
-            {
-                DebugWrapper.Log("Unit is not movable");
-                return false;
-            }
-            
-            return true;
+            return clientUnit.CheckIfMovable();
         }
         
         private void OnTapUnit(ClientCell clientCell)

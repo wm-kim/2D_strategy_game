@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using Minimax.GamePlay.Unit;
+using Minimax.UnityGamingService.Multiplayer;
+using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.GamePlay.GridSystem
@@ -16,11 +19,34 @@ namespace Minimax.GamePlay.GridSystem
         /// Returns true if the cell is walkable.
         /// Cell이 유닛에 의해 점령되지 않았어도, 이동 불가능한 Cell일 수 있습니다.
         /// </summary>
-        public bool IsWalkable => CurrentUnitUID == -1;
+        public bool IsWalkable { get; set; } = true;
+        
+        /// <summary>
+        /// Returns true if the cell is placeable.
+        /// </summary>
+        public Dictionary<int, bool> IsPlaceable { get; set; }
         
         public ServerCell(int x, int y)
         {
             Coord = new Vector2Int(x, y);
+            IsPlaceable = new Dictionary<int, bool>();
+            foreach(var playerNumber in SessionPlayerManager.Instance.GetAllPlayerNumbers())
+                IsPlaceable.Add(playerNumber, false);
+        }
+        
+        /// <summary>
+        /// Checks if the cell is placeable by the given player and log error if not.
+        /// </summary>
+        /// <returns></returns>
+        public bool CheckIfPlaceableBy(int playerNumber)
+        {
+            if (!IsPlaceable[playerNumber])
+            {
+                DebugWrapper.LogError($"Cell {Coord} is not placeable by player {playerNumber}");
+                return false;
+            }
+
+            return true;
         }
         
         public int GetDistance(ICell other)
@@ -31,11 +57,13 @@ namespace Minimax.GamePlay.GridSystem
         public void PlaceUnit(int unitUID)
         {
             CurrentUnitUID = unitUID;
+            IsWalkable = false;
         }
         
         public void RemoveUnit()
         {
             CurrentUnitUID = -1;
+            IsWalkable = true;
         }
         
         public bool Equals(ServerCell other)

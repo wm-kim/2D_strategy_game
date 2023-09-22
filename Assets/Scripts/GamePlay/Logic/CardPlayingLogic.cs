@@ -38,8 +38,13 @@ namespace Minimax.GamePlay.Logic
             var senderClientId = serverRpcParams.Receive.SenderClientId;
             m_turnManager.CheckIfPlayerTurn(senderClientId, "PlayACardFromHand");
             
+            // check if the cell is placeable 
+            var serverCell = m_serverMap[coord];
+            
             var sessionPlayers = SessionPlayerManager.Instance;
             var playerNumber = sessionPlayers.GetPlayerNumber(senderClientId);
+            if (!serverCell.CheckIfPlaceableBy(playerNumber)) return;
+            
             var opponentPlayerNumber = sessionPlayers.GetOpponentPlayerNumber(senderClientId);
             var clientRpcParams = sessionPlayers.ClientRpcParams;
 

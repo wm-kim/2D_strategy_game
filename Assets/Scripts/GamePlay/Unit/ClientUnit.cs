@@ -66,5 +66,19 @@ namespace Minimax.GamePlay.Unit
         public int MoveRange { get; set; }
         
         public bool IsMovable { get; set; } = true;
+        
+        /// <summary>
+        /// Checks if the unit is movable, and log if it is not.
+        /// </summary>
+        public bool CheckIfMovable()
+        {
+            if (!IsMovable)
+            {
+                DebugWrapper.LogError($"Unit {UID} is not movable");
+                return false;
+            }
+
+            return true;
+        }
     }
 }

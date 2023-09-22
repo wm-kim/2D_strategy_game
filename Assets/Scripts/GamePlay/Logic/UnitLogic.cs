@@ -24,9 +24,6 @@ namespace Minimax.GamePlay.Logic
         [SerializeField] private ClientUnitManager m_clientUnit;
         [SerializeField] private ClientMap m_clientMap;
         
-        [Header("Other Logic References")]
-        [SerializeField] private MapLogic m_mapLogic;
-        
         [ServerRpc(RequireOwnership = false)]
         public void CommandMoveUnitServerRpc(int unitUID, Vector2Int destCoord, ServerRpcParams serverRpcParams = default)
         {
@@ -37,18 +34,15 @@ namespace Minimax.GamePlay.Logic
             if (!CheckIsUnitOwner(serverUnit, senderClientId)) return;
             
             // check if the unit is movable
-            if (!serverUnit.IsMovable)
-            {
-                DebugWrapper.Log("Unit is not movable");
-                return;
-            }
+            if (!serverUnit.CheckIfMovable()) return;
             
+            // check if the destination is reachable
             var path = m_serverMap.GetPath(serverUnit.Coord, destCoord);
             if (path.Count == 0) return;
             
+            // remove the unit from the current cell and place it on the destination cell
             var serverCell = m_serverMap[serverUnit.Coord];
             serverCell.RemoveUnit();
-            
             // TODO : add additional logic if there is event on the cell (in the future)
             serverUnit.Coord = destCoord;
             serverUnit.MoveRange -= path.Count;

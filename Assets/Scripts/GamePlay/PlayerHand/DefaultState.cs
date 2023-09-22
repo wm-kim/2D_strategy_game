@@ -10,7 +10,6 @@ namespace Minimax.GamePlay.PlayerHand
 
         public override void Enter()
         {
-            m_slot.HandManager.ReleaseSelectingCard();
             m_slot.HandCardView.transform.SetParent(m_slot.transform);
         }
 

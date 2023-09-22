@@ -29,15 +29,14 @@ namespace Minimax.GamePlay.Logic
         public void CommandDrawAllPlayerInitialCards()
         {
             DebugWrapper.Log("Server is drawing initial cards for all players");
-            var connectedClientIds = NetworkManager.Singleton.ConnectedClientsIds;
             var sessionPlayers = SessionPlayerManager.Instance;
             var clientRpcParams = sessionPlayers.ClientRpcParams;
             
             Dictionary<int, int[]> cardUIDs = new Dictionary<int, int[]>();
+            var playerNumbers = sessionPlayers.GetAllPlayerNumbers();
             
-            foreach (var clientId in connectedClientIds)
+            foreach (var playerNumber in playerNumbers)
             {
-                var playerNumber = sessionPlayers.GetPlayerNumber(clientId);
                 cardUIDs.Add(playerNumber, new int[Define.InitialHandCardCount]);
                 for (int i = 0; i < Define.InitialHandCardCount; i++)
                 {
@@ -46,11 +45,10 @@ namespace Minimax.GamePlay.Logic
                 }
             }
             
-            foreach (var clientId in connectedClientIds)
+            foreach (var playerNumber in playerNumbers)
             {
-                var playerNumber = sessionPlayers.GetPlayerNumber(clientId);
-                var opponentNumber = sessionPlayers.GetOpponentPlayerNumber(clientId);
-                DrawAllPlayerInitialCardsClientRpc(cardUIDs[playerNumber], cardUIDs[opponentNumber], clientRpcParams[clientId]);
+                var opponentNumber = sessionPlayers.GetOpponentPlayerNumber(playerNumber);
+                DrawAllPlayerInitialCardsClientRpc(cardUIDs[playerNumber], cardUIDs[opponentNumber], clientRpcParams[playerNumber]);
             }
         }
         
@@ -76,7 +74,7 @@ namespace Minimax.GamePlay.Logic
         private int DrawACard(int playerNumber)
         {
             var playerDeck = m_serverPlayersDeck.GetPlayerDeck(playerNumber);
-            if (playerDeck.Count == 0)
+            if (!m_serverPlayersDeck.IsCardLeftInDeck(playerNumber))
             {
                 throw new Exception($"Player {playerNumber} has no more cards in deck.");
             }

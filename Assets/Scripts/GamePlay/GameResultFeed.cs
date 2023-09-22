@@ -30,12 +30,12 @@ namespace Minimax.GamePlay
         
         private void DisplayGameResult(int loserPlayerNumber)
         {
-            foreach (var clientId in NetworkManager.Singleton.ConnectedClientsIds)
+            var sessionPlayers = SessionPlayerManager.Instance;
+            var playerNumbers = sessionPlayers.GetAllPlayerNumbers();
+            foreach (var playerNumber in playerNumbers)
             {
-                var sessionPlayers = SessionPlayerManager.Instance;
-                var playerNumber = sessionPlayers.GetPlayerNumber(clientId);
                 var isWinner = playerNumber != loserPlayerNumber;
-                DisplayGameResultClientRpc(isWinner, sessionPlayers.ClientRpcParams[clientId]);
+                DisplayGameResultClientRpc(isWinner, sessionPlayers.ClientRpcParams[playerNumber]);
             }
         }
         

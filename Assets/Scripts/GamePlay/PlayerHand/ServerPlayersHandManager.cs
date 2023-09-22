@@ -20,11 +20,8 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (!IsServer) return;
             
-            foreach (var clientId in NetworkManager.Singleton.ConnectedClientsIds)
-            {
-                var playerNumber = SessionPlayerManager.Instance.GetPlayerNumber(clientId);
+            foreach (var playerNumber in SessionPlayerManager.Instance.GetAllPlayerNumbers())
                 m_plyersCardInHand.Add(playerNumber, new List<int>());
-            }
             
             base.OnNetworkSpawn();
         }

@@ -62,13 +62,11 @@ namespace Minimax.GamePlay
                 }
                 
                 var sessionPlayers = SessionPlayerManager.Instance;
-                foreach (var clientId in clientIds)
+                foreach (var playerNumber in sessionPlayers.GetAllPlayerNumbers())
                 {
-                    var clientRpcParam = sessionPlayers.ClientRpcParams[clientId];
-                    var playerNumber = sessionPlayers.GetPlayerNumber(clientId);
+                    var clientRpcParam = sessionPlayers.ClientRpcParams[playerNumber];
                     m_clientMyDeckManager.SetupMyDeckClientRpc(copiedCardUIDs[playerNumber],copiedCardIds[playerNumber], clientRpcParam);
-                    
-                    var opponentNumber = sessionPlayers.GetOpponentPlayerNumber(clientId);
+                    var opponentNumber = sessionPlayers.GetOpponentPlayerNumber(playerNumber);
                     m_clientOpponentDeckManager.SetupOpponentDeckClientRpc(copiedCardUIDs[opponentNumber], clientRpcParam);
                 }
             }
@@ -168,5 +166,7 @@ namespace Minimax.GamePlay
         {
             return m_playersDeck[playerNumber];
         }
+        
+        public bool IsCardLeftInDeck(int playerNumber) => m_playersDeck[playerNumber].Count > 0;
     }
 }

@@ -44,6 +44,8 @@ namespace Minimax.Utilities
         public static readonly int TurnTimeLimit = 30;
         public static readonly int MaxHandCardCount = 10;
         public static readonly int InitialHandCardCount = 3;
+        public static readonly int InitialManaCapacity = 1;
+        public static readonly int MaxManaCapacity = 10;
 #endregion
 
 #region SortingLayer

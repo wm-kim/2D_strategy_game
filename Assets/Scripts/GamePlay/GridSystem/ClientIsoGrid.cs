@@ -247,7 +247,7 @@ namespace Minimax.GamePlay.GridSystem
       }
       else
       {
-        gridClientCell = default(ClientCell);
+        gridClientCell = null;
         return false;
       }
     }

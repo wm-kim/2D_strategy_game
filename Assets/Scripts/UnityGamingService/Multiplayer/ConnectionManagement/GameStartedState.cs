@@ -22,12 +22,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public override void Enter()
         {
-            foreach (var clientId in m_connectionManager.NetworkManager.ConnectedClientsIds)
-            {
-                var sessionPlayers = SessionPlayerManager.Instance;
-                var playerNumber = sessionPlayers.GetPlayerNumber(clientId);
+            foreach (var playerNumber in SessionPlayerManager.Instance.GetAllPlayerNumbers())
                 m_remainTimeForClientReconnect[playerNumber] = Define.ServerWaitMsForClientReconnect;
-            }
         }
 
         public override void Exit()

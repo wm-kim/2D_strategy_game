@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -14,6 +15,16 @@ namespace Minimax.UnityGamingService.Multiplayer
         private static SessionPlayerManager s_instance;
         public new static SessionPlayerManager Instance { get; } = s_instance ??= new SessionPlayerManager();
         
+        public List<int> GetAllPlayerNumbers()
+        {
+            var playerNumbers = new List<int>();
+            
+            foreach (var clientId in NetworkManager.Singleton.ConnectedClientsIds)
+                playerNumbers.Add(GetPlayerNumber(clientId));
+            
+            return playerNumbers;
+        }
+
         public int GetAvailablePlayerNumber()
         {
             for (var i = 0; i < Define.MaxConnectedPlayers; i++)

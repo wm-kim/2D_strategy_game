@@ -25,11 +25,9 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public ConnectStatus GetDisconnectReason(int playerNumber)
         {
-            if (m_disconnectReasons.ContainsKey(playerNumber))
-                return m_disconnectReasons[playerNumber];
-            
-            // if this disconnect reason is not recorded (unintentional), return generic disconnect
-            return ConnectStatus.GenericDisconnect;
+            return m_disconnectReasons.TryGetValue(playerNumber, out var reason) ? reason :
+                // if this disconnect reason is not recorded (unintentional), return generic disconnect
+                ConnectStatus.GenericDisconnect;
         }
         
         public void DisconnectAll(int loserPlayerNumber, ConnectStatus disconnectReason)

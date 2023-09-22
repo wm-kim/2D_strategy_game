@@ -9,6 +9,7 @@ using QFSW.QC;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.Serialization;
 
 namespace Minimax.GamePlay.PlayerHand
 {
@@ -18,7 +19,7 @@ namespace Minimax.GamePlay.PlayerHand
     public class ClientMyHandManager : MonoBehaviour
     {
         [BoxGroup("References")] [SerializeField]
-        private HandCardSlot m_cardPrefab;
+        private HandCardSlot m_handCardSlotPrefab;
 
         [BoxGroup("References")] [SerializeField]
         private Transform m_cardParent;
@@ -82,23 +83,18 @@ namespace Minimax.GamePlay.PlayerHand
         private int m_selectedIndex = -1;
         public bool IsSelecting => m_selectedIndex != -1;
         
-        /// <summary>
-        /// Is the player targeting a cell to play a card
-        /// </summary>
-        public bool IsTargeting { get; private set; } = false;
-
         private void Awake()
         {
             // Object Pooling
             m_cardSlotPool = new ObjectPool<HandCardSlot>(() =>
                 {
-                    var card = Instantiate(m_cardPrefab, m_cardParent);
-                    card.gameObject.SetActive(false);
-                    return card;
+                    var handCardSlot = Instantiate(m_handCardSlotPrefab, m_cardParent);
+                    handCardSlot.gameObject.SetActive(false);
+                    return handCardSlot;
                 },
-                (card) => { card.gameObject.SetActive(true); },
-                (card) => { card.gameObject.SetActive(false); },
-                (card) => { Destroy(card.gameObject); },
+                (handCardSlot) => { handCardSlot.gameObject.SetActive(true); },
+                (handCardSlot) => { handCardSlot.gameObject.SetActive(false); },
+                (handCardSlot) => { Destroy(handCardSlot.gameObject); },
                 maxSize: Define.MaxHandCardCount);
 
             // Memory Allocation
@@ -112,8 +108,7 @@ namespace Minimax.GamePlay.PlayerHand
         private void OnEnable()
         {
             m_map.OnTouchOverMap += OnTouchOverMap;
-            m_map.OnTouchOutsideOfMap += OnUnHoverMap;
-            m_map.OnTouchEndOverMap += OnTouchEndOverMap;
+            m_map.OnTouchOutsideOfMap += OnTouchOutsideOfMap;
         }
         
         private void OnDisable()
@@ -121,8 +116,7 @@ namespace Minimax.GamePlay.PlayerHand
             if (m_map == null) return;
             
             m_map.OnTouchOverMap -= OnTouchOverMap;
-            m_map.OnTouchOutsideOfMap -= OnUnHoverMap;
-            m_map.OnTouchEndOverMap -= OnTouchEndOverMap;
+            m_map.OnTouchOutsideOfMap -= OnTouchOutsideOfMap;
         }
         
         public void AddInitialCardsAndTween(int[] cardUIDs)
@@ -265,39 +259,45 @@ namespace Minimax.GamePlay.PlayerHand
         
         public void SelectCard(int index) => m_selectedIndex = index;
 
-        public void ReleaseSelectingCard()
-        {
-            if (!IsSelecting || IsTargeting) return;
-            
-            m_slotList[m_selectedIndex].HandCardView.FadeView(1f, m_cardFadeDuration);
-            m_selectedIndex = -1;
-        }
-        
         // I think it is inefficient to add/remove this listener function
         // to Map's OnTouchOverMap event whenever player select/deselect a card.
         // instead, I can just check if the player is selecting a card or not, inside the listeners
         private void OnTouchOverMap(ClientCell clientCell)
         {
             if (!IsSelecting) return;
-            IsTargeting = true;
             m_slotList[m_selectedIndex].HandCardView.FadeView(m_cardFadeAlpha, m_cardFadeDuration);
         }
 
-        private void OnUnHoverMap()
+        private void OnTouchOutsideOfMap()
         {
             if (!IsSelecting) return;
-            IsTargeting = false;
             m_slotList[m_selectedIndex].HandCardView.FadeView(1f, m_cardFadeDuration);
         }
         
-        private void OnTouchEndOverMap(ClientCell clientCell)
+        public void ReleaseSelectingCard()
         {
             if (!IsSelecting) return;
             
+            DebugWrapper.Log($"Release Selecting Card {m_selectedIndex}");
+            m_slotList[m_selectedIndex].HandCardView.FadeView(1f, m_cardFadeDuration);
+            m_selectedIndex = -1;
+        }
+        
+        public void PlaySelectingCard(ClientCell clientCell)
+        {
             var cardUID = m_cardUIDs[m_selectedIndex];
             DebugWrapper.Log($"Play Card UID {cardUID} on Cell {clientCell.Coord}");
-            IsTargeting = false;
             m_cardPlayingLogic.CommandPlayACardFromHandServerRpc(cardUID, clientCell.Coord);
+        }
+        
+        /// <summary>
+        /// Wrapper method for ClientMap.TryGetCellFromTouchPos, additionally check if cell is placeable
+        /// </summary>
+        public bool TryGetCellOfPlayingCard(Vector2 touchPosition, out ClientCell cell)
+        {
+            if (!m_map.TryGetCellFromTouchPos(touchPosition, out cell)) return false;
+            if (!cell.CheckIfPlaceable()) return false;
+            return true;
         }
         
 #if UNITY_EDITOR

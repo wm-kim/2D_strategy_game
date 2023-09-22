@@ -40,13 +40,16 @@ namespace Minimax.GamePlay.GridSystem
         /// <summary>
         /// Invoked when the touch is outside the map
         /// </summary>
-        public event System.Action OnTouchOutsideOfMap;
+        public event Action OnTouchOutsideOfMap;
         
         /// <summary>
         /// Invoked when the touch is over the map and ended
         /// </summary>
         public event Action<ClientCell> OnTouchEndOverMap;
         
+        /// <summary>
+        /// Invoked when the map is tapped
+        /// </summary>
         public event Action<ClientCell> OnTapMap;
 #endregion
 
@@ -88,6 +91,35 @@ namespace Minimax.GamePlay.GridSystem
             // Set Camera boundary
             m_cameraController.SetCameraPositionAndBoundary(m_isoGrid.GetGridCenterPos(), m_isoGrid.GetSize());
         }
+
+        [ClientRpc]
+        public void SetPlayersInitialPlaceableAreaClientRpc()
+        {
+            var myPlayerNumber = TurnManager.Instance.MyPlayerNumber;
+            var mapWidth = m_isoGrid.Width;
+            var mapHeight = m_isoGrid.Height;
+            
+            if (myPlayerNumber == 0)
+            {
+                for (int y = 0; y < mapHeight; y++)
+                {
+                    m_isoGrid.Cells[0, y].IsPlaceable = true;
+                    m_isoGrid.Cells[0, y].CreateOverlay(OverlayType.MyPlaceable);
+                }
+                for (int y = 0; y < mapHeight; y++)
+                    m_isoGrid.Cells[mapWidth - 1, y].CreateOverlay(OverlayType.OpponentPlaceable);
+            }
+            else if (myPlayerNumber == 1)
+            {
+                for (int y = 0; y < mapHeight; y++)
+                {
+                    m_isoGrid.Cells[mapWidth - 1, y].IsPlaceable = true;
+                    m_isoGrid.Cells[mapWidth - 1, y].CreateOverlay(OverlayType.MyPlaceable);
+                }
+                for (int y = 0; y < mapHeight; y++)
+                    m_isoGrid.Cells[0, y].CreateOverlay(OverlayType.OpponentPlaceable);
+            }
+        }
         
         private void SetRotation(GridRotation rotation) => m_isoGrid.SetRotation(rotation);
 
@@ -111,7 +143,7 @@ namespace Minimax.GamePlay.GridSystem
                 {
                     OnTouchOverMap?.Invoke(cell);
                 }
-                else
+                else // TouchPhase.Ended
                 {
                     OnTouchEndOverMap?.Invoke(cell);
                 }
@@ -120,6 +152,12 @@ namespace Minimax.GamePlay.GridSystem
             {
                 OnTouchOutsideOfMap?.Invoke();
             }
+        }
+        
+        public bool TryGetCellFromTouchPos(Vector2 touchPosition, out ClientCell cell)
+        {
+            var worldPos = m_cameraController.Camera.ScreenToWorldPoint(touchPosition);
+            return m_isoGrid.TryGetGridCellFromWorldIso(worldPos, out cell);
         }
         
         /// <summary>

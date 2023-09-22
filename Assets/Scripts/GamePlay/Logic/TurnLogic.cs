@@ -8,6 +8,7 @@ namespace Minimax.GamePlay.Logic
     {
         [Header("Server References")]
         [SerializeField] private TurnManager m_turnManager;
+        [SerializeField] private ServerPlayersDeckManager m_serverPlayersDeck;
         
         [Header("Client References")]
         [SerializeField] private ClientMap m_clientMap;
@@ -31,7 +32,8 @@ namespace Minimax.GamePlay.Logic
         
         private void OnServerTurnStart(int playerNumber)
         {
-            m_cardDrawingLogic.CommandDrawACardFromDeck(playerNumber);
+            if (m_serverPlayersDeck.IsCardLeftInDeck(playerNumber)) 
+                m_cardDrawingLogic.CommandDrawACardFromDeck(playerNumber);
         }
         
         private void OnClientTurnStart(int playerNumber)
