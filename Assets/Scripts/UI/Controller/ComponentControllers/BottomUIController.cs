@@ -1,3 +1,4 @@
+using System;
 using Minimax.CoreSystems;
 using UnityEngine;
 
@@ -7,10 +8,10 @@ namespace Minimax.UI.Controller
     {
         [SerializeField] private PageNavigationManager m_pageNavigationManager;
         [SerializeField] private ButtonGroupController m_bottomButtonGroupController;
-        
-        private void Awake()
+    
+        public void Init(int initialIndexToClick = 0)
         {
-            m_bottomButtonGroupController.Init();
+            m_bottomButtonGroupController.Init(initialIndexToClick);
             m_bottomButtonGroupController.OnButtonSelected += OnBottomButtonSelected;
         }
 

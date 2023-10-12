@@ -23,7 +23,12 @@ namespace Minimax
 
         protected override void Show(float transitionDuration = 0)
         {
-            if (m_fadeTween != null && m_fadeTween.IsPlaying()) m_fadeTween.Kill();
+            if (m_fadeTween != null && m_fadeTween.IsActive())
+            {
+                m_fadeTween.Kill();
+                m_fadeTween = null;
+            }
+            
             m_canvasGroup.gameObject.SetActive(true);
             m_fadeTween = m_canvasGroup.DOFade(1f, transitionDuration).OnComplete(
                 () =>
@@ -35,7 +40,12 @@ namespace Minimax
 
         protected override void Hide(float transitionDuration = 0)
         {
-            if (m_fadeTween != null && m_fadeTween.IsPlaying()) m_fadeTween.Kill();
+            if (m_fadeTween != null && m_fadeTween.IsActive())
+            {
+                m_fadeTween.Kill();
+                m_fadeTween = null;
+            }
+            
             m_fadeTween = m_canvasGroup.DOFade(0f, transitionDuration).OnComplete(
                 () =>
                 {

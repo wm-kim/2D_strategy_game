@@ -41,9 +41,19 @@ namespace Minimax.UI.Controller
         /// 최대 선택 가능한 버튼 수를 초과했을 때 발생하는 이벤트
         /// </summary>
         public Action OnExceedMaxSelectNum;
+        
+        /// <summary>
+        /// Start()에서 첫 번째 버튼을 선택할 때 사용할 인덱스
+        /// </summary>
+        private int m_initialButtonIndex = -1;
 
-        public void Init()
+        public void Init(int initialIndexToClick = 0)
         {
+            if (m_buttonList.Count == 0) return;
+            
+            m_buttonList.CheckIndexWithinRange(initialIndexToClick);
+            m_initialButtonIndex = initialIndexToClick;
+            
             for (int i = 0; i < m_buttonList.Count; i++)
             {
                 var temp_i = i;
@@ -53,9 +63,14 @@ namespace Minimax.UI.Controller
 
         private void Start()
         {
+            ResetViewAndClickInitialButton();
+        }
+
+        private void ResetViewAndClickInitialButton()
+        {
             Reset();
-            if (m_selectButtonOnStart && m_buttonList.Count > 0) 
-                m_buttonList[0].Button.onClick.Invoke();
+            if (!m_selectButtonOnStart) return;
+            if (m_buttonList.Count > 0) m_buttonList[m_initialButtonIndex].Button.onClick.Invoke();
         }
         
         private void ToggleActiveState(int index)

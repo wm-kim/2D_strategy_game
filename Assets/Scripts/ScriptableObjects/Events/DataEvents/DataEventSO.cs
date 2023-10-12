@@ -34,6 +34,7 @@ namespace Minimax.ScriptableObjects.Events.Primitives
                 DebugWrapper.LogWarning($"DataEventSO: " + name + " has no listeners!");
             }
         }
+        
     }
 }
  

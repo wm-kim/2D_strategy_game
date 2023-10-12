@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Minimax.ScriptableObjects;
 using Minimax.UI.View.Pages;
 using Minimax.Utilities;
 using UnityEngine;
@@ -20,7 +21,8 @@ namespace Minimax.CoreSystems
         [field: SerializeField] public PageNavigationType NavigationType { get; private set; } = PageNavigationType.Undefined;
         [field: SerializeField] public PageType InitialPage { get; private set; } = PageType.Undefined;
 
-        private Stack<PageType> m_history = new Stack<PageType>();
+        [SerializeField] private PageStackSO m_pageStackSO;
+        private Stack<PageType> m_pageStack => m_pageStackSO.PageStack;
         
         private void Awake()
         {
@@ -30,7 +32,7 @@ namespace Minimax.CoreSystems
             CheckIfInitialPageIsSet();
             Hide();
         }
-        
+
         private void SetTagIfNotSet()
         {
             if (gameObject.CompareTag("PageNavigation")) return;
@@ -50,48 +52,52 @@ namespace Minimax.CoreSystems
                 $"InitialPage is undefined in {gameObject.name}, please set it properly in inspector");
         }
         
-        private void SetInitialPage() => m_history.Push(InitialPage);
+        private void SetInitialPage()
+        {
+            if (m_pageStack.Count == 0) Push(InitialPage);
+        }
         
         // Don't use this method directly. Use the PushPage method of PageNavigationManager instead.
         public PageView Push(PageType page)
         {
             var view = m_pageManager.GetPageView(page);
+            
             // Hide the currently active view (if any)
-            if (m_history.Count > 0)
+            if (m_pageStack.Count > 0)
             {
-                PageView currentView =  m_pageManager.GetPageView(m_history.Peek());
+                PageView currentView =  m_pageManager.GetPageView(m_pageStack.Peek());
                 currentView.StartHide();
             }
             // Show the new view
             view.StartShow();
-            m_history.Push(page);
+            m_pageStack.Push(page);
             return view;
         }
 
         // Don't use this method directly. Use the PopPage method of PageNavigationManager instead.
         public bool Pop()
         {   
-            if (m_history.Count > 1)
+            if (m_pageStack.Count > 1)
             {
                 // Hide the current view
-                PageView currentView =  m_pageManager.GetPageView(m_history.Pop());
+                PageView currentView =  m_pageManager.GetPageView(m_pageStack.Pop());
                 currentView.StartHide();
-                PageView previousView =  m_pageManager.GetPageView(m_history.Peek());
+                PageView previousView =  m_pageManager.GetPageView(m_pageStack.Peek());
                 previousView.StartShow();
                 return true;
             }
             return false;
         }
-        
+
         public void Hide(float duration = 0.0f)
         {
-            PageView currentView = m_pageManager.GetPageView(m_history.Peek());
+            PageView currentView = m_pageManager.GetPageView(m_pageStack.Peek());
             currentView.StartHide(duration);
         }
         
         public void Show(float duration = 0.0f)
         {
-            PageView currentView = m_pageManager.GetPageView(m_history.Peek());
+            PageView currentView = m_pageManager.GetPageView(m_pageStack.Peek());
             currentView.StartShow(duration);
         }
     }
