@@ -154,6 +154,9 @@ namespace Minimax.CoreSystems
         /// </summary>
         private void RegisterCommandToQueue(IPopupCommand command)
         {
+            DebugWrapper.Log($"Registering popup to queue. Key : {command.Key}, Type : {command.Type}, " +
+                             $"CommandType : {command.CommandType}, Priority : {command.Priority}");
+            
             switch (command.CommandType)
             {
                 case PopupCommandType.Unique:

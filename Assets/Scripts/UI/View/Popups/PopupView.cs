@@ -43,7 +43,6 @@ namespace Minimax.UI.View.Popups
         // transitionDuration is not used in PopupView, you need to set manually in inspector using AnimationSequencerController
         protected override void Hide(float transitionDuration = 0.0f)
         {
-            DebugWrapper.Log($"Hide {gameObject.name}");
             if (m_hideAnimationSequencer.IsPlaying) return;
             if (m_showAnimationSequencer.IsPlaying) m_showAnimationSequencer.Kill();
 

@@ -1,5 +1,7 @@
+using System;
 using Minimax.CoreSystems;
 using Minimax.SceneManagement;
+using Minimax.UI.View.Popups;
 using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,15 +18,23 @@ namespace Minimax.UI.Controller.PageControllers
         [SerializeField] private Button m_exitAndSaveButton;
         [SerializeField] private Button m_exitWithoutSaveButton;
         [SerializeField] private TMP_InputField m_deckNameInputField;
-        
+
         private void Start()
         {
+            m_deckNameInputField.text = "New Deck Name";
             m_exitAndSaveButton.onClick.AddListener(OnExitAndSavePressed);
             m_exitWithoutSaveButton.onClick.AddListener(OnExitWithoutSavePressed);
-            GlobalManagers.Instance.Input.OnBackButton += OnBackButtonPressed;
             m_deckNameInputField.onValueChanged.AddListener(OnDeckNameChanged);
-            
-            m_deckNameInputField.text = "New Deck Name";
+        }
+
+        private void OnEnable()
+        {
+            GlobalManagers.Instance.Input.OnBackButton += OnBackButtonPressed;
+        }
+        
+        private void OnDisable()
+        {
+            GlobalManagers.Instance.Input.OnBackButton -= OnBackButtonPressed;
         }
         
         private void OnExitWithoutSavePressed()
@@ -47,7 +57,8 @@ namespace Minimax.UI.Controller.PageControllers
                 () =>
                 {
                     PopupManager.Instance.HideCurrentPopup();
-                });
+                },
+                PopupCommandType.Unique);
         }
         
         private void OnExitAndSavePressed()

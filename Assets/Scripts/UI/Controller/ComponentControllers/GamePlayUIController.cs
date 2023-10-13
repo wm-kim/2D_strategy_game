@@ -1,3 +1,4 @@
+using System;
 using Minimax.CoreSystems;
 using Minimax.UI.View.Popups;
 using UnityEngine;
@@ -13,7 +14,16 @@ namespace Minimax
         private void Start()
         {
             m_menuButton.onClick.AddListener(RequestOpenMenuPopup);
+        }
+
+        private void OnEnable()
+        {
             GlobalManagers.Instance.Input.OnBackButton += OnBackButtonPressed;
+        }
+
+        private void OnDisable()
+        {
+            GlobalManagers.Instance.Input.OnBackButton -= OnBackButtonPressed;
         }
 
         private void RequestOpenMenuPopup()
