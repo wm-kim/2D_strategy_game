@@ -27,6 +27,9 @@ namespace Minimax.GamePlay.GridSystem
         [SerializeField] private Tilemap m_tilemap;
         [SerializeField] private CameraController m_cameraController;
         
+        [Header("Settings")]
+        [SerializeField] private bool m_displayDebugCoords = false;
+        
         public ClientCell SelectedClientCell { get; private set; }
         
         private List<ClientCell> m_highlightedCells = new List<ClientCell>();
@@ -69,7 +72,7 @@ namespace Minimax.GamePlay.GridSystem
                 GlobalManagers.Instance.Input.OnTap -= SelectCell;
             }
         }
-        
+
         [ClientRpc]
         public void GenerateMapClientRpc(int mapSize, PathFinding pathFinding, GridRotation rotation, ClientRpcParams clientRpcParams = default)
         {
@@ -83,6 +86,7 @@ namespace Minimax.GamePlay.GridSystem
             
 #if UNITY_EDITOR
             m_isoGrid.GenerateDebugCoord(m_coordTexts, m_debugTextScale);
+            m_isoGrid.DisplayDebugCoords(m_displayDebugCoords);
 #endif
             
             // Set Rotation, need to be set after generating grid and debug coords

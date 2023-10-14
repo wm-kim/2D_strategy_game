@@ -118,6 +118,18 @@ namespace Minimax.GamePlay.GridSystem
 
 #if UNITY_EDITOR
     private TextMesh[,] m_debugTexts;
+    
+    public void DisplayDebugCoords(bool display)
+    {
+      if (m_debugTexts == null) return;
+      for (int x = 0; x < Cells.GetLength(0); x++)
+      {
+        for (int y = 0; y < Cells.GetLength(1); y++)
+        {
+          m_debugTexts[x, y].gameObject.SetActive(display);
+        }
+      }
+    }
 
     /// <summary>
     /// 디버그 목적으로 그리드 셀 중앙에 텍스트를 표시합니다.
@@ -139,6 +151,9 @@ namespace Minimax.GamePlay.GridSystem
     
     private void UpdateDebugText()
     {
+      // check if debug text is generated
+      if (m_debugTexts == null) return;
+      
       for (int x = 0; x < Cells.GetLength(0); x++)
       {
         for (int y = 0; y < Cells.GetLength(1); y++)

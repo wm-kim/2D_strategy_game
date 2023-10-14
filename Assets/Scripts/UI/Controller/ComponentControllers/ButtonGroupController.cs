@@ -28,9 +28,24 @@ namespace Minimax.UI.Controller
         [SerializeField, ReadOnly] private List<int> m_activeIndices = new List<int>();
 
         /// <summary>
-        /// 버튼이 선택되었을 때 발생하는 이벤트
+        /// 첫 번째 버튼이 클릭된 상태인지 나타냅니다.
+        /// </summary>
+        private bool m_isInitialButtonClicked = false;
+        
+        /// <summary>
+        /// m_selectButtonOnStart가 true로 설정되었을 때, Start()에서 첫 번째 버튼을 선택했는지 여부
+        /// </summary>
+        public bool IsInitialButtonClicked => m_selectButtonOnStart && m_isInitialButtonClicked;
+        
+        /// <summary>
+        /// 버튼이 선택되었을 때 발생하는 이벤트. 이미 선택된 버튼을 다시 선택하면 발생하지 않습니다.
         /// </summary>
         public Action<int> OnButtonSelected; 
+        
+        /// <summary>
+        /// 버튼이 클릭되었을 때 발생하는 이벤트, 이미 선택된 버튼을 다시 선택해도 발생합니다.
+        /// </summary>
+        public Action<int> OnButtonClicked;
 
         /// <summary>
         /// 버튼 선택이 해제되었을 때 발생하는 이벤트
@@ -71,10 +86,13 @@ namespace Minimax.UI.Controller
             Reset();
             if (!m_selectButtonOnStart) return;
             if (m_buttonList.Count > 0) m_buttonList[m_initialButtonIndex].Button.onClick.Invoke();
+            m_isInitialButtonClicked = true;
         }
         
         private void ToggleActiveState(int index)
         {
+            OnButtonClicked?.Invoke(index);
+            
             if (m_isMultipleSelection)
             {
                 // 최대 선택 가능한 버튼 수가 0보다 크고, m_activeIndices 리스트에 index가 없으면

@@ -10,6 +10,10 @@ namespace Minimax.UI.View.ComponentViews
         [Header("Settings")]
         [SerializeField, Range(1, 2)] private float m_scaleFactor = 1.25f;
         
+        [Header("References")]
+        [SerializeField] private DOTweenAnimation m_tweenAnimation = null;
+        
+        
         private Tween m_scaleTween;
         private Vector2 m_originalSizeDelta, m_scaledSizeDelta;
 
@@ -20,6 +24,7 @@ namespace Minimax.UI.View.ComponentViews
         }
 
         public override Button Button => GetComponent<Button>();
+        
         public override void SetVisualActive(bool active, bool isImmediate = false)
         {
             if (isImmediate)
@@ -31,6 +36,7 @@ namespace Minimax.UI.View.ComponentViews
                 m_scaleTween?.Kill();
                 m_scaleTween = active ? GetComponent<RectTransform>().DOSizeDelta(m_scaledSizeDelta, m_duration)
                     : GetComponent<RectTransform>().DOSizeDelta(m_originalSizeDelta, m_duration);
+                if (active) m_tweenAnimation.DORestart();
             }
         }
     }

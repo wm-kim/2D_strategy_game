@@ -49,10 +49,11 @@ namespace Minimax.GamePlay.Unit
             Health = unitData.Health;
             Attack = unitData.Attack;
             MoveRange = unitData.MoveRange;
+            
             Coord = coord;
       
             UnitsCreatedThisGame.Add(UID, this);
-                  
+
             DebugWrapper.Log($"ClientUnit {UID} is created\n" +
                              $"Health: {Health}\n" +
                              $"Attack: {Attack}\n" +

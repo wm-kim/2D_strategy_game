@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
 using Cysharp.Threading.Tasks;
+using JSAM;
 using Minimax.ScriptableObjects;
 using Minimax.ScriptableObjects.Events;
 using Minimax.ScriptableObjects.Events.Primitives;
@@ -95,7 +96,8 @@ namespace Minimax.CoreSystems
         {
             if (!m_currentNavigation.Pop())
             {
-                PopupManager.Instance.MobileBackButtonPopup(PopupType.QuitAppPopup, PopupCommandType.Unique);
+                AudioManager.PlaySound(AudioLibrarySounds.PopupSound);
+                PopupManager.Instance.MobileBackButtonPopup(PopupType.ExitAppPopup, PopupCommandType.Unique);
             }
         }
     }

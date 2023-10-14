@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "com.brunomikoski.animationsequencer": "0.5.2",
+    "com.brogrammist.jsam": "https://github.com/jackyyang09/Simple-Unity-Audio-Manager.git#master",
+    "com.brunomikoski.animationsequencer": "0.5.4",
     "com.cysharp.unitask": "https://github.com/Cysharp/UniTask.git?path=src/UniTask/Assets/Plugins/UniTask",
     "com.unity.addressables": "1.21.14",
     "com.unity.collab-proxy": "2.0.7",

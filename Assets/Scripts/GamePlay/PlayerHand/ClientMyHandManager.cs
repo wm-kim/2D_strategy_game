@@ -118,7 +118,7 @@ namespace Minimax.GamePlay.PlayerHand
             m_map.OnTouchOverMap -= OnTouchOverMap;
             m_map.OnTouchOutsideOfMap -= OnTouchOutsideOfMap;
         }
-        
+
         public void AddInitialCardsAndTween(int[] cardUIDs)
         {
             foreach (var cardUID in cardUIDs)

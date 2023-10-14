@@ -13,7 +13,7 @@ namespace Minimax.GamePlay.INetworkSerialize
         public int Cost;
         public int Attack;
         public int Health;
-        public int Movement;
+        public int MoveRange;
         // TODO : add abilities as dictionary, but dictionary is not serializable, so use double array instead
         
         public NetworkUnitCardData(UnitBaseData data)
@@ -22,7 +22,7 @@ namespace Minimax.GamePlay.INetworkSerialize
             Cost = data.Cost;
             Attack = data.Attack;
             Health = data.Health;
-            Movement = data.MoveRange;
+            MoveRange = data.MoveRange;
         }
 
         public override string ToString()
@@ -32,7 +32,7 @@ namespace Minimax.GamePlay.INetworkSerialize
             sb.AppendLine($"Cost: {Cost}");
             sb.AppendLine($"Attack: {Attack}");
             sb.AppendLine($"Health: {Health}");
-            sb.AppendLine($"MoveRange: {Movement}");
+            sb.AppendLine($"MoveRange: {MoveRange}");
             return sb.ToString();
         }
 
@@ -42,7 +42,7 @@ namespace Minimax.GamePlay.INetworkSerialize
             serializer.SerializeValue(ref Cost);
             serializer.SerializeValue(ref Attack);
             serializer.SerializeValue(ref Health);
-            serializer.SerializeValue(ref Movement);
+            serializer.SerializeValue(ref MoveRange);
         }
     }
 }

@@ -25,7 +25,7 @@ namespace Minimax.ScriptableObjects.CardDatas
             instance.Cost = data.Cost;
             instance.Attack = data.Attack;
             instance.Health = data.Health;
-            instance.MoveRange = data.Movement;
+            instance.MoveRange = data.MoveRange;
             return instance;
         }
     }

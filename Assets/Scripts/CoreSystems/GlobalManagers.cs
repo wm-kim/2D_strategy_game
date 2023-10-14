@@ -16,13 +16,11 @@ namespace Minimax.CoreSystems
         [SerializeField] private SceneLoader m_sceneLoader;
         [SerializeField] private CacheManager m_cacheManager;
         [SerializeField] private ConnectionManager m_connectonManager;
-        [SerializeField] private AudioManager m_audioManager;
         
         public InputManager Input => m_inputManager;
         public SceneLoader Scene => m_sceneLoader;
         public CacheManager Cache => m_cacheManager;
         public ConnectionManager Connection => m_connectonManager;
-        public AudioManager Audio => m_audioManager;
         public ServiceLocator ServiceLocator { get; private set; } = new ServiceLocator();
     }
 }
