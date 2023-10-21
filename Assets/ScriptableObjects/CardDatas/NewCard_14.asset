@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: NewCard_14
   m_EditorClassIdentifier: 
   CardId: 14
-  Cost: 3
+  Cost: 9
   CardName: NewCard_14
   Description: This is a random card
-  Attack: 8
-  Health: 4
+  m_abilityPrefab: {fileID: 0}
+  Attack: 1
+  Health: 5
   MoveRange: 4
+  AttackRange: 1

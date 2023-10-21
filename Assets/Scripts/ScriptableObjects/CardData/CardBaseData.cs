@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Minimax.ScriptableObjects.CardDatas
 {
@@ -14,8 +15,8 @@ namespace Minimax.ScriptableObjects.CardDatas
         public string CardName;
         public string Description;
         
-        [Header("Card Abilities")]
-        public List<CardAbility> CardAbilities = new List<CardAbility>();
+        [Header("Ability Prefab")]
+        [SerializeField] private GameObject m_abilityPrefab;
         
         [JsonConverter(typeof(StringEnumConverter))]
         protected CardType CardType;

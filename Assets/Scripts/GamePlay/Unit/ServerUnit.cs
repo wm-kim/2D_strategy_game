@@ -47,6 +47,7 @@ namespace Minimax.GamePlay.Unit
             Health = unitData.Health;
             Attack = unitData.Attack;
             MoveRange = unitData.MoveRange;
+            AttackRange = unitData.AttackRange;
             Coord = coord;
             
             UnitsCreatedThisGame.Add(UID, this);
@@ -54,7 +55,8 @@ namespace Minimax.GamePlay.Unit
             DebugWrapper.Log($"ServerUnit {UID} is created\n" +
                              $"Health: {Health}\n" +
                              $"Attack: {Attack}\n" +
-                             $"MoveRange: {MoveRange}");
+                             $"MoveRange: {MoveRange}" +
+                             $"AttackRange: {AttackRange}");
         }
         
         public int Health { get; set; }
@@ -62,6 +64,8 @@ namespace Minimax.GamePlay.Unit
         public int Attack { get; set; }
         
         public int MoveRange { get; set; }
+        
+        public int AttackRange { get; set; }
         
         public bool IsMovable { get; set; } = true;
 

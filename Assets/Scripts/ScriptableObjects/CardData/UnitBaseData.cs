@@ -11,6 +11,7 @@ namespace Minimax.ScriptableObjects.CardDatas
         public int Attack;
         public int Health;
         public int MoveRange;
+        public int AttackRange;
         
         public UnitBaseData()
         {
@@ -26,7 +27,8 @@ namespace Minimax.ScriptableObjects.CardDatas
             instance.Attack = data.Attack;
             instance.Health = data.Health;
             instance.MoveRange = data.MoveRange;
-            return instance;
+            instance.AttackRange = data.AttackRange;
+            return instance; 
         }
     }
 }

@@ -211,20 +211,145 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 240519186115491611, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_fontSize
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 240519186115491611, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 683e2ed03e4973e4da8b472d7f3d5d4b, type: 2}
+    - target: {fileID: 240519186115491611, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 240519186115491611, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: -7161907940720923270, guid: 683e2ed03e4973e4da8b472d7f3d5d4b, type: 2}
+    - target: {fileID: 240519186115491611, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1042838960831606738, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 400
+      objectReference: {fileID: 0}
+    - target: {fileID: 1757382601182566480, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_fontSize
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1757382601182566480, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: ab9087764620f234b926afb7fdc52d16, type: 2}
+    - target: {fileID: 1757382601182566480, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1757382601182566480, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 6163774647100564221, guid: ab9087764620f234b926afb7fdc52d16, type: 2}
+    - target: {fileID: 1757382601182566480, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2626747228773271231, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_TargetGraphic
+      value: 
+      objectReference: {fileID: 85938183}
     - target: {fileID: 6870916478966035978, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
       propertyPath: m_Name
       value: MainPage
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 7400564881016141665, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_fontSize
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7400564881016141665, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: ab9087764620f234b926afb7fdc52d16, type: 2}
+    - target: {fileID: 7400564881016141665, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 7400564881016141665, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 6163774647100564221, guid: ab9087764620f234b926afb7fdc52d16, type: 2}
+    - target: {fileID: 7400564881016141665, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      propertyPath: m_hasFontAssetChanged
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 9036609375998049433, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 702091091771342781, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 85938183}
+    - targetCorrespondingSourceObject: {fileID: 702091091771342781, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 85938182}
   m_SourcePrefab: {fileID: 100100000, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
 --- !u!224 &85938180 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 137444547151818247, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
   m_PrefabInstance: {fileID: 85938179}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &85938181 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 702091091771342781, guid: 38034a01938485d499c0d5c2f1425156, type: 3}
+  m_PrefabInstance: {fileID: 85938179}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &85938182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 85938181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8714c362c0c8a6449a9559a31cdab9a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 30
+--- !u!114 &85938183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 85938181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41f1c5417c9d7ab4b84e531f83f60a4b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 3f91331724a9da84197e9b6d94f0483c, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+  borderWidth: 0
+  falloffDistance: 1
 --- !u!1 &143376594
 GameObject:
   m_ObjectHideFlags: 0
@@ -304,7 +429,7 @@ Canvas:
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
-  m_AdditionalShaderChannelsFlag: 25
+  m_AdditionalShaderChannelsFlag: 31
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 0

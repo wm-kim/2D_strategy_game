@@ -20,48 +20,82 @@ namespace Minimax.GamePlay
     /// </summary>
     public class GameInitializer : NetworkBehaviour
     {
+#region Fields and Properties
         [Header("References")]
         [SerializeField] private CardDBManager m_cardDBManager;
         [SerializeField] private ServerPlayersDeckManager m_serverPlayersDeckManager;
         [SerializeField] private TurnManager m_turnManager;
         [SerializeField] private ProfileManager m_profileManager;
-        [SerializeField] private ManaManager m_manaManager;
+        [SerializeField] private ServerManaManager m_manaManager;
         [SerializeField] private ServerMap m_serverMap;
-        
-        [Header("Game Logics")]
-        [SerializeField] private CardDrawingLogic m_cardDrawingLogic;
 
-        private NetworkManager m_networkManager => NetworkManager.Singleton;
+        [Header("Game Logics")] [SerializeField]
+        private CardDrawingLogic m_cardDrawingLogic;
         
+        private NetworkManager m_networkManager => NetworkManager.Singleton;
+#endregion
+
+#region Unity Lifecycle Methods
         private async void Start()
         {
-#if DEDICATED_SERVER
-            // let Game Server Hosting know that a game server is no longer ready to receive players
-            await MultiplayService.Instance.UnreadyServerAsync();
-            
-            // just for clearing logs
-            Camera.main.enabled = false;
-#endif
+            HandleStartForDedicatedServer();
         }
-
+        
         public override void OnNetworkSpawn()
         {
-            m_networkManager.SceneManager.OnSceneEvent += GameManager_OnSceneEvent;
-            
-            if (IsServer)
-            {
-                // Marks the current session as started, so from now on we keep the data of disconnected players.
-                SessionPlayerManager.Instance.OnSessionStarted();
-                DebugWrapper.Log("Session started");
-            }
-            
-            base.OnNetworkSpawn();
+            HandleOnNetworkSpawn();
         }
         
         public override void OnNetworkDespawn()
         {
-            m_networkManager.SceneManager.OnSceneEvent -= GameManager_OnSceneEvent;
+            HandleOnNetworkDespawn();
+        }
+#endregion
 
+#region Event Handlers
+
+        private async void GameManager_OnSceneEvent(SceneEvent sceneEvent)
+        {
+            HandleSceneEvent(sceneEvent);
+        }
+
+#endregion
+
+#region Private Helper Methods
+
+        /// <summary>
+        /// 서버 설정 시작
+        /// </summary>
+        private async void HandleStartForDedicatedServer()
+        {
+#if DEDICATED_SERVER
+            await MultiplayService.Instance.UnreadyServerAsync();
+            Camera.main.enabled = false;  // just for clearing logs
+#endif
+        }
+        
+        private void HandleOnNetworkSpawn()
+        {
+            m_networkManager.SceneManager.OnSceneEvent += GameManager_OnSceneEvent;
+
+            if (IsServer)
+            {
+                SessionPlayerManager.Instance.OnSessionStarted();
+                DebugWrapper.Log("Session started");
+            }
+
+            base.OnNetworkSpawn();
+        }
+        
+        private void HandleOnNetworkDespawn()
+        {
+            m_networkManager.SceneManager.OnSceneEvent -= GameManager_OnSceneEvent;
+            ClearGameData();
+            base.OnNetworkDespawn();
+        }
+        
+        private void ClearGameData()
+        {
             if (IsServer)
             {
                 IDFactory.ResetIDs();
@@ -75,11 +109,10 @@ namespace Minimax.GamePlay
                 ClientCard.CardsCreatedThisGame.Clear();
                 ClientUnit.UnitsCreatedThisGame.Clear();
             }
-            base.OnNetworkDespawn();
         }
-        
+
         // only executed on server
-        private async void GameManager_OnSceneEvent(SceneEvent sceneEvent)
+        private async void HandleSceneEvent(SceneEvent sceneEvent)
         {
             if (sceneEvent.SceneEventType != SceneEventType.LoadEventCompleted) return;
             
@@ -88,16 +121,24 @@ namespace Minimax.GamePlay
             
             if (IsServer)
             {
-                await m_serverPlayersDeckManager.SetupPlayersDeck();
-                m_serverMap.GenerateMap(Define.MapSize);
-                m_serverMap.SetPlayersInitialPlaceableArea();
-                m_profileManager.SetPlayersName();
-                m_manaManager.InitPlayersMana();
-                m_cardDrawingLogic.CommandDrawAllPlayerInitialCards();
-                m_turnManager.StartInitialTurn();
-                var connection = GlobalManagers.Instance.Connection;
-                connection.ChangeState(connection.GameStarted);
+                InitializeServerGameData();
             }
         }
+        
+        private async void InitializeServerGameData()
+        {
+            await m_serverPlayersDeckManager.SetupPlayersDeck();
+            m_serverMap.GenerateMap(Define.MapSize);
+            m_serverMap.SetPlayersInitialPlaceableArea();
+            m_profileManager.SetPlayersName();
+            m_manaManager.InitPlayersMana();
+            m_cardDrawingLogic.CommandDrawAllPlayerInitialCards();
+            m_turnManager.StartInitialTurn();
+
+            var connection = GlobalManagers.Instance.Connection;
+            connection.ChangeState(connection.GameStarted);
+        }
+#endregion
+        
     }
 }

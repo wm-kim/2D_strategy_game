@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Minimax
 {
-    public class ManaManager : NetworkBehaviour
+    public class ServerManaManager : NetworkBehaviour
     {
         [SerializeField] private TextMeshProUGUI m_myManaText;
         [SerializeField] private TextMeshProUGUI m_opponentManaText;

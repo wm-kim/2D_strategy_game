@@ -8,7 +8,7 @@ namespace Minimax.UI.View.Popups
         Undefined = -1,
         ExitAppPopup,
         AppSettingPopup,
-        GameMenuPopup,
+        SurrenderPopup,
         TwoButtonPopup,
         LoadingPopup,
         OneButtonPopup,

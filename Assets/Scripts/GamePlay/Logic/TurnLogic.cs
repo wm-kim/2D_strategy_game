@@ -34,6 +34,8 @@ namespace Minimax.GamePlay.Logic
         {
             if (m_serverPlayersDeck.IsCardLeftInDeck(playerNumber)) 
                 m_cardDrawingLogic.CommandDrawACardFromDeck(playerNumber);
+            
+            
         }
         
         private void OnClientTurnStart(int playerNumber)

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Minimax
 {
-    public class MenuUIController : MonoBehaviour
+    public class MenuOptionUIController : MonoBehaviour
     {
         [SerializeField] private Button m_settingsButton;
         [SerializeField] private Button m_exitButton;

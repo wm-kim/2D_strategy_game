@@ -49,6 +49,7 @@ namespace Minimax.GamePlay.Unit
             Health = unitData.Health;
             Attack = unitData.Attack;
             MoveRange = unitData.MoveRange;
+            AttackRange = unitData.AttackRange;
             
             Coord = coord;
       
@@ -57,7 +58,8 @@ namespace Minimax.GamePlay.Unit
             DebugWrapper.Log($"ClientUnit {UID} is created\n" +
                              $"Health: {Health}\n" +
                              $"Attack: {Attack}\n" +
-                             $"MoveRange: {MoveRange}");
+                             $"MoveRange: {MoveRange}\n" +
+                             $"AttackRange: {AttackRange}\n");
         }
         
         public int Health { get; set; }
@@ -65,6 +67,8 @@ namespace Minimax.GamePlay.Unit
         public int Attack { get; set; }
         
         public int MoveRange { get; set; }
+        
+        public int AttackRange { get; set; }
         
         public bool IsMovable { get; set; } = true;
         

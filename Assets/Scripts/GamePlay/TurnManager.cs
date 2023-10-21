@@ -11,6 +11,7 @@ using Random = UnityEngine.Random;
 
 namespace Minimax.GamePlay
 {
+    // TODO : separate out visual logic from this class into client turn manager
     public class TurnManager : NetworkBehaviour
     {
         public static TurnManager Instance { get; private set; }
