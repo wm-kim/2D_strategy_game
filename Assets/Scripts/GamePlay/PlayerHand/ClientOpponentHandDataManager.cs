@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using Minimax.GamePlay.CommandSystem;
-using Minimax.GamePlay.INetworkSerialize;
+using Minimax.GamePlay.PlayerHand;
 using Minimax.UI.View.ComponentViews.GamePlay;
 using Minimax.Utilities;
 using Sirenix.OdinInspector;
@@ -11,35 +11,18 @@ using UnityEngine;
 
 namespace Minimax
 {
-    public class ClientOpponentHandManager : MonoBehaviour
+    public class ClientOpponentHandDataManager : MonoBehaviour
     {
-        [BoxGroup("References")] [SerializeField]
-        private HandCardView m_cardPrefab;
-
-        [BoxGroup("References")] [SerializeField]
-        private Transform m_cardParent;
-        
-        [BoxGroup("Card Settings")] [SerializeField, Tooltip("카드가 놓일 곡선의 반지름")] [Range(0, 10000)]
-        private float m_curvRadius = 2000f;
-
-        [BoxGroup("Card Settings")] [SerializeField, Tooltip("카드가 놓일 곡선의 각도")] [Range(0, 360)]
-        private float m_curvAngle = 30f;
-
-        [BoxGroup("Card Settings")] [SerializeField, Tooltip("카드가 놓일 곡선의 중심, m_cardParent를 기준으로 한다.")]
-        Vector2 m_curvCenter = new Vector2(0, -200);
-
-        [BoxGroup("Card Settings")] [SerializeField, Tooltip("카드가 놓일 곡선의 각도")] [Range(0, 360)]
-        private float m_baseRotation = 0f;
-
-        [BoxGroup("Card Settings")] [SerializeField, Tooltip("카드 사이의 최대 각도")] [Range(0, 30)]
-        private float m_maxBetweenAngle = 3f;
+        [Header("References")]
+        [SerializeField] private HandAnimationManager m_handAnimationManager;
+        [SerializeField] private HandCardView m_cardPrefab;
+        [SerializeField] private Transform m_cardParent;
         
         [BoxGroup("Card Settings")] [SerializeField, Tooltip("카드 처음 생성 위치")]
         private Vector3 m_cardInitialPosition = new Vector3(0, 0, 0);
         
         [BoxGroup("Card Settings")] [SerializeField, Tooltip("카드 처음 생성 회전값")]
         private Vector3 m_cardInitialRotation = new Vector3(0, 0, 0);
-        
         
         [BoxGroup("Animation Settings")] [SerializeField, Tooltip("슬롯 정렬 애니메이션의 시간")]
         private float m_tweenDuration = 0.5f;
@@ -74,15 +57,13 @@ namespace Minimax
                 AddCard(cardUID);
             }
             
-            UpdateCardTransforms();
-            TweenHandCards();
+            m_handAnimationManager.UpdateAndTweenHand(m_handCards);
         }
         
         public void AddCardAndTween(int cardUID)
         {
             AddCard(cardUID);
-            UpdateCardTransforms();
-            TweenHandCards();
+            m_handAnimationManager.UpdateAndTweenHand(m_handCards);
         }
 
         public void PlayCardAndTween(int cardUID)
@@ -92,9 +73,7 @@ namespace Minimax
                 var card = RemoveCard(cardUID);
                 // TODO : animate the card revealing, just for now destroy it.
                 Destroy(card.gameObject);
-                
-                UpdateCardTransforms();
-                TweenHandCards();
+                m_handAnimationManager.UpdateAndTweenHand(m_handCards);
             }
             catch (Exception e)
             {
@@ -138,50 +117,6 @@ namespace Minimax
             card.Init(cardUID);
             m_cardUIDs.Add(cardUID);
             m_handCards.Add(card);
-        }
-
-        private void UpdateCardTransforms()
-        {
-            float cardAngle = CardCount <= 1 ? 0 : m_curvAngle / (CardCount - 1);  // Adjust for a single card.
-            cardAngle = Mathf.Min(cardAngle, m_maxBetweenAngle);
-
-            float cardAngleOffset = (CardCount - 1) * cardAngle / 2;
-
-            for (int i = 0; i < CardCount; i++)
-            {
-                float angle = cardAngle * i - cardAngleOffset;
-                float radian = angle * Mathf.Deg2Rad;
-                float baseRadian = m_baseRotation * Mathf.Deg2Rad;
-                float x = m_curvCenter.x + m_curvRadius * Mathf.Sin(baseRadian + radian);
-                float y = m_curvCenter.y + m_curvRadius * Mathf.Cos(baseRadian + radian);
-
-                m_handCardPositions[i] = new Vector3(x, y, 0);
-
-                // Rotate the card such that its end points to the curve's center point
-                Vector2 directionToCenter = m_curvCenter - new Vector2(x, y);
-                // Subtracting 90 degrees to align with the vertical
-                float rotationAngle = Mathf.Atan2(directionToCenter.y, directionToCenter.x) * Mathf.Rad2Deg + 90f;
-
-                m_handCardRotations[i] = Quaternion.Euler(0, 0, rotationAngle);
-            }
-        }
-        
-        private void TweenHandCards()
-        {
-            Sequence sequence = DOTween.Sequence();
-            
-            for (int i = 0; i < CardCount; i++)
-            {
-                m_handCards[i].KillTweens();
-                m_handCards[i].PosTween = m_handCards[i].transform.DOLocalMove(m_handCardPositions[i], m_tweenDuration);
-                m_handCards[i].RotTween = m_handCards[i].transform.DOLocalRotateQuaternion(m_handCardRotations[i], m_tweenDuration);
-                
-                sequence.Join(m_handCards[i].PosTween);
-                sequence.Join(m_handCards[i].RotTween);
-            }
-            
-            sequence.Play();
-            sequence.OnComplete(Command.ExecutionComplete);
         }
     }
 }

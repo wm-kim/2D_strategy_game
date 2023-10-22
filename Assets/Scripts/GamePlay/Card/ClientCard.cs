@@ -57,7 +57,15 @@ namespace Minimax.GamePlay
         {
             foreach (var card in CardsCreatedThisGame)
             {
-                DebugWrapper.Log($"Card UID: {card.Key}, Card ID {card.Value.Data.CardId}");
+                DebugWrapper.Log($"Card UID: {card.Key}");
+                if (card.Value.Data != null)
+                {
+                    DebugWrapper.Log($"Card ID {card.Value.Data.CardId}");
+                }
+                else
+                {
+                    DebugWrapper.Log($"Card ID is unknown");
+                }
             }
         }
 #endif

@@ -15,7 +15,7 @@ namespace Minimax.GamePlay
         [Header("References")]
         [SerializeField] Camera m_camera;
         [SerializeField] 
-        private ClientMyHandManager m_clientMyHandManager;
+        private ClientMyHandDataManager m_clientMyHandManager;
         
         [Header("Settings")]
         [SerializeField, Range(0, 2)] 

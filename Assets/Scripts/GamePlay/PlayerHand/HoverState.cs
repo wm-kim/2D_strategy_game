@@ -35,11 +35,11 @@ namespace Minimax.GamePlay.PlayerHand
             inputManager.OnTouch += CheckForSecondTouch;
             
             // If there is a card currently being hovered, then we need to stop hovering it
-            m_slot.HandManager.HoverOffHoveringCard();
-            m_slot.HandManager.HoverCard(m_slot.Index);
+            m_slot.HandDataManager.HoverOffHoveringCard();
+            m_slot.HandDataManager.HoverCard(m_slot.Index);
 
             // Set the card view as the last sibling in its parent to render it on top of the other cards
-            m_slot.HandCardView.transform.SetParent(m_slot.HandManager.CardParent);
+            m_slot.HandCardView.transform.SetParent(m_slot.HandDataManager.CardParent);
         }
 
         public override void Exit()
@@ -49,13 +49,13 @@ namespace Minimax.GamePlay.PlayerHand
             inputManager.OnTouch -= CheckForSecondTouch;
             
             // Reset the hovering index
-            m_slot.HandManager.UnHoverCard();
+            m_slot.HandDataManager.UnHoverCard();
         }
 
         private void CheckForSecondTouch(EnhancedTouch.Touch touch)
         {
             var cardViewRect = m_slot.HandCardView.GetComponent<RectTransform>();
-            var camera = m_slot.HandManager.Canvas.worldCamera;
+            var camera = m_slot.HandDataManager.Canvas.worldCamera;
             bool isInsideCardDisplayMenu =
                 RectTransformUtility.RectangleContainsScreenPoint(cardViewRect, touch.screenPosition,
                     camera);
@@ -96,7 +96,7 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (m_camera == null)
             {
-                var canvas = m_slot.HandManager.Canvas;
+                var canvas = m_slot.HandDataManager.Canvas;
                 m_zdepth = canvas.transform.position.z;
                 m_camera = canvas.worldCamera;
                 var planeDistance =  canvas.planeDistance;
@@ -116,10 +116,9 @@ namespace Minimax.GamePlay.PlayerHand
                 float targetScale = m_slot.HandCardSlotSettings.HoverScale;
                 float duration = m_slot.HandCardSlotSettings.HoverDuration;
 
-                m_slot.HandCardView.KillTweens();
-                m_slot.HandCardView.PosTween = m_slot.HandCardView.transform.DOMove(targetPosition, duration);
-                m_slot.HandCardView.RotTween = m_slot.HandCardView.transform.DORotate(targetRotation, duration);
-                m_slot.HandCardView.ScaleTween = m_slot.HandCardView.transform.DOScale(targetScale, duration);
+                m_slot.HandCardView.StartPosTween(targetPosition, duration);
+                m_slot.HandCardView.StartRotTween(targetRotation, duration);
+                m_slot.HandCardView.StartScaleTween(targetScale, duration);
             }
         }
 

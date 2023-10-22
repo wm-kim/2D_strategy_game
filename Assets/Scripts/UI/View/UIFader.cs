@@ -26,7 +26,6 @@ namespace Minimax
             if (m_fadeTween != null && m_fadeTween.IsActive())
             {
                 m_fadeTween.Kill();
-                m_fadeTween = null;
             }
             
             m_canvasGroup.gameObject.SetActive(true);
@@ -43,7 +42,6 @@ namespace Minimax
             if (m_fadeTween != null && m_fadeTween.IsActive())
             {
                 m_fadeTween.Kill();
-                m_fadeTween = null;
             }
             
             m_fadeTween = m_canvasGroup.DOFade(0f, transitionDuration).OnComplete(

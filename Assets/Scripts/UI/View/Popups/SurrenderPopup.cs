@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace Minimax.UI.View.Popups
 {
-    public class GameMenuPopup : PopupView
+    public class SurrenderPopup : PopupView
     {
         
         [Header("References")]

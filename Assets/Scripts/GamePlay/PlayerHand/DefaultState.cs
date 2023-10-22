@@ -10,32 +10,44 @@ namespace Minimax.GamePlay.PlayerHand
 
         public override void Enter()
         {
+            SetCardViewParent();
+        }
+        
+        public override void Exit() { }
+
+        private void SetCardViewParent()
+        {
             m_slot.HandCardView.transform.SetParent(m_slot.transform);
         }
 
-        public override void Exit() { }
-
         public override void MoveCardView()
         {
+            if (IsAboveThresholdDistance()) TweenCardViewToSlotTransform();
+        }
+        
+        private bool IsAboveThresholdDistance()
+        {
             Vector3 targetPosition = m_slot.transform.position;
-
-            if (Vector3.Distance(m_slot.HandCardView.transform.position, targetPosition) > m_positionThreshold)
-            {
-                Vector3 targetRotation = m_slot.transform.eulerAngles;
-                float targetScale = 1f;
-                float duration = m_slot.HandCardSlotSettings.DropDownDuration;
-                
-                m_slot.HandCardView.KillTweens();
-                m_slot.HandCardView.PosTween = m_slot.HandCardView.transform.DOMove(targetPosition, duration);
-                m_slot.HandCardView.RotTween = m_slot.HandCardView.transform.DORotate(targetRotation, duration);
-                m_slot.HandCardView.ScaleTween = m_slot.HandCardView.transform.DOScale(targetScale, duration);
-            }
+            return Vector3.Distance(m_slot.HandCardView.transform.position, targetPosition) > m_positionThreshold;
+        }
+        
+        private void TweenCardViewToSlotTransform()
+        {
+            var slotTransform = m_slot.transform;
+            Vector3 targetPosition = slotTransform.position;
+            Vector3 targetRotation = slotTransform.eulerAngles;
+            float targetScale = 1f;
+            float duration = m_slot.HandCardSlotSettings.DropDownDuration;
+            
+            m_slot.HandCardView.StartPosTween(targetPosition, duration);
+            m_slot.HandCardView.StartRotTween(targetRotation, duration);
+            m_slot.HandCardView.StartScaleTween(targetScale, duration);
         }
 
         public override void OnPointerEnter()
         {
             // if the card is not selected(not dragging), then we can hover it
-            if (!m_slot.HandManager.IsSelecting)
+            if (!m_slot.HandDataManager.IsSelecting)
                 m_slot.ChangeState(m_slot.HoverState);
         }
 

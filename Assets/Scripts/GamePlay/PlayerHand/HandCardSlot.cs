@@ -8,22 +8,13 @@ using UnityEngine.EventSystems;
 
 namespace Minimax.GamePlay.PlayerHand
 {
-    public class HandCardSlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
+    public class HandCardSlot : TweenableItem, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         public int Index { get; set; }
         
-        public Tween PosTween { get; set; }
-        public Tween RotTween { get; set; }
-        
-        public void KillTweens()
-        {
-            PosTween?.Kill();
-            RotTween?.Kill();
-        }
-        
         [field: SerializeField] public HandCardView HandCardView { get; private set; }
         [field: SerializeField] public HandCardSlotSettingSO HandCardSlotSettings { get; private set; }
-        public ClientMyHandManager HandManager { get; private set; }
+        public ClientMyHandDataManager HandDataManager { get; private set; }
         
         // States
         [ReadOnly] private HandCardSlotState m_currentState;
@@ -31,9 +22,9 @@ namespace Minimax.GamePlay.PlayerHand
         public HoverState HoverState { get; private set; }
         public DraggingState DraggingState { get; private set; }
         
-        public void Init(ClientMyHandManager handManager, int index, int cardUID)
+        public void Init(ClientMyHandDataManager handDataManager, int index, int cardUID)
         {
-            HandManager = handManager;
+            HandDataManager = handDataManager;
             Index = index;
             gameObject.name = $"HandCardSlot_{index}";
             HandCardView.Init(cardUID);
@@ -84,6 +75,6 @@ namespace Minimax.GamePlay.PlayerHand
             ChangeState(DefaultState);
         }
         
-        private void OnDestroy() { KillTweens(); }
+        private void OnDestroy() { KillAllTweens(); }
     }
 }

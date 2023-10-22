@@ -23,8 +23,8 @@ namespace Minimax.GamePlay.Logic
         [Header("Client References")]
         [SerializeField] private ClientMyDeckManager m_clientMyDeck;
         [SerializeField] private ClientOpponentDeckManager m_clientOpponentDeck;
-        [SerializeField] private ClientMyHandManager m_clientMyHand;
-        [SerializeField] private ClientOpponentHandManager m_clientOpponentHand;
+        [SerializeField] private ClientMyHandDataManager m_clientMyHand;
+        [SerializeField] private ClientOpponentHandDataManager m_clientOpponentHand;
         
         public void CommandDrawAllPlayerInitialCards()
         {

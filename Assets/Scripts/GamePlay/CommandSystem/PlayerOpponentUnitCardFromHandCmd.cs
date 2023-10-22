@@ -10,11 +10,11 @@ namespace Minimax.GamePlay.CommandSystem
         private int m_cardUID;
         private Vector2Int m_coord;
         private NetworkUnitCardData m_networkUnitData;
-        private ClientOpponentHandManager m_clientOpponentHand;
+        private ClientOpponentHandDataManager m_clientOpponentHand;
         private ClientUnitManager m_clientUnitManager;
 
         public PlayerOpponentUnitCardFromHandCmd(int unitUID, int cardUID, Vector2Int coord, NetworkUnitCardData unitData,
-            ClientOpponentHandManager clientOpponentHand, ClientUnitManager clientUnitManager)
+            ClientOpponentHandDataManager clientOpponentHand, ClientUnitManager clientUnitManager)
         {
             m_unitUID = unitUID;
             m_cardUID = cardUID;

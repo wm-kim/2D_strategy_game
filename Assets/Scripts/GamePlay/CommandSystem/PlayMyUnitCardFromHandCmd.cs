@@ -11,17 +11,17 @@ namespace Minimax.GamePlay.CommandSystem
         private int m_cardUID;
         private Vector2Int m_coord;
         private NetworkUnitCardData m_networkUnitData;
-        private ClientMyHandManager m_clientMyHand;
+        private ClientMyHandDataManager _mClientMyHandData;
         private ClientUnitManager m_clientUnitMananger;
         
         public PlayMyUnitCardFromHandCmd(int unitUID, int cardUID, Vector2Int coord, NetworkUnitCardData unitData,
-            ClientMyHandManager clientMyHand, ClientUnitManager clientUnitManager)
+            ClientMyHandDataManager clientMyHandData, ClientUnitManager clientUnitManager)
         { 
             m_unitUID = unitUID;
             m_cardUID = cardUID;
             m_coord = coord;
             m_networkUnitData = unitData;
-            m_clientMyHand = clientMyHand;
+            _mClientMyHandData = clientMyHandData;
             m_clientUnitMananger = clientUnitManager;
         }
         
@@ -35,7 +35,7 @@ namespace Minimax.GamePlay.CommandSystem
             var unitBaseData = UnitBaseData.CreateInstance(m_networkUnitData);
             clientCard.Data = unitBaseData;
             
-            m_clientMyHand.PlayCardAndTween(m_cardUID);
+            _mClientMyHandData.PlayCardAndTween(m_cardUID);
             m_clientUnitMananger.SpawnUnit(m_unitUID, m_cardUID, m_coord);
         }
     }

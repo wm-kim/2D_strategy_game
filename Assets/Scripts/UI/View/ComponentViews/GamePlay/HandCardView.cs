@@ -9,7 +9,7 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
     /// <summary>
     /// This class is responsible for tweening the hand card view and the card visual.
     /// </summary>
-    public class HandCardView : MonoBehaviour
+    public class HandCardView : TweenableItem
     {
         public Tween PosTween { get; set; }
         public Tween RotTween { get; set; }
@@ -38,16 +38,9 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
             FadeTween = m_canvasGroup.DOFade(alpha, duration);            
         }
 
-        public void KillTweens()
-        {
-            PosTween?.Kill();
-            RotTween?.Kill();
-            ScaleTween?.Kill();
-        }
-
         private void OnDestroy()
         {
-            KillTweens();
+            KillAllTweens();
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Minimax.GamePlay.PlayerHand
         public override void Enter()
         {
             CalculateFrustumSize();
-            m_slot.HandManager.SelectCard(m_slot.Index);
+            m_slot.HandDataManager.SelectCard(m_slot.Index);
             GlobalManagers.Instance.Input.OnTouch += MoveCardViewToTouchPosition;
         }
 
@@ -36,7 +36,7 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (m_camera == null)
             {
-                var canvas = m_slot.HandManager.Canvas;
+                var canvas = m_slot.HandDataManager.Canvas;
                 m_zdepth = canvas.transform.position.z;
                 m_camera = canvas.worldCamera;
                 var planeDistance =  canvas.planeDistance;
@@ -46,42 +46,61 @@ namespace Minimax.GamePlay.PlayerHand
         
         private void MoveCardViewToTouchPosition(EnhancedTouch.Touch touch)
         {
-            if (touch.phase is TouchPhase.Moved || touch.phase is TouchPhase.Began || touch.phase is TouchPhase.Stationary)
+            if (IsTouchMovingOrStationary(touch.phase))
             {
-                Ray ray = m_camera.ScreenPointToRay(touch.screenPosition);
-                Plane plane = new Plane(Vector3.forward, new Vector3(0, 0, m_zdepth));
-
-                if (plane.Raycast(ray, out float enter))
-                {
-                    Vector3 hitPoint = ray.GetPoint(enter);
-                    
-                    // 거리 비교를 위한 제곱값 계산
-                    float sqrDist = (m_slot.HandCardView.transform.position - hitPoint).sqrMagnitude;
-                    if (sqrDist > m_positionThreshold * m_positionThreshold)
-                    {
-                        m_slot.HandCardView.KillTweens();
-                
-                        // Lerp 연산으로 캐시된 위치와 실제 위치를 보간
-                        cachedTargetPosition = Vector3.Lerp(m_slot.HandCardView.transform.position, hitPoint,
-                            Time.deltaTime * m_slot.HandCardSlotSettings.DraggingSpeed);
-                
-                        m_slot.HandCardView.transform.position = cachedTargetPosition;
-                    }
-                }
+                UpdateCardPositionBasedOnTouch(touch);
             }
             else if (touch.phase is TouchPhase.Ended)
             {
-                if (m_slot.HandManager.TryGetCellOfPlayingCard(touch.screenPosition, out var cell))
-                {
-                    m_slot.ChangeState(m_slot.DefaultState);
-                    m_slot.HandManager.PlaySelectingCard(cell);
-                }
-                else
-                {
-                    m_slot.HandManager.ReleaseSelectingCard();
-                    m_slot.ChangeState(m_slot.DefaultState);
-                }
+                HandleCardRelease(touch);
             }
+        }
+        
+        private bool IsTouchMovingOrStationary(TouchPhase touchPhase)
+        {
+            return touchPhase is TouchPhase.Moved || touchPhase is TouchPhase.Began || touchPhase is TouchPhase.Stationary;
+        }
+
+        private void UpdateCardPositionBasedOnTouch(EnhancedTouch.Touch touch)
+        {
+            Ray ray = m_camera.ScreenPointToRay(touch.screenPosition);
+            Plane plane = new Plane(Vector3.forward, new Vector3(0, 0, m_zdepth));
+
+            if (plane.Raycast(ray, out float enter))
+            {
+                Vector3 hitPoint = ray.GetPoint(enter);
+                float sqrDist = (m_slot.HandCardView.transform.position - hitPoint).sqrMagnitude;
+
+                if (sqrDist <= m_positionThreshold * m_positionThreshold) return;
+
+                m_slot.HandCardView.KillAllTweens();
+                cachedTargetPosition = Vector3.Lerp(m_slot.HandCardView.transform.position, hitPoint, Time.deltaTime * m_slot.HandCardSlotSettings.DraggingSpeed);
+                m_slot.HandCardView.transform.position = cachedTargetPosition;
+            }
+        }
+
+        private void HandleCardRelease(EnhancedTouch.Touch touch)
+        {
+            if (m_slot.HandDataManager.TryGetCellOfPlayingCard(touch.screenPosition, out var cell))
+            {
+                m_slot.ChangeState(m_slot.DefaultState);
+                m_slot.HandDataManager.PlaySelectingCard(cell);
+            }
+            else
+            {
+                m_slot.HandDataManager.ReleaseSelectingCard();
+                m_slot.ChangeState(m_slot.DefaultState);
+            }
+        }
+
+        private bool ClientCheckIfCardIsPlayable(EnhancedTouch.Touch touch)
+        {
+            if (m_slot.HandDataManager.TryGetCellOfPlayingCard(touch.screenPosition, out var cell))
+            {
+                if(!cell.IsPlaceable) return false;
+            }
+
+            return true;
         }
 
         public override void MoveCardView()

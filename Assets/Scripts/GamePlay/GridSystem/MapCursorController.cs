@@ -8,7 +8,7 @@ namespace Minimax.GamePlay.GridSystem
     public class MapCursorController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private ClientMyHandManager m_clientMyHand;
+        [SerializeField] private ClientMyHandDataManager m_clientMyHand;
         [SerializeField] private ClientMap m_clientMap;
         [SerializeField] private ClientUnitManager m_clientUnitManager;
         

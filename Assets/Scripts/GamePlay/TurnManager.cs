@@ -138,7 +138,7 @@ namespace Minimax.GamePlay
         {
             // check if it's the player's turn
             var senderClientId = serverRpcParams.Receive.SenderClientId;
-            if (!CheckIfPlayerTurn(senderClientId, "end turn")) return;
+            if (!CheckIfPlayerTurn(senderClientId)) return;
             m_networkTimer.EndTimerImmediately();
         }
         
@@ -169,14 +169,21 @@ namespace Minimax.GamePlay
         /// used by server to check if the player is allowed to do something
         /// and log if it is not.
         /// </summary>
-        public bool CheckIfPlayerTurn(ulong clientId, string logMessage = "")
+        public bool CheckIfPlayerTurn(ulong clientId)
         {
             if (!IsServer) return false;
             
             var playerNumber = SessionPlayerManager.Instance.GetPlayerNumber(clientId);
+            return CheckIfPlayerTurn(playerNumber);
+        }
+        
+        public bool CheckIfPlayerTurn(int playerNumber)
+        {
+            if (!IsServer) return false;
+            
             if (playerNumber != m_whosTurn.Value)
             {
-                DebugWrapper.LogError($"Player {playerNumber} request denied to {logMessage}");
+                DebugWrapper.LogError($"Player {playerNumber} request denied");
                 return false;
             }
 

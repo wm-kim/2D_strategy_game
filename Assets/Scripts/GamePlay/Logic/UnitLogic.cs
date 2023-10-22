@@ -28,7 +28,7 @@ namespace Minimax.GamePlay.Logic
         public void CommandMoveUnitServerRpc(int unitUID, Vector2Int destCoord, ServerRpcParams serverRpcParams = default)
         {
             var senderClientId = serverRpcParams.Receive.SenderClientId;
-            m_turnManager.CheckIfPlayerTurn(senderClientId, "MoveUnit");
+            m_turnManager.CheckIfPlayerTurn(senderClientId);
             
             var serverUnit = ServerUnit.UnitsCreatedThisGame[unitUID];
             if (!CheckIsUnitOwner(serverUnit, senderClientId)) return;

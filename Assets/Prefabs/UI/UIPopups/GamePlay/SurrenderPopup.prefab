@@ -859,12 +859,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1d818607fc3f1fa46903803a93d44b15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_currentState: -1
-  <Type>k__BackingField: 1
-  m_showAnimationSequencer: {fileID: 1605959131210769261}
-  m_hideAnimationSequencer: {fileID: 1738832499827819086}
-  m_confirmButton: {fileID: 5718010598716103259}
-  m_cancelButton: {fileID: 7031721218535487427}
 --- !u!1 &5558414615485122800
 GameObject:
   m_ObjectHideFlags: 0
