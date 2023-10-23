@@ -24,7 +24,7 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
             m_canvasGroup = GetComponent<CanvasGroup>();
         }
         
-        public void Init(int cardUID)
+        public void CreateClientCardAndSetVisual(int cardUID)
         {
             var card = ClientCard.CardsCreatedThisGame[cardUID];
             // card data could be null

@@ -13,9 +13,8 @@ namespace Minimax.GamePlay
     public class CameraController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] Camera m_camera;
-        [SerializeField] 
-        private ClientMyHandDataManager m_clientMyHandManager;
+        [SerializeField] private Camera m_camera;
+        [SerializeField] private MyHandInteractionManager m_handInteraction;
         
         [Header("Settings")]
         [SerializeField, Range(0, 2)] 
@@ -70,13 +69,13 @@ namespace Minimax.GamePlay
                 return; 
             }
             
-            if (m_clientMyHandManager.IsHovering && !m_clientMyHandManager.IsSelecting)
+            if (m_handInteraction.IsHovering && !m_handInteraction.IsSelecting)
             {
                 return;
             }
             
             // If the player is selecting a card, do not proceed with camera movement
-            if (m_clientMyHandManager.IsSelecting)
+            if (m_handInteraction.IsSelecting)
             {
                 return;
             }

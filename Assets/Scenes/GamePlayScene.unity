@@ -902,8 +902,8 @@ GameObject:
   m_Component:
   - component: {fileID: 273055803}
   - component: {fileID: 273055804}
-  - component: {fileID: 273055805}
   - component: {fileID: 273055806}
+  - component: {fileID: 273055805}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -1341,7 +1341,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: acf54a783333b02478a8ca2fa3ec62a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_clientMyHand: {fileID: 1441576941}
+  m_handInteraction: {fileID: 1600305047}
   m_clientMap: {fileID: 273055804}
   m_clientUnitManager: {fileID: 604000563}
   m_hoverOverlay: {fileID: 915131092}
@@ -1934,7 +1934,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_camera: {fileID: 1985358684}
-  m_clientMyHandManager: {fileID: 1441576941}
+  m_handInteraction: {fileID: 1600305047}
   m_panSpeed: 1
   m_panSmoothTime: 0.25
   m_bounadryScaleX: 1.3
@@ -2533,7 +2533,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 84.42, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &740757249
@@ -2994,7 +2994,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 84.42, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &827774448
@@ -3420,14 +3420,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0d6e894d5254497b8c83dbfd56dffd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_deckTransform: {fileID: 282298256}
   m_curvRadius: 1800
   m_curvAngle: 25
   m_curvCenter: {x: 0, y: -1740}
   m_baseRotation: 0
   m_maxBetweenAngle: 5
-  m_cardInitialPosition: {x: 0, y: 0, z: 0}
-  m_cardInitialRotation: {x: 0, y: 0, z: 0}
   m_tweenDuration: 0.5
+  m_cardInitialRotation: {x: 0, y: 0, z: 0}
 --- !u!1 &912690085
 GameObject:
   m_ObjectHideFlags: 0
@@ -3864,7 +3864,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 22.14, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &979732357
@@ -5388,6 +5388,7 @@ Transform:
   m_Children:
   - {fileID: 881196924}
   - {fileID: 2021274862}
+  - {fileID: 1600305046}
   m_Father: {fileID: 306494741}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1441576941
@@ -5402,14 +5403,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aff5df224d7c0964c954e2ad5b4358e9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_handAnimationManager: {fileID: 881196925}
+  m_handAnimation: {fileID: 881196925}
+  m_myHandInteraction: {fileID: 1600305047}
   m_handCardSlotPrefab: {fileID: 3918943217404332006, guid: 5931730aab95b3343a60de3584e1d0ac, type: 3}
   m_cardParent: {fileID: 1034621258}
-  m_canvas: {fileID: 419028561}
-  m_map: {fileID: 273055804}
-  m_cardPlayingLogic: {fileID: 1759084143}
-  m_cardFadeDuration: 0.15
-  m_cardFadeAlpha: 0.2
 --- !u!114 &1441576942
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5457,9 +5454,6 @@ MonoBehaviour:
   m_handAnimationManager: {fileID: 2021274863}
   m_cardPrefab: {fileID: 7904266608249723250, guid: 32df99b888f89a04299fd0bcf63a2009, type: 3}
   m_cardParent: {fileID: 1073306792}
-  m_cardInitialPosition: {x: 0, y: 0, z: 0}
-  m_cardInitialRotation: {x: 0, y: 180, z: -180}
-  m_tweenDuration: 0.5
 --- !u!1 &1467030910
 GameObject:
   m_ObjectHideFlags: 0
@@ -5881,6 +5875,56 @@ Transform:
   - {fileID: 1141432226}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1600305045
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1600305046}
+  - component: {fileID: 1600305047}
+  m_Layer: 0
+  m_Name: MyHandInteraction
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1600305046
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1600305045}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1441576940}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1600305047
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1600305045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86d388db60394c1e93be4dea503e88ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_clientMyHand: {fileID: 1441576941}
+  m_canvas: {fileID: 419028561}
+  m_map: {fileID: 273055804}
+  m_cardPlayingLogic: {fileID: 1759084143}
+  m_cardFadeDuration: 0.2
+  m_cardFadeAlpha: 0.2
 --- !u!1 &1610226232
 GameObject:
   m_ObjectHideFlags: 0
@@ -6308,7 +6352,7 @@ MonoBehaviour:
   m_serverMap: {fileID: 273055806}
   m_serverManaManager: {fileID: 182772818}
   m_turnManager: {fileID: 775888030}
-  m_clientMyHand: {fileID: 1441576941}
+  m_myHandInteraction: {fileID: 1600305047}
   m_clientOpponentHand: {fileID: 1441576944}
   m_clientUnitManager: {fileID: 604000563}
 --- !u!114 &1759084144
@@ -9094,14 +9138,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0d6e894d5254497b8c83dbfd56dffd0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_deckTransform: {fileID: 1545833604}
   m_curvRadius: 1800
   m_curvAngle: 25
   m_curvCenter: {x: 0, y: 1740}
   m_baseRotation: 180
   m_maxBetweenAngle: 5
-  m_cardInitialPosition: {x: 0, y: 0, z: 0}
-  m_cardInitialRotation: {x: 0, y: 0, z: 0}
   m_tweenDuration: 0.5
+  m_cardInitialRotation: {x: 0, y: 180, z: -180}
 --- !u!1 &2021870057
 GameObject:
   m_ObjectHideFlags: 0
@@ -9137,7 +9181,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 22.14, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2021870059

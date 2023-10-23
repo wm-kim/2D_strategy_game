@@ -32,8 +32,8 @@ namespace Minimax.GamePlay.Logic
         [SerializeField] private TurnManager m_turnManager;
         
         [Header("Client References")]
-        [SerializeField] private ClientMyHandDataManager m_clientMyHand;
-        [SerializeField] private ClientOpponentHandDataManager m_clientOpponentHand;
+        [SerializeField] private MyHandInteractionManager m_myHandInteraction;
+        [SerializeField] private ClientOpponentHandManager m_clientOpponentHand;
         [SerializeField] private ClientUnitManager m_clientUnitManager;
         
         [ServerRpc(RequireOwnership = false)]
@@ -110,7 +110,7 @@ namespace Minimax.GamePlay.Logic
         [ClientRpc]
         private void PlayMyUnitCardFromHandClientRpc(int unitUID, int cardUID, Vector2Int coord, NetworkUnitCardData unitData, ClientRpcParams clientRpcParams = default)
         {
-            new PlayMyUnitCardFromHandCmd(unitUID, cardUID, coord, unitData, m_clientMyHand, m_clientUnitManager).AddToQueue();
+            new PlayMyUnitCardFromHandCmd(unitUID, cardUID, coord, unitData, m_myHandInteraction, m_clientUnitManager).AddToQueue();
         }
 
         // TODO : instead of passing in whole unit data, pass in only card id and let the client fetch the data from card db can be enough

@@ -20,7 +20,7 @@ namespace Minimax.GamePlay.PlayerHand
         public override void Enter()
         {
             CalculateFrustumSize();
-            m_slot.HandDataManager.SelectCard(m_slot.Index);
+            m_slot.MyHandInteraction.SelectCard(m_slot.Index);
             GlobalManagers.Instance.Input.OnTouch += MoveCardViewToTouchPosition;
         }
 
@@ -36,7 +36,7 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (m_camera == null)
             {
-                var canvas = m_slot.HandDataManager.Canvas;
+                var canvas = m_slot.MyHandInteraction.Canvas;
                 m_zdepth = canvas.transform.position.z;
                 m_camera = canvas.worldCamera;
                 var planeDistance =  canvas.planeDistance;
@@ -81,21 +81,21 @@ namespace Minimax.GamePlay.PlayerHand
 
         private void HandleCardRelease(EnhancedTouch.Touch touch)
         {
-            if (m_slot.HandDataManager.TryGetCellOfPlayingCard(touch.screenPosition, out var cell))
+            if (m_slot.MyHandInteraction.TryGetCellOfPlayingCard(touch.screenPosition, out var cell))
             {
                 m_slot.ChangeState(m_slot.DefaultState);
-                m_slot.HandDataManager.PlaySelectingCard(cell);
+                m_slot.MyHandInteraction.RequestPlaySelectingCard(cell);
             }
             else
             {
-                m_slot.HandDataManager.ReleaseSelectingCard();
+                m_slot.MyHandInteraction.ReleaseSelectingCard();
                 m_slot.ChangeState(m_slot.DefaultState);
             }
         }
 
         private bool ClientCheckIfCardIsPlayable(EnhancedTouch.Touch touch)
         {
-            if (m_slot.HandDataManager.TryGetCellOfPlayingCard(touch.screenPosition, out var cell))
+            if (m_slot.MyHandInteraction.TryGetCellOfPlayingCard(touch.screenPosition, out var cell))
             {
                 if(!cell.IsPlaceable) return false;
             }

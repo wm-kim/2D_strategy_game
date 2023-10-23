@@ -11,21 +11,12 @@ using UnityEngine;
 
 namespace Minimax
 {
-    public class ClientOpponentHandDataManager : MonoBehaviour
+    public class ClientOpponentHandManager : MonoBehaviour
     {
         [Header("References")]
         [SerializeField] private HandAnimationManager m_handAnimationManager;
         [SerializeField] private HandCardView m_cardPrefab;
         [SerializeField] private Transform m_cardParent;
-        
-        [BoxGroup("Card Settings")] [SerializeField, Tooltip("카드 처음 생성 위치")]
-        private Vector3 m_cardInitialPosition = new Vector3(0, 0, 0);
-        
-        [BoxGroup("Card Settings")] [SerializeField, Tooltip("카드 처음 생성 회전값")]
-        private Vector3 m_cardInitialRotation = new Vector3(0, 0, 0);
-        
-        [BoxGroup("Animation Settings")] [SerializeField, Tooltip("슬롯 정렬 애니메이션의 시간")]
-        private float m_tweenDuration = 0.5f;
         
         private List<HandCardView> m_handCards = new List<HandCardView>();
         
@@ -34,29 +25,11 @@ namespace Minimax
         /// </summary>
         private List<int> m_cardUIDs = new List<int>();
         
-        
-        private List<Vector3> m_handCardPositions = new List<Vector3>();
-        private List<Quaternion> m_handCardRotations = new List<Quaternion>();
-        
         public int CardCount => m_handCards.Count;
-
-        private void Awake()
-        {
-            // Memory Allocation
-            for (int i = 0; i < Define.MaxHandCardCount; i++)
-            {
-                m_handCardPositions.Add(Vector3.zero);
-                m_handCardRotations.Add(Quaternion.identity);
-            }
-        }
 
         public void AddInitialCardsAndTween(int[] cardUIDs)
         {
-            foreach (var cardUID in cardUIDs)
-            {
-                AddCard(cardUID);
-            }
-            
+            foreach (var cardUID in cardUIDs) AddCard(cardUID);
             m_handAnimationManager.UpdateAndTweenHand(m_handCards);
         }
         
@@ -105,18 +78,25 @@ namespace Minimax
 
         private void AddCard(int cardUID)
         {
+            if (!CheckMaxHandCardCount()) return;
+            
+            var handCardView = Instantiate(m_cardPrefab, m_cardParent);
+            m_handAnimationManager.SetInitialTransform(handCardView);
+            
+            handCardView.CreateClientCardAndSetVisual(cardUID);
+            m_cardUIDs.Add(cardUID);
+            m_handCards.Add(handCardView);
+        }
+        
+        private bool CheckMaxHandCardCount()
+        {
             if (CardCount >= Define.MaxHandCardCount)
             {
-                DebugWrapper.LogWarning("상대방의 손패에 카드를 추가하려고 했지만, 손패가 꽉 찼습니다.");
-                return;
+                DebugWrapper.LogWarning("상대방의 손패가 가득 찼습니다.");
+                return false;
             }
-            
-            var card = Instantiate(m_cardPrefab, m_cardParent.transform.position + m_cardInitialPosition,
-                Quaternion.Euler(m_cardInitialRotation), m_cardParent);
-            
-            card.Init(cardUID);
-            m_cardUIDs.Add(cardUID);
-            m_handCards.Add(card);
+
+            return true;
         }
     }
 }

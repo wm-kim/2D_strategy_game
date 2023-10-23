@@ -8,7 +8,7 @@ namespace Minimax.GamePlay.GridSystem
     public class MapCursorController : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private ClientMyHandDataManager m_clientMyHand;
+        [SerializeField] private MyHandInteractionManager m_handInteraction;
         [SerializeField] private ClientMap m_clientMap;
         [SerializeField] private ClientUnitManager m_clientUnitManager;
         
@@ -50,7 +50,7 @@ namespace Minimax.GamePlay.GridSystem
         private void OnTouchOverMap(ClientCell clientCell)
         {
             // Show hover overlay only when Player Select a card to play
-            if(!m_clientMyHand.IsSelecting) return;
+            if(!m_handInteraction.IsSelecting) return;
             ShowHoverOverlay(clientCell.transform.position);
         }
         

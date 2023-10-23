@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using Minimax.GamePlay.CommandSystem;
+using Minimax.UI.View.ComponentViews.GamePlay;
 using Minimax.Utilities;
 using UnityEngine;
 
@@ -9,6 +10,9 @@ namespace Minimax.GamePlay.PlayerHand
 {
     public class HandAnimationManager : MonoBehaviour
     {
+        [Header("References")]
+        [SerializeField]private Transform m_deckTransform;
+        
         [Header("Hand Curve Settings")]
         [SerializeField, Tooltip("카드가 놓일 곡선의 반지름")] [Range(0, 10000)]
         private float m_curvRadius = 2000f;
@@ -20,14 +24,12 @@ namespace Minimax.GamePlay.PlayerHand
         private float m_baseRotation = 0f;
         [SerializeField, Tooltip("카드 사이의 최대 각도")] [Range(0, 30)]
         private float m_maxBetweenAngle = 3f;
-        [SerializeField, Tooltip("카드 처음 생성 위치")]
-        private Vector3 m_cardInitialPosition = new Vector3(0, 0, 0);
-        [SerializeField, Tooltip("카드 처음 생성 회전값")]
-        private Vector3 m_cardInitialRotation = new Vector3(0, 0, 0);
-        
+
         [Header("Animation Settings")]
         [SerializeField, Tooltip("슬롯 정렬 애니메이션의 시간")]
         private float m_tweenDuration = 0.5f;
+        [SerializeField] private Vector3 m_cardInitialRotation = new Vector3(0, 0, 0);
+
         
         private List<Vector3> m_slotPositionList = new List<Vector3>();
         private List<Quaternion> m_slotRotationList = new List<Quaternion>();
@@ -47,6 +49,12 @@ namespace Minimax.GamePlay.PlayerHand
                 m_slotPositionList.Add(Vector3.zero);
                 m_slotRotationList.Add(Quaternion.identity);
             }
+        }
+
+        public void SetInitialTransform<T>(T handCardView) where T : TweenableItem
+        {
+            handCardView.transform.position = m_deckTransform.transform.position;
+            handCardView.transform.rotation = Quaternion.Euler(m_cardInitialRotation);
         }
 
         public void UpdateAndTweenHand<T>(List<T> slots) where T : TweenableItem

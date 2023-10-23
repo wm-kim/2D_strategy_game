@@ -14,7 +14,8 @@ namespace Minimax.GamePlay.PlayerHand
         
         [field: SerializeField] public HandCardView HandCardView { get; private set; }
         [field: SerializeField] public HandCardSlotSettingSO HandCardSlotSettings { get; private set; }
-        public ClientMyHandDataManager HandDataManager { get; private set; }
+        
+        public MyHandInteractionManager MyHandInteraction { get; set; }
         
         // States
         [ReadOnly] private HandCardSlotState m_currentState;
@@ -22,19 +23,29 @@ namespace Minimax.GamePlay.PlayerHand
         public HoverState HoverState { get; private set; }
         public DraggingState DraggingState { get; private set; }
         
-        public void Init(ClientMyHandDataManager handDataManager, int index, int cardUID)
+        /// <summary>
+        /// Initializes all configurations for HandCardSlot.
+        /// </summary>
+        public void Init(MyHandInteractionManager myHandInteraction, int index, int cardUID)
         {
-            HandDataManager = handDataManager;
+            MyHandInteraction = myHandInteraction;
             Index = index;
             gameObject.name = $"HandCardSlot_{index}";
-            HandCardView.Init(cardUID);
+            HandCardView.CreateClientCardAndSetVisual(cardUID);
             
-            // Init states
+            InitializeStates();
+            SetDefaultState();
+        }
+        
+        private void InitializeStates()
+        {
             DefaultState = new DefaultState(this);
             HoverState = new HoverState(this);
             DraggingState = new DraggingState(this);
-            
-            // Set default state as the initial state
+        }
+        
+        private void SetDefaultState()
+        {
             ChangeState(DefaultState);
         }
         

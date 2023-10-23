@@ -3,11 +3,11 @@ namespace Minimax.GamePlay.CommandSystem
     public class DrawOpponentCardCmd : Command
     {
         private int m_cardUID;
-        private ClientOpponentHandDataManager m_clientOpponentHand;
+        private ClientOpponentHandManager m_clientOpponentHand;
         private ClientOpponentDeckManager m_clientOpponentDeck;
         
         public DrawOpponentCardCmd(int cardUID,
-            ClientOpponentHandDataManager clientOpponentHand, 
+            ClientOpponentHandManager clientOpponentHand, 
             ClientOpponentDeckManager clientOpponentDeck)
         {
             m_cardUID = cardUID;

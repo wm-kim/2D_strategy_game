@@ -47,7 +47,7 @@ namespace Minimax.GamePlay.PlayerHand
         public override void OnPointerEnter()
         {
             // if the card is not selected(not dragging), then we can hover it
-            if (!m_slot.HandDataManager.IsSelecting)
+            if (!m_slot.MyHandInteraction.IsSelecting)
                 m_slot.ChangeState(m_slot.HoverState);
         }
 

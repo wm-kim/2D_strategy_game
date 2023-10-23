@@ -35,11 +35,12 @@ namespace Minimax.GamePlay.PlayerHand
             inputManager.OnTouch += CheckForSecondTouch;
             
             // If there is a card currently being hovered, then we need to stop hovering it
-            m_slot.HandDataManager.HoverOffHoveringCard();
-            m_slot.HandDataManager.HoverCard(m_slot.Index);
+            m_slot.MyHandInteraction.HoverOffHoveringCard();
+            m_slot.MyHandInteraction.HoverCard(m_slot.Index);
 
             // Set the card view as the last sibling in its parent to render it on top of the other cards
-            m_slot.HandCardView.transform.SetParent(m_slot.HandDataManager.CardParent);
+            var slotParentTransform = m_slot.transform.parent;
+            m_slot.HandCardView.transform.SetParent(slotParentTransform);
         }
 
         public override void Exit()
@@ -49,13 +50,13 @@ namespace Minimax.GamePlay.PlayerHand
             inputManager.OnTouch -= CheckForSecondTouch;
             
             // Reset the hovering index
-            m_slot.HandDataManager.UnHoverCard();
+            m_slot.MyHandInteraction.UnHoverCard();
         }
 
         private void CheckForSecondTouch(EnhancedTouch.Touch touch)
         {
             var cardViewRect = m_slot.HandCardView.GetComponent<RectTransform>();
-            var camera = m_slot.HandDataManager.Canvas.worldCamera;
+            var camera = m_slot.MyHandInteraction.Canvas.worldCamera;
             bool isInsideCardDisplayMenu =
                 RectTransformUtility.RectangleContainsScreenPoint(cardViewRect, touch.screenPosition,
                     camera);
@@ -96,7 +97,7 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (m_camera == null)
             {
-                var canvas = m_slot.HandDataManager.Canvas;
+                var canvas = m_slot.MyHandInteraction.Canvas;
                 m_zdepth = canvas.transform.position.z;
                 m_camera = canvas.worldCamera;
                 var planeDistance =  canvas.planeDistance;

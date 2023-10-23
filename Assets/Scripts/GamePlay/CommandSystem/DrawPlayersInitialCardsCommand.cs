@@ -7,15 +7,15 @@ namespace Minimax.GamePlay.CommandSystem
     {
         private int[] m_myCardUIDs;
         private int[] m_opponentCardUIDs;
-        private ClientMyHandDataManager _mClientMyHandData;
-        private ClientOpponentHandDataManager m_clientOpponentHand;
+        private ClientMyHandManager _mClientMyHandData;
+        private ClientOpponentHandManager m_clientOpponentHand;
         private ClientMyDeckManager m_clientMyDeck;
         private ClientOpponentDeckManager m_clientOpponentDeck;
         
         public DrawAllPlayerInitialCardsCmd(int[] myCardUIDs,
             int[] opponentCardUIDs,
-            ClientMyHandDataManager clientMyHandData, 
-            ClientOpponentHandDataManager clientOpponentHand,
+            ClientMyHandManager clientMyHandData, 
+            ClientOpponentHandManager clientOpponentHand,
             ClientMyDeckManager clientMyDeck,
             ClientOpponentDeckManager clientOpponentDeck)
         {
