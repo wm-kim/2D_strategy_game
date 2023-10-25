@@ -1,15 +1,9 @@
 using System;
 using System.Collections.Generic;
-using DG.Tweening;
-using Minimax.GamePlay.CommandSystem;
-using Minimax.GamePlay.GridSystem;
-using Minimax.GamePlay.Logic;
 using Minimax.Utilities;
 using QFSW.QC;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using UnityEngine.Pool;
-using UnityEngine.Serialization;
 
 namespace Minimax.GamePlay.PlayerHand
 {
@@ -46,10 +40,22 @@ namespace Minimax.GamePlay.PlayerHand
                     handCardSlot.gameObject.SetActive(false);
                     return handCardSlot;
                 },
-                (handCardSlot) => { handCardSlot.gameObject.SetActive(true); },
-                (handCardSlot) => { handCardSlot.gameObject.SetActive(false); },
+                OnGetCardFromPool,
+                OnReleaseCardToPool,
                 (handCardSlot) => { Destroy(handCardSlot.gameObject); },
                 maxSize: Define.MaxHandCardCount);
+        }
+        
+        private void OnGetCardFromPool(HandCardSlot handCardSlot)
+        {
+            handCardSlot.gameObject.SetActive(true);
+            m_handAnimation.SetInitialTransform(handCardSlot);
+        }
+        
+        private void OnReleaseCardToPool(HandCardSlot handCardSlot)
+        {
+            handCardSlot.gameObject.SetActive(false);
+            handCardSlot.HandCardView.StartFadeTween(1);
         }
 
         public void AddInitialCardsAndTween(int[] cardUIDs)

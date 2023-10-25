@@ -1,5 +1,4 @@
 using System;
-using JSAM;
 using Minimax.CoreSystems;
 using Minimax.Utilities;
 using UnityEngine;
@@ -27,8 +26,7 @@ namespace Minimax.UI.Controller
         private void PlayClickSoundAfterInit(int index)
         {
             if (!m_bottomButtonGroupController.IsInitialButtonClicked) return;
-            AudioManager.PlaySound(AudioLibrarySounds.GeneralButtonSound);
+            AudioManager.Instance.PlaySFX(AudioLib.Button);
         }
-        
     }
 }

@@ -1,7 +1,6 @@
-using System;
 using DG.Tweening;
 using Minimax.GamePlay;
-using Unity.VisualScripting;
+using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.UI.View.ComponentViews.GamePlay
@@ -11,19 +10,17 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
     /// </summary>
     public class HandCardView : TweenableItem
     {
-        public Tween PosTween { get; set; }
-        public Tween RotTween { get; set; }
-        public Tween ScaleTween { get; set; }
-        public Tween FadeTween { get; set; }
-        
         [SerializeField] private CardVisual m_cardVisual;
-        private CanvasGroup m_canvasGroup;
-
-        private void Awake()
-        {
-            m_canvasGroup = GetComponent<CanvasGroup>();
-        }
+        [SerializeField] private CanvasGroup m_canvasGroup;
         
+        public Tweener FadeTween { get; private set; }
+
+        public override void KillAllTweens()
+        {
+            FadeTween?.Kill();
+            base.KillAllTweens();
+        }
+
         public void CreateClientCardAndSetVisual(int cardUID)
         {
             var card = ClientCard.CardsCreatedThisGame[cardUID];
@@ -32,10 +29,24 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
             m_cardVisual.Init(cardData);
         }
         
-        public void FadeView(float alpha, float duration)
+        public void UpdateCardVisual(int cardUID)
         {
+            var card = ClientCard.CardsCreatedThisGame[cardUID];
+            // card data could be null
+            var cardData = card.Data;
+            m_cardVisual.Init(cardData);
+        }
+        
+        public Tweener StartFadeTween(float targetAlpha, float duration = 0.0f)
+        {
+            if (duration.Equals(0f))
+            {
+                m_canvasGroup.alpha = targetAlpha;
+                return null; 
+            }
+            
             FadeTween?.Kill();
-            FadeTween = m_canvasGroup.DOFade(alpha, duration);            
+            return FadeTween = m_canvasGroup.DOFade(targetAlpha, duration);
         }
 
         private void OnDestroy()

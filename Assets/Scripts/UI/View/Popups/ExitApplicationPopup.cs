@@ -1,5 +1,4 @@
-using System;
-using JSAM;
+ using System;
 using Minimax.CoreSystems;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,21 +20,22 @@ namespace Minimax.UI.View.Popups
             m_yesButton.onClick.AddListener(OnYesButtonClicked);
         }
 
+
         private void OnCancelButtonClicked()
         {
-            AudioManager.PlaySound(AudioLibrarySounds.GeneralButtonSound);
+            AudioManager.Instance.PlaySFX(AudioLib.Button);
             PopupManager.Instance.HideCurrentPopup();
         }
         
         private void OnNoButtonClicked()
         {
-            AudioManager.PlaySound(AudioLibrarySounds.GeneralButtonSound);
+            AudioManager.Instance.PlaySFX(AudioLib.Button);
             PopupManager.Instance.HideCurrentPopup();
         }
         
         private void OnYesButtonClicked()
         {
-            AudioManager.PlaySound(AudioLibrarySounds.GeneralButtonSound);
+            AudioManager.Instance.PlaySFX(AudioLib.Button);
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
 #else

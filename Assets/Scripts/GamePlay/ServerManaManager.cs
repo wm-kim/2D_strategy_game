@@ -65,7 +65,8 @@ namespace Minimax.GamePlay
             m_clientManager.SetPlayersCurrentManaClientRpc(playerNumber, m_playerCurrentMana[playerNumber]);
         }
         
-        private bool IsManaEnough(int playerNumber, int cost)
+        // For server to check if it has enough mana to play a card
+        private bool CheckIfManaEnough(int playerNumber, int cost)
         {
             if (!IsServer) return false;
             if (m_playerCurrentMana.TryGetValue(playerNumber, out var value))
@@ -83,7 +84,7 @@ namespace Minimax.GamePlay
         public bool TryConsumeMana(int playerNumber, int cost)
         {
             if (!IsServer) return false;
-            if (IsManaEnough(playerNumber, cost))
+            if (CheckIfManaEnough(playerNumber, cost))
             {
                 ModifyCurrentMana(playerNumber, -cost);
                 return true;

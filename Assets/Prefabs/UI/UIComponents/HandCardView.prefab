@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 739624829729861695}
   - component: {fileID: 7904266608249723250}
   - component: {fileID: 3407148998534856490}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: HandCardView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,8 +72,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -2413806693520163455, guid: 35ee07a4c714061449532825ebd900b5, type: 3}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: fab06e0be9375cc4d823efa71629885c, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -107,6 +107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_cardVisual: {fileID: 3407148998534856490}
+  m_canvasGroup: {fileID: 739624829729861695}
 --- !u!114 &3407148998534856490
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -133,7 +134,7 @@ GameObject:
   - component: {fileID: 7136632427138757167}
   - component: {fileID: 6354126131643241186}
   - component: {fileID: 2805302976670403593}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Cost
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -267,7 +268,7 @@ GameObject:
   - component: {fileID: 8259977884417705613}
   - component: {fileID: 3289515171844359928}
   - component: {fileID: 4423416542513389671}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: CardType
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -401,7 +402,7 @@ GameObject:
   - component: {fileID: 6968962342207892933}
   - component: {fileID: 5486236800050673174}
   - component: {fileID: 3531803907530449169}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: CardID
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -535,7 +536,7 @@ GameObject:
   - component: {fileID: 4756673969041607290}
   - component: {fileID: 6400340536571391605}
   - component: {fileID: 7010140869101683443}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}

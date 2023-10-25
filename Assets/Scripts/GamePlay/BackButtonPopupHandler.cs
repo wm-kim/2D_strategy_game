@@ -1,4 +1,3 @@
-using JSAM;
 using Minimax.CoreSystems;
 using Minimax.UI.View.Popups;
 using UnityEngine;
@@ -19,7 +18,7 @@ namespace Minimax
         
         private void OnMobileBackButton()
         {
-            AudioManager.PlaySound(AudioLibrarySounds.PopupSound);
+            AudioManager.Instance.PlaySFX(AudioLib.Popup);
             PopupManager.Instance.MobileBackButtonPopup(PopupType.SurrenderPopup, PopupCommandType.Unique);
         }
     }

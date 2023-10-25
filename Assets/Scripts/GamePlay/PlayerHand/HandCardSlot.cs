@@ -10,7 +10,17 @@ namespace Minimax.GamePlay.PlayerHand
 {
     public class HandCardSlot : TweenableItem, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
-        public int Index { get; set; }
+        private int m_index;
+        public int Index
+        {
+            get => m_index;
+            set
+            {
+                m_index = value;
+                gameObject.name = $"HandCardSlot_{m_index}";
+                transform.SetSiblingIndex(m_index);
+            }
+        }
         
         [field: SerializeField] public HandCardView HandCardView { get; private set; }
         [field: SerializeField] public HandCardSlotSettingSO HandCardSlotSettings { get; private set; }
@@ -30,7 +40,6 @@ namespace Minimax.GamePlay.PlayerHand
         {
             MyHandInteraction = myHandInteraction;
             Index = index;
-            gameObject.name = $"HandCardSlot_{index}";
             HandCardView.CreateClientCardAndSetVisual(cardUID);
             
             InitializeStates();

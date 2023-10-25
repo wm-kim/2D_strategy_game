@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using JSAM;
 using Minimax.CoreSystems;
 using Minimax.UI.View.Popups;
 using UnityEngine;
@@ -23,7 +19,7 @@ namespace Minimax
         
         private void OnExitButtonClicked()
         {
-            AudioManager.PlaySound(AudioLibrarySounds.GeneralButtonSound);
+            AudioManager.Instance.PlaySFX(AudioLib.Button);
             PopupManager.Instance.HideCurrentPopup();
         }
     }

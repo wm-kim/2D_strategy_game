@@ -29,12 +29,16 @@ namespace Minimax.GamePlay.CommandSystem
             base.StartExecute();
             
             // revealing the opponent card
+            SetOpponentCardData();
+            m_clientOpponentHand.PlayCardAndTween(m_cardUID);
+            m_clientUnitManager.SpawnUnit(m_unitUID, m_cardUID, m_coord);
+        }
+
+        private void SetOpponentCardData()
+        {
             var clientCard = ClientCard.CardsCreatedThisGame[m_cardUID];
             var unitBaseData = UnitBaseData.CreateInstance(m_networkUnitData);
             clientCard.Data = unitBaseData;
-            
-            m_clientOpponentHand.PlayCardAndTween(m_cardUID);
-            m_clientUnitManager.SpawnUnit(m_unitUID, m_cardUID, m_coord);
         }
     }
 }

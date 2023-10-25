@@ -11,7 +11,8 @@ namespace Minimax.GamePlay.PlayerHand
     public class HandAnimationManager : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField]private Transform m_deckTransform;
+        [SerializeField] private Transform m_deckTransform;
+        [SerializeField] private Transform m_cardRevealTransform;
         
         [Header("Hand Curve Settings")]
         [SerializeField, Tooltip("카드가 놓일 곡선의 반지름")] [Range(0, 10000)]
@@ -26,10 +27,11 @@ namespace Minimax.GamePlay.PlayerHand
         private float m_maxBetweenAngle = 3f;
 
         [Header("Animation Settings")]
-        [SerializeField, Tooltip("슬롯 정렬 애니메이션의 시간")]
-        private float m_tweenDuration = 0.5f;
+        [SerializeField] [Range(0, 1)] private float m_handTweenDuration = 0.5f;
         [SerializeField] private Vector3 m_cardInitialRotation = new Vector3(0, 0, 0);
-
+        [SerializeField] [Range(0, 1)] private float m_cardRevealMoveDuration = 0.5f;
+        [SerializeField] [Range(0, 1)] private float m_cardFlipDuration = 0.5f;
+        [SerializeField] [Range(0, 1)] private float m_cardfadeDuration = 0.5f;
         
         private List<Vector3> m_slotPositionList = new List<Vector3>();
         private List<Quaternion> m_slotRotationList = new List<Quaternion>();
@@ -96,15 +98,37 @@ namespace Minimax.GamePlay.PlayerHand
             
             for (int i = 0; i < slots.Count; i++)
             {
-                slots[i].StartLocalPosTween(m_slotPositionList[i], m_tweenDuration);
-                slots[i].StartLocalRotQuaternionTween(m_slotRotationList[i], m_tweenDuration);
+                slots[i].StartLocalMoveTween(m_slotPositionList[i], m_handTweenDuration);
+                slots[i].StartLocalRotQuaternionTween(m_slotRotationList[i], m_handTweenDuration);
                 
                 sequence.Join(slots[i].PosTween);
                 sequence.Join(slots[i].RotTween);
             }
-
+            
             sequence.Play();
             sequence.OnComplete(Command.ExecutionComplete);
+        }
+        
+        public void TweenOpponentCardReveal(int cardUID, HandCardView handCardView)
+        {
+            handCardView.UpdateCardVisual(cardUID);
+            
+            Sequence seq = DOTween.Sequence();
+            
+            var moveTween = handCardView.StartMoveTween(m_cardRevealTransform.position, m_cardRevealMoveDuration);
+            var rotTween = handCardView.StartRotTween(m_cardInitialRotation, m_cardRevealMoveDuration);
+            seq.Join(moveTween)
+                .Join(rotTween);
+            
+            var flipRotTween = handCardView.StartRotTween(Vector3.zero, m_cardFlipDuration);
+            seq.Append(flipRotTween);
+            
+            var fadeTween = handCardView.StartFadeTween(0, m_cardfadeDuration);
+            seq.Append(fadeTween);
+            
+            seq.OnComplete(() => {
+                Destroy(handCardView.gameObject);
+            });
         }
     }
 }

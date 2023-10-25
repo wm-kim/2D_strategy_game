@@ -1,7 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using JSAM;
 using Minimax.CoreSystems;
 using Minimax.UI.View.Popups;
 using UnityEngine;
@@ -22,14 +18,14 @@ namespace Minimax
 
         private void OnSettingsButtonClicked()
         {
-            AudioManager.PlaySound(AudioLibrarySounds.PopupSound);
+            AudioManager.Instance.PlaySFX(AudioLib.Popup);
             PopupManager.Instance.RegisterPopupToQueue(PopupType.AppSettingPopup, PopupCommandType.Unique);
             gameObject.SetActive(false);
         }
         
         private void OnExitButtonClicked()
         {
-            AudioManager.PlaySound(AudioLibrarySounds.PopupSound);
+            AudioManager.Instance.PlaySFX(AudioLib.Popup);
             PopupManager.Instance.RegisterPopupToQueue(PopupType.ExitAppPopup, PopupCommandType.Unique);
             gameObject.SetActive(false);
         } 

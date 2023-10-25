@@ -158,7 +158,7 @@ namespace Minimax.GamePlay
         {
             if (!IsMyTurn)
             {
-                DebugWrapper.LogError($"Player {MyPlayerNumber} request denied to {logMessage}");
+                DebugWrapper.LogError($"Player {MyPlayerNumber} request denied to {logMessage} because it's not their turn");
                 return false;
             }
 
@@ -183,7 +183,7 @@ namespace Minimax.GamePlay
             
             if (playerNumber != m_whosTurn.Value)
             {
-                DebugWrapper.LogError($"Player {playerNumber} request denied");
+                DebugWrapper.LogError($"Player {playerNumber} request denied because it's not their turn");
                 return false;
             }
 

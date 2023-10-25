@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 510c61cdec524e86b647525bb5947f82, type: 3}
   m_Name: DeckViewBlurConfig
   m_EditorClassIdentifier: 
-  radius: 3.4
-  iteration: 2
+  radius: 1.75
+  iteration: 3
   maxDepth: 32
-  strength: 13.6
+  strength: 14

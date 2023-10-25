@@ -28,7 +28,7 @@ namespace Minimax
         /// <summary>
         /// Key is unit UID
         /// </summary>
-        private Dictionary<int, UnitVisual> m_unitVisuals = new Dictionary<int, UnitVisual>();
+        private Dictionary<int, UnitVisual> m_unitVisuals = new ();
         private int m_selectedUnitUID = -1;
 
         private void OnEnable()

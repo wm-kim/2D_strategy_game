@@ -39,7 +39,7 @@ namespace Minimax.GamePlay.PlayerHand
             float targetScale = 1f;
             float duration = m_slot.HandCardSlotSettings.DropDownDuration;
             
-            m_slot.HandCardView.StartPosTween(targetPosition, duration);
+            m_slot.HandCardView.StartMoveTween(targetPosition, duration);
             m_slot.HandCardView.StartRotTween(targetRotation, duration);
             m_slot.HandCardView.StartScaleTween(targetScale, duration);
         }

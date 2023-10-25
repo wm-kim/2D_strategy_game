@@ -1,5 +1,6 @@
 using DG.Tweening;
 using Minimax.CoreSystems;
+using Minimax.GamePlay.GridSystem;
 using Minimax.Utilities;
 using UnityEngine;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
@@ -73,7 +74,6 @@ namespace Minimax.GamePlay.PlayerHand
 
                 if (sqrDist <= m_positionThreshold * m_positionThreshold) return;
 
-                m_slot.HandCardView.KillAllTweens();
                 cachedTargetPosition = Vector3.Lerp(m_slot.HandCardView.transform.position, hitPoint, Time.deltaTime * m_slot.HandCardSlotSettings.DraggingSpeed);
                 m_slot.HandCardView.transform.position = cachedTargetPosition;
             }
@@ -81,26 +81,16 @@ namespace Minimax.GamePlay.PlayerHand
 
         private void HandleCardRelease(EnhancedTouch.Touch touch)
         {
-            if (m_slot.MyHandInteraction.TryGetCellOfPlayingCard(touch.screenPosition, out var cell))
+            if (m_slot.MyHandInteraction.TryGetPlayableCellForCard(touch, out ClientCell playableCell))
             {
                 m_slot.ChangeState(m_slot.DefaultState);
-                m_slot.MyHandInteraction.RequestPlaySelectingCard(cell);
+                m_slot.MyHandInteraction.RequestPlayCard(playableCell);
             }
             else
             {
                 m_slot.MyHandInteraction.ReleaseSelectingCard();
                 m_slot.ChangeState(m_slot.DefaultState);
             }
-        }
-
-        private bool ClientCheckIfCardIsPlayable(EnhancedTouch.Touch touch)
-        {
-            if (m_slot.MyHandInteraction.TryGetCellOfPlayingCard(touch.screenPosition, out var cell))
-            {
-                if(!cell.IsPlaceable) return false;
-            }
-
-            return true;
         }
 
         public override void MoveCardView()

@@ -1,17 +1,10 @@
-using System;
 using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
-using Cysharp.Threading.Tasks;
-using JSAM;
 using Minimax.ScriptableObjects;
-using Minimax.ScriptableObjects.Events;
-using Minimax.ScriptableObjects.Events.Primitives;
 using Minimax.UI.Controller;
 using Minimax.UI.View.Pages;
 using Minimax.UI.View.Popups;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 namespace Minimax.CoreSystems
 {
@@ -96,7 +89,7 @@ namespace Minimax.CoreSystems
         {
             if (!m_currentNavigation.Pop())
             {
-                AudioManager.PlaySound(AudioLibrarySounds.PopupSound);
+                AudioManager.Instance.PlaySFX(AudioLib.Popup);
                 PopupManager.Instance.MobileBackButtonPopup(PopupType.ExitAppPopup, PopupCommandType.Unique);
             }
         }

@@ -44,8 +44,7 @@ namespace Minimax
             try 
             {
                 var card = RemoveCard(cardUID);
-                // TODO : animate the card revealing, just for now destroy it.
-                Destroy(card.gameObject);
+                m_handAnimationManager.TweenOpponentCardReveal(cardUID, card);
                 m_handAnimationManager.UpdateAndTweenHand(m_handCards);
             }
             catch (Exception e)

@@ -10,51 +10,72 @@ namespace Minimax
         public Tweener PosTween { get; set; }
         public Tweener RotTween { get; set; }
         public Tweener ScaleTween { get; set; }
-        public Tweener FadeTween { get; set; }
         
-        public void KillAllTweens()
+        public virtual void KillAllTweens()
         {
             PosTween?.Kill();
             RotTween?.Kill();
             ScaleTween?.Kill();
-            FadeTween?.Kill();
         }
         
-        public void StartPosTween(Vector3 targetPos, float duration)
+        public Tweener StartMoveTween(Vector3 targetPos, float duration = 0.0f)
         {
+            if (duration.Equals(0f))
+            {
+                transform.position = targetPos;
+                return null; 
+            }
+            
             PosTween?.Kill();
-            PosTween = transform.DOMove(targetPos, duration);
+            return PosTween = transform.DOMove(targetPos, duration);
         }
         
-        public void StartLocalPosTween(Vector3 targetPos, float duration)
+        public Tweener StartLocalMoveTween(Vector3 targetPos, float duration = 0.0f)
         {
+            if (duration.Equals(0f))
+            {
+                transform.localPosition = targetPos;
+                return null; 
+            }
+            
             PosTween?.Kill();
-            PosTween = transform.DOLocalMove(targetPos, duration);
+            return PosTween = transform.DOLocalMove(targetPos, duration);
         }
         
-        public void StartRotTween(Vector3 targetRot, float duration)
+        public Tweener StartRotTween(Vector3 targetRot, float duration = 0.0f)
         {
+            if (duration.Equals(0f))
+            {
+                transform.eulerAngles = targetRot;
+                return null; 
+            }
+            
             RotTween?.Kill();
-            RotTween = transform.DORotate(targetRot, duration);
+            return RotTween = transform.DORotate(targetRot, duration);
         }
         
-        public void StartLocalRotQuaternionTween(Quaternion targetRot, float duration)
+        public Tweener StartLocalRotQuaternionTween(Quaternion targetRot, float duration = 0.0f)
         {
+            if (duration.Equals(0f))
+            {
+                transform.localRotation = targetRot;
+                return null; 
+            }
+            
             RotTween?.Kill();
-            RotTween = transform.DOLocalRotateQuaternion(targetRot, duration);
+            return RotTween = transform.DOLocalRotateQuaternion(targetRot, duration);
         }
         
-        public void StartScaleTween(float targetScale, float duration)
+        public Tweener StartScaleTween(float targetScale, float duration = 0.0f)
         {
+            if (duration.Equals(0f))
+            {
+                transform.localScale = targetScale * Vector3.one;
+                return null; 
+            }
+            
             ScaleTween?.Kill();
-            ScaleTween = transform.DOScale(targetScale, duration);
-        }
-        
-        public void StartFadeTween(float targetAlpha, float duration)
-        {
-            FadeTween?.Kill();
-            var canvasGroup = GetComponent<CanvasGroup>();
-            FadeTween = canvasGroup.DOFade(targetAlpha, duration);
+            return ScaleTween = transform.DOScale(targetScale, duration);
         }
     }
 }
