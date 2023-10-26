@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using Minimax.GamePlay;
+using Minimax.GamePlay.CommandSystem;
 using Minimax.GamePlay.GridSystem;
 using Minimax.GamePlay.Logic;
 using Minimax.GamePlay.Unit;
@@ -112,6 +114,9 @@ namespace Minimax
                 Quaternion.identity, m_unitContainer);
             m_unitVisuals.Add(unitUID, unitVisual);
             
+            // TODO : pass both player rotation and current rotation
+            unitVisual.Init(m_clientMap.GetMyPlayerRotation());
+            
             if (clientUnit.IsMine)
             {
                 m_clientMap.DisableHighlightCells();
@@ -127,13 +132,17 @@ namespace Minimax
             var clientCell = m_clientMap[clientUnit.Coord];
             clientCell.RemoveUnit();
             
-            m_unitVisuals[unitUID].MoveTo(m_clientMap[coord].transform.position, 
-                () =>
-            {
-                clientUnit.Coord = coord;
-                clientUnit.MoveRange -= 1;
-                m_clientMap.PlaceUnitOnMap(unitUID, coord);
-            });
+            Vector2Int dir = coord - clientUnit.Coord;
+            // TODO : Change it to current rotation
+            var playerRotation = m_clientMap.GetMyPlayerRotation();
+            
+            m_unitVisuals[unitUID].AnimateMove(dir, playerRotation, m_clientMap[coord].transform.position).OnComplete(() =>
+                {
+                    clientUnit.Coord = coord;
+                    clientUnit.MoveRange -= 1;
+                    m_clientMap.PlaceUnitOnMap(unitUID, coord);
+                    Command.ExecutionComplete();
+                });
         }
     }
 }

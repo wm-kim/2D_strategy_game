@@ -218,5 +218,15 @@ namespace Minimax.GamePlay.GridSystem
         /// Wrapper for <see cref="ClientIsoGrid.GetPath"/>
         /// </summary>
         public List<ClientCell> GetPath(Vector2Int start, Vector2Int target) => m_isoGrid.GetPath(start, target);
+        
+        public GridRotation GetMyPlayerRotation() => m_isoGrid.PlayerRotation;
+
+        public GridRotation GetOpponentPlayerRotation()
+        {
+            var myPlayerRotation = GetMyPlayerRotation();
+            if (myPlayerRotation == GridRotation.Default) return GridRotation.Rotate180;
+            if (myPlayerRotation == GridRotation.Rotate180) return GridRotation.Default;
+            throw new Exception($"Invalid GridRotation {myPlayerRotation}");
+        }
     }
 }

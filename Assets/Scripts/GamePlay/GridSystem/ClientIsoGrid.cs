@@ -47,7 +47,8 @@ namespace Minimax.GamePlay.GridSystem
   
     private IPathFinding<ClientCell> m_pathFinding;
     private Vector2 m_originPos;
-    private GridRotation m_rotation = GridRotation.Default;
+    private GridRotation m_playerRotation = GridRotation.Default;
+    public GridRotation PlayerRotation => m_playerRotation;
    
     public ClientIsoGrid(int width, int height, PathFinding pathfinding, Vector3 cellSize, Vector2 originPos, 
       Func<ClientIsoGrid, int, int, ClientCell> createGridObject, GridRotation rotation = GridRotation.Default)
@@ -68,7 +69,7 @@ namespace Minimax.GamePlay.GridSystem
         }
       }
       
-      m_rotation = rotation;
+      m_playerRotation = rotation;
       
   #if UNITY_EDITOR
       m_debugTexts = new TextMesh[width, height];
@@ -80,7 +81,7 @@ namespace Minimax.GamePlay.GridSystem
     /// </summary>
     private Vector2Int GetRotatedCoord(int x, int y)
     {
-      switch (m_rotation)
+      switch (m_playerRotation)
       {
         case GridRotation.Default:
           return new Vector2Int(x, y);
@@ -100,7 +101,7 @@ namespace Minimax.GamePlay.GridSystem
     /// </summary>
     public void SetRotation(GridRotation rotation)
     {
-      m_rotation = rotation;
+      m_playerRotation = rotation;
       for (int x = 0; x < Cells.GetLength(0); x++)
       {
         for (int y = 0; y < Cells.GetLength(1); y++)

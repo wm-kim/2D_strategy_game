@@ -943,7 +943,7 @@ MonoBehaviour:
   m_clientCellPrefab: {fileID: 4990805122112571578, guid: 24a4769136aac6646baa4349f6f800d7, type: 3}
   m_tilemap: {fileID: 1952707544}
   m_cameraController: {fileID: 551629212}
-  m_displayDebugCoords: 0
+  m_displayDebugCoords: 1
 --- !u!114 &273055805
 MonoBehaviour:
   m_ObjectHideFlags: 0

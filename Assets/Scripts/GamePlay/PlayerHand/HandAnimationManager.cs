@@ -101,7 +101,7 @@ namespace Minimax.GamePlay.PlayerHand
                 slots[i].StartLocalMoveTween(m_slotPositionList[i], m_handTweenDuration);
                 slots[i].StartLocalRotQuaternionTween(m_slotRotationList[i], m_handTweenDuration);
                 
-                sequence.Join(slots[i].PosTween);
+                sequence.Join(slots[i].MoveTween);
                 sequence.Join(slots[i].RotTween);
             }
             

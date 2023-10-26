@@ -7,13 +7,13 @@ namespace Minimax
 {
     public abstract class TweenableItem : MonoBehaviour
     {
-        public Tweener PosTween { get; set; }
+        public Tweener MoveTween { get; set; }
         public Tweener RotTween { get; set; }
         public Tweener ScaleTween { get; set; }
         
         public virtual void KillAllTweens()
         {
-            PosTween?.Kill();
+            MoveTween?.Kill();
             RotTween?.Kill();
             ScaleTween?.Kill();
         }
@@ -26,8 +26,8 @@ namespace Minimax
                 return null; 
             }
             
-            PosTween?.Kill();
-            return PosTween = transform.DOMove(targetPos, duration);
+            MoveTween?.Kill();
+            return MoveTween = transform.DOMove(targetPos, duration);
         }
         
         public Tweener StartLocalMoveTween(Vector3 targetPos, float duration = 0.0f)
@@ -38,8 +38,8 @@ namespace Minimax
                 return null; 
             }
             
-            PosTween?.Kill();
-            return PosTween = transform.DOLocalMove(targetPos, duration);
+            MoveTween?.Kill();
+            return MoveTween = transform.DOLocalMove(targetPos, duration);
         }
         
         public Tweener StartRotTween(Vector3 targetRot, float duration = 0.0f)
