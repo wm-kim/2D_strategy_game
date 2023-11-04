@@ -31,11 +31,11 @@ namespace SingularityGroup.HotReload.Editor {
         }
         
         public bool CheckIfDownloaded(ICliController cliController) {
-            if(IsDownloaded(cliController)) {
+            if(TryUseUserDefinedBinaryPath(cliController, GetExecutablePath(cliController))) {
                 Started = true;
                 Progress = 1f;
                 return true;
-            } else if(TryUseUserDefinedBinaryPath(cliController, GetExecutablePath(cliController))) {
+            } else if(IsDownloaded(cliController)) {
                 Started = true;
                 Progress = 1f;
                 return true;
@@ -137,8 +137,15 @@ namespace SingularityGroup.HotReload.Editor {
             } 
             
             try {
-                Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
-                File.Copy(customBinaryPath, targetPath);
+                var targetFile = new FileInfo(targetPath);
+                bool copy = true;
+                if (targetFile.Exists) {
+                    copy = File.GetLastWriteTimeUtc(customBinaryPath) > targetFile.LastWriteTimeUtc;
+                }
+                if (copy) {
+                    Directory.CreateDirectory(Path.GetDirectoryName(targetPath));
+                    File.Copy(customBinaryPath, targetPath, true);
+                }
                 return true;
             } catch(IOException ex) {
                 Log.Warning("encountered exception when copying server binary in the specified custom executable path '{0}':\n{1}", customBinaryPath, ex);

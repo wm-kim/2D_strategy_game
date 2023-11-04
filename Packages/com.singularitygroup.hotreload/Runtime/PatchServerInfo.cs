@@ -61,8 +61,8 @@ namespace SingularityGroup.HotReload {
             } catch (Exception ex) {
                 Log.Exception(ex);
                 return $"Parsing uri failed with an exception: {ex}";
-            }
         }
+    }
 
         /// <summary>
         /// Convert server info into a uri that launches an app via a deeplink.

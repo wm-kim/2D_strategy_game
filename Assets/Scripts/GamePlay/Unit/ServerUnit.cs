@@ -66,15 +66,19 @@ namespace Minimax.GamePlay.Unit
         public int MoveRange { get; set; }
         
         public int AttackRange { get; set; }
-        
-        public bool IsMovable { get; set; } = true;
 
+        public void ResetOnNewTurn()
+        {
+            var unitData = ServerCard.CardsCreatedThisGame[m_cardUID].Data as UnitBaseData;
+            MoveRange = unitData.MoveRange;
+        }
+        
         /// <summary>
         /// Checks if the unit is movable, and log if it is not.
         /// </summary>
         public bool CheckIfMovable()
         {
-            if (!IsMovable)
+            if (MoveRange <= 0)
             {
                 DebugWrapper.LogError($"Unit {UID} is not movable");
                 return false;

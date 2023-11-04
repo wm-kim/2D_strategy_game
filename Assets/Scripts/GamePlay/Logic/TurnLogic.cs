@@ -1,4 +1,5 @@
 using Minimax.GamePlay.GridSystem;
+using Minimax.GamePlay.Unit;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -13,6 +14,7 @@ namespace Minimax.GamePlay.Logic
         
         [Header("Client References")]
         [SerializeField] private ClientMap m_clientMap;
+        [SerializeField] private ClientUnitManager m_clientUnitManager;
         
         [Header("Other Logic References")]
         [SerializeField] private CardDrawingLogic m_cardDrawingLogic;
@@ -45,6 +47,14 @@ namespace Minimax.GamePlay.Logic
             if (m_turnManager.MyPlayerNumber != playerNumber)
             {
                 m_clientMap.DisableHighlightCells();
+            }
+        }
+        
+        private void ServerResetUnitOnTurnStart(int playerNumber)
+        {
+            foreach (var serverUnit in ServerUnit.UnitsCreatedThisGame.Values)
+            {
+                
             }
         }
     }

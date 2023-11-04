@@ -1,17 +1,14 @@
 ﻿using UnityEditor;
 using UnityEngine;
-using System;
 using System.Reflection;
 
 namespace SingularityGroup.HotReload.Editor {
     internal static class HotReloadWindowStyles {
-        const int defaultPadding = 31;
-                
         private static GUIStyle h1TitleStyle;
         private static GUIStyle h1TitleCenteredStyle;
         private static GUIStyle h2TitleStyle;
         private static GUIStyle h3TitleStyle;
-        private static GUIStyle accountCreatedStyle;
+        private static GUIStyle h3TitleWrapStyle;
         private static GUIStyle h4TitleStyle;
         private static GUIStyle h5TitleStyle;
         private static GUIStyle boxStyle;
@@ -25,38 +22,46 @@ namespace SingularityGroup.HotReload.Editor {
         private static GUIStyle h3CenterTitleStyle;
         private static GUIStyle logoStyle;
         private static GUIStyle changelogPointersStyle;
-        private static GUIStyle indicationIconBox;
-        private static GUIStyle indicationTextBox;
-        private static GUIStyle indicationText;
-        private static GUIStyle textStyle;
-        private static GUIStyle buttonStyle;
+        private static GUIStyle recompileButtonStyle;
         private static GUIStyle indicationIconStyle;
-        private static GUIStyle spinnerIconStyle;
-        private static GUIStyle unsupportedChangesIconStyle;
-        private static GUIStyle removeUnsupportedChangeStyle;
+        private static GUIStyle indicationAlertIconStyle;
         private static GUIStyle startButtonStyle;
-        private static GUIStyle logStyle;
-        private static GUIStyle sectionOuterBoxStyle;
+        private static GUIStyle stopButtonStyle;
+        private static GUIStyle eventFilters;
         private static GUIStyle sectionOuterBoxCompactStyle;
-        private static GUIStyle dynamicSectionOuterBoxCompactStyle;
         private static GUIStyle sectionInnerBoxStyle;
         private static GUIStyle sectionInnerBoxWideStyle;
-        private static GUIStyle dynamicSectionInnerBoxWideStyle;
         private static GUIStyle changelogSectionInnerBoxStyle;
-        private static GUIStyle unsupportedChangesInnerBoxStyle;
         private static GUIStyle indicationBoxStyle;
-        private static GUIStyle indicationIconBoxStyle;
-        private static GUIStyle indicationTextBoxStyle;
-        private static GUIStyle unsupportedChangesHeaderStyle;
-        private static GUIStyle logStyleLight;
-        private static GUIStyle logStyleDark;
         private static GUIStyle linkStyle;
-        private static GUIStyle dropdownAreaStyle;
-        private static GUIStyle dropdownBoxStyle;
         private static GUIStyle labelStyle;
         private static GUIStyle progressBarBarStyle;
-        private static GUIStyle progressBarAnchorStyle;
-        private static GUIStyle downloadInfoButtonStyle;
+        private static GUIStyle section;
+        private static GUIStyle scroll;
+        private static GUIStyle barStyle;
+        private static GUIStyle barBgStyle;
+        private static GUIStyle barChildStyle;
+        private static GUIStyle barFoldoutStyle;
+        private static GUIStyle timestampStyle;
+        private static GUIStyle clickableLabelBoldStyle;
+        private static GUIStyle _footerStyle;
+        private static GUIStyle _emptyListText;
+        private static GUIStyle _stacktraceTextAreaStyle;
+        private static GUIStyle _customFoldoutStyle;
+        private static GUIStyle _entryBoxStyle;
+        private static GUIStyle _childEntryBoxStyle;
+        private static GUIStyle _removeIconStyle;
+        private static GUIStyle upgradeLicenseButtonStyle;
+        private static GUIStyle upgradeLicenseButtonOverlayStyle;
+        private static GUIStyle upgradeButtonStyle;
+        private static GUIStyle hideButtonStyle;
+        private static GUIStyle dynamicSection;
+        private static GUIStyle dynamicSectionHelpTab;
+        private static GUIStyle helpTabButton;
+        private static GUIStyle indicationHelpBox;
+        
+        private static Color32? darkModeLinkColor;
+        private static Color32? lightModeModeLinkColor;
         
         public static bool IsDarkMode => EditorGUIUtility.isProSkin;
         public static int windowScreenWidth => HotReloadWindow.Current ? (int)HotReloadWindow.Current.position.width : Screen.width;
@@ -72,6 +77,16 @@ namespace SingularityGroup.HotReload.Editor {
                     h1TitleStyle.padding.bottom = 5;
                 }
                 return h1TitleStyle;
+            }
+        }
+        
+        public static GUIStyle FooterStyle {
+            get {
+                if (_footerStyle == null) {
+                    _footerStyle = new GUIStyle();
+                    _footerStyle.fixedHeight = 28;
+                }
+                return _footerStyle;
             }
         }
         
@@ -110,6 +125,16 @@ namespace SingularityGroup.HotReload.Editor {
                     h3TitleStyle.padding.bottom = 5;
                 }
                 return h3TitleStyle;
+            }
+        }
+        
+        public static GUIStyle H3TitleWrapStyle {
+            get {
+                if (h3TitleWrapStyle == null) {
+                    h3TitleWrapStyle = new GUIStyle(H3TitleStyle);
+                    h3TitleWrapStyle.wordWrap = true;
+                }
+                return h3TitleWrapStyle;
             }
         }
         
@@ -158,20 +183,14 @@ namespace SingularityGroup.HotReload.Editor {
                     labelStyle.clipping = TextClipping.Clip;
                     labelStyle.wordWrap = true;
                 }
-                if (IsDarkMode) {
-                    labelStyle.normal.textColor = Color.white;
-                } else {
-                    labelStyle.normal.textColor = Color.black;
-                    labelStyle.hover.textColor = Color.white;
-                }
                 return labelStyle;
             }
         }
-
+        
         public static GUIStyle BoxStyle {
             get {
                 if (boxStyle == null) {
-                    boxStyle = new GUIStyle(GUI.skin.box);
+                    boxStyle = new GUIStyle(EditorStyles.helpBox);
                     boxStyle.normal.textColor = GUI.skin.label.normal.textColor;
                     boxStyle.fontStyle = FontStyle.Bold;
                     boxStyle.alignment = TextAnchor.UpperLeft;
@@ -291,72 +310,35 @@ namespace SingularityGroup.HotReload.Editor {
         public static GUIStyle IndicationIcon {
             get {
                 if (indicationIconStyle == null) {
-                    indicationIconStyle = new GUIStyle();
-                    indicationIconStyle.padding = new RectOffset(5, 6, 6, 6);
-                    indicationIconStyle.fixedWidth = 50;
-                    indicationIconStyle.fixedHeight = 50;
+                    indicationIconStyle = new GUIStyle(H2TitleStyle);
+                    indicationIconStyle.fixedHeight = 20;
                 }
+                indicationIconStyle.padding = new RectOffset(left: windowScreenWidth > Constants.IndicationTextHideWidth ? 7 : 5, right: windowScreenWidth > Constants.IndicationTextHideWidth ? 0 : -10, top: 1, bottom: 1);
                 return indicationIconStyle;
             }
         }
         
-        public static GUIStyle SpinnerIcon {
+        public static GUIStyle IndicationAlertIcon {
             get {
-                if (spinnerIconStyle == null) {
-                    spinnerIconStyle = new GUIStyle();
-                    spinnerIconStyle.padding = new RectOffset(5, 6, 6, 6);
-                    spinnerIconStyle.fixedWidth = 45;
-                    spinnerIconStyle.fixedHeight = 45;
+                if (indicationAlertIconStyle == null) {
+                    indicationAlertIconStyle = new GUIStyle(H2TitleStyle);
+                    indicationAlertIconStyle.padding = new RectOffset(left: 5, right: -7, top: 1, bottom: 1);
+                    indicationAlertIconStyle.fixedHeight = 20;
                 }
-                return spinnerIconStyle;
+                return indicationAlertIconStyle;
             }
         }
         
-        public static GUIStyle UnsupportedChangesIcon {
+        public static GUIStyle RecompileButton {
             get {
-                if (unsupportedChangesIconStyle == null) {
-                    unsupportedChangesIconStyle = new GUIStyle();
-                    unsupportedChangesIconStyle.fixedWidth = 22;
-                    unsupportedChangesIconStyle.fixedHeight = 22;
-                    unsupportedChangesIconStyle.padding.left = -40;
-                    unsupportedChangesIconStyle.padding.top = -4;
+                if (recompileButtonStyle == null) {
+                    recompileButtonStyle = new GUIStyle(EditorStyles.miniButton);
+                    recompileButtonStyle.margin.top = 17;
+                    recompileButtonStyle.fixedHeight = 25;
+                    recompileButtonStyle.margin.right = 5;
                 }
-                return unsupportedChangesIconStyle;
-            }
-        }
-        
-        public static GUIStyle RemoveUnsupportedChangeIcon {
-            get {
-                if (removeUnsupportedChangeStyle == null) {
-                    removeUnsupportedChangeStyle = new GUIStyle();
-                    removeUnsupportedChangeStyle.fixedWidth = 22;
-                    removeUnsupportedChangeStyle.fixedHeight = 22;
-                }
-                return removeUnsupportedChangeStyle;
-            }
-        }
-        
-        public static GUIStyle UnsupportedChangesText {
-            get {
-                if (textStyle == null) {
-                    textStyle = new GUIStyle(H1TitleStyle);
-                    textStyle.fixedWidth = 250;
-                    textStyle.padding.top = -2;
-                }
-                return textStyle;
-            }
-        }
-            
-        public static GUIStyle UnsupportedChangesButton {
-            get {
-                if (buttonStyle == null) {
-                    buttonStyle = new GUIStyle(EditorStyles.miniButton);
-                    buttonStyle.margin.left = 5;
-                    buttonStyle.padding.left = 10;
-                }
-                buttonStyle.fixedWidth = EditorApplication.isPlaying ? 120 : 90;
-                
-                return buttonStyle;
+                recompileButtonStyle.fixedWidth = windowScreenWidth > Constants.RecompileButtonTextHideWidth ? 95 : 30;
+                return recompileButtonStyle;
             }
         }
         
@@ -365,10 +347,39 @@ namespace SingularityGroup.HotReload.Editor {
                 if (startButtonStyle == null) {
                     startButtonStyle = new GUIStyle(EditorStyles.miniButton);
                     startButtonStyle.fixedHeight = 25;
-                    startButtonStyle.padding.left = 0;
-                    startButtonStyle.fixedWidth = 135;
+                    startButtonStyle.padding.top = 6;
+                    startButtonStyle.padding.bottom = 6;
+                    startButtonStyle.margin.top = 17;
                 }
+                startButtonStyle.fixedWidth = windowScreenWidth > Constants.StartButtonTextHideWidth ? 70 : 30;
                 return startButtonStyle;
+            }
+        }
+        
+        public static GUIStyle StopButton {
+            get {
+                if (stopButtonStyle == null) {
+                    stopButtonStyle = new GUIStyle(EditorStyles.miniButton);
+                    stopButtonStyle.fixedHeight = 25;
+                    stopButtonStyle.margin.top = 17;
+                }
+                stopButtonStyle.fixedWidth = HotReloadWindowStyles.windowScreenWidth > Constants.StartButtonTextHideWidth ? 70 : 30;
+                return stopButtonStyle;
+            }
+        }
+        
+        internal static GUIStyle EventFiltersStyle {
+            get {
+                if (eventFilters == null) {
+                    eventFilters = new GUIStyle(EditorStyles.toolbarButton);
+                    eventFilters.fontSize = 13;
+                    // gets overwritten to content size
+                    eventFilters.fixedHeight = 26; 
+                    eventFilters.fixedWidth = 50; 
+                    eventFilters.margin = new RectOffset(0, 0, 0, 0);
+                    eventFilters.padding = new RectOffset(0, 0, 6, 6);
+                }
+                return eventFilters;
             }
         }
 
@@ -385,114 +396,81 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
-        public static GUIStyle SectionOuterBox {
-            get {
-                var renderUnsupportedChanges = EditorCodePatcher.Running && !EditorCodePatcher.Starting && EditorCodePatcher.Failures.Count > 0;
-                var sectionInnerBoxMinWidth = renderUnsupportedChanges ? UnsupportedChangesInnerBox.fixedWidth : SectionInnerBox.fixedWidth;
-                var unknownPadding = renderUnsupportedChanges ? 40 : 23;
-                if (sectionOuterBoxStyle == null) {
-                    sectionOuterBoxStyle = new GUIStyle(GUI.skin.box);
-                    sectionOuterBoxStyle.margin.bottom = 0;
-                    sectionOuterBoxStyle.margin.top = 0;
-                }
-                // Looks better without a background
-                sectionOuterBoxStyle.normal.background = clearBackground;                    
-                sectionOuterBoxStyle.padding.top = windowScreenHeight > 500 ? 50 : 10;
-                sectionOuterBoxStyle.padding.bottom = windowScreenHeight > 500 ? 50 : 10;
-                sectionOuterBoxStyle.fixedWidth = Math.Max(windowScreenWidth - unknownPadding, sectionInnerBoxMinWidth);
-                return sectionOuterBoxStyle;
-            }
-        }
-        
-        
-        public static GUIStyle DynamicSectionOuterBoxCompact {
-            get {
-                const int unknownPadding = 30;
-                if (dynamicSectionOuterBoxCompactStyle == null) {
-                    dynamicSectionOuterBoxCompactStyle = new GUIStyle(SectionOuterBoxCompact);
-                }
-                // making it smaller than screen size removes the scroll bar
-                
-                dynamicSectionOuterBoxCompactStyle.fixedWidth = windowScreenWidth - unknownPadding;
-                return dynamicSectionOuterBoxCompactStyle;
-            }
-        }
-
-
-
         public static GUIStyle SectionOuterBoxCompact {
             get {
-                var sectionInnerBoxMinWidth = SectionInnerBox.fixedWidth - 50;
-                const int unknownPadding = 31;
                 if (sectionOuterBoxCompactStyle == null) {
-                    sectionOuterBoxCompactStyle = new GUIStyle(GUI.skin.box);
+                    sectionOuterBoxCompactStyle = new GUIStyle();
                     sectionOuterBoxCompactStyle.padding.top = 10;
                     sectionOuterBoxCompactStyle.padding.bottom = 10;
-                    sectionOuterBoxCompactStyle.margin.top = 0;
-                    sectionOuterBoxCompactStyle.margin.bottom = 0;
                 }
                 // Looks better without a background
-                sectionOuterBoxCompactStyle.normal.background = clearBackground;  
-                sectionOuterBoxCompactStyle.fixedWidth = Math.Max(windowScreenWidth - unknownPadding, sectionInnerBoxMinWidth);
+                sectionOuterBoxCompactStyle.normal.background = clearBackground;
                 return sectionOuterBoxCompactStyle;
             }
         }
         
         public static GUIStyle SectionInnerBox {
             get {
-                const int sectionInnerBoxWidth = 400;
-                const int unknownPadding = 23;
                 if (sectionInnerBoxStyle == null) {
-                    sectionInnerBoxStyle = new GUIStyle(EditorStyles.helpBox);
-                    sectionInnerBoxStyle.fixedWidth = sectionInnerBoxWidth;
-                    sectionInnerBoxStyle.padding.top = 15;
-                    sectionInnerBoxStyle.padding.bottom = 15;
-                    sectionInnerBoxStyle.padding.left = 5;
-                    sectionInnerBoxStyle.padding.right = 10;
+                    sectionInnerBoxStyle = new GUIStyle();
                 }
-                sectionInnerBoxStyle.margin.left = windowScreenWidth / 2 - sectionInnerBoxWidth / 2 - unknownPadding / 2;
+                sectionInnerBoxStyle.padding = new RectOffset(left: 0, right: 0, top: 15, bottom: 0);
                 return sectionInnerBoxStyle;
             }
         }
         
-        public static GUIStyle DynamicSectionInnerBoxWide {
-            get {
-                const int sectionInnerBoxWidth = 600;
-                if (dynamicSectionInnerBoxWideStyle == null) {
-                    dynamicSectionInnerBoxWideStyle = new GUIStyle(SectionInnerBoxWide);
-                }
-                dynamicSectionInnerBoxWideStyle.fixedWidth = Math.Min(windowScreenWidth - defaultPadding, sectionInnerBoxWidth);
-                dynamicSectionInnerBoxWideStyle.margin.left = windowScreenWidth / 2 - (int)dynamicSectionInnerBoxWideStyle.fixedWidth / 2 - defaultPadding / 2;
-                return dynamicSectionInnerBoxWideStyle;
-            }
-        }
-
         public static GUIStyle SectionInnerBoxWide {
             get {
-                const int sectionInnerBoxWidth = 600;
-                const int unknownPadding = 23;
                 if (sectionInnerBoxWideStyle == null) {
                     sectionInnerBoxWideStyle = new GUIStyle(EditorStyles.helpBox);
-                    sectionInnerBoxWideStyle.fixedWidth = sectionInnerBoxWidth;
                     sectionInnerBoxWideStyle.padding.top = 15;
                     sectionInnerBoxWideStyle.padding.bottom = 15;
                     sectionInnerBoxWideStyle.padding.left = 5;
                     sectionInnerBoxWideStyle.padding.right = 10;
                 }
-                sectionInnerBoxWideStyle.margin.left = windowScreenWidth / 2 - sectionInnerBoxWidth / 2 - unknownPadding / 2;
                 return sectionInnerBoxWideStyle;
+            }
+        }
+        
+        public static GUIStyle DynamiSection {
+            get {
+                if (dynamicSection == null) {
+                    dynamicSection = new GUIStyle();
+                }
+                var defaultPadding = 13;
+                if (windowScreenWidth > 600) {
+                    var dynamicPadding = (windowScreenWidth - 600) / 2;
+                    dynamicSection.padding.left = defaultPadding + dynamicPadding;
+                    dynamicSection.padding.right = defaultPadding + dynamicPadding;
+                } else if (windowScreenWidth < Constants.IndicationTextHideWidth) {
+                    dynamicSection.padding.left = 0;
+                    dynamicSection.padding.right = 0;
+                } else {
+                    dynamicSection.padding.left = 13;
+                    dynamicSection.padding.right = 13;
+                }
+                return dynamicSection;
+            }
+        }
+        
+        public static GUIStyle DynamicSectionHelpTab {
+            get {
+                if (dynamicSectionHelpTab == null) {
+                    dynamicSectionHelpTab = new GUIStyle(DynamiSection);
+                }
+                dynamicSectionHelpTab.padding.left = DynamiSection.padding.left - 3;
+                dynamicSectionHelpTab.padding.right = DynamiSection.padding.right - 3;
+                return dynamicSectionHelpTab;
             }
         }
 
         public static GUIStyle ChangelogSectionInnerBox {
             get {
-                const int sectionInnerBoxWidth = 585;
                 if (changelogSectionInnerBoxStyle == null) {
                     changelogSectionInnerBoxStyle = new GUIStyle(EditorStyles.helpBox);
                     changelogSectionInnerBoxStyle.margin.bottom = 10;
                     changelogSectionInnerBoxStyle.margin.top = 10;
                 }
-                sectionOuterBoxCompactStyle.fixedWidth = Math.Max(windowScreenWidth - defaultPadding, sectionInnerBoxWidth);
                 return changelogSectionInnerBoxStyle;
             }
         }
@@ -501,136 +479,43 @@ namespace SingularityGroup.HotReload.Editor {
             get {
                 if (indicationBoxStyle == null) {
                     indicationBoxStyle = new GUIStyle();
-                    indicationBoxStyle.margin.left = 35;
-                    indicationBoxStyle.margin.right = 35;
-                    indicationBoxStyle.margin.bottom = 10;
                 }
+                indicationBoxStyle.margin.bottom = windowScreenWidth < 141 ? 0 : 10;
                 return indicationBoxStyle;
             }
         }
         
-        public static GUIStyle IndicationIconBox {
-            get {
-                if (indicationIconBoxStyle == null) {
-                    indicationIconBoxStyle = new GUIStyle(EditorStyles.helpBox);
-                    indicationIconBoxStyle.fixedWidth = 50;
-                    indicationIconBoxStyle.fixedHeight = 50;
-                    indicationIconBoxStyle.margin.right = 7;
-                }
-                return indicationIconBoxStyle;
-            }
-        }
-        
-        public static GUIStyle IndicationTextBox {
-            get {
-                if (indicationTextBoxStyle == null) {
-                    indicationTextBoxStyle = new GUIStyle(EditorStyles.helpBox);
-                    indicationTextBoxStyle.fixedHeight = 50;
-                    indicationTextBoxStyle.padding.top = 9;
-                    indicationTextBoxStyle.fixedWidth = SectionInnerBox.fixedWidth - IndicationBox.margin.left - IndicationIconBox.fixedWidth - IndicationIconBox.margin.right - IndicationBox.margin.right - SectionInnerBox.padding.left - SectionInnerBox.padding.right;
-                }
-                return indicationTextBoxStyle;
-            }
-        }
-        
-        public static GUIStyle UnsupportedChangesInnerBox {
-            get {
-                const int width = 600;
-                const int unknownPadding = 23;
-                if (unsupportedChangesInnerBoxStyle == null) {
-                    unsupportedChangesInnerBoxStyle = new GUIStyle(SectionInnerBox);
-                    unsupportedChangesInnerBoxStyle.fixedWidth = width;
-                }
-                unsupportedChangesInnerBoxStyle.margin.left = windowScreenWidth/2 - width/2 - unknownPadding/2;
-                return unsupportedChangesInnerBoxStyle;
-            }
-        }
-        
-        public static GUIStyle UnsupportedChangesHeader {
-            get {
-                if (unsupportedChangesHeaderStyle == null) {
-                    unsupportedChangesHeaderStyle = new GUIStyle();
-                    unsupportedChangesHeaderStyle.padding.top = 5;
-                    unsupportedChangesHeaderStyle.padding.bottom = 5;
-                }
-                return unsupportedChangesHeaderStyle;
-            }
-        }
-        
-        public static GUIStyle LogStyle {
-            get {
-                if (logStyle == null) {
-                    logStyle = new GUIStyle();
-                    logStyle.padding.top = 17;
-                    logStyle.padding.bottom = 5;
-                    logStyle.fixedHeight = 60;
-                    logStyle.fixedWidth = UnsupportedChangesInnerBox.fixedWidth - 5;
-                }
-                return logStyle;
-            }
-        }
-
-        public static GUIStyle LogStyleLight {
-            get {
-                if (logStyleLight == null) {
-                    logStyleLight = new GUIStyle(LogStyle);
-                    Color lighterGrey = new Color(0.7f, 0.7f, 0.7f, 0.3f);
-                    Texture2D lighterGreyTexture = new Texture2D(1, 1);
-                    lighterGreyTexture.SetPixel(0, 0, lighterGrey);
-                    lighterGreyTexture.Apply();
-                    logStyleLight.normal.background = lighterGreyTexture;
-                }
-                return logStyleLight;
-            }
-        }
-        
-        public static GUIStyle LogStyleDark {
-            get {
-                if (logStyleDark == null) {
-                    logStyleDark = new GUIStyle(LogStyle);
-                    Color darkerGrey = new Color(0.7f, 0.7f, 0.7f, 0.5f);
-                    Texture2D darkerGreyTexture = new Texture2D(1, 1);
-                    darkerGreyTexture.SetPixel(0, 0, darkerGrey);
-                    darkerGreyTexture.Apply();
-                    logStyleDark.normal.background = darkerGreyTexture;
-                }
-                return logStyleDark;
-            }
-        }
         
         public static GUIStyle LinkStyle {
             get {
                 if (linkStyle == null) {
                     linkStyle = new GUIStyle(EditorStyles.label);
-                    var color = IsDarkMode ? new Color32(0x3F, 0x9F, 0xFF, 0xFF) : new Color32(0x0F, 0x52, 0xD7, 0xFF);
-                    linkStyle.normal.textColor = color;
                     linkStyle.fontStyle = FontStyle.Bold;
                 }
+                var color = IsDarkMode ? DarkModeLinkColor : LightModeModeLinkColor;
+                linkStyle.normal.textColor = color;
                 return linkStyle;
             }
         }
-
-        public static GUIStyle DropdownAreaStyle {
+        
+        private static Color32 DarkModeLinkColor {
             get {
-                if (dropdownAreaStyle == null) {
-                    dropdownAreaStyle = new GUIStyle(EditorStyles.helpBox);
-                    dropdownAreaStyle.margin.left = 0;
-                    dropdownAreaStyle.fixedWidth = UnsupportedChangesInnerBox.fixedWidth - 10;
+                if (darkModeLinkColor == null) {
+                    darkModeLinkColor = new Color32(0x3F, 0x9F, 0xFF, 0xFF);
                 }
-                return dropdownAreaStyle;
-            }
-        }
-
-        public static GUIStyle DropdownBox {
-            get {
-                if (dropdownBoxStyle == null) {
-                    dropdownBoxStyle = new GUIStyle(EditorStyles.textArea);
-                    dropdownBoxStyle.margin.left = 0;
-                }
-                return dropdownBoxStyle;
+                return darkModeLinkColor.Value;
             }
         }
         
+        
+        private static Color32 LightModeModeLinkColor {
+            get {
+                if (lightModeModeLinkColor == null) {
+                    lightModeModeLinkColor = new Color32(0x0F, 0x52, 0xD7, 0xFF);
+                }
+                return lightModeModeLinkColor.Value;
+            }
+        }
         public static GUIStyle ProgressBarBarStyle {
             get {
                 if (progressBarBarStyle != null) {
@@ -647,43 +532,233 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
         
-        public static GUIStyle ProgressBarAnchorStyle {
+        internal static GUIStyle Section {
             get {
-                if (progressBarAnchorStyle != null) {
-                    return progressBarAnchorStyle;
+                if (section == null) {
+                    section = new GUIStyle(EditorStyles.helpBox);
+                    section.padding = new RectOffset(left: 10, right: 10, top: 10, bottom: 10);
+                    section.margin = new RectOffset(left: 0, right: 0, top: 0, bottom: 0);
                 }
-                progressBarAnchorStyle = new GUIStyle();
-                progressBarAnchorStyle.padding.bottom = SectionInnerBox.padding.bottom - 5;
-                return progressBarAnchorStyle;
+                return section;
+            }
+        }
+        internal static GUIStyle Scroll {
+            get {
+                if (scroll == null) {
+                    scroll = new GUIStyle(EditorStyles.helpBox);
+                }
+                if (IsDarkMode) {
+                    scroll.normal.background = GUIHelper.ConvertTextureToColor(new Color(0,0,0,0.05f));
+                } else {
+                    scroll.normal.background = GUIHelper.ConvertTextureToColor(new Color(0,0,0,0.03f));
+                }
+                return scroll;
             }
         }
         
-        public static GUIStyle DownloadInfoButtonStyle {
+        internal static GUIStyle BarStyle {
             get {
-                if (downloadInfoButtonStyle != null) {
-                    return downloadInfoButtonStyle;
+                if (barStyle == null) {
+                    barStyle = new GUIStyle(GUI.skin.label);
+                    barStyle.fontSize = 12;
+                    barStyle.alignment = TextAnchor.MiddleLeft;
+                    barStyle.fixedHeight = 20;
+                    barStyle.padding = new RectOffset(10, 5, 2, 2);
                 }
-                downloadInfoButtonStyle = new GUIStyle(EditorStyles.miniButton);
-                downloadInfoButtonStyle.fixedHeight = StartButton.fixedHeight - 1;
-                downloadInfoButtonStyle.margin.top = -1;
-                downloadInfoButtonStyle.fixedWidth = 60;
-                return downloadInfoButtonStyle;
+                return barStyle;
             }
         }
         
-        public static GUIStyle AccountCreatedStyle {
+        internal static GUIStyle BarBackgroundStyle {
             get {
-                if (accountCreatedStyle == null) {
-                    accountCreatedStyle = new GUIStyle(GUI.skin.box) {
-                        stretchWidth = true,
-                        fontSize = 13,
-                        alignment = TextAnchor.MiddleLeft,
-                        padding = new RectOffset(10, 10, 5, 5),
-                        fontStyle = FontStyle.Bold,
-                    };
+                if (barBgStyle == null) {
+                    barBgStyle = new GUIStyle();
                 }
-                accountCreatedStyle.normal.textColor = EditorGUIUtility.isProSkin ? EditorStyles.label.normal.textColor : GUI.skin.box.normal.textColor;
-                return accountCreatedStyle;
+                barBgStyle.normal.background = GUIHelper.ConvertTextureToColor(Color.clear);
+                barBgStyle.hover.background = GUIHelper.ConvertTextureToColor(new Color(0, 0, 0, 0.1f));
+                barBgStyle.focused.background = GUIHelper.ConvertTextureToColor(Color.clear);
+                barBgStyle.active.background = null;
+                return barBgStyle;
+            }
+        }
+        
+        internal static GUIStyle ChildBarStyle {
+            get {
+                if (barChildStyle == null) {
+                    barChildStyle = new GUIStyle(BarStyle);
+                    barChildStyle.padding = new RectOffset(43, barChildStyle.padding.right, barChildStyle.padding.top, barChildStyle.padding.bottom);
+                }
+                return barChildStyle;
+            }
+        }
+        
+        internal static GUIStyle FoldoutBarStyle {
+            get {
+                if (barFoldoutStyle == null) {
+                    barFoldoutStyle = new GUIStyle(BarStyle);
+                    barFoldoutStyle.padding = new RectOffset(23, barFoldoutStyle.padding.right, barFoldoutStyle.padding.top, barFoldoutStyle.padding.bottom);
+                }
+                return barFoldoutStyle;
+            }
+        }
+        
+        public static GUIStyle TimestampStyle {
+            get {
+                if (timestampStyle == null) {
+                    timestampStyle = new GUIStyle(GUI.skin.label);
+                }
+                if (IsDarkMode) {
+                    timestampStyle.normal.textColor = new Color(0.5f, 0.5f, 0.5f);
+                } else {
+                    timestampStyle.normal.textColor = new Color(0.5f, 0.5f, 0.5f);
+                }
+                timestampStyle.hover = timestampStyle.normal;
+                return timestampStyle;
+            }
+        }
+        
+        internal static GUIStyle ClickableLabelBoldStyle {
+            get {
+                if (clickableLabelBoldStyle == null) {
+                    clickableLabelBoldStyle = new GUIStyle(LabelStyle);
+                    clickableLabelBoldStyle.fontStyle = FontStyle.Bold;
+                    clickableLabelBoldStyle.fontSize = 14;
+                    clickableLabelBoldStyle.margin.left = 17;
+                    clickableLabelBoldStyle.active.textColor = clickableLabelBoldStyle.normal.textColor;
+                }
+                return clickableLabelBoldStyle;
+            }
+        }
+        
+        internal static GUIStyle EmptyListText {
+            get {
+                if (_emptyListText == null) {
+                    _emptyListText = new GUIStyle();
+                    _emptyListText.fontSize = 11;
+                    _emptyListText.padding.left = 15;
+                    _emptyListText.padding.top = 10;
+                    _emptyListText.alignment = TextAnchor.MiddleCenter;
+                    _emptyListText.normal.textColor = Color.gray;
+                }
+
+                return _emptyListText;
+            }
+        }
+        
+        internal static GUIStyle StacktraceTextAreaStyle {
+            get {
+                if (_stacktraceTextAreaStyle == null) {
+                    _stacktraceTextAreaStyle = new GUIStyle(EditorStyles.textArea);
+                    _stacktraceTextAreaStyle.border = new RectOffset(0, 0, 0, 0);
+                }
+                return _stacktraceTextAreaStyle;
+            }
+        }
+        
+        internal static GUIStyle EntryBoxStyle {
+            get {
+                if (_entryBoxStyle == null) {
+                    _entryBoxStyle = new GUIStyle();
+                    _entryBoxStyle.margin.left = 30;
+                }
+                return _entryBoxStyle;
+            }
+        }
+        
+        internal static GUIStyle ChildEntryBoxStyle {
+            get {
+                if (_childEntryBoxStyle == null) {
+                    _childEntryBoxStyle = new GUIStyle();
+                    _childEntryBoxStyle.margin.left = 45;
+                }
+                return _childEntryBoxStyle;
+            }
+        }
+        
+        internal static GUIStyle CustomFoldoutStyle {
+            get {
+                if (_customFoldoutStyle == null) {
+                    _customFoldoutStyle = new GUIStyle(EditorStyles.foldout);
+                    _customFoldoutStyle.margin.top = 4;
+                    _customFoldoutStyle.margin.left = 0;
+                    _customFoldoutStyle.padding.left = 0;
+                    _customFoldoutStyle.fixedWidth = 100;
+                }
+                return _customFoldoutStyle;
+            }
+        }
+        
+        internal static GUIStyle RemoveIconStyle {
+            get {
+                if (_removeIconStyle == null) {
+                    _removeIconStyle = new GUIStyle();
+                    _removeIconStyle.margin.top = 5;
+                    _removeIconStyle.fixedWidth = 17;
+                    _removeIconStyle.fixedHeight = 17;
+                }
+                return _removeIconStyle;
+            }
+        }
+        
+        internal static GUIStyle UpgradeLicenseButtonStyle {
+            get {
+                if (upgradeLicenseButtonStyle == null) {
+                    upgradeLicenseButtonStyle = new GUIStyle(GUI.skin.button);
+                    upgradeLicenseButtonStyle.padding = new RectOffset(5, 5, 0, 0);
+                }
+                return upgradeLicenseButtonStyle;
+            }
+        }
+        
+        internal static GUIStyle UpgradeLicenseButtonOverlayStyle {
+            get {
+                if (upgradeLicenseButtonOverlayStyle == null) {
+                    upgradeLicenseButtonOverlayStyle = new GUIStyle(UpgradeLicenseButtonStyle);
+                }
+                return upgradeLicenseButtonOverlayStyle;
+            }
+        }
+        
+        internal static GUIStyle UpgradeButtonStyle {
+            get {
+                if (upgradeButtonStyle == null) {
+                    upgradeButtonStyle = new GUIStyle(EditorStyles.miniButton);
+                    upgradeButtonStyle.fontStyle = FontStyle.Bold;
+                    upgradeButtonStyle.fontSize = 14;
+                    upgradeButtonStyle.fixedHeight = 24;
+                }
+                return upgradeButtonStyle;
+            }
+        }
+        
+        internal static GUIStyle HideButtonStyle {
+            get {
+                if (hideButtonStyle == null) {
+                    hideButtonStyle = new GUIStyle(GUI.skin.button);
+                }
+                return hideButtonStyle;
+            }
+        }
+        
+        internal static GUIStyle HelpTabButton {
+            get {
+                if (helpTabButton == null) {
+                    helpTabButton = new GUIStyle(GUI.skin.button);
+                    helpTabButton.alignment = TextAnchor.MiddleLeft;
+                    helpTabButton.padding.left = 10;
+                }
+                return helpTabButton;
+            }
+        }
+        
+        internal static GUIStyle IndicationHelpBox {
+            get {
+                if (indicationHelpBox == null) {
+                    indicationHelpBox = new GUIStyle(EditorStyles.helpBox);
+                    indicationHelpBox.margin.right = 0;
+                    indicationHelpBox.margin.left = 0;
+                }
+                return indicationHelpBox;
             }
         }
     }

@@ -67,7 +67,9 @@ namespace SingularityGroup.HotReload.JsonConverters {
                 id ?? string.Empty,
                 patches ?? Array.Empty<CodePatch>(), 
                 failures ?? Array.Empty<string>(), 
-                removedMethod ?? Array.Empty<SMethod>()
+                removedMethod ?? Array.Empty<SMethod>(),
+                // Note: doesn't have to be persisted here 
+                Array.Empty<PartiallySupportedChange>()
             );
         }
 

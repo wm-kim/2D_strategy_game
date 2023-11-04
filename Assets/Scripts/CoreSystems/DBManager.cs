@@ -1,3 +1,4 @@
+#if false
 using System;
 using Cysharp.Threading.Tasks;
 using Firebase;
@@ -60,3 +61,4 @@ namespace Minimax.CoreSystems
         }
     }
 }
+#endif

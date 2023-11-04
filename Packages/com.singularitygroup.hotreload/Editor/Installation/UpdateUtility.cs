@@ -43,8 +43,13 @@ namespace SingularityGroup.HotReload.Editor {
             progress?.Report(0.8f);
             
             var packageRecycleBinDir = PackageConst.LibraryCachePath + $"/PackageArchived-{version}-{Guid.NewGuid():N}";
-            Directory.Move(packageDir, packageRecycleBinDir);
-            Directory.Move(updatedPackageCopy, packageDir);
+            try {
+                Directory.Move(packageDir, packageRecycleBinDir);
+                Directory.Move(updatedPackageCopy, packageDir);
+            } catch {
+                // fallback to replacing files individually if access to the folder is denied
+                PackageUpdater.UpdatePackage(targetFilePath, packageDir); 
+            }
             try {
                 Directory.Delete(packageRecycleBinDir, true);
             } catch (IOException) {

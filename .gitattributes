@@ -1,6 +1,5 @@
 # Macro for Unity YAML-based asset files.
 [attr]unityyaml -text merge=unityyamlmerge diff
-
 # Macro for all binary files that should use Git LFS.
 [attr]lfs -text filter=lfs diff=lfs merge=lfs
 # Default to auto-normalized line endings.
@@ -116,4 +115,4 @@
 *.gz lfs
 *.rar lfs
 *.tar lfs
-Assets/Firebase/Plugins/x86_64/FirebaseCppApp-11_2_0.bundle filter=lfs diff=lfs merge=lfs -text
+Assets/Externals/Firebase/Plugins/x86_64/FirebaseCppApp-11_2_0.bundle filter=lfs diff=lfs merge=lfs -text

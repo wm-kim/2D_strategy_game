@@ -31,7 +31,7 @@ namespace Minimax.GamePlay.Logic
         [SerializeField] private ServerMap m_serverMap;
         [SerializeField] private ServerManaManager m_serverManaManager; 
         [SerializeField] private TurnManager m_turnManager;
-        
+
         [Header("Client References")]
         [SerializeField] private ClientMap m_clientMap;
         [SerializeField] private MyHandInteractionManager m_myHandInteraction;
@@ -60,7 +60,7 @@ namespace Minimax.GamePlay.Logic
             m_turnManager.CheckIfPlayerTurn(cardPlayData.PlayerNumber);
 
             // 셀이 플레이어에 의해 배치 가능한지 확인합니다.
-            if (!CheckIfCellPlaceableByPlayer(cardPlayData.Coord, cardPlayData.PlayerNumber)) return false;
+            if (!ServerCheckIfCellPlaceableByPlayer(cardPlayData.Coord, cardPlayData.PlayerNumber)) return false;
             
             // 마나 비용을 확인하고 사용합니다.
             var manaCost = ServerCard.CardsCreatedThisGame[cardPlayData.CardUID].Data.Cost;
@@ -69,7 +69,10 @@ namespace Minimax.GamePlay.Logic
             return true;
         }
 
-        // 클라이언트가 카드를 플레이할 수 있는지 여부와 그 위치를 반환
+        
+        /// <summary>
+        /// 클라이언트가 카드를 플레이할 수 있는지 여부와 그 위치를 반환
+        /// </summary>
         public bool TryGetPlayableCellForCard(int cardUID, EnhancedTouch.Touch touch, out ClientCell playableCell)
         {
             playableCell = null;
@@ -82,7 +85,7 @@ namespace Minimax.GamePlay.Logic
             return true;
         }
         
-        private bool CheckIfCellPlaceableByPlayer(Vector2Int coord, int playerNumber)
+        private bool ServerCheckIfCellPlaceableByPlayer(Vector2Int coord, int playerNumber)
         {
             var serverCell = m_serverMap[coord];
             return serverCell.CheckIfPlaceableBy(playerNumber);

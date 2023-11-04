@@ -14,7 +14,7 @@ using UnityEngine.Serialization;
 namespace Minimax
 {
     /// <summary>
-    /// Responsible for spawning units and visualizing them
+    /// Responsible for spawning units and visualizing them, cache client unit based on player number
     /// </summary>
     public class ClientUnitManager : MonoBehaviour
     {

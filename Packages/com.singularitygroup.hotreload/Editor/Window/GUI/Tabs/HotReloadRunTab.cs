@@ -4,6 +4,7 @@ using System.IO;
 using SingularityGroup.HotReload.DTO;
 using SingularityGroup.HotReload.EditorDependencies;
 using UnityEditor;
+using UnityEditor.Compilation;
 using UnityEngine;
 using Color = UnityEngine.Color;
 using Task = System.Threading.Tasks.Task;
@@ -12,6 +13,133 @@ using Unity.CodeEditor;
 #endif
 
 namespace SingularityGroup.HotReload.Editor {
+    internal class ErrorData {
+        public string fileName;
+        public string error;
+        public TextAsset file;
+        public int lineNumber;
+        public string stacktrace;
+        public string linkString;
+        private static string[] supportedPaths = new[] { Path.GetFullPath("Assets"), Path.GetFullPath("Plugins") };
+        
+        public static ErrorData GetErrorData(string errorString) {
+            // Get the relevant file name
+            string stackTrace = errorString;
+            string fileName = null;
+            try {
+                int csIndex = 0;
+                int attempt = 0;
+                do {
+                    csIndex = errorString.IndexOf(".cs", csIndex + 1, StringComparison.Ordinal);
+                    if (csIndex == -1) {
+                        break;
+                    }
+                    int fileNameStartIndex = csIndex - 1;
+                    for (; fileNameStartIndex >= 0; fileNameStartIndex--) {
+                        if (!char.IsLetter(errorString[fileNameStartIndex])) {
+                            if (errorString.Contains("error CS")) {
+                                fileName = errorString.Substring(fileNameStartIndex + 1,
+                                    csIndex - fileNameStartIndex + ".cs".Length - 1);
+                            } else {
+                                fileName = errorString.Substring(fileNameStartIndex,
+                                    csIndex - fileNameStartIndex + ".cs".Length);
+                            }
+                            break;
+                        }
+                    }
+                } while (attempt++ < 100 && fileName == null);
+            } catch {
+                // ignore
+            }
+            fileName = fileName ?? "Tap to show stacktrace";
+            
+            // Get the error
+            string error = (errorString.Contains("error CS") 
+                               ? "Compile error, " 
+                               : "Unsupported change detected, ") + "tap here to see more.";
+            int endOfError = errorString.IndexOf(". in ", StringComparison.Ordinal);
+            string specialChars = "\"'/\\";
+            char[] characters = specialChars.ToCharArray();
+            int specialChar = errorString.IndexOfAny(characters);
+            try {
+                if (errorString.Contains("error CS") ) {
+                    error = errorString.Substring(errorString.IndexOf("error CS", StringComparison.Ordinal), errorString.Length - errorString.IndexOf("error CS", StringComparison.Ordinal)).Trim();
+                    using (StringReader reader = new StringReader(error)) {
+                        string line;
+                        while ((line = reader.ReadLine()) != null) {
+                            error = line;
+                            break;
+                        }
+                    }
+                } else if (errorString.StartsWith("errors:", StringComparison.Ordinal) && endOfError > 0) {
+                    error = errorString.Substring("errors: ".Length, endOfError - "errors: ".Length).Trim();
+                } else if (errorString.StartsWith("errors:", StringComparison.Ordinal) && specialChar > 0) {
+                    error = errorString.Substring("errors: ".Length, specialChar - "errors: ".Length).Trim();
+                } 
+            } catch {
+                // ignore
+            }
+            
+            // Get relative path
+            TextAsset file = null;
+            foreach (var path in supportedPaths) {
+                int lastprojectIndex = 0;
+                int attempt = 0;
+                while (attempt++ < 100 && !file) {
+                    lastprojectIndex = errorString.IndexOf(path, lastprojectIndex + 1, StringComparison.Ordinal);
+                    if (lastprojectIndex == -1) {
+                        break;
+                    }
+                    var fullCsIndex = errorString.IndexOf(".cs", lastprojectIndex, StringComparison.Ordinal);
+                    var candidateAbsolutePath = errorString.Substring(lastprojectIndex, fullCsIndex - lastprojectIndex + ".cs".Length);
+                    var candidateRelativePath = EditorCodePatcher.GetRelativePath(filespec: candidateAbsolutePath, folder: path);
+                    file = AssetDatabase.LoadAssetAtPath<TextAsset>(candidateRelativePath);
+                }
+            }
+            
+            // Get the line number
+            int lineNumber = 0;
+            try {
+                int lastIndex = 0;
+                int attempt = 0;
+                do {
+                    lastIndex = errorString.IndexOf(fileName, lastIndex + 1, StringComparison.Ordinal);
+                    if (lastIndex == -1) {
+                        break;
+                    }
+                    var part = errorString.Substring(lastIndex + fileName.Length);
+                    if (!part.StartsWith(errorString.Contains("error CS") ? "(" : ":", StringComparison.Ordinal) 
+                        || part.Length == 1 
+                        || !char.IsDigit(part[1])
+                       ) {
+                        continue;
+                    }
+                    int y = 1;
+                    for (; y < part.Length; y++) {
+                        if (!char.IsDigit(part[y])) {
+                            break;
+                        }
+                    }
+                    if (int.TryParse(part.Substring(1, errorString.Contains("error CS") ? y - 1 : y), out lineNumber)) {
+                        break;
+                    }
+                } while (attempt++ < 100);
+            } catch { 
+                //ignore
+            }
+
+            return new ErrorData() {
+                fileName = fileName,
+                error = error,
+                file = file,
+                lineNumber = lineNumber,
+                stacktrace = stackTrace,
+                linkString = lineNumber > 0 ? fileName + ":" + lineNumber : fileName
+            };
+        }
+        
+    }
+    
     internal struct HotReloadRunTabState {
         public readonly bool spinnerActive;
         public readonly string indicationIconPath;
@@ -21,13 +149,13 @@ namespace SingularityGroup.HotReload.Editor {
         public readonly bool running;
         public readonly Tuple<float, string> startupProgress;
         public readonly string indicationStatusText;
-        public readonly IReadOnlyList<string> failures;
         public readonly LoginStatusResponse loginStatus;
         public readonly bool downloadRequired;
         public readonly bool downloadStarted;
         public readonly bool requestingLoginInfo;
         public readonly RedeemStage redeemStage;
-        
+        public readonly int suggestionCount;
+
         public HotReloadRunTabState(
             bool spinnerActive, 
             string indicationIconPath,
@@ -37,12 +165,12 @@ namespace SingularityGroup.HotReload.Editor {
             bool running,
             Tuple<float, string> startupProgress,
             string indicationStatusText,
-            IReadOnlyList<string> failures,
             LoginStatusResponse loginStatus,
             bool downloadRequired,
             bool downloadStarted,
             bool requestingLoginInfo,
-            RedeemStage redeemStage
+            RedeemStage redeemStage,
+            int suggestionCount
         ) {
             this.spinnerActive = spinnerActive;
             this.indicationIconPath = indicationIconPath;
@@ -52,12 +180,12 @@ namespace SingularityGroup.HotReload.Editor {
             this.running = running;
             this.startupProgress = startupProgress;
             this.indicationStatusText = indicationStatusText;
-            this.failures = failures;
             this.loginStatus = loginStatus;
             this.downloadRequired = downloadRequired;
             this.downloadStarted = downloadStarted;
             this.requestingLoginInfo = requestingLoginInfo;
             this.redeemStage = redeemStage;
+            this.suggestionCount = suggestionCount;
         }
 
         public static HotReloadRunTabState Current => new HotReloadRunTabState(
@@ -69,12 +197,12 @@ namespace SingularityGroup.HotReload.Editor {
             running: EditorCodePatcher.Running,
             startupProgress: EditorCodePatcher.StartupProgress,
             indicationStatusText: EditorIndicationState.IndicationStatusText,
-            failures: EditorCodePatcher.Failures,
             loginStatus: EditorCodePatcher.Status,
             downloadRequired: EditorCodePatcher.DownloadRequired,
             downloadStarted: EditorCodePatcher.DownloadStarted,
             requestingLoginInfo: EditorCodePatcher.RequestingLoginInfo,
-            redeemStage: RedeemLicenseHelper.I.RedeemStage
+            redeemStage: RedeemLicenseHelper.I.RedeemStage,
+            suggestionCount: HotReloadTimelineHelper.Suggestions.Count
         );
     }
 
@@ -103,17 +231,14 @@ namespace SingularityGroup.HotReload.Editor {
     }
     
     internal class HotReloadRunTab : HotReloadTabBase {
-        private string _pendingEmail;
-        private string _pendingPassword;
+        private static string _pendingEmail;
+        private static string _pendingPassword;
         private string _pendingPromoCode;
-        
-        private bool _requestingFlushErrors;
         private bool _requestingActivatePromoCode;
-        
-        private long _lastErrorFlush;
 
-        private Tuple<string, MessageType> _activateInfoMessage;
-        
+        private static Tuple<string, MessageType> _activateInfoMessage;
+
+        private HotReloadRunTabState currentState => _window.RunTabState;
         // Has Indie or Pro license (even if not currenctly active)
         public bool HasPayedLicense => currentState.loginStatus != null && (currentState.loginStatus.isIndieLicense || currentState.loginStatus.isBusinessLicense);
         public bool TrialLicense => currentState.loginStatus != null && (currentState.loginStatus?.isTrial == true);
@@ -127,52 +252,32 @@ namespace SingularityGroup.HotReload.Editor {
         
         public HotReloadRunTab(HotReloadWindow window) : base(window, "Run", "forward", "Run and monitor the current Hot Reload session.") { }
 
-        HotReloadRunTabState currentState;
         public override void OnGUI() {
-            // HotReloadRunTabState ensures rendering is consistent between Layout and Repaint calls
-            // Without it errors like this happen:
-            // ArgumentException: Getting control 2's position in a group with only 2 controls when doing repaint
-            // See thread for more context: https://answers.unity.com/questions/17718/argumentexception-getting-control-2s-position-in-a.html
-            if (Event.current.type == EventType.Layout) {
-                currentState = HotReloadRunTabState.Current;
-            }
-            EditorGUILayout.Space();
             using(new EditorGUILayout.VerticalScope()) {
                 OnGUICore();
             }
         }
-        
-        private bool ShouldRenderConsumption => (currentState.running && !currentState.starting && !currentState.stopping && currentState.loginStatus?.isLicensed != true && currentState.loginStatus?.isFree != true && !EditorCodePatcher.LoginNotRequired) && !(currentState.loginStatus == null || currentState.loginStatus.isFree);
-        private bool ShouldRenderUnsupportedChanges => currentState.running && !currentState.starting && currentState.failures.Count > 0;
+
+        internal static bool ShouldRenderConsumption(HotReloadRunTabState currentState) => (currentState.running && !currentState.starting && !currentState.stopping && currentState.loginStatus?.isLicensed != true && currentState.loginStatus?.isFree != true && !EditorCodePatcher.LoginNotRequired) && !(currentState.loginStatus == null || currentState.loginStatus.isFree);
         
         void OnGUICore() {
-            using (var scope = new EditorGUILayout.ScrollViewScope(_runTabScrollPos, GUI.skin.horizontalScrollbar, GUI.skin.verticalScrollbar, GUILayout.MaxHeight(Math.Max(Screen.height, 800)), GUILayout.MaxWidth(Math.Max(Screen.width, 800)))) {
+            using (var scope = new EditorGUILayout.ScrollViewScope(_runTabScrollPos, GUI.skin.horizontalScrollbar, GUI.skin.verticalScrollbar, GUILayout.MaxHeight(Math.Max(HotReloadWindowStyles.windowScreenHeight, 800)), GUILayout.MaxWidth(Math.Max(HotReloadWindowStyles.windowScreenWidth, 800)))) {
                 _runTabScrollPos.x = scope.scrollPosition.x;
                 _runTabScrollPos.y = scope.scrollPosition.y;
+                using (new EditorGUILayout.VerticalScope(HotReloadWindowStyles.DynamiSection)) {
+                    if (HotReloadWindowStyles.windowScreenWidth > Constants.UpgradeLicenseNoteHideWidth
+                        && HotReloadWindowStyles.windowScreenHeight > Constants.UpgradeLicenseNoteHideHeight
+                    ) {
+                        RenderUpgradeLicenseNote(currentState, HotReloadWindowStyles.UpgradeLicenseButtonStyle);
+                    }
 
-                var isIndie = RedeemLicenseHelper.I.RegistrationOutcome == RegistrationOutcome.Indie
-                    || EditorCodePatcher.licenseType == UnityLicenseType.UnityPersonalPlus;
-                
-                if (RedeemLicenseHelper.I.RegistrationOutcome == RegistrationOutcome.Business
-                    && currentState.loginStatus?.isBusinessLicense != true
-                    && (PackageConst.IsAssetStoreBuild || HotReloadPrefs.RateAppShown)
-                ) {
-                    // Warn asset store users they need to buy a business license
-                    // Website users get reminded after using Hot Reload for 5+ days
-                    RenderBusinessLicenseInfo();
-                } else if (isIndie
-                    && HotReloadPrefs.RateAppShown
-                    && !PackageConst.IsAssetStoreBuild
-                    && currentState.loginStatus?.isBusinessLicense != true
-                    && currentState.loginStatus?.isIndieLicense != true
-                ) {
-                    // Reminder users they need to buy an indie license
-                    RenderIndieLicenseInfo();
-                }
-                
-                RenderIndicationPanel();
-                if (ShouldRenderUnsupportedChanges) {
-                    RenderUnsupportedChanges();
+                    RenderIndicationPanel();
+
+                    if (CanRenderBars(currentState)) {
+                        RenderBars(currentState);
+                        // clear red dot next time button shows
+                        HotReloadState.ShowingRedDot = false;
+                    }
                 }
             }
 
@@ -186,8 +291,270 @@ namespace SingularityGroup.HotReload.Editor {
                 EditorCodePatcher.DownloadAndRun().Forget();
             }
         }
+
+        internal static void RenderUpgradeLicenseNote(HotReloadRunTabState currentState, GUIStyle style) {
+            var isIndie = RedeemLicenseHelper.I.RegistrationOutcome == RegistrationOutcome.Indie
+                || EditorCodePatcher.licenseType == UnityLicenseType.UnityPersonalPlus;
+
+            if (RedeemLicenseHelper.I.RegistrationOutcome == RegistrationOutcome.Business
+                && currentState.loginStatus?.isBusinessLicense != true
+                && EditorCodePatcher.Running
+                && (PackageConst.IsAssetStoreBuild || HotReloadPrefs.RateAppShown)
+            ) {
+                // Warn asset store users they need to buy a business license
+                // Website users get reminded after using Hot Reload for 5+ days
+                RenderBusinessLicenseInfo(style);
+            } else if (isIndie
+                && HotReloadPrefs.RateAppShown
+                && !PackageConst.IsAssetStoreBuild
+                && EditorCodePatcher.Running
+                && currentState.loginStatus?.isBusinessLicense != true
+                && currentState.loginStatus?.isIndieLicense != true
+            ) {
+                // Reminder users they need to buy an indie license
+                RenderIndieLicenseInfo(style);
+            }
+        }
         
-        internal void RenderConsumption(LoginStatusResponse loginStatus) {
+        internal static bool CanRenderBars(HotReloadRunTabState currentState) {
+            return HotReloadWindowStyles.windowScreenHeight > Constants.EventsListHideHeight
+                && HotReloadWindowStyles.windowScreenWidth > Constants.EventsListHideWidth
+                && !currentState.starting
+                && !currentState.stopping
+                && !currentState.requestingDownloadAndRun
+            ;
+        }
+        
+        static Texture2D GetFoldoutIcon(AlertEntry alertEntry) {
+            InvertibleIcon alertIcon = InvertibleIcon.FoldoutClosed;
+            if (HotReloadTimelineHelper.expandedEntries.Contains(alertEntry)) {
+                alertIcon = InvertibleIcon.FoldoutOpen;
+            }
+            return GUIHelper.GetInvertibleIcon(alertIcon);
+        }
+        
+        static void ToggleEntry(AlertEntry alertEntry) {
+            if (HotReloadTimelineHelper.expandedEntries.Contains(alertEntry)) {
+                HotReloadTimelineHelper.expandedEntries.Remove(alertEntry);
+            } else {
+                HotReloadTimelineHelper.expandedEntries.Add(alertEntry);
+            }
+        }
+        
+        static void RenderEntries(TimelineType timelineType) {
+            List<AlertEntry> alertEntries;
+            
+            alertEntries = timelineType == TimelineType.Suggestions ? HotReloadTimelineHelper.Suggestions : HotReloadTimelineHelper.EventsTimeline;
+
+            bool skipChildren = false;
+            for (int i = 0; i < alertEntries.Count; i++) {
+                var alertEntry = alertEntries[i];
+                if (i > HotReloadTimelineHelper.maxVisibleEntries && alertEntry.entryType != EntryType.Child) {
+                    break;
+                }
+                if (timelineType != TimelineType.Suggestions) {
+                    if (alertEntry.entryType != EntryType.Child
+                        && !enabledFilters.Contains(alertEntry.alertType)
+                    ) {
+                        skipChildren = true;
+                        continue;
+                    } else if (alertEntry.entryType == EntryType.Child && skipChildren) {
+                        continue;
+                    } else {
+                        skipChildren = false;
+                    }
+                }
+                
+                EntryType entryType = alertEntry.entryType;
+
+                string title = $" {alertEntry.title}{(!string.IsNullOrEmpty(alertEntry.shortDescription) ? $": {alertEntry.shortDescription}": "")}";
+                Texture2D icon = null;
+                GUIStyle style;
+                if (entryType != EntryType.Child) {
+                    icon = GUIHelper.GetLocalIcon(HotReloadTimelineHelper.alertIconString[alertEntry.iconType]);
+                }
+                if (entryType == EntryType.Child) {
+                    style = HotReloadWindowStyles.ChildBarStyle;
+                } else if (entryType == EntryType.Foldout) {
+                    style = HotReloadWindowStyles.FoldoutBarStyle;
+                } else {
+                    style = HotReloadWindowStyles.BarStyle;
+                }
+
+                Rect startRect;
+                using (new EditorGUILayout.HorizontalScope()) {
+                    GUILayout.Space(0);
+                    Rect spaceRect = GUILayoutUtility.GetLastRect();
+                    // entry header foldout arrow
+                    if (entryType == EntryType.Foldout) {
+                        GUI.Label(new Rect(spaceRect.x + 3, spaceRect.y, 20, 20), new GUIContent(GetFoldoutIcon(alertEntry)));
+                    } else if (entryType == EntryType.Child) {
+                        GUI.Label(new Rect(spaceRect.x + 26, spaceRect.y + 2, 20, 20), new GUIContent(GetFoldoutIcon(alertEntry)));
+                    }
+                    // a workaround to limit the width of the label
+                    GUILayout.Label(new GUIContent(""), style);
+                    startRect = GUILayoutUtility.GetLastRect();
+                    GUI.Label(startRect, new GUIContent(title, icon), style);
+                }
+
+                bool clickableDescription = alertEntry.title == "Unsupported change" || alertEntry.title == "Compile error" || alertEntry.title == "Failed applying patch to method";
+                
+                if (HotReloadTimelineHelper.expandedEntries.Contains(alertEntry) || alertEntry.alertType == AlertType.CompileError) {
+                    using (new EditorGUILayout.VerticalScope()) {
+                        using (new EditorGUILayout.HorizontalScope()) {
+                            using (new EditorGUILayout.VerticalScope(entryType == EntryType.Child ? HotReloadWindowStyles.ChildEntryBoxStyle : HotReloadWindowStyles.EntryBoxStyle)) {
+                                if (alertEntry.alertType == AlertType.Suggestion) {
+                                    GUILayout.Label(alertEntry.description, HotReloadWindowStyles.LabelStyle);
+                                } else if (!clickableDescription) {
+                                    string text = alertEntry.description;
+                                    GUILayout.TextArea(text, HotReloadWindowStyles.StacktraceTextAreaStyle);
+                                }
+                                if (alertEntry.actionData != null) {
+                                    alertEntry.actionData.Invoke();
+                                }
+                                GUILayout.Space(5f);
+                            }
+                        }
+                    }
+                }
+                
+                // remove button
+                if (timelineType == TimelineType.Suggestions) {
+                    var isClick = GUI.Button(new Rect(startRect.x + startRect.width - 20, startRect.y + 2, 20, 20), new GUIContent(GUIHelper.GetInvertibleIcon(InvertibleIcon.Close)), HotReloadWindowStyles.RemoveIconStyle);
+                    if (isClick) {
+                        HotReloadTimelineHelper.EventsTimeline.Remove(alertEntry);
+                        var kind = HotReloadSuggestionsHelper.FindSuggestionKind(alertEntry);
+                        if (kind != null) {
+                            HotReloadSuggestionsHelper.SetSuggestionInactive((HotReloadSuggestionKind)kind);
+                        }
+                        _instantRepaint = true;
+                    }
+                }
+
+                // Extend background to whole entry
+                var endRect = GUILayoutUtility.GetLastRect();
+                if (GUI.Button(new Rect(startRect) { height = endRect.y - startRect.y + endRect.height}, new GUIContent(""), HotReloadWindowStyles.BarBackgroundStyle) && (entryType == EntryType.Child || entryType == EntryType.Foldout)) {
+                    ToggleEntry(alertEntry);
+                }
+        
+                if (alertEntry.alertType != AlertType.Suggestion && HotReloadWindowStyles.windowScreenWidth > 400 && entryType != EntryType.Child) {
+                    using (new EditorGUILayout.HorizontalScope()) {
+                        GUI.Label(new Rect(startRect.x + startRect.width - 60, startRect.y, 80, 20), $"{alertEntry.timestamp.Hour:D2}:{alertEntry.timestamp.Minute:D2}:{alertEntry.timestamp.Second:D2}", HotReloadWindowStyles.TimestampStyle);
+                    }
+                }
+                
+                GUILayout.Space(1f);
+            }
+            if (timelineType != TimelineType.Suggestions && HotReloadTimelineHelper.GetRunTabTimelineEventCount() > 40) { 
+                GUILayout.Space(3f);
+                GUILayout.Label(Constants.Only40EntriesShown, HotReloadWindowStyles.EmptyListText);
+            }
+        }
+
+        private static List<AlertType> _enabledFilters;
+        private static List<AlertType> enabledFilters {
+            get {
+                if (_enabledFilters == null) {
+                    _enabledFilters = new List<AlertType>();
+                }
+                
+                if (HotReloadPrefs.RunTabUnsupportedChangesFilter && !_enabledFilters.Contains(AlertType.UnsupportedChange))
+                    _enabledFilters.Add(AlertType.UnsupportedChange);
+                if (!HotReloadPrefs.RunTabUnsupportedChangesFilter && _enabledFilters.Contains(AlertType.UnsupportedChange))
+                    _enabledFilters.Remove(AlertType.UnsupportedChange);
+                
+                if (HotReloadPrefs.RunTabCompileErrorFilter && !_enabledFilters.Contains(AlertType.CompileError))
+                    _enabledFilters.Add(AlertType.CompileError);
+                if (!HotReloadPrefs.RunTabCompileErrorFilter && _enabledFilters.Contains(AlertType.CompileError))
+                    _enabledFilters.Remove(AlertType.CompileError);
+                
+                if (HotReloadPrefs.RunTabPartiallyAppliedPatchesFilter && !_enabledFilters.Contains(AlertType.PartiallySupportedChange))
+                    _enabledFilters.Add(AlertType.PartiallySupportedChange);
+                if (!HotReloadPrefs.RunTabPartiallyAppliedPatchesFilter && _enabledFilters.Contains(AlertType.PartiallySupportedChange))
+                    _enabledFilters.Remove(AlertType.PartiallySupportedChange);
+                
+                if (HotReloadPrefs.RunTabAppliedPatchesFilter && !_enabledFilters.Contains(AlertType.AppliedChange))
+                    _enabledFilters.Add(AlertType.AppliedChange);
+                if (!HotReloadPrefs.RunTabAppliedPatchesFilter && _enabledFilters.Contains(AlertType.AppliedChange))
+                    _enabledFilters.Remove(AlertType.AppliedChange);
+                    
+                return _enabledFilters;
+            }
+        }
+        
+        private Vector2 suggestionsScroll;
+        static GUILayoutOption[] timelineButtonOptions = new[] { GUILayout.Height(27), GUILayout.Width(100) };
+
+        internal static void RenderBars(HotReloadRunTabState currentState) {
+            if (currentState.suggestionCount > 0) {
+                GUILayout.Space(5f);
+
+                using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.Section)) {
+                    using (new EditorGUILayout.VerticalScope()) {
+                        HotReloadPrefs.RunTabEventsSuggestionsFoldout = EditorGUILayout.Foldout(HotReloadPrefs.RunTabEventsSuggestionsFoldout, "", true, HotReloadWindowStyles.CustomFoldoutStyle);
+                        GUILayout.Space(-23);
+                        if (GUILayout.Button($"Suggestions ({currentState.suggestionCount.ToString()})", HotReloadWindowStyles.ClickableLabelBoldStyle, GUILayout.Height(27))) {
+                            HotReloadPrefs.RunTabEventsSuggestionsFoldout = !HotReloadPrefs.RunTabEventsSuggestionsFoldout;
+                        }
+                        if (HotReloadPrefs.RunTabEventsSuggestionsFoldout) {
+                            using (new EditorGUILayout.VerticalScope(HotReloadWindowStyles.Scroll)) {
+                                RenderEntries(TimelineType.Suggestions);
+                            }
+                        }
+                    }
+                }
+            }
+            GUILayout.Space(5f);
+
+            using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.Section)) {
+                using (new EditorGUILayout.VerticalScope()) {
+                    HotReloadPrefs.RunTabEventsTimelineFoldout = EditorGUILayout.Foldout(HotReloadPrefs.RunTabEventsTimelineFoldout, "", true, HotReloadWindowStyles.CustomFoldoutStyle);
+                    GUILayout.Space(-23);
+                    if (GUILayout.Button("Timeline", HotReloadWindowStyles.ClickableLabelBoldStyle, timelineButtonOptions)) {
+                        HotReloadPrefs.RunTabEventsTimelineFoldout = !HotReloadPrefs.RunTabEventsTimelineFoldout;
+                    }
+                    if (HotReloadPrefs.RunTabEventsTimelineFoldout) {
+                        GUILayout.Space(-10);
+                        var noteShown = HotReloadTimelineHelper.GetRunTabTimelineEventCount() == 0 || !currentState.running;
+                        using (new EditorGUILayout.HorizontalScope()) {
+                            if (noteShown) {
+                                GUILayout.Space(2f);
+                                using (new EditorGUILayout.VerticalScope()) {
+                                    GUILayout.Space(2f);
+                                    string text;
+                                    if (currentState.redeemStage != RedeemStage.None) {
+                                        text = "Complete registration before using Hot Reload";
+                                    } else if (!currentState.running) {
+                                        text = "Use the Start button to activate Hot Reload";
+                                    } else if (enabledFilters.Count < 4 && HotReloadTimelineHelper.EventsTimeline.Count != 0) {
+                                        text = "Enable filters to see events";
+                                    } else {
+                                        text = "Make code changes to see events";
+                                    }
+                                    GUILayout.Label(text, HotReloadWindowStyles.EmptyListText);
+                                }
+                                GUILayout.FlexibleSpace();
+                            } else {
+                                GUILayout.FlexibleSpace();
+                                if (HotReloadTimelineHelper.EventsTimeline.Count > 0 && GUILayout.Button("Clear")) {
+                                    HotReloadTimelineHelper.ClearEntries();
+                                    HotReloadWindow.Current.Repaint();
+                                }
+                                GUILayout.Space(3);
+                            }
+                        }
+                        if (!noteShown) {
+                            GUILayout.Space(2f);
+                            using (new EditorGUILayout.VerticalScope(HotReloadWindowStyles.Scroll)) {
+                                RenderEntries(TimelineType.Timeline);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+            
+        internal static void RenderConsumption(LoginStatusResponse loginStatus) {
             if (loginStatus == null) {
                 return;
             }
@@ -213,15 +580,11 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
-        bool _repaint;
-        bool _instantRepaint;
-        DateTime _lastRepaint;
+        static bool _repaint;
+        static bool _instantRepaint;
+        static DateTime _lastRepaint;
         private EditorIndicationState.IndicationStatus _lastStatus;
         public override void Update() {
-            EditorCodePatcher.RequestServerInfo();
-            if (!_requestingFlushErrors && EditorCodePatcher.Running) {
-                RequestFlushErrors().Forget();
-            }
             if (EditorIndicationState.SpinnerActive) {
                 _repaint = true;
             }
@@ -230,6 +593,20 @@ namespace SingularityGroup.HotReload.Editor {
             }
             if (EditorIndicationState.IndicationIconPath == Spinner.SpinnerIconPath) {
                 _repaint = true;
+            }
+            try {
+                // workaround: hovering over non-buttons doesn't repain by default
+                if (EditorWindow.mouseOverWindow == HotReloadWindow.Current) {
+                    _repaint = true;
+                }
+                if (EditorWindow.mouseOverWindow
+                    && EditorWindow.mouseOverWindow?.GetType() == typeof(PopupWindow)
+                    && HotReloadEventPopup.I.open
+                ) {
+                    _repaint = true;
+                }
+            } catch (NullReferenceException) {
+                // Unity randomly throws nullrefs when EditorWindow.mouseOverWindow gets accessed
             }
             if (_repaint && DateTime.UtcNow - _lastRepaint > TimeSpan.FromMilliseconds(33)) {
                 _repaint = false;
@@ -243,332 +620,150 @@ namespace SingularityGroup.HotReload.Editor {
             }
             if (_instantRepaint) {
                 Repaint();
+                HotReloadEventPopup.I.Repaint();
                 _instantRepaint = false;
                 _repaint = false;
                 _lastRepaint = DateTime.UtcNow;
             }
         }
         
-        public void RepaintInstant() {
+        public static void RepaintInstant() {
             _instantRepaint = true;
+        }
+
+        private void RenderRecompileButton() {
+            string recompileText = HotReloadWindowStyles.windowScreenWidth > Constants.RecompileButtonTextHideWidth ? " Recompile" : "";
+            var recompileButton = new GUIContent(recompileText, GUIHelper.GetInvertibleIcon(InvertibleIcon.Recompile));
+            if (!GUILayout.Button(recompileButton, HotReloadWindowStyles.RecompileButton)) {
+                return;
+            }
+            RecompileWithChecks();
+        }
+
+        public static void RecompileWithChecks() {
+            var firstDialoguePass = HotReloadPrefs.RecompileDialogueShown
+                || EditorUtility.DisplayDialog(
+                    title: "Hot Reload auto-applies changes",
+                    message: "Using the Recompile button is only necessary when Hot Reload fails to apply your changes. \n\nDo you wish to proceed?",
+                    ok: "Recompile",
+                    cancel: "Not now");
+            HotReloadPrefs.RecompileDialogueShown = true;
+            if (!firstDialoguePass) {
+                return;
+            }
+            var secondDialoguePass = !Application.isPlaying
+                || EditorUtility.DisplayDialog(
+                    title: "Stop Play Mode and Recompile?",
+                    message: "Using the Recompile button will stop Play Mode.\n\nDo you wish to proceed?",
+                    ok: "Stop and Recompile",
+                    cancel: "Cancel");
+            if (!secondDialoguePass) {
+                return;
+            }
+            Recompile();
+        }
+
+        public static bool recompiling;
+        public static void Recompile() {
+            recompiling = true;
+            EditorApplication.isPlaying = false;
+            AssetDatabase.Refresh();
+            CompilationPipeline.RequestScriptCompilation();
         }
         
         private void RenderIndicationButtons() {
-            using (new EditorGUILayout.HorizontalScope()) {
-                if (currentState.requestingDownloadAndRun || currentState.starting || currentState.stopping) {
-                    RenderProgressBar();
-                } else if (!currentState.running && (currentState.startupProgress?.Item1 ?? 0) == 0) {
-                    GUILayout.FlexibleSpace();
-                    if (GUILayout.Button(new GUIContent(" Start", EditorGUIUtility.IconContent("PlayButton@2x").image), HotReloadWindowStyles.StartButton)) {
-                        EditorCodePatcher.DownloadAndRun().Forget();
+            if (currentState.requestingDownloadAndRun || currentState.starting || currentState.stopping || currentState.redeemStage != RedeemStage.None) {
+                return;
+            }
+            
+            if (!currentState.running && (currentState.startupProgress?.Item1 ?? 0) == 0) {
+                string startText = HotReloadWindowStyles.windowScreenWidth > Constants.StartButtonTextHideWidth ? " Start" : "";
+                if (GUILayout.Button(new GUIContent(startText, GUIHelper.GetInvertibleIcon(InvertibleIcon.Start)), HotReloadWindowStyles.StartButton)) {
+                    EditorCodePatcher.DownloadAndRun().Forget();
+                }
+            } else if (currentState.running && !currentState.starting) {
+                if (HotReloadWindowStyles.windowScreenWidth > 150 && HotReloadTimelineHelper.CompileErrorsCount == 0) {
+                    RenderRecompileButton();
+                }
+                string stopText = HotReloadWindowStyles.windowScreenWidth > Constants.StartButtonTextHideWidth ? " Stop" : "";
+                if (GUILayout.Button(new GUIContent(stopText, GUIHelper.GetInvertibleIcon(InvertibleIcon.Stop)), HotReloadWindowStyles.StopButton)) {
+                    if (!EditorCodePatcher.StoppedServerRecently()) {
+                        EditorCodePatcher.StopCodePatcher().Forget();
                     }
-                    GUILayout.FlexibleSpace();
-                } else if (currentState.running && !currentState.starting) {
-                    GUILayout.FlexibleSpace();
-                    if (GUILayout.Button(new GUIContent(" Stop", EditorGUIUtility.IconContent("animationdopesheetkeyframe").image), HotReloadWindowStyles.StartButton)) {
-                        if (!EditorCodePatcher.StoppedServerRecently()) {
-                            EditorCodePatcher.StopCodePatcher().Forget();
-                        }
-                    }
-                    GUILayout.FlexibleSpace();
                 }
             }
         }
 
         void RenderIndicationPanel() {
-            using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.SectionOuterBox)) {
-                using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.SectionInnerBox)) {
-                    using (new EditorGUILayout.VerticalScope()) {
-                        RenderIndication();
+            using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.SectionInnerBox)) {
+                RenderIndication();
+                if (HotReloadWindowStyles.windowScreenWidth > Constants.IndicationTextHideWidth) {
+                    GUILayout.FlexibleSpace();
+                }
+                RenderIndicationButtons();
+                if (HotReloadWindowStyles.windowScreenWidth <= Constants.IndicationTextHideWidth) {
+                    GUILayout.FlexibleSpace();
+                }
+            }
+            if (currentState.requestingDownloadAndRun || currentState.starting) {
+                RenderProgressBar();
+            }
+            if (HotReloadWindowStyles.windowScreenWidth > Constants.ConsumptionsHideWidth
+                && HotReloadWindowStyles.windowScreenHeight > Constants.ConsumptionsHideHeight
+            ) {
+                RenderLicenseInfo(currentState);
+            }
+        }
 
-                        if (currentState.redeemStage != RedeemStage.None) {
-                            RedeemLicenseHelper.I.RenderStage(currentState.redeemStage);
-                        } else {
-                            RenderIndicationButtons();
-                    
-                            if (ShouldRenderConsumption) {
-                                RenderConsumption(currentState.loginStatus);
-                                RenderLicenseInfo(currentState.loginStatus);
-                                RenderLicenseButtons();
-                            }
-                        }
+        internal static void RenderLicenseInfo(HotReloadRunTabState currentState) {
+            var showRedeem = currentState.redeemStage != RedeemStage.None;
+            var showConsumptions = ShouldRenderConsumption(currentState);
+            if (!showConsumptions && !showRedeem) {
+                return;
+            }
+            using (new EditorGUILayout.VerticalScope()) {
+                // space needed only for consumptions because of Stop/Start button's margin
+                if (showConsumptions) {
+                    GUILayout.Space(6);
+                }
+                using (new EditorGUILayout.VerticalScope(HotReloadWindowStyles.Section)) {
+                    if (showRedeem) {
+                        RedeemLicenseHelper.I.RenderStage(currentState);
+                    } else {
+                        RenderConsumption(currentState.loginStatus);
+                        GUILayout.Space(10);
+                        RenderLicenseInfo(currentState, currentState.loginStatus);
+                        RenderLicenseButtons(currentState);
+                        GUILayout.Space(10);
                     }
-                } 
-            } 
+                }
+                GUILayout.Space(6);
+            }
         }
         
         private Spinner _spinner = new Spinner(85);
         private void RenderIndication() {
             using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.IndicationBox)) {
                 // icon box
-                using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.IndicationIconBox)) {
+                if (HotReloadWindowStyles.windowScreenWidth <= Constants.IndicationTextHideWidth) {
+                    GUILayout.FlexibleSpace();
+                }
+
+                using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.IndicationHelpBox)) {
+                    var text = HotReloadWindowStyles.windowScreenWidth > Constants.IndicationTextHideWidth ? $"  {currentState.indicationStatusText}" : "";
                     if (currentState.indicationIconPath == Spinner.SpinnerIconPath) {
-                        GUILayout.Label(image: _spinner.GetIcon(), style: HotReloadWindowStyles.SpinnerIcon);
+                        GUILayout.Label(new GUIContent(text, _spinner.GetIcon()), style: HotReloadWindowStyles.IndicationIcon);
                     } else if (currentState.indicationIconPath != null) {
-                        GUILayout.Label(Resources.Load<Texture2D>(currentState.indicationIconPath), HotReloadWindowStyles.IndicationIcon);
+                        var style = HotReloadWindowStyles.IndicationIcon;
+                        if (HotReloadTimelineHelper.alertIconString.ContainsValue(currentState.indicationIconPath)) {
+                            style = HotReloadWindowStyles.IndicationAlertIcon;
+                        }
+                        GUILayout.Label(new GUIContent(text, GUIHelper.GetLocalIcon(currentState.indicationIconPath)), style);
                     }
                 } 
-                // text box
-                using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.IndicationTextBox)) {
-                    GUILayout.Label(currentState.indicationStatusText, HotReloadWindowStyles.H1TitleCenteredStyle);
-                }
             }
         }
         
-        private GUIStyle _unsupportedChangesInnerBoxMinStyle;
-        private GUIStyle UnsupportedChangesInnerBoxMin {
-            get {
-                const int minimumHeight = 63;
-                const int minimumExpandedLogHeight = 60;
-                const int minimumCollapsedHeight = 55;
-                if (_unsupportedChangesInnerBoxMinStyle == null) {
-                    _unsupportedChangesInnerBoxMinStyle = new GUIStyle(HotReloadWindowStyles.UnsupportedChangesInnerBox);
-                }
-                _unsupportedChangesInnerBoxMinStyle.margin.left = HotReloadWindowStyles.UnsupportedChangesInnerBox.margin.left;
-                var height = minimumHeight + (HotReloadWindowStyles.LogStyle.fixedHeight * EditorCodePatcher.Failures.Count) + (minimumExpandedLogHeight * _expandedLogs.Count);
-                if (HotReloadPrefs.ShowUnsupportedChanges) {
-                    _unsupportedChangesInnerBoxMinStyle.fixedHeight = Math.Min(height, 400);
-                } else {
-                    _unsupportedChangesInnerBoxMinStyle.fixedHeight = minimumCollapsedHeight;
-                }
-                return _unsupportedChangesInnerBoxMinStyle;
-            }
-        }
-
-        private string _warningIconPath = "warning";
-        private void RenderUnsupportedChanges() {
-            using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.SectionOuterBox)) {
-                using (new EditorGUILayout.HorizontalScope(UnsupportedChangesInnerBoxMin)) {
-                    using (new EditorGUILayout.VerticalScope()) { 
-                        
-                        // header
-                        using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.UnsupportedChangesHeader)) {
-                            HotReloadPrefs.ShowUnsupportedChanges = EditorGUILayout.Foldout(HotReloadPrefs.ShowUnsupportedChanges, "", true, HotReloadWindowStyles.FoldoutStyle);
-                            GUILayout.Label(Resources.Load<Texture2D>(_warningIconPath), HotReloadWindowStyles.UnsupportedChangesIcon);
-                            GUILayout.Space(-35);
-                            if (GUILayout.Button("Unsupported changes detected!", HotReloadWindowStyles.UnsupportedChangesText)) {
-                                HotReloadPrefs.ShowUnsupportedChanges = !HotReloadPrefs.ShowUnsupportedChanges;
-                            }
-                            GUILayout.Space(5);
-                            if (GUILayout.Button(EditorApplication.isPlaying ? "Force Recompile" : "Recompile", HotReloadWindowStyles.UnsupportedChangesButton)) {
-                                EditorApplication.isPlaying = false;
-                                AssetDatabase.Refresh();
-                            }
-                            GUILayout.FlexibleSpace();
-                        }
-                        
-                        // unsupported changes log list
-                        if (HotReloadPrefs.ShowUnsupportedChanges) {
-                            RenderUnsupportedChangesList();
-                        }
-                        
-                    }
-                }
-            }
-        }
-
-        private string _closeIconPath = "close";
-        private string[] supportedPaths = new[] { Path.GetFullPath("Assets"), Path.GetFullPath("Plugins") };
-        private List<string> _expandedLogs = new List<string>();
-        private void RenderUnsupportedChangesList() {
-            using (var scope = new EditorGUILayout.ScrollViewScope(_patchedMethodsScrollPos, GUIStyle.none, GUI.skin.verticalScrollbar)) {
-                _patchedMethodsScrollPos.y = scope.scrollPosition.y;
- 
-                GUIStyle logStyle;
-                for (var i = currentState.failures.Count - 1; i >= 0; i--) {
-                    var failure = currentState.failures[i];
-                    if (string.IsNullOrEmpty(failure)) {
-                        continue;
-                    }
-                    // Alternate log background color between light and dark
-                    if (i % 2 == 1) {
-                        logStyle = HotReloadWindowStyles.LogStyleLight;
-                    } else {
-                        logStyle = HotReloadWindowStyles.LogStyleDark;
-                    }
-                    // Get the relevant file name
-                    string fileName = null;
-                    try {
-                        int csIndex = 0;
-                        int attempt = 0;
-                        do {
-                            csIndex = failure.IndexOf(".cs", csIndex + 1, StringComparison.Ordinal);
-                            if (csIndex == -1) {
-                                break;
-                            }
-                            int fileNameStartIndex = csIndex - 1;
-                            for (; fileNameStartIndex >= 0; fileNameStartIndex--) {
-                                if (!char.IsLetter(failure[fileNameStartIndex])) {
-                                    fileName = failure.Substring(fileNameStartIndex, csIndex - fileNameStartIndex + ".cs".Length);
-                                    break;
-                                }
-                            }
-                        } while (attempt++ < 100 && fileName == null);
-                    } catch {
-                        // ignore
-                    }
-                    fileName = fileName ?? "Tap to show stacktrace";
-                    
-                    // Get the error
-                    string error;
-                    int endOfError = failure.IndexOf(". in ", StringComparison.Ordinal);
-                    string specialChars = "\"'/\\";
-                    char[] characters = specialChars.ToCharArray();
-                    int specialChar = failure.IndexOfAny(characters);
-                    try {
-                        if (failure.StartsWith("errors:", StringComparison.Ordinal) && endOfError > 0) {
-                            error = failure.Substring("errors: ".Length, endOfError - "errors: ".Length).Trim();
-                        } else if (failure.StartsWith("errors:", StringComparison.Ordinal) && specialChar > 0) {
-                            error = failure.Substring("errors: ".Length, specialChar - "errors: ".Length).Trim();
-                        } else {
-                            error = "Unsupported change deteced, tap here to see more.";
-                        }
-                    } catch {
-                        error = "Unsupported change deteced, tap here to see more.";
-                    }
-                    
-                    // Get relative path
-                    TextAsset file = null;
-                    foreach (var path in supportedPaths) {
-                        int lastprojectIndex = 0;
-                        int attempt = 0;
-                        while (attempt++ < 100 && !file) {
-                            lastprojectIndex = failure.IndexOf(path, lastprojectIndex + 1, StringComparison.Ordinal);
-                            if (lastprojectIndex == -1) {
-                                break;
-                            }
-                            var fullCsIndex = failure.IndexOf(".cs", lastprojectIndex, StringComparison.Ordinal);
-                            var candidateAbsolutePath = failure.Substring(lastprojectIndex, fullCsIndex - lastprojectIndex + ".cs".Length);
-                            var candidateRelativePath = EditorCodePatcher.GetRelativePath(filespec: candidateAbsolutePath, folder: path);
-                            file = AssetDatabase.LoadAssetAtPath<TextAsset>(candidateRelativePath);
-                        }
-                    }
-                    
-                    // Get the line number
-                    int lineNumber = 0;
-                    try {
-                        int lastIndex = 0;
-                        int attempt = 0;
-                        do {
-                            lastIndex = failure.IndexOf(fileName, lastIndex + 1, StringComparison.Ordinal);
-                            if (lastIndex == -1) {
-                                break;
-                            }
-                            var part = failure.Substring(lastIndex + fileName.Length);
-                            if (!part.StartsWith(":", StringComparison.Ordinal) 
-                                || part.Length == 1 
-                                || !char.IsDigit(part[1])
-                            ) {
-                                continue;
-                            }
-                            int y = 1;
-                            for (; y < part.Length; y++) {
-                                if (!char.IsDigit(part[y])) {
-                                    break;
-                                }
-                            }
-                            if (int.TryParse(part.Substring(1, y), out lineNumber)) {
-                                break;
-                            }
-                        } while (attempt++ < 100);
-                    } catch { 
-                        //ignore
-                    }
-                    
-                    // make sure there is no overflow
-                    const int filenameUpperLimit = 27;
-                    const int errorLowerLimit = 115;
-                    if (fileName.Length >= filenameUpperLimit) {
-                        fileName = fileName.Substring(0, filenameUpperLimit) + "...";
-                        lineNumber = 0;
-                        if (error.Length >= errorLowerLimit) {
-                            error = error.Substring(0, errorLowerLimit) + "...";
-                        }
-                    } else {
-                        var errorLimit = errorLowerLimit + (filenameUpperLimit - fileName.Length);
-                        if (error.Length >= errorLimit) {
-                            error = error.Substring(0, errorLimit) + "...";
-                        }
-                    }
-                    
-                    // log entry
-                    using (new EditorGUILayout.HorizontalScope(logStyle)) {
-                        
-                        // Error text
-                        GUILayout.Space(10);
-                        if (GUILayout.Button(error, HotReloadWindowStyles.LabelStyle)) {
-                            if (!_expandedLogs.Contains(failure)) {
-                                _expandedLogs.Add(failure);
-                            } else {
-                                _expandedLogs.Remove(failure);
-                            }
-                        }
-                        GUILayout.FlexibleSpace();
-                        
-                        // Link
-                        if (GUILayout.Button(lineNumber > 0 ? fileName + ":" + lineNumber : fileName, HotReloadWindowStyles.LinkStyle)) {
-                            if (file) {
-                                AssetDatabase.OpenAsset(file, Math.Max(lineNumber, 1));
-                            } else {
-                                if (!_expandedLogs.Contains(failure)) {
-                                    _expandedLogs.Add(failure);
-                                } else {
-                                    _expandedLogs.Remove(failure);
-                                }
-                            } 
-                        }
-                        
-                        // remove button
-                        if (GUILayout.Button(Resources.Load<Texture2D>(_closeIconPath), HotReloadWindowStyles.RemoveUnsupportedChangeIcon)) {
-                            var newFailures = new List<string>(EditorCodePatcher.Failures);
-                            newFailures.RemoveAt(i);
-                            EditorCodePatcher.Failures = newFailures;
-                        }
-                        GUILayout.Space(30);
-                        
-                    }
-                    
-                    // stacktrace if should show
-                    if (_expandedLogs.Contains(failure)) {
-                        using (new EditorGUILayout.VerticalScope(HotReloadWindowStyles.DropdownAreaStyle)) {
-                            GUILayout.TextArea(failure, HotReloadWindowStyles.DropdownBox);
-                        }
-                    }
-                }
-            }
-        }
-        
-        private async Task RequestFlushErrors() {
-            _requestingFlushErrors = true;
-            try {
-                await RequestFlushErrorsCore();
-            } finally {
-                _requestingFlushErrors = false;
-            }
-        }
-        
-        private async Task RequestFlushErrorsCore() {
-            var pollFrequency = 500;
-            // Delay until we've hit the poll request frequency
-            var waitMs = (int)Mathf.Clamp(pollFrequency - ((DateTime.Now.Ticks / (float)TimeSpan.TicksPerMillisecond) - _lastErrorFlush), 0, pollFrequency);
-            await Task.Delay(waitMs);
-            await FlushErrors();
-            _lastErrorFlush = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
-        }
-        
-        static async Task FlushErrors() {
-            var response = await RequestHelper.RequestFlushErrors();
-            if (response == null) {
-                return;
-            }
-            foreach (var responseWarning in response.warnings) {
-                Log.Warning(responseWarning);
-            }
-            foreach (var responseError in response.errors) {
-                Log.Error(responseError);
-            }
-        }
-
         static GUIStyle _openSettingsStyle;
         static GUIStyle openSettingsStyle => _openSettingsStyle ?? (_openSettingsStyle = new GUIStyle(GUI.skin.button) {
             fontStyle = FontStyle.Normal,
@@ -581,8 +776,7 @@ namespace SingularityGroup.HotReload.Editor {
         private static GUIContent indieLicenseContent;
         private static GUIContent businessLicenseContent;
 
-        float lastRectHeigh = 38;
-        internal void RenderLicenseStatusInfo(LoginStatusResponse loginStatus, bool allowHide = true, bool verbose = false) {
+        internal static void RenderLicenseStatusInfo(HotReloadRunTabState currentState, LoginStatusResponse loginStatus, bool allowHide = true, bool verbose = false) {
             string message = null;
             MessageType messageType = default(MessageType);
             Action customGUI = null;
@@ -591,7 +785,7 @@ namespace SingularityGroup.HotReload.Editor {
                 // no info
             } else if (loginStatus.lastLicenseError != null) {
                 messageType = !loginStatus.freeSessionFinished ? MessageType.Warning : MessageType.Error;
-                message = GetMessageFromError(loginStatus.lastLicenseError);
+                message = GetMessageFromError(currentState, loginStatus.lastLicenseError);
             } else if (loginStatus.isTrial && !PackageConst.IsAssetStoreBuild) {
                 message = $"Using Trial license, valid until {loginStatus.licenseExpiresAt.ToShortDateString()}";
                 messageType = MessageType.Info;
@@ -599,12 +793,17 @@ namespace SingularityGroup.HotReload.Editor {
                 if (verbose) {
                     message = " Indie license active";
                     messageType = MessageType.Info;
-                    if (loginStatus.licenseExpiresAt.Date != DateTime.MaxValue.Date) {
-                        customGUI = () => {
+                    customGUI = () => {
+                        if (loginStatus.licenseExpiresAt.Date != DateTime.MaxValue.Date) {
                             EditorGUILayout.LabelField($"License will renew on {loginStatus.licenseExpiresAt.ToShortDateString()}.");
                             EditorGUILayout.Space();
-                        };
-                    }
+                        }
+                        using (new GUILayout.HorizontalScope()) {
+                            HotReloadAboutTab.manageLicenseButton.OnGUI();
+                            HotReloadAboutTab.manageAccountButton.OnGUI();
+                        }
+                        EditorGUILayout.Space();
+                    };
                     if (indieLicenseContent == null) {
                         indieLicenseContent = new GUIContent(message, EditorGUIUtility.FindTexture("TestPassed"));
                     }
@@ -618,6 +817,13 @@ namespace SingularityGroup.HotReload.Editor {
                         businessLicenseContent = new GUIContent(message, EditorGUIUtility.FindTexture("TestPassed"));
                     }
                     content = businessLicenseContent;
+                    customGUI = () => {
+                        using (new GUILayout.HorizontalScope()) {
+                            HotReloadAboutTab.manageLicenseButton.OnGUI();
+                            HotReloadAboutTab.manageAccountButton.OnGUI();
+                        }
+                        EditorGUILayout.Space();
+                    };
                 }
             }
 
@@ -628,12 +834,12 @@ namespace SingularityGroup.HotReload.Editor {
                 if (messageType != MessageType.Info) {
                     using(new EditorGUILayout.HorizontalScope()) {
                         EditorGUILayout.HelpBox(message, messageType);
-                        // lastRectHeigh is not accurate during Layout event
+                        var style = HotReloadWindowStyles.HideButtonStyle;
                         if (Event.current.type == EventType.Repaint) {
-                            lastRectHeigh = GUILayoutUtility.GetLastRect().height;
+                            style.fixedHeight = GUILayoutUtility.GetLastRect().height;
                         }
                         if (allowHide) {
-                            if (GUILayout.Button("Hide", GUILayout.ExpandHeight(true), GUILayout.MaxHeight(lastRectHeigh))) {
+                            if (GUILayout.Button("Hide", style)) {
                                 HotReloadPrefs.ErrorHidden = true;
                             }
                         }
@@ -649,22 +855,21 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
-        float lastInfoRectHeigh;
         const string assetStoreProInfo = "Unity Pro/Enterprise users from company with your number of employees require a Business license. Please upgrade your license on our website.";
-        public void RenderBusinessLicenseInfo() {
+        internal static void RenderBusinessLicenseInfo(GUIStyle style) {
+            GUILayout.Space(8);
             using (new EditorGUILayout.HorizontalScope()) {
                 EditorGUILayout.HelpBox(assetStoreProInfo, MessageType.Info);
-                // lastRectHeigh is not accurate during Layout event
                 if (Event.current.type == EventType.Repaint) {
-                    lastInfoRectHeigh = GUILayoutUtility.GetLastRect().height;
+                    style.fixedHeight = GUILayoutUtility.GetLastRect().height;
                 }
-                if (GUILayout.Button(" Upgrade ", GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(true), GUILayout.MaxHeight(lastInfoRectHeigh))) {
+                if (GUILayout.Button("Upgrade", style)) {
                     Application.OpenURL(Constants.ProductPurchaseBusinessURL);
                 }
             }
         }
         
-        public void RenderIndieLicenseInfo() {
+        internal static void RenderIndieLicenseInfo(GUIStyle style) {
             string message;
             if (EditorCodePatcher.licenseType == UnityLicenseType.UnityPersonalPlus) {
                 message = "Unity Plus users require an Indie license. Please upgrade your license on our website.";
@@ -673,13 +878,13 @@ namespace SingularityGroup.HotReload.Editor {
             } else {
                 return;
             }
+            GUILayout.Space(8);
             using (new EditorGUILayout.HorizontalScope()) {
                 EditorGUILayout.HelpBox(message, MessageType.Info);
-                // lastRectHeigh is not accurate during Layout event
                 if (Event.current.type == EventType.Repaint) {
-                    lastInfoRectHeigh = GUILayoutUtility.GetLastRect().height;
+                    style.fixedHeight = GUILayoutUtility.GetLastRect().height;
                 }
-                if (GUILayout.Button(" Upgrade ", GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(true), GUILayout.MaxHeight(lastInfoRectHeigh))) {
+                if (GUILayout.Button("Upgrade", style)) {
                     Application.OpenURL(Constants.ProductPurchaseURL);
                 }
             }
@@ -689,8 +894,8 @@ namespace SingularityGroup.HotReload.Editor {
         const string ContactSupport = "Contact Support";
         const string UpgradeLicense = "Upgrade License";
         const string ManageLicense = "Manage License";
-        internal Dictionary<string, LicenseErrorData> _licenseErrorData;
-        internal Dictionary<string, LicenseErrorData> LicenseErrorData => _licenseErrorData ?? (_licenseErrorData = new Dictionary<string, LicenseErrorData> {
+        internal static Dictionary<string, LicenseErrorData> _licenseErrorData;
+        internal static Dictionary<string, LicenseErrorData> LicenseErrorData => _licenseErrorData ?? (_licenseErrorData = new Dictionary<string, LicenseErrorData> {
             { "DeviceNotLicensedException", new LicenseErrorData(description: "Another device is using your license. Please reach out to customer support for assistance.", showSupportButton: true, supportButtonText: ContactSupport) },
             { "DeviceBlacklistedException", new LicenseErrorData(description: "You device has been blacklisted.") },
             { "DateHeaderInvalidException", new LicenseErrorData(description: $"Your license is not working because your computer's clock is incorrect. Please set the clock to the correct time to restore your license.") },
@@ -710,16 +915,16 @@ namespace SingularityGroup.HotReload.Editor {
             // { "LicenseNotFoundException", new LicenseErrorData(description: "The account you're trying to access doesn't seem to exist yet. Please enter your email address to create a new account and receive a trial license.", showLoginButton: true, loginButtonText: CreateAccount) },
             { "LicenseIncompatibleException", new LicenseErrorData(description: "Please upgrade your license to continue using hotreload with Unity Pro.", showManageLicenseButton: true, manageLicenseButtonText: ManageLicense) },
         });
-        internal LicenseErrorData defaultLicenseErrorData = new LicenseErrorData(description: "We apologize, an error happened while verifying your license. Please reach out to customer support for assistance.", showSupportButton: true, supportButtonText: ContactSupport);
+        internal static LicenseErrorData defaultLicenseErrorData = new LicenseErrorData(description: "We apologize, an error happened while verifying your license. Please reach out to customer support for assistance.", showSupportButton: true, supportButtonText: ContactSupport);
 
-        internal string GetMessageFromError(string error) {
+        internal static string GetMessageFromError(HotReloadRunTabState currentState, string error) {
             if (PackageConst.IsAssetStoreBuild && error == "TrialLicenseExpiredException") {
                 return assetStoreProInfo;
             }
-            return GetLicenseErrorDataOrDefault(error).description;
+            return GetLicenseErrorDataOrDefault(currentState, error).description;
         }
         
-        internal LicenseErrorData GetLicenseErrorDataOrDefault(string error) {
+        internal static LicenseErrorData GetLicenseErrorDataOrDefault(HotReloadRunTabState currentState, string error) {
             if (currentState.loginStatus?.isFree == true) {
                 return default(LicenseErrorData);
             }
@@ -735,11 +940,12 @@ namespace SingularityGroup.HotReload.Editor {
             return LicenseErrorData[error];
         }
 
-        internal void RenderBuyLicenseButton(string buyLicenseButton) {
+        internal static void RenderBuyLicenseButton(string buyLicenseButton) {
             OpenURLButton.Render(buyLicenseButton, Constants.ProductPurchaseURL);
         }
 
-        void RenderLicenseActionButtons(LicenseErrorData errInfo) {
+        static void RenderLicenseActionButtons(HotReloadRunTabState currentState) {
+            var errInfo = GetLicenseErrorDataOrDefault(currentState, currentState.loginStatus?.lastLicenseError);
             if (errInfo.showBuyButton || errInfo.showManageLicenseButton) {
                 using(new EditorGUILayout.HorizontalScope()) {
                     if (errInfo.showBuyButton) {
@@ -752,27 +958,27 @@ namespace SingularityGroup.HotReload.Editor {
             }
             if (errInfo.showLoginButton && GUILayout.Button(errInfo.loginButtonText, openSettingsStyle)) {
                 // show license section
-                _window.SelectTab(typeof(HotReloadSettingsTab));
-                _window.SettingsTab.FocusLicenseFoldout();
+                HotReloadWindow.Current.SelectTab(typeof(HotReloadSettingsTab));
+                HotReloadWindow.Current.SettingsTab.FocusLicenseFoldout();
             }
             if (errInfo.showSupportButton && !HotReloadPrefs.ErrorHidden) {
                 OpenURLButton.Render(errInfo.supportButtonText, Constants.ContactURL);
             }
             if (currentState.loginStatus?.lastLicenseError != null) {
-                _window.AboutTab.reportIssueButton.OnGUI();
+                HotReloadAboutTab.reportIssueButton.OnGUI();
             }
         }
-
-        internal void RenderLicenseInfo(LoginStatusResponse loginStatus, bool verbose = false, bool allowHide = true, string overrideActionButton = null, bool showConsumptions = false) {
+        
+        internal static void RenderLicenseInfo(HotReloadRunTabState currentState, LoginStatusResponse loginStatus, bool verbose = false, bool allowHide = true, string overrideActionButton = null, bool showConsumptions = false) {
             HotReloadPrefs.ShowLogin = EditorGUILayout.Foldout(HotReloadPrefs.ShowLogin, "Hot Reload License", true, HotReloadWindowStyles.FoldoutStyle);
             if (HotReloadPrefs.ShowLogin) {
                 EditorGUILayout.Space();
                 if ((loginStatus?.isLicensed != true && showConsumptions) && !(loginStatus == null || loginStatus.isFree)) {
                     RenderConsumption(loginStatus);
                 }
-                RenderLicenseStatusInfo(loginStatus: loginStatus, allowHide: allowHide, verbose: verbose);
+                RenderLicenseStatusInfo(currentState, loginStatus: loginStatus, allowHide: allowHide, verbose: verbose);
 
-                RenderLicenseInnerPanel(overrideActionButton: overrideActionButton);
+                RenderLicenseInnerPanel(currentState, overrideActionButton: overrideActionButton);
                 
                 EditorGUILayout.Space();
                 EditorGUILayout.Space();
@@ -887,12 +1093,11 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
-        public void RenderLicenseButtons() {
-            var errInfo = GetLicenseErrorDataOrDefault(currentState.loginStatus?.lastLicenseError);
-            RenderLicenseActionButtons(errInfo);
+        public static void RenderLicenseButtons(HotReloadRunTabState currentState) {
+            RenderLicenseActionButtons(currentState);
         }
 
-        internal void RenderLicenseInnerPanel(string overrideActionButton = null, bool renderLogout = true) {
+        internal static void RenderLicenseInnerPanel(HotReloadRunTabState currentState, string overrideActionButton = null, bool renderLogout = true) {
             EditorGUILayout.LabelField("Email");
             GUI.SetNextControlName("email");
             _pendingEmail = EditorGUILayout.TextField(string.IsNullOrEmpty(_pendingEmail) ? HotReloadPrefs.LicenseEmail : _pendingEmail);
@@ -925,7 +1130,7 @@ namespace SingularityGroup.HotReload.Editor {
                         } else if (string.IsNullOrEmpty(_pendingPassword)) {
                             _activateInfoMessage = new Tuple<string, MessageType>("Please enter your password.", MessageType.Warning);
                         } else {
-                            _window.SelectTab(typeof(HotReloadRunTab));
+                            HotReloadWindow.Current.SelectTab(typeof(HotReloadRunTab));
 
                             _activateInfoMessage = null;
                             if (RedeemLicenseHelper.I.RedeemStage == RedeemStage.Login) {
@@ -939,7 +1144,7 @@ namespace SingularityGroup.HotReload.Editor {
                         }
                     }
                     if (renderLogout) {
-                        RenderLogout();
+                        RenderLogout(currentState);
                     }
                 }
             }
@@ -959,12 +1164,12 @@ namespace SingularityGroup.HotReload.Editor {
             return null;
         }
 
-        public void RenderLogout() {
+        public static void RenderLogout(HotReloadRunTabState currentState) {
             if (currentState.loginStatus?.isLicensed != true) {
                 return;
             }
             if (GUILayout.Button("Logout", bigButtonHeight)) {
-                _window.SelectTab(typeof(HotReloadRunTab));
+                HotReloadWindow.Current.SelectTab(typeof(HotReloadRunTab));
                 if (!EditorCodePatcher.RequestingDownloadAndRun && !EditorCodePatcher.Running) {
                     LogoutOnDownloadAndRun().Forget();
                 } else {
@@ -973,7 +1178,7 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
         
-        async Task LoginOnDownloadAndRun(LoginData loginData = null) {
+        async static Task LoginOnDownloadAndRun(LoginData loginData = null) {
             var ok = await EditorCodePatcher.DownloadAndRun(loginData);
             if (ok && loginData != null) {
                 HotReloadPrefs.ErrorHidden = false;
@@ -982,7 +1187,7 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
-        async Task LogoutOnDownloadAndRun() {
+        async static Task LogoutOnDownloadAndRun() {
             var ok = await EditorCodePatcher.DownloadAndRun();
             if (!ok) {
                 return;
@@ -990,7 +1195,7 @@ namespace SingularityGroup.HotReload.Editor {
             await RequestLogout();
         }
 
-        private async Task RequestLogout() {
+        private async static Task RequestLogout() {
             int i = 0;
             while (!EditorCodePatcher.Running && i < 100) {
                 await Task.Delay(100);
@@ -1022,37 +1227,28 @@ namespace SingularityGroup.HotReload.Editor {
                 return;
             }
             
-            GUILayout.Label("", HotReloadWindowStyles.ProgressBarAnchorStyle);
-            var progressBarAnchorRect = GUILayoutUtility.GetLastRect();
-            
             using(var scope = new EditorGUILayout.VerticalScope(HotReloadWindowStyles.MiddleCenterStyle)) {
                 float progress;
                 var bg = HotReloadWindowStyles.ProgressBarBarStyle.normal.background;
                 try {
                     HotReloadWindowStyles.ProgressBarBarStyle.normal.background = GreenTexture;
                     var barRect = scope.rect;
-                    
-                    barRect.x = progressBarAnchorRect.x + HotReloadWindowStyles.IndicationBox.margin.left + 3;
-                    barRect.height = HotReloadWindowStyles.StartButton.fixedHeight - 1;
-                    var indicationsLength = HotReloadWindowStyles.SectionInnerBox.fixedWidth - HotReloadWindowStyles.IndicationBox.margin.right - HotReloadWindowStyles.IndicationBox.margin.left - HotReloadWindowStyles.SectionInnerBox.padding.left - HotReloadWindowStyles.SectionInnerBox.padding.right; 
+
+                    barRect.height = 25;
                     if (currentState.downloadRequired) {
+                        barRect.width = barRect.width - 65;
                         using (new EditorGUILayout.HorizontalScope()) {
                             progress = EditorCodePatcher.DownloadProgress;
-                            const int infoButtonWidth = 60;
-                            const int padding = 5;
-                            barRect.width = indicationsLength - infoButtonWidth - padding;
-                            var spaceDistance = HotReloadWindowStyles.SectionInnerBox.fixedWidth - HotReloadWindowStyles.IndicationBox.margin.right - HotReloadWindowStyles.SectionInnerBox.padding.right - HotReloadWindowStyles.SectionInnerBox.padding.left - infoButtonWidth;
-                            GUILayout.Space(spaceDistance - 10);
-                            EditorGUI.ProgressBar(barRect, progress, "");
-                            if (GUILayout.Button(new GUIContent(" Info", EditorGUIUtility.IconContent("console.infoicon").image), HotReloadWindowStyles.DownloadInfoButtonStyle)) {
+                            EditorGUI.ProgressBar(barRect, Mathf.Clamp(progress, 0f, 1f), "");
+                            if (GUI.Button(new Rect(barRect) { x = barRect.x + barRect.width + 5, height = barRect.height, width = 60 }, new GUIContent(" Info", GUIHelper.GetLocalIcon("alert_info")))) {
                                 Application.OpenURL(Constants.AdditionalContentURL);
                             }
                         }
                     } else {
-                        barRect.width = indicationsLength;
                         progress = EditorCodePatcher.Stopping ? 1 : Mathf.Clamp(EditorCodePatcher.StartupProgress?.Item1 ?? 0f, 0f, 1f);
                         EditorGUI.ProgressBar(barRect, progress, "");
                     }
+                    GUILayout.Space(barRect.height);
                 } finally {
                     HotReloadWindowStyles.ProgressBarBarStyle.normal.background = bg;
                 }

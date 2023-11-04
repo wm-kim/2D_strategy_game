@@ -33,7 +33,6 @@ namespace Minimax.GamePlay.Logic
             var serverUnit = ServerUnit.UnitsCreatedThisGame[unitUID];
             if (!CheckIsUnitOwner(serverUnit, senderClientId)) return;
             
-            // check if the unit is movable
             if (!serverUnit.CheckIfMovable()) return;
             
             // check if the destination is reachable
@@ -43,6 +42,7 @@ namespace Minimax.GamePlay.Logic
             // remove the unit from the current cell and place it on the destination cell
             var serverCell = m_serverMap[serverUnit.Coord];
             serverCell.RemoveUnit();
+            
             // TODO : add additional logic if there is event on the cell (in the future)
             serverUnit.Coord = destCoord;
             serverUnit.MoveRange -= path.Count;

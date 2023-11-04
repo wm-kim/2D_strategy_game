@@ -4,11 +4,7 @@ namespace SingularityGroup.HotReload.Editor {
     internal class AllowAndroidAppToMakeHttpRequestsOption : ProjectOptionBase {
         public override string ShortSummary {
             get {
-                #if UNITY_2022_1_OR_NEWER
                 return "Allow app to make HTTP requests";
-                #else
-                return "Allow Android app to make HTTP requests";
-                #endif
             }
         }
 

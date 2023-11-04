@@ -68,13 +68,13 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
-        public void RenderStage(RedeemStage stage) {
-            if (stage == RedeemStage.Registration) {
+        public void RenderStage(HotReloadRunTabState state) {
+            if (state.redeemStage == RedeemStage.Registration) {
                 RenderRegistration();
-            } else if (stage == RedeemStage.Redeem) {
+            } else if (state.redeemStage == RedeemStage.Redeem) {
                 RenderRedeem();
-            } else if (stage == RedeemStage.Login) {
-                RenderLogin();
+            } else if (state.redeemStage == RedeemStage.Login) {
+                RenderLogin(state);
             }
         }
 
@@ -248,7 +248,7 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
-        private void RenderLogin() {
+        private void RenderLogin(HotReloadRunTabState state) {
             if (status == statusSuccess) {
                 EditorGUILayout.HelpBox("Success! You will receive an email containing your license password shortly. Once you receive it, please enter the received password in the designated field below to complete your registration.", MessageType.Info);
             } else if (status == statusAlreadyClaimed) {
@@ -257,7 +257,7 @@ namespace SingularityGroup.HotReload.Editor {
             EditorGUILayout.Space();
             EditorGUILayout.Space();
 
-            HotReloadWindow.Current.RunTab.RenderLicenseInnerPanel(renderLogout: false);
+            HotReloadRunTab.RenderLicenseInnerPanel(state, renderLogout: false);
             EditorGUILayout.Space();
             EditorGUILayout.Space();
 

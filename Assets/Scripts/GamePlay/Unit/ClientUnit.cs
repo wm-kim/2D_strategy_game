@@ -70,6 +70,9 @@ namespace Minimax.GamePlay.Unit
         
         public int AttackRange { get; set; }
         
+        /// <summary>
+        /// 플레이어가 중복하여 이동 명령을 내리는 것을 방지하기 위한 플래그
+        /// </summary>
         public bool IsMovable { get; set; } = true;
         
         /// <summary>

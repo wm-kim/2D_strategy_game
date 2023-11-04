@@ -1,4 +1,4 @@
-﻿#if ENABLE_MONO && (DEVELOPMENT_BUILD || UNITY_EDITOR)
+#if ENABLE_MONO && (DEVELOPMENT_BUILD || UNITY_EDITOR)
 
 using System;
 using System.Collections.Generic;
@@ -21,6 +21,12 @@ using UnityEngine.SceneManagement;
 [assembly: InternalsVisibleTo("SingularityGroup.HotReload.Editor")]
 
 namespace SingularityGroup.HotReload {
+    class RegisterPatchesResult {
+        public readonly List<SMethod> patchedMethods = new List<SMethod>();
+        public readonly List<SMethod> addedMethods = new List<SMethod>();
+        public readonly List<Tuple<SMethod, string>> patchFailures = new List<Tuple<SMethod, string>>();
+    }
+    
     class CodePatcher {
         public static readonly CodePatcher I = new CodePatcher();
         /// <summary>Tag for use in Debug.Log.</summary>
@@ -30,9 +36,7 @@ namespace SingularityGroup.HotReload {
         string PersistencePath {get;}
         
         List<MethodPatchResponse> pendingPatches;
-        readonly Dictionary<MethodBase, IDisposable> patchRecords;
         readonly List<MethodPatchResponse> patchHistory;
-        readonly List<SMethod> patchedMethods;
         readonly HashSet<string> seenResponses = new HashSet<string>();
         string[] assemblySearchPaths;
         SymbolResolver symbolResolver;
@@ -40,9 +44,7 @@ namespace SingularityGroup.HotReload {
         
         CodePatcher() {
             pendingPatches = new List<MethodPatchResponse>();
-            patchRecords = new Dictionary<MethodBase, IDisposable>();
             patchHistory = new List<MethodPatchResponse>(); 
-            patchedMethods = new List<SMethod>();
             if(UnityHelper.IsEditor) {
                 tmpDir = PackageConst.LibraryCachePath;
             } else {
@@ -78,7 +80,6 @@ namespace SingularityGroup.HotReload {
         }
 
         
-        internal IReadOnlyList<SMethod> PatchedMethods => patchedMethods;
         internal IReadOnlyList<MethodPatchResponse> PendingPatches => pendingPatches;
         internal SymbolResolver SymbolResolver => symbolResolver;
         
@@ -88,24 +89,25 @@ namespace SingularityGroup.HotReload {
             return assemblySearchPaths;
         }
        
-        internal List<string> RegisterPatches(MethodPatchResponse patches, bool persist) {
+        internal RegisterPatchesResult RegisterPatches(MethodPatchResponse patches, bool persist) {
             PlayerLog("Register patches.\nWarnings: {0} \nMethods:\n{1}", string.Join("\n", patches.failures), string.Join("\n", patches.patches.SelectMany(p => p.modifiedMethods).Select(m => m.displayName)));
             pendingPatches.Add(patches);
             return ApplyPatches(persist);
         }
         
-        List<string> ApplyPatches(bool persist) {
+        RegisterPatchesResult ApplyPatches(bool persist) {
             PlayerLog("ApplyPatches. {0} patches pending.", pendingPatches.Count);
             EnsureSymbolResolver();
-            var errors = new List<string>();
 
+            var result = new RegisterPatchesResult();
+            
             try {
                 int count = 0;
                 foreach(var response in pendingPatches) {
                     if (seenResponses.Contains(response.id)) {
                         continue;
                     }
-                    HandleMethodPatchResponse(response, errors);
+                    HandleMethodPatchResponse(response, result);
                     patchHistory.Add(response);
 
                     seenResponses.Add(response.id);
@@ -125,27 +127,11 @@ namespace SingularityGroup.HotReload {
             }
 
             PatchesApplied++;
-            return errors;
+            return result;
         }
         
         internal void ClearPatchedMethods() {
-            patchedMethods.Clear();
             PatchesApplied = 0;
-        }
-        void TryUndoPatch(MethodBase method, bool requireSuccess) {
-            IDisposable state;
-            if (patchRecords.TryGetValue(method, out state)) {
-                PlayerLog("Undo patch for method {0}", method);
-                try {
-                    state.Dispose();
-                } catch {
-                    if(requireSuccess) {
-                        throw;
-                    }
-                }
-                    
-                patchRecords.Remove(method);
-            }
         }
 
         static bool didLog;
@@ -160,7 +146,7 @@ namespace SingularityGroup.HotReload {
             };
         }
 
-        void HandleMethodPatchResponse(MethodPatchResponse response, List<string> errors) {
+        void HandleMethodPatchResponse(MethodPatchResponse response, RegisterPatchesResult result) {
             EnsureSymbolResolver();
 
             foreach(var patch in response.patches) {
@@ -176,13 +162,18 @@ namespace SingularityGroup.HotReload {
                             Log.Warning("Encountered exception in EnsureUnityEventMethod: {0} {1}", ex.GetType().Name, ex.Message);
                         }
                         MethodUtils.DisableVisibilityChecks(newMethod);
+                        if (!patch.patchMethods.Any(m => m.metadataToken == sMethod.metadataToken)) {
+                            result.addedMethods.Add(sMethod);
+                        }
                     }
                     
                     symbolResolver.AddAssembly(asm);
                     for (int i = 0; i < patch.modifiedMethods.Length; i++) {
-                        var err = PatchMethod(module, patch.modifiedMethods[i], patch.patchMethods[i], patch.unityJobs.Length > 0);
+                        var sOriginalMethod = patch.modifiedMethods[i];
+                        var sPatchMethod = patch.patchMethods[i];
+                        var err = PatchMethod(module: module, sOriginalMethod: sOriginalMethod, sPatchMethod: sPatchMethod, containsBurstJobs: patch.unityJobs.Length > 0, patchesResult: result);
                         if (!string.IsNullOrEmpty(err)) {
-                            errors.Add(err);
+                            result.patchFailures.Add(Tuple.Create(sOriginalMethod, err));
                         }
                     }
                     JobHotReloadUtility.HotReloadBurstCompiledJobs(patch, module);
@@ -192,7 +183,7 @@ namespace SingularityGroup.HotReload {
             }
         }
 
-        string PatchMethod(Module module, SMethod sOriginalMethod, SMethod sPatchMethod, bool containsBurstJobs) {
+        string PatchMethod(Module module, SMethod sOriginalMethod, SMethod sPatchMethod, bool containsBurstJobs, RegisterPatchesResult patchesResult) {
             try {
                 var patchMethod = module.ResolveMethod(sPatchMethod.metadataToken);
                 var start = DateTime.UtcNow;
@@ -217,12 +208,7 @@ namespace SingularityGroup.HotReload {
                 DetourResult result;
                 DetourApi.DetourMethod(state.match, patchMethod, out result);
                 if (result.success) {
-                    patchRecords[state.match] = result.patchRecord;
-                    patchedMethods.Add(sOriginalMethod);
-                    if (RequestHelper.ServerInfo.isRemote) {
-                        Directory.CreateDirectory(tmpDir);
-                        File.WriteAllText(Path.Combine(tmpDir, "code-patcher-detour-log"), $"success {patchMethod.Name}");
-                    }
+                    patchesResult.patchedMethods.Add(sOriginalMethod);
                     return null;
                 } else {
                     if(result.exception is InvalidProgramException && containsBurstJobs) {
@@ -346,7 +332,7 @@ namespace SingularityGroup.HotReload {
                     list.Add(assemblies[i]);
                     
                     if(assemblies[i].IsDynamic) continue;
-                    
+
                     var location = assemblies[i].Location;
                     if(File.Exists(location)) {
                         searchPaths.Add(Path.GetDirectoryName(Path.GetFullPath(location)));

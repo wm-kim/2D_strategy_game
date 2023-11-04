@@ -60,6 +60,7 @@ namespace SingularityGroup.HotReload {
             ThreadUtility.RunOnMainThread((Action)o);
         }
         
+        static string lastPatchId = string.Empty;
         static void OnIntervalMainThread() {
             PatchServerInfo verifiedServer;
             if(ServerHandshake.I.TryGetVerifiedServer(out verifiedServer)) {
@@ -74,7 +75,7 @@ namespace SingularityGroup.HotReload {
                 // we may have reconnected to the same host, after losing connection for several seconds
                 Prompts.SetConnectionState(ConnectionSummary.Connected, false);
                 serverHealthyAt = DateTime.UtcNow;
-                RequestHelper.PollMethodPatches(resp => HandleResponseReceived(resp));
+                RequestHelper.PollMethodPatches(lastPatchId, resp => HandleResponseReceived(resp));
             } else if (ServerHealthCheck.I.WasServerResponding) { // only update prompt state if disconnected server 
                 var secondsSinceHealthy = TimeSinceServerHealthy().TotalSeconds;
                 var reconnectTimeout = 30; // seconds
@@ -86,7 +87,7 @@ namespace SingularityGroup.HotReload {
                 }
                 if (secondsSinceHealthy > reconnectTimeout) {
                     // give up on the server, give user a way to connect to another
-                    Log.Info("Hot Reload was unreachable for 40 seconds, disconnecting");
+                    Log.Info($"Hot Reload was unreachable for {reconnectTimeout} seconds, disconnecting");
                     var disconnectedServer = RequestHelper.ServerInfo;
                     Disconnect().Forget();
                     // Let user tap button to retry connecting to the same server (maybe just need to run Hot Reload again)
@@ -99,6 +100,7 @@ namespace SingularityGroup.HotReload {
         static void HandleResponseReceived(MethodPatchResponse response) {
             Log.Debug("PollMethodPatches handling MethodPatchResponse id:{0} response.patches.Length:{1} response.failures.Length:{2}",
                 response.id, response.patches.Length, response.failures.Length);
+            // TODO handle new response data (removed methods etc.)
             if(response.patches.Length > 0) {
                 CodePatcher.I.RegisterPatches(response, persist: true);
             }
@@ -108,6 +110,7 @@ namespace SingularityGroup.HotReload {
                     Log.Warning(failure);
                 }
             }
+            lastPatchId = response.id;
         }
     }
 

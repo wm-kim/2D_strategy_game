@@ -6,8 +6,8 @@ using UnityEditor;
 namespace SingularityGroup.HotReload.Editor {
     internal sealed class ExposeServerOption : ComputerOptionBase {
 
-        public override string ShortSummary => "Allow Mobile Builds to Connect";
-        public override string Summary => "Allow Mobile Builds to Connect (WiFi)";
+        public override string ShortSummary => "Allow Devices to Connect";
+        public override string Summary => "Allow Devices to Connect (WiFi)";
 
         public override void InnerOnGUI() {
             string description;

@@ -171,6 +171,10 @@ namespace SingularityGroup.HotReload.Editor {
                         AssetDatabase.Refresh();
                     }
                 }
+                
+                //open changelog
+                HotReloadPrefs.ShowChangeLog = true;
+                HotReloadWindow.Current.SelectTab(typeof(HotReloadAboutTab));
             }
         }
         

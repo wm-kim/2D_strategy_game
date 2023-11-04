@@ -10,6 +10,7 @@ using SingularityGroup.HotReload.DTO;
 using SingularityGroup.HotReload.Editor.Cli;
 using SingularityGroup.HotReload.Editor.Semver;
 using UnityEditor;
+using UnityEditor.Compilation;
 using UnityEngine;
 
 [assembly: InternalsVisibleTo("SingularityGroup.HotReload.EditorSamples")]
@@ -17,8 +18,6 @@ using UnityEngine;
 namespace SingularityGroup.HotReload.Editor {
     class HotReloadWindow : EditorWindow {
         public static HotReloadWindow Current { get; private set; }
-
-        static readonly Dictionary<string, PatchInfo> pendingPatches = new Dictionary<string, PatchInfo>();
 
         List<HotReloadTabBase> tabs;
         List<HotReloadTabBase> Tabs => tabs ?? (tabs = new List<HotReloadTabBase> {
@@ -28,7 +27,7 @@ namespace SingularityGroup.HotReload.Editor {
         });
         int selectedTab;
 
-        Vector2 scrollPos;
+        internal static Vector2 scrollPos;
 
 
         HotReloadRunTab runTab;
@@ -38,7 +37,7 @@ namespace SingularityGroup.HotReload.Editor {
         HotReloadAboutTab aboutTab;
         internal HotReloadAboutTab AboutTab => aboutTab ?? (aboutTab = new HotReloadAboutTab(this));
 
-        ShowOnStartupEnum _showOnStartupOption;
+        static ShowOnStartupEnum _showOnStartupOption;
 
         /// <summary>
         /// This token is cancelled when the EditorWindow is disabled.
@@ -70,18 +69,17 @@ namespace SingularityGroup.HotReload.Editor {
             if (cancelTokenSource != null) {
                 cancelTokenSource.Cancel();
             }
+            // Set min size initially so that full UI is visible
+            if (!HotReloadPrefs.OpenedWindowAtLeastOnce) {
+                this.minSize = new Vector2(Constants.RecompileButtonTextHideWidth + 1, Constants.EventsListHideHeight + 70);
+                HotReloadPrefs.OpenedWindowAtLeastOnce = true;
+            }
             cancelTokenSource = new CancellationTokenSource();
             cancelToken = cancelTokenSource.Token;
+            
+            this.titleContent = new GUIContent(" Hot Reload", GUIHelper.GetInvertibleIcon(InvertibleIcon.Logo));
+            _showOnStartupOption = HotReloadPrefs.ShowOnStartup;
 
-
-            this.minSize = new Vector2(425, 150f);
-            var tex = Resources.Load<Texture>(HotReloadWindowStyles.IsDarkMode ? "Icon_DarkMode" : "Icon_LightMode");
-            this.titleContent = new GUIContent(" Hot Reload", tex);
-            this._showOnStartupOption = HotReloadPrefs.ShowOnStartup;
-
-            foreach (var patch in CodePatcher.I.PendingPatches) {
-                pendingPatches.Add(patch.id, new PatchInfo(patch));
-            }
             packageUpdateChecker.StartCheckingForNewVersion();
         }
 
@@ -105,15 +103,24 @@ namespace SingularityGroup.HotReload.Editor {
         internal void SelectTab(Type tabType) {
             selectedTab = Tabs.FindIndex(x => x.GetType() == tabType);
         }
-
+        
+        public HotReloadRunTabState RunTabState { get; private set; }
         void OnGUI() {
+            // TabState ensures rendering is consistent between Layout and Repaint calls
+            // Without it errors like this happen:
+            // ArgumentException: Getting control 2's position in a group with only 2 controls when doing repaint
+            // See thread for more context: https://answers.unity.com/questions/17718/argumentexception-getting-control-2s-position-in-a.html
+            if (Event.current.type == EventType.Layout) {
+                RunTabState = HotReloadRunTabState.Current;
+            }
             using(var scope = new EditorGUILayout.ScrollViewScope(scrollPos, false, false)) {
                 scrollPos = scope.scrollPosition;
                 // RenderDebug();
                 RenderTabs();
             }
             GUILayout.FlexibleSpace(); // GUI below will be rendered on the bottom
-            RenderBottomBar();
+            if (HotReloadWindowStyles.windowScreenHeight > 90)
+                RenderBottomBar();
         }
 
         void RenderDebug() {
@@ -121,9 +128,7 @@ namespace SingularityGroup.HotReload.Editor {
                 OnDisable();
 
                 RequestHelper.RequestLogin("test", "test", 1).Forget();
-
-                HotReloadPrefs.RemoteServer = false;
-                HotReloadPrefs.RemoteServerHost = null;
+                
                 HotReloadPrefs.LicenseEmail = null;
                 HotReloadPrefs.ExposeServerToLocalNetwork = true;
                 HotReloadPrefs.LicensePassword = null;
@@ -145,14 +150,14 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
-        void RenderLogo() {
+        internal static void RenderLogo(int width = 243) {
             var isDarkMode = HotReloadWindowStyles.IsDarkMode;
             var tex = Resources.Load<Texture>(isDarkMode ? "Logo_HotReload_DarkMode" : "Logo_HotReload_LightMode");
             //Can happen during player builds where Editor Resources are unavailable
             if(tex == null) {
                 return;
             }
-            var targetWidth = 243;
+            var targetWidth = width;
             var targetHeight = 44;
             GUILayout.Space(4f);
             // background padding top and bottom
@@ -175,14 +180,32 @@ namespace SingularityGroup.HotReload.Editor {
             }
         }
 
+        int? collapsedTab;
         void RenderTabs() {
             using(new EditorGUILayout.VerticalScope(HotReloadWindowStyles.BoxStyle)) {
-                selectedTab = GUILayout.Toolbar(
-                    selectedTab,
-                    Tabs.Select(t => new GUIContent(t.Title.StartsWith(" ", StringComparison.Ordinal) ? t.Title : " " + t.Title, t.Icon, t.Tooltip)).ToArray(),
-                    GUILayout.Height(22f) // required, otherwise largest icon height determines toolbar height
-                );
-                RenderLogo();
+                if (HotReloadWindowStyles.windowScreenHeight > 210 && HotReloadWindowStyles.windowScreenWidth > 375) {
+                    selectedTab = GUILayout.Toolbar(
+                        selectedTab,
+                        Tabs.Select(t =>
+                            new GUIContent(t.Title.StartsWith(" ", StringComparison.Ordinal) ? t.Title : " " + t.Title,
+                                t.Icon, t.Tooltip)).ToArray(),
+                        GUILayout.Height(22f) // required, otherwise largest icon height determines toolbar height
+                    );
+                    if (collapsedTab != null) {
+                        selectedTab = collapsedTab.Value;
+                        collapsedTab = null;
+                    }
+                } else {
+                    if (collapsedTab == null) {
+                        collapsedTab = selectedTab;
+                    }
+                    // When window is super small, we pretty much can only show run tab
+                    SelectTab(typeof(HotReloadRunTab));
+                }
+
+                if (HotReloadWindowStyles.windowScreenHeight > 250 && HotReloadWindowStyles.windowScreenWidth > 275) {
+                    RenderLogo();
+                }
 
                 Tabs[selectedTab].OnGUI();
             }
@@ -190,109 +213,89 @@ namespace SingularityGroup.HotReload.Editor {
 
         void RenderBottomBar() {
             SemVersion newVersion;
-            var updateAvailable = packageUpdateChecker.TryGetNewVersion(out newVersion); 
+            var updateAvailable = packageUpdateChecker.TryGetNewVersion(out newVersion);
 
-            RenderRateApp();
-            
-            // var updateAvailable = true;
-            // newVersion = SemVersion.Parse("9.9.9");
-            using(new EditorGUILayout.HorizontalScope("ProjectBrowserBottomBarBg", GUILayout.ExpandWidth(true), GUILayout.Height(25f))) {
-                RenderAutoRefreshTroubleshooting();
+            if (HotReloadWindowStyles.windowScreenWidth > Constants.RateAppHideWidth
+                && HotReloadWindowStyles.windowScreenHeight > Constants.RateAppHideHeight
+            ) {
+                RenderRateApp();
             }
-            using(new EditorGUILayout.HorizontalScope("ProjectBrowserBottomBarBg", GUILayout.ExpandWidth(true), GUILayout.Height(updateAvailable ? 28f : 25f))) {
-                RenderBottomBarCore(updateAvailable, newVersion);
+
+            if (updateAvailable) {
+                RenderUpdateButton(newVersion);
+            }
+            
+            using(new EditorGUILayout.HorizontalScope("ProjectBrowserBottomBarBg", GUILayout.ExpandWidth(true), GUILayout.Height(25f))) {
+                RenderBottomBarCore();
             }
         }
 
         static GUIStyle _renderAppBoxStyle;
         static GUIStyle renderAppBoxStyle => _renderAppBoxStyle ?? (_renderAppBoxStyle = new GUIStyle(GUI.skin.box) {
-            padding = new RectOffset(10, 10, 10, 10)
+            padding = new RectOffset(10, 10, 0, 0)
         });
         
         static GUILayoutOption[] _nonExpandable;
         public static GUILayoutOption[] NonExpandableLayout => _nonExpandable ?? (_nonExpandable = new [] {GUILayout.ExpandWidth(false), GUILayout.ExpandHeight(true)});
         
-        void RenderRateApp() {
-            if (HotReloadPrefs.RateAppShown) {
+        internal static void RenderRateApp() {
+            if (!ShouldShowRateApp()) {
                 return;
+            }
+            using (new EditorGUILayout.VerticalScope(renderAppBoxStyle)) {
+                using (new EditorGUILayout.HorizontalScope()) {
+                    HotReloadGUIHelper.HelpBox("Are you enjoying using Hot Reload?", MessageType.Info, 11);
+                    if (GUILayout.Button("Hide", NonExpandableLayout)) {
+                        RequestHelper.RequestEditorEventWithRetry(new Stat(StatSource.Client, StatLevel.Debug, StatFeature.RateApp), new EditorExtraData { { "dismissed", true } }).Forget();
+                        HotReloadPrefs.RateAppShown = true;
+                    }
+                }
+                using (new EditorGUILayout.HorizontalScope()) {
+                    if (GUILayout.Button("Yes")) {
+                        var openedUrl = PackageConst.IsAssetStoreBuild && EditorUtility.DisplayDialog("Rate Hot Reload", "Thank you for using Hot Reload!\n\nPlease consider leaving a review on the Asset Store to support us.", "Open in browser", "Cancel");
+                        if (openedUrl) {
+                            Application.OpenURL(Constants.UnityStoreRateAppURL);
+                        }
+                        HotReloadPrefs.RateAppShown = true;
+                        var data = new EditorExtraData();
+                        if (PackageConst.IsAssetStoreBuild) {
+                            data.Add("opened_url", openedUrl);
+                        }
+                        data.Add("enjoy_app", true);
+                        RequestHelper.RequestEditorEventWithRetry(new Stat(StatSource.Client, StatLevel.Debug, StatFeature.RateApp), data).Forget();
+                    }
+                    if (GUILayout.Button("No")) {
+                        HotReloadPrefs.RateAppShown = true;
+                        var data = new EditorExtraData();
+                        data.Add("enjoy_app", false);
+                        RequestHelper.RequestEditorEventWithRetry(new Stat(StatSource.Client, StatLevel.Debug, StatFeature.RateApp), data).Forget();
+                    }
+                }
+            }
+        }
+
+        internal static bool ShouldShowRateApp() {
+            if (HotReloadPrefs.RateAppShown) {
+                return false;
             }
             var activeDays = EditorCodePatcher.GetActiveDaysForRateApp();
             if (activeDays.Count < Constants.DaysToRateApp) {
-                return;
+                return false;
             }
-            EditorGUILayout.BeginVertical(renderAppBoxStyle);
-            EditorGUILayout.BeginHorizontal();
-            HotReloadGUIHelper.HelpBox("Are you enjoying using Hot Reload?", MessageType.Info, 11);
-            if (GUILayout.Button("Hide", NonExpandableLayout)) {
-                RequestHelper.RequestEditorEventWithRetry(new Stat(StatSource.Client, StatLevel.Debug, StatFeature.RateApp), new EditorExtraData { { "dismissed", true } }).Forget();
-                HotReloadPrefs.RateAppShown = true;
-            }
-            EditorGUILayout.EndHorizontal();
-            using (new EditorGUILayout.HorizontalScope()) {
-                if (GUILayout.Button("Yes")) {
-                    var openedUrl = PackageConst.IsAssetStoreBuild && EditorUtility.DisplayDialog("Rate Hot Reload", "Thank you for using Hot Reload!\n\nPlease consider leaving a review on the Asset Store to support us.", "Open in browser", "Cancel");
-                    if (openedUrl) {
-                        Application.OpenURL(Constants.UnityStoreRateAppURL);
-                    }
-                    HotReloadPrefs.RateAppShown = true;
-                    var data = new EditorExtraData();
-                    if (PackageConst.IsAssetStoreBuild) {
-                        data.Add("opened_url", openedUrl);
-                    }
-                    data.Add("enjoy_app", true);
-                    RequestHelper.RequestEditorEventWithRetry(new Stat(StatSource.Client, StatLevel.Debug, StatFeature.RateApp), data).Forget();
-                }
-                if (GUILayout.Button("No")) {
-                    HotReloadPrefs.RateAppShown = true;
-                    var data = new EditorExtraData();
-                    data.Add("enjoy_app", false);
-                    RequestHelper.RequestEditorEventWithRetry(new Stat(StatSource.Client, StatLevel.Debug, StatFeature.RateApp), data).Forget();
-                }
-            }
-            EditorGUILayout.EndVertical();
-            EditorGUILayout.Space();
-            EditorGUILayout.Space();
-            EditorGUILayout.Space();
-        }
-        
-        static readonly OpenURLButton autoRefreshTroubleshootingBtn = new OpenURLButton("Troubleshooting", Constants.TroubleshootingURL);
-        void RenderAutoRefreshTroubleshooting() {
-            EditorGUILayout.LabelField("Issues with Unity Auto Refresh?", GUILayout.Width(180));
-            autoRefreshTroubleshootingBtn.OnGUI();
-            GUILayout.FlexibleSpace();
+            return true;
         }
 
-        void RenderBottomBarCore(bool updateAvailable, SemVersion newVersion) {
-            if (updateAvailable) {
-                var btn = EditorStyles.miniButton;
-                var prevStyle = btn.fontStyle;
-                var prevSize = btn.fontSize;
-                var prevHeight = btn.fixedHeight;
-                try {
-                    btn.fontStyle = FontStyle.Bold;
-                    btn.fontSize = 11;
-                    btn.fixedHeight = 20.45f; // make same height as documentation button next to it
-                    if (GUILayout.Button($"Update To v{newVersion}", btn, GUILayout.MaxWidth(140), GUILayout.ExpandHeight(true))) {
-                        packageUpdateChecker.UpdatePackageAsync(newVersion).Forget(CancellationToken.None);
-                        
-                        //open changelog
-                        HotReloadPrefs.ShowChangeLog = true;
-                        Current.SelectTab(typeof(HotReloadAboutTab));
-                    }
-                } finally {
-                    btn.fontStyle = prevStyle;
-                    btn.fontSize = prevSize;
-                    btn.fixedHeight = prevHeight;
-                }
+        void RenderUpdateButton(SemVersion newVersion) {
+            if (GUILayout.Button($"Update To v{newVersion}", HotReloadWindowStyles.UpgradeButtonStyle)) {
+                packageUpdateChecker.UpdatePackageAsync(newVersion).Forget(CancellationToken.None);
             }
-            
-            aboutTab.documentationButton.OnGUI();
-            GUILayout.FlexibleSpace();
+        }
+        
+        internal static void RenderShowOnStartup() {
             var prevLabelWidth = EditorGUIUtility.labelWidth;
             try {
                 EditorGUIUtility.labelWidth = 105f;
                 using (new GUILayout.VerticalScope()) {
-                    GUILayout.FlexibleSpace();
                     using (new GUILayout.HorizontalScope()) {
                         GUILayout.Label("Show On Startup");
                         Rect buttonRect = GUILayoutUtility.GetLastRect();
@@ -309,52 +312,58 @@ namespace SingularityGroup.HotReload.Editor {
                             menu.DropDown(new Rect(buttonRect.x, buttonRect.y, 100, 0));
                         }
                     }
-                    GUILayout.FlexibleSpace();
                 }
             } finally {
                 EditorGUIUtility.labelWidth = prevLabelWidth;
             }
         }
-
-        struct PatchInfo {
-            public readonly string patchId;
-            public readonly bool apply;
-            public readonly string[] methodNames;
-
-            public PatchInfo(MethodPatchResponse response) : this(response.id, apply: true, methodNames: GetMethodNames(response)) { }
-
-            PatchInfo(string patchId, bool apply, string[] methodNames) {
-                this.patchId = patchId;
-                this.apply = apply;
-                this.methodNames = methodNames;
-            }
-
-
-            static string[] GetMethodNames(MethodPatchResponse response) {
-                var methodNames = new string[MethodCount(response)];
-                var methodIndex = 0;
-                for (int i = 0; i < response.patches.Length; i++) {
-                    for (int j = 0; j < response.patches[i].modifiedMethods.Length; j++) {
-                        var method = response.patches[i].modifiedMethods[j];
-                        var displayName = method.displayName;
-
-                        var spaceIndex = displayName.IndexOf(" ", StringComparison.Ordinal);
-                        if (spaceIndex > 0) {
-                            displayName = displayName.Substring(spaceIndex);
+        
+        internal static readonly OpenURLButton autoRefreshTroubleshootingBtn = new OpenURLButton("Troubleshooting", Constants.TroubleshootingURL);
+        void RenderBottomBarCore() {
+            bool troubleshootingShown = EditorCodePatcher.Started && HotReloadWindowStyles.windowScreenWidth >= 400;
+            bool alertsShown = EditorCodePatcher.Started && HotReloadWindowStyles.windowScreenWidth > Constants.EventFiltersShownHideWidth;
+            using (new EditorGUILayout.VerticalScope()) {
+                using (new EditorGUILayout.HorizontalScope(HotReloadWindowStyles.FooterStyle)) {
+                    if (!troubleshootingShown) {
+                        GUILayout.FlexibleSpace();
+                        if (alertsShown) {
+                            GUILayout.Space(-20);
                         }
+                    } else {
+                        GUILayout.Space(21);
+                    }
+                    GUILayout.Space(0);
+                    var lastRect = GUILayoutUtility.GetLastRect();
+                    // show events button when scrolls are hidden
+                    if (!HotReloadRunTab.CanRenderBars(RunTabState) && !RunTabState.starting) {
+                        using (new EditorGUILayout.VerticalScope()) {
+                            GUILayout.FlexibleSpace();
+                            var icon = HotReloadState.ShowingRedDot ? InvertibleIcon.EventsNew : InvertibleIcon.Events;
+                            if (GUILayout.Button(new GUIContent("", GUIHelper.GetInvertibleIcon(icon)))) {
+                                PopupWindow.Show(new Rect(lastRect.x, lastRect.y, 0, 0), HotReloadEventPopup.I);
+                            }
+                            GUILayout.FlexibleSpace();
+                        }
+                        GUILayout.Space(3f);
+                    }
+                    if (alertsShown) {
+                        using (new EditorGUILayout.VerticalScope()) {
+                            GUILayout.FlexibleSpace();
+                            HotReloadTimelineHelper.RenderAlertFilters();
+                            GUILayout.FlexibleSpace();
+                        }
+                    }
 
-                        methodNames[methodIndex++] = displayName;
+                    GUILayout.FlexibleSpace();
+                    if (troubleshootingShown) {
+                        using (new EditorGUILayout.VerticalScope()) {
+                            GUILayout.FlexibleSpace();
+                            autoRefreshTroubleshootingBtn.OnGUI();
+                            GUILayout.FlexibleSpace();
+                        }
+                        GUILayout.Space(21);
                     }
                 }
-                return methodNames;
-            }
-
-            static int MethodCount(MethodPatchResponse response) {
-                var count = 0;
-                for (int i = 0; i < response.patches.Length; i++) {
-                    count += response.patches[i].modifiedMethods.Length;
-                }
-                return count;
             }
         }
     }

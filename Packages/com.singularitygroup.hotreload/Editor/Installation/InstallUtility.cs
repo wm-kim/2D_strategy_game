@@ -25,7 +25,6 @@ namespace SingularityGroup.HotReload.Editor {
                 HotReloadWindow.Open();
             }
             if (HotReloadPrefs.LaunchOnEditorStart) {
-                HotReloadWindow.Open();
                 EditorCodePatcher.DownloadAndRun().Forget();
             }
             

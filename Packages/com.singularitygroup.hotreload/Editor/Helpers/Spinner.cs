@@ -3,16 +3,12 @@ using UnityEngine;
 
 namespace SingularityGroup.HotReload.Editor {
     internal class Spinner {
-        internal static string SpinnerIconPath => HotReloadWindowStyles.IsDarkMode ? "icon_loading_star_dark_mode_96": "icon_loading_star_light_mode_96";
-        internal static Texture2D _spinnerTextureLight;
-        internal static Texture2D _spinnerTextureDark;
-        internal static Texture2D spinnerTextureLight => _spinnerTextureLight ? _spinnerTextureLight : _spinnerTextureLight = Resources.Load<Texture2D>("icon_loading_star_light_mode_96");
-        internal static Texture2D spinnerTextureDark => _spinnerTextureDark ? _spinnerTextureDark : _spinnerTextureDark = Resources.Load<Texture2D>("icon_loading_star_dark_mode_96");
-        internal static Texture2D spinnerTexture => HotReloadWindowStyles.IsDarkMode ? spinnerTextureDark : spinnerTextureLight;
+        internal static string SpinnerIconPath => "icon_loading_star_light_mode_96";
+        internal static Texture2D spinnerTexture => GUIHelper.GetInvertibleIcon(InvertibleIcon.Spinner);
         private Texture2D _rotatedTextureLight;
         private Texture2D _rotatedTextureDark;
-        private Texture2D rotatedTextureLight => _rotatedTextureLight ? _rotatedTextureLight : _rotatedTextureLight = GetCopy(spinnerTextureLight);
-        private Texture2D rotatedTextureDark => _rotatedTextureDark ? _rotatedTextureDark : _rotatedTextureDark = GetCopy(spinnerTextureDark);
+        private Texture2D rotatedTextureLight => _rotatedTextureLight ? _rotatedTextureLight : _rotatedTextureLight = GetCopy(spinnerTexture);
+        private Texture2D rotatedTextureDark => _rotatedTextureDark ? _rotatedTextureDark : _rotatedTextureDark = GetCopy(spinnerTexture);
         internal Texture2D rotatedTexture => HotReloadWindowStyles.IsDarkMode ? rotatedTextureDark : rotatedTextureLight;
         
         private float _rotationAngle;

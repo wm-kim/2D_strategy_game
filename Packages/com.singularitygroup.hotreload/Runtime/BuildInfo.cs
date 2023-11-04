@@ -99,7 +99,7 @@ namespace SingularityGroup.HotReload {
                 if (buildMachineHostName == null || buildMachinePort == 0) {
                     return null;
                 }
-                return new PatchServerInfo(buildMachineHostName, buildMachinePort, commitHash, null, isRemote: true);
+                return new PatchServerInfo(buildMachineHostName, buildMachinePort, commitHash, null);
             }
         }
 
