@@ -6,6 +6,7 @@ using QFSW.QC;
 using UnityEngine;
 using UnityEngine.Pool;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.PlayerHand
 {
@@ -109,7 +110,7 @@ namespace Minimax.GamePlay.PlayerHand
             }
             catch (Exception e)
             {
-                DebugWrapper.LogError(e.Message);
+                Debug.LogError(e.Message);
             }
         }
 
@@ -126,7 +127,7 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (CardCount >= Define.MaxHandCardCount)
             {
-                DebugWrapper.LogWarning("손패가 가득 찼습니다.");
+                Debug.LogWarning("손패가 가득 찼습니다.");
                 return false;
             }
 
@@ -138,7 +139,7 @@ namespace Minimax.GamePlay.PlayerHand
         public void PrintAllPlayerHands()
         {
             foreach (var cardUID in m_cardUIDs)
-                DebugWrapper.Log(
+                Debug.Log(
                     $"Card UID: {cardUID}, Card ID {ClientCard.CardsCreatedThisGame[cardUID].Data.CardId}");
         }
 #endif

@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Unity.Netcode;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 #if DEDICATED_SERVER
 using System.Collections;
 using System.Collections.Generic;
@@ -35,7 +36,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         public override async void Enter()
         {
 #if DEDICATED_SERVER
-            DebugWrapper.Log("Ready server for accepting players");
+            Debug.Log("Ready server for accepting players");
             await MultiplayService.Instance.ReadyServerForPlayersAsync();
 #endif
         }
@@ -60,7 +61,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             {
                 if (!m_connectionManager.HasAvailablePlayerSlot())
                 {
-                    DebugWrapper.Log("Server reached max players, automatically starting game");
+                    Debug.Log("Server reached max players, automatically starting game");
                     GlobalManagers.Instance.Scene.LoadScene(SceneType.GamePlayScene, true);
                 }
             }
@@ -110,8 +111,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
             if (isConnectSuccess && isPlayerNumberValid)
             {
-                DebugWrapper.Log($"Client {clientId} approved");
-                DebugWrapper.Log($"Player {connectionPayload.playerName} assigned to player number {playerNumber}");
+                Debug.Log($"Client {clientId} approved");
+                Debug.Log($"Player {connectionPayload.playerName} assigned to player number {playerNumber}");
 
                 sessionPlayers.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
                     new SessionPlayerData(clientId, connectionPayload.playerName, playerNumber, true));
@@ -121,7 +122,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
 
             response.Approved = false;
-            DebugWrapper.Log($"Client {clientId} denied: {gameReturnStatus}");
+            Debug.Log($"Client {clientId} denied: {gameReturnStatus}");
 
             // If response.Approved is false, you can provide a message that explains the reason why via ConnectionApprovalResponse.
             // On the client-side, NetworkManager.DisconnectReason will be populated with this message via DisconnectReasonMessage

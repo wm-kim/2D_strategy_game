@@ -23,7 +23,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             }
             catch (Exception ex)
             {
-                DebugWrapper.LogWarning($"Error creating Multiplay allocation service.\n{ex}");
+                Debug.LogWarning($"Error creating Multiplay allocation service.\n{ex}");
             }
         }
         
@@ -49,7 +49,7 @@ namespace Minimax.UnityGamingService.Multiplayer
         private async UniTask<string> AwaitAllocationID()
         {
             var config = m_multiplayService.ServerConfig;
-            DebugWrapper.Log($"Awaiting DEDICATED_SERVER Allocation. Server Config is:\n" +
+            Debug.Log($"Awaiting DEDICATED_SERVER Allocation. Server Config is:\n" +
                 $"-ServerID: {config.ServerId}\n" +
                 $"-AllocationID: {config.AllocationId}\n" +
                 $"-Port: {config.Port}\n" +
@@ -63,7 +63,7 @@ namespace Minimax.UnityGamingService.Multiplayer
                 
                 if (!string.IsNullOrEmpty(configID) && string.IsNullOrEmpty(m_AllocationId))
                 {
-                    DebugWrapper.Log($"Config had AllocationID: {configID}");
+                    Debug.Log($"Config had AllocationID: {configID}");
                     m_AllocationId = configID;
                 }
                 
@@ -78,13 +78,13 @@ namespace Minimax.UnityGamingService.Multiplayer
             var payloadAllocation =
  await MultiplayService.Instance.GetPayloadAllocationFromJsonAs<MatchmakingResults>();
             var modelAsJson = JsonConvert.SerializeObject(payloadAllocation, Formatting.Indented);
-            DebugWrapper.Log(nameof(GetMatchmakerAllocationPayloadAsync) + ":" + Environment.NewLine + modelAsJson);
+            Debug.Log(nameof(GetMatchmakerAllocationPayloadAsync) + ":" + Environment.NewLine + modelAsJson);
             return payloadAllocation;
         }
         
         private void OnMultiplayAllocation(MultiplayAllocation allocation)
         {
-            DebugWrapper.Log($"DEDICATED_SERVER OnAllocation: {allocation.AllocationId}");
+            Debug.Log($"DEDICATED_SERVER OnAllocation: {allocation.AllocationId}");
             if (string.IsNullOrEmpty(allocation.AllocationId))
                 return;
             m_AllocationId = allocation.AllocationId;
@@ -92,13 +92,13 @@ namespace Minimax.UnityGamingService.Multiplayer
         
         private void OnMultiplayDeAllocation(MultiplayDeallocation deallocation)
         {
-            DebugWrapper.Log(
+            Debug.Log(
                 $"DEDICATED_SERVER Deallocated : ID: {deallocation.AllocationId}\nEvent: {deallocation.EventId}\nServer{deallocation.ServerId}");
         }
         
         private void OnMultiplayError(MultiplayError error)
         {
-            DebugWrapper.Log($"DEDICATED_SERVER Error : {error.Reason}\n{error.Detail}");
+            Debug.Log($"DEDICATED_SERVER Error : {error.Reason}\n{error.Detail}");
         }
 
         public void Dispose()

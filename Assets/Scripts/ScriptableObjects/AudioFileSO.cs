@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.ScriptableObjects
 {
@@ -23,7 +24,7 @@ namespace Minimax.ScriptableObjects
         public void Play(AudioSource audioSource, float volumeFactor = 1f)
         {
             if (Clips == null || Clips.Count == 0)
-                DebugWrapper.LogWarning("AudioFileSO: " + name + " has no audio clips.");
+                Debug.LogWarning("AudioFileSO: " + name + " has no audio clips.");
 
             audioSource.loop   = Loop;
             audioSource.volume = Volume * volumeFactor;

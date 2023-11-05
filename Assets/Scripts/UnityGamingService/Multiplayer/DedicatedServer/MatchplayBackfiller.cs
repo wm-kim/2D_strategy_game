@@ -37,11 +37,11 @@ namespace Minimax.UnityGamingService.Multiplayer
         {
             if (Backfilling)
             {
-                DebugWrapper.LogWarning("Already backfilling, no need to start another.");
+                Debug.LogWarning("Already backfilling, no need to start another.");
                 return;
             }
 
-            DebugWrapper.Log(
+            Debug.Log(
                 $"Starting backfill  Server: {m_localBackfillTicket.Properties.MatchProperties.Players.Count}/{Define.MaxConnectedPlayers}");
 
             // Create a ticket if we don't have one already (via Allocation)
@@ -60,13 +60,13 @@ namespace Minimax.UnityGamingService.Multiplayer
         {
             if (!Backfilling)
             {
-                DebugWrapper.LogWarning("Can't add users to the backfill ticket before it's been created");
+                Debug.LogWarning("Can't add users to the backfill ticket before it's been created");
                 return;
             }
             
             if (GetPlayerById(playerId) != null)
             {
-                DebugWrapper.LogWarning($"Player {playerId} is already in the Match. Ignoring add.");
+                Debug.LogWarning($"Player {playerId} is already in the Match. Ignoring add.");
                 return;
             }
             
@@ -82,7 +82,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             var playerToRemove = GetPlayerById(playerId);
             if (playerToRemove == null)
             {
-                DebugWrapper.LogWarning($"Player {playerId} is not in local backfill Data.");
+                Debug.LogWarning($"Player {playerId} is not in local backfill Data.");
                 return MatchPlayerCount;
             }
             
@@ -135,7 +135,7 @@ namespace Minimax.UnityGamingService.Multiplayer
         {
             if (!Backfilling)
             {
-                DebugWrapper.LogError("Can't stop backfilling before we start.");
+                Debug.LogError("Can't stop backfilling before we start.");
                 return;
             }
 

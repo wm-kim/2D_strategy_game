@@ -1,5 +1,6 @@
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.ScriptableObjects
 {
@@ -19,7 +20,7 @@ namespace Minimax.ScriptableObjects
                             "SingletonSO -> instance -> assets is null or length is less than 1 for type " +
                             typeof(T).ToString() + ".");
                     else if (assets.Length > 1)
-                        DebugWrapper.LogWarning("SingletonSO -> instance -> assets length is greater than 1 for type " +
+                        Debug.LogWarning("SingletonSO -> instance -> assets length is greater than 1 for type " +
                                                 typeof(T).ToString() + ".");
                     m_instance = assets[0];
                 }

@@ -4,6 +4,7 @@ using Minimax.Definitions;
 using Unity.Netcode;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.UnityGamingService.Multiplayer
 {
@@ -34,7 +35,7 @@ namespace Minimax.UnityGamingService.Multiplayer
                 if (IsPlayerNumberAvailable(i))
                     return i;
 
-            DebugWrapper.LogError("Server is full, There is no available player number");
+            Debug.LogError("Server is full, There is no available player number");
             return -1;
         }
 

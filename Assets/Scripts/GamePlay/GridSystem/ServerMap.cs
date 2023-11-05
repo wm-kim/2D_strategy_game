@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using Minimax.CoreSystems;
 using Minimax.UnityGamingService.Multiplayer;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.GridSystem
 {
@@ -21,7 +19,7 @@ namespace Minimax.GamePlay.GridSystem
         {
             if (!IsServer) return;
             m_serverGrid = new ServerGrid(mapSize, mapSize, m_pathFinding);
-            DebugWrapper.Log($"Map Generated with size {mapSize}x{mapSize}");
+            Debug.Log($"Map Generated with size {mapSize}x{mapSize} ");
 
             var sessionPlayers = SessionPlayerManager.Instance;
             foreach (var playerNumber in sessionPlayers.GetAllPlayerNumbers())

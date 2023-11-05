@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using Minimax.PropertyDrawer;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.CoreSystems
 {
@@ -27,7 +28,7 @@ namespace Minimax.CoreSystems
         {
             if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key), "키는 null일 수 없습니다.");
             var hasKey = cacheObjects.ContainsKey(key);
-            if (!hasKey) DebugWrapper.LogWarning($"캐시 오브젝트 키 {key}가 존재하지 않습니다.");
+            if (!hasKey) Debug.LogWarning($"캐시 오브젝트 키 {key}가 존재하지 않습니다.");
             return hasKey;
         }
 
@@ -105,7 +106,7 @@ namespace Minimax.CoreSystems
         /// </summary>
         public void RequestLoad(string key)
         {
-            DebugWrapper.Log($"RequestLoad {key}");
+            Debug.Log($"RequestLoad {key}");
             if (CheckHasKey(key))
             {
                 if (cacheObjects[key].IsAsync) cacheObjects[key].RequestLoadAsync();

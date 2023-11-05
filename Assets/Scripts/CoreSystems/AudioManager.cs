@@ -6,6 +6,7 @@ using Minimax.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.Pool;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.CoreSystems
 {
@@ -48,7 +49,7 @@ namespace Minimax.CoreSystems
 
             foreach (var audioFile in m_audioFiles)
                 if (Enum.TryParse(audioFile.name, out AudioLib sfxEnum)) m_audioFileDict[sfxEnum] = audioFile;
-                else DebugWrapper.LogError($"Audio File {audioFile.name} 을 SFX enum으로 변환할 수 없습니다.");
+                else Debug.LogError($"Audio File {audioFile.name} 을 SFX enum으로 변환할 수 없습니다.");
         }
 
         private void ConfigureAudioSourcePool()
@@ -70,7 +71,7 @@ namespace Minimax.CoreSystems
         {
             if (!m_audioFileDict.ContainsKey(audio))
             {
-                DebugWrapper.LogError($"BGM with name {audio} does not exist in the dictionary.");
+                Debug.LogError($"BGM with name {audio} does not exist in the dictionary.");
                 return;
             }
 
@@ -94,7 +95,7 @@ namespace Minimax.CoreSystems
         {
             if (!m_audioFileDict.ContainsKey(audio))
             {
-                DebugWrapper.LogError($"SFX with name {audio} does not exist in the dictionary.");
+                Debug.LogError($"SFX with name {audio} does not exist in the dictionary.");
                 return;
             }
 
@@ -119,7 +120,7 @@ namespace Minimax.CoreSystems
 
             if (audioSource == null)
             {
-                DebugWrapper.LogWarning($"No active audio found for {audio.ToString()}.");
+                Debug.LogWarning($"No active audio found for {audio.ToString()}.");
                 return;
             }
 

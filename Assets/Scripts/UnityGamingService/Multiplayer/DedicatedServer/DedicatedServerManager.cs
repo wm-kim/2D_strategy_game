@@ -34,7 +34,7 @@ namespace Minimax.UnityGamingService.Multiplayer
         /// </summary>
         public async UniTask StartGameServerAysnc()
         {
-            DebugWrapper.Log("Starting Dedicated Server...");
+            Debug.Log("Starting Dedicated Server...");
             
             
             // The server should respond to query requests irrespective of the server being allocated.
@@ -46,17 +46,17 @@ namespace Minimax.UnityGamingService.Multiplayer
                 var matchmakerPayload = await GetMatchmakerPayload(k_multiplayServiceTimeout);
                 if (matchmakerPayload != null)
                 {
-                    DebugWrapper.Log($"Got payload: {matchmakerPayload}.");
+                    Debug.Log($"Got payload: {matchmakerPayload}.");
                     await StartBackfill(matchmakerPayload);
                 }
                 else
                 {
-                    DebugWrapper.Log($"Getting matchmaker payload timed out");
+                    Debug.Log($"Getting matchmaker payload timed out");
                 }
             }
             catch (Exception ex)
             {
-                DebugWrapper.LogWarning($"Something went wrong trying to set up the Services:\n{ex} ");
+                Debug.LogWarning($"Something went wrong trying to set up the Services:\n{ex} ");
             }
             
             var unityTransport = NetworkManager.Singleton.GetComponent<UnityTransport>();
@@ -65,7 +65,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             m_serverPort = config.Port;
             m_queryPort = config.QueryPort;
             unityTransport.SetConnectionData(m_serverIP, (ushort)m_serverPort, "0.0.0.0");
-            DebugWrapper.Log($"Starting server with: {m_serverIP}:{m_serverPort}.");
+            Debug.Log($"Starting server with: {m_serverIP}:{m_serverPort}.");
              
             GlobalManagers.Instance.Connection.StartServer();
 
@@ -109,7 +109,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             var playerCount = m_backfiller.RemovePlayerFromMatch(playerId);
             m_multiplayServerQueryService.RemovePlayer();
             
-            DebugWrapper.Log($"Player {playerId} left. {playerCount} players remaining.");
+            Debug.Log($"Player {playerId} left. {playerCount} players remaining.");
             // if (playerCount <= 0)
             // {
             //     CloseServer().Forget();
@@ -124,7 +124,7 @@ namespace Minimax.UnityGamingService.Multiplayer
 
         public async void CloseServer()
         {
-            DebugWrapper.Log("Closing server...");
+            Debug.Log("Closing server...");
             await m_backfiller.StopBackfill();
             Dispose();
             Application.Quit();
@@ -138,12 +138,12 @@ namespace Minimax.UnityGamingService.Multiplayer
             
             if (String.IsNullOrEmpty(serverAuthResponse.error))
             {
-                DebugWrapper.Log("Server Authentication Success");
+                Debug.Log("Server Authentication Success");
                 ServerBearerToken = serverAuthResponse.token;
             }
             else
             {
-                DebugWrapper.LogError(serverAuthResponse.error);
+                Debug.LogError(serverAuthResponse.error);
             }
         }
         

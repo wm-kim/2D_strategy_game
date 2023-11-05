@@ -11,6 +11,7 @@ using Minimax.UnityGamingService.Multiplayer;
 using Unity.Netcode;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 #if DEDICATED_SERVER
 using Unity.Services.Multiplay;
 using UnityEngine.Serialization;
@@ -90,7 +91,7 @@ namespace Minimax.GamePlay
             if (IsServer)
             {
                 SessionPlayerManager.Instance.OnSessionStarted();
-                DebugWrapper.Log("Session started");
+                Debug.Log("Session started");
             }
 
             base.OnNetworkSpawn();

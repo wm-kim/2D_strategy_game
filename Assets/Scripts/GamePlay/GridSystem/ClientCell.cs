@@ -5,6 +5,7 @@ using Minimax.ScriptableObjects;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.GridSystem
 {
@@ -89,7 +90,7 @@ namespace Minimax.GamePlay.GridSystem
         {
             if (!IsPlaceable)
             {
-                DebugWrapper.LogError($"Cell {Coord} is not placeable");
+                Debug.LogError($"Cell {Coord} is not placeable");
                 return false;
             }
 

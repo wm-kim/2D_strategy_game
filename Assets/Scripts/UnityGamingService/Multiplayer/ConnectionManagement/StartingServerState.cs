@@ -52,7 +52,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         private void StartServerFailed()
         {
-            DebugWrapper.LogError("Failed to start server");
+            Debug.LogError("Failed to start server");
             m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.StartServerFailed);
             m_connectionManager.ChangeState(m_connectionManager.Offline);
             m_connectionManager.ShutDownApplication();

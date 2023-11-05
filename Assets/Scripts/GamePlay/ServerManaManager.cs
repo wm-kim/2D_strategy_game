@@ -6,6 +6,7 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay
 {
@@ -80,7 +81,7 @@ namespace Minimax.GamePlay
                 }
                 else
                 {
-                    DebugWrapper.LogError($"Player {playerNumber} does not have enough mana");
+                    Debug.LogError($"Player {playerNumber} does not have enough mana");
                     return false;
                 }
             }

@@ -4,6 +4,7 @@ using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax
 {
@@ -23,7 +24,7 @@ namespace Minimax
             {
                 if (m_audioSource != null && m_audioSource.isPlaying && m_audioSource.loop)
                 {
-                    DebugWrapper.LogWarning("Audio is already playing in loop. Stop the current audio before playing a new one.");
+                    Debug.LogWarning("Audio is already playing in loop. Stop the current audio before playing a new one.");
                     return;
                 }
                 

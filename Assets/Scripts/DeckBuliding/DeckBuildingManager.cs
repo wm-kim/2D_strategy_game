@@ -8,6 +8,7 @@ using Minimax.UI.View.Popups;
 using Unity.Services.CloudCode;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.DeckBuliding
 {
@@ -74,7 +75,7 @@ namespace Minimax.DeckBuliding
             }
             catch (CloudCodeException exception)
             {
-                DebugWrapper.LogError(exception.Message);
+                Debug.LogError(exception.Message);
             }
         }
 

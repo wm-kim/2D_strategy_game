@@ -21,14 +21,14 @@ namespace Utilities
             if (!m_services.ContainsKey(type))
                 m_services[type] = service;
             else
-                DebugWrapper.LogWarning($"Service of type {type} is already registered.");
+                Debug.LogWarning($"Service of type {type} is already registered.");
 
             if (!string.IsNullOrEmpty(serviceName))
             {
                 if (!m_namedServices.ContainsKey(serviceName))
                     m_namedServices[serviceName] = service;
                 else
-                    DebugWrapper.LogWarning($"Service of name {serviceName} is already registered.");
+                    Debug.LogWarning($"Service of name {serviceName} is already registered.");
             }
         }
 
@@ -41,7 +41,7 @@ namespace Utilities
             }
             else
             {
-                DebugWrapper.LogError($"No service of type {type} is registered.");
+                Debug.LogError($"No service of type {type} is registered.");
                 return null;
             }
         }
@@ -54,7 +54,7 @@ namespace Utilities
             }
             else
             {
-                DebugWrapper.LogError($"No service with name {serviceName} is registered.");
+                Debug.LogError($"No service with name {serviceName} is registered.");
                 return null;
             }
         }
@@ -69,7 +69,7 @@ namespace Utilities
             }
             else
             {
-                DebugWrapper.LogWarning($"No service with name {serviceName} is registered.");
+                Debug.LogWarning($"No service with name {serviceName} is registered.");
             }
         }
     }

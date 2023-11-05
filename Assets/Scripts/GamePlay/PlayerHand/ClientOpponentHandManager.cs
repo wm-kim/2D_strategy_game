@@ -4,6 +4,7 @@ using Minimax.Definitions;
 using Minimax.UI.View.ComponentViews.GamePlay;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.PlayerHand
 {
@@ -46,7 +47,7 @@ namespace Minimax.GamePlay.PlayerHand
             }
             catch (Exception e)
             {
-                DebugWrapper.LogError(e.Message);
+                Debug.LogError(e.Message);
             }
         }
 
@@ -84,7 +85,7 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (CardCount >= Define.MaxHandCardCount)
             {
-                DebugWrapper.LogWarning("상대방의 손패가 가득 찼습니다.");
+                Debug.LogWarning("상대방의 손패가 가득 찼습니다.");
                 return false;
             }
 

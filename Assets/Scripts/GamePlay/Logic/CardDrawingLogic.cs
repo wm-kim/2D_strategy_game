@@ -10,6 +10,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.Logic
 {
@@ -32,7 +33,7 @@ namespace Minimax.GamePlay.Logic
 
         public void CommandDrawAllPlayerInitialCards()
         {
-            DebugWrapper.Log("Server is drawing initial cards for all players");
+            Debug.Log("Server is drawing initial cards for all players");
             var sessionPlayers  = SessionPlayerManager.Instance;
             var clientRpcParams = sessionPlayers.ClientRpcParams;
 
@@ -61,7 +62,7 @@ namespace Minimax.GamePlay.Logic
         {
             try
             {
-                DebugWrapper.Log($"Drawing a card for player {playerNumber}");
+                Debug.Log($"Drawing a card for player {playerNumber}");
                 var sessionPlayers  = SessionPlayerManager.Instance;
                 var clientRpcParams = sessionPlayers.ClientRpcParams;
                 var opponentNumber  = sessionPlayers.GetOpponentPlayerNumber(playerNumber);
@@ -72,7 +73,7 @@ namespace Minimax.GamePlay.Logic
             }
             catch (Exception e)
             {
-                DebugWrapper.LogError(e.Message);
+                Debug.LogError(e.Message);
             }
         }
 

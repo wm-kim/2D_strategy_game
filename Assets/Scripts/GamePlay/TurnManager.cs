@@ -8,6 +8,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 using Utilities;
+using Debug = Utilities.Debug;
 using Random = UnityEngine.Random;
 
 namespace Minimax.GamePlay
@@ -90,7 +91,7 @@ namespace Minimax.GamePlay
         private void SetMyPlayerNumberClientRpc(int myPlayerNumber, ClientRpcParams clientRpcParams = default)
         {
             m_myPlayerNumber = myPlayerNumber;
-            DebugWrapper.Log($"My Player Number is {m_myPlayerNumber}");
+            Debug.Log($"My Player Number is {m_myPlayerNumber}");
         }
 
         public void StartInitialTurn()
@@ -111,7 +112,7 @@ namespace Minimax.GamePlay
             if (!IsServer) return;
 
             m_whosTurn.Value = Random.Range(0, 2);
-            DebugWrapper.Log($"Player {m_whosTurn.Value} goes first");
+            Debug.Log($"Player {m_whosTurn.Value} goes first");
         }
 
         private void StartNewTurn()
@@ -142,7 +143,7 @@ namespace Minimax.GamePlay
 
         private void OnTurnChanged(int oldPlayerNumber, int newPlayerNumber)
         {
-            DebugWrapper.Log($"Player {newPlayerNumber} Turn Starts");
+            Debug.Log($"Player {newPlayerNumber} Turn Starts");
             OnClientTurnStart?.Invoke(newPlayerNumber);
             var isMyTurn = newPlayerNumber == MyPlayerNumber;
             m_turnText.text              = isMyTurn ? "End Turn" : "Opponent's Turn";
@@ -156,7 +157,7 @@ namespace Minimax.GamePlay
         {
             if (!IsMyTurn)
             {
-                DebugWrapper.LogError(
+                Debug.LogError(
                     $"Player {MyPlayerNumber} request denied to {logMessage} because it's not their turn");
                 return false;
             }
@@ -182,7 +183,7 @@ namespace Minimax.GamePlay
 
             if (playerNumber != m_whosTurn.Value)
             {
-                DebugWrapper.LogError($"Player {playerNumber} request denied because it's not their turn");
+                Debug.LogError($"Player {playerNumber} request denied because it's not their turn");
                 return false;
             }
 

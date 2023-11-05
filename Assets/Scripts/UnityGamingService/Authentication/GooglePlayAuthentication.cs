@@ -8,6 +8,7 @@ using Unity.Services.Core;
 using Unity.Services.Core.Environments;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.UnityGamingService.Authentication
 {
@@ -48,7 +49,7 @@ namespace Minimax.UnityGamingService.Authentication
                 }
 
                 await UnityServices.InitializeAsync(options);
-                DebugWrapper.Log(UnityServices.State.ToString());
+                Debug.Log(UnityServices.State.ToString());
             }
         }
 
@@ -57,18 +58,18 @@ namespace Minimax.UnityGamingService.Authentication
             AuthenticationService.Instance.SignedIn += () =>
             {
                 // Shows how to get the player ID
-                DebugWrapper.Log($"Player ID: {AuthenticationService.Instance.PlayerId}");
+                Debug.Log($"Player ID: {AuthenticationService.Instance.PlayerId}");
 
                 // Shows how to get the access token
-                DebugWrapper.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
+                Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
             };
 
             AuthenticationService.Instance.SignInFailed += (exception) =>
             {
-                DebugWrapper.LogError($"Sign in failed: {exception.Message}");
+                Debug.LogError($"Sign in failed: {exception.Message}");
             };
 
-            AuthenticationService.Instance.SignedOut += () => { DebugWrapper.Log("Player signed out."); };
+            AuthenticationService.Instance.SignedOut += () => { Debug.Log("Player signed out."); };
         }
 
 
@@ -79,10 +80,10 @@ namespace Minimax.UnityGamingService.Authentication
             {
                 if (success == SignInStatus.Success)
                 {
-                    DebugWrapper.Log("Login with Google Play games successful.");
+                    Debug.Log("Login with Google Play games successful.");
                     PlayGamesPlatform.Instance.RequestServerSideAccess(true, code =>
                     {
-                        DebugWrapper.Log("Authorization code: " + code);
+                        Debug.Log("Authorization code: " + code);
                         // This token serves as an example to be used for SignInWithGooglePlayGames
                         m_googlePlayToken = code;
                         AuthenticateWithUnity(code).Forget();
@@ -91,7 +92,7 @@ namespace Minimax.UnityGamingService.Authentication
                 else
                 {
                     m_googlePlayError = "Failed to retrieve Google play games authorization code";
-                    DebugWrapper.Log("Login Unsuccessful");
+                    Debug.Log("Login Unsuccessful");
                 }
             });
         }
@@ -101,20 +102,20 @@ namespace Minimax.UnityGamingService.Authentication
             try
             {
                 await AuthenticationService.Instance.SignInWithGooglePlayGamesAsync(authCode);
-                DebugWrapper.Log("Login with Unity successful.");
+                Debug.Log("Login with Unity successful.");
             }
             catch (AuthenticationException ex)
             {
                 // Compare error code to AuthenticationErrorCodes
                 // Notify the player with the proper error message
-                DebugWrapper.LogException(ex);
+                Debug.LogException(ex);
                 throw;
             }
             catch (RequestFailedException ex)
             {
                 // Compare error code to CommonErrorCodes
                 // Notify the player with the proper error message
-                DebugWrapper.LogException(ex);
+                Debug.LogException(ex);
                 throw;
             }
         }

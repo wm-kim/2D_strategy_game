@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Unity.Netcode;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 #if DEDICATED_SERVER
 using System.Collections;
 using System.Collections.Generic;
@@ -63,8 +64,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
             if (isConnectSuccess && isPlayerNumberAvailable)
             {
-                DebugWrapper.Log($"Client {clientId.ToString()} approved");
-                DebugWrapper.Log(
+                Debug.Log($"Client {clientId.ToString()} approved");
+                Debug.Log(
                     $"Player {connectionPayload.playerName} assigned to player number {playerNumber.ToString()}");
 
                 sessionPlayers.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
@@ -75,7 +76,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
 
             response.Approved = false;
-            DebugWrapper.Log($"Client {clientId.ToString()} denied: {gameReturnStatus}");
+            Debug.Log($"Client {clientId.ToString()} denied: {gameReturnStatus}");
 
             // If response.Approved is false, you can provide a message that explains the reason why via ConnectionApprovalResponse.
             // On the client-side, NetworkManager.DisconnectReason will be populated with this message via DisconnectReasonMessage

@@ -5,6 +5,7 @@ using Unity.Services.Core;
 using Unity.Services.Core.Environments;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 #if UNITY_EDITOR
 #endif
 
@@ -57,7 +58,7 @@ namespace Minimax.UnityGamingService.Authentication
                 }
 #endif
                 await UnityServices.InitializeAsync(options);
-                DebugWrapper.Log(UnityServices.State.ToString());
+                Debug.Log(UnityServices.State.ToString());
             }
         }
 
@@ -66,44 +67,44 @@ namespace Minimax.UnityGamingService.Authentication
             AuthenticationService.Instance.SignedIn += () =>
             {
                 // Shows how to get the player ID
-                DebugWrapper.Log($"Player ID: {AuthenticationService.Instance.PlayerId}");
+                Debug.Log($"Player ID: {AuthenticationService.Instance.PlayerId}");
 
                 // Shows how to get the access token
-                DebugWrapper.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
+                Debug.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
             };
 
             AuthenticationService.Instance.SignInFailed += (exception) =>
             {
-                DebugWrapper.LogError($"Sign in failed: {exception.Message}");
+                Debug.LogError($"Sign in failed: {exception.Message}");
             };
 
-            AuthenticationService.Instance.SignedOut += () => { DebugWrapper.Log("Player signed out."); };
+            AuthenticationService.Instance.SignedOut += () => { Debug.Log("Player signed out."); };
         }
 
         private async UniTask SignInAnonymously()
         {
             if (AuthenticationService.Instance.IsSignedIn)
             {
-                DebugWrapper.Log("Already signed in!");
+                Debug.Log("Already signed in!");
                 return;
             }
 
             try
             {
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                DebugWrapper.Log("Sign in anonymously succeeded!");
+                Debug.Log("Sign in anonymously succeeded!");
             }
             catch (AuthenticationException ex)
             {
                 // Compare error code to AuthenticationErrorCodes
                 // Notify the player with the proper error message
-                DebugWrapper.LogException(ex);
+                Debug.LogException(ex);
             }
             catch (RequestFailedException ex)
             {
                 // Compare error code to CommonErrorCodes
                 // Notify the player with the proper error message
-                DebugWrapper.LogException(ex);
+                Debug.LogException(ex);
             }
         }
     }

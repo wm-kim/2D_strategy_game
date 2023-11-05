@@ -11,6 +11,7 @@ using Minimax.UnityGamingService.CloudSave;
 using UnityEngine;
 using TMPro;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.UI.View.Pages
 {
@@ -59,15 +60,15 @@ namespace Minimax.UI.View.Pages
 
         private async UniTask FetchDecksFromCloud(bool isUpdate)
         {
-            DebugWrapper.Log("Fetching decks from cloud...");
+            Debug.Log("Fetching decks from cloud...");
             var decks = await CloudService.Load<Dictionary<int, DeckDTO>>(Define.DeckCloud);
             if (decks == null || decks.Count == 0)
             {
-                DebugWrapper.LogWarning("No deck data found.");
+                Debug.LogWarning("No deck data found.");
             }
             else
             {
-                DebugWrapper.Log("Decks successfully fetched from cloud.");
+                Debug.Log("Decks successfully fetched from cloud.");
                 m_deckCollectionSO.Decks = decks;
 
                 // setting recent deck id in PlayerPrefs

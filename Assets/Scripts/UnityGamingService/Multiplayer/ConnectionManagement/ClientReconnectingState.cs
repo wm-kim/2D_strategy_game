@@ -7,6 +7,7 @@ using Minimax.UI.View.Popups;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
@@ -83,7 +84,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
             else // 최대 재연결 시도 횟수를 초과한 경우
             {
-                DebugWrapper.Log("Used up all reconnection attempts, giving up.");
+                Debug.Log("Used up all reconnection attempts, giving up.");
                 if (string.IsNullOrEmpty(disconnectReason))
                 {
                     m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.GenericDisconnect);
@@ -116,12 +117,12 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             if (m_attempts > 0) yield return new WaitForSeconds(Define.TimeBetweenReconnectionAttempts);
 
             // 연결을 시도합니다.
-            DebugWrapper.Log("Attempting to reconnect to server...");
+            Debug.Log("Attempting to reconnect to server...");
 
             m_connectionManager.NetworkManager.Shutdown();
             // wait until NetworkManager completes shutting down
             yield return new WaitWhile(() => m_connectionManager.NetworkManager.ShutdownInProgress);
-            DebugWrapper.Log($"Reconnecting attempt {m_attempts + 1}/{Define.MaxReconnectionAttempts}...");
+            Debug.Log($"Reconnecting attempt {m_attempts + 1}/{Define.MaxReconnectionAttempts}...");
 
             // If first attempt, wait some time before attempting to reconnect to give time to services to update
             if (m_attempts == 0) yield return new WaitForSeconds(Define.TimeBeforeFirstAttempt);

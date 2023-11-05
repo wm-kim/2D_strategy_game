@@ -4,6 +4,7 @@ using Minimax.ScriptableObjects.CardData;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.DeckBuliding
 {
@@ -20,7 +21,7 @@ namespace Minimax.DeckBuliding
         public CardBaseData GetCardData(int cardID)
         {
             if (m_cardDB.TryGetValue(cardID, out var data)) return data;
-            DebugWrapper.LogError($"CardDBManager: Card ID {cardID} not found in DB");
+            Debug.LogError($"CardDBManager: Card ID {cardID} not found in DB");
             return null;
         }
 
@@ -36,7 +37,7 @@ namespace Minimax.DeckBuliding
             }
             else
             {
-                DebugWrapper.LogError("CardDBManager: Failed to load DB cards");
+                Debug.LogError("CardDBManager: Failed to load DB cards");
                 return false;
             }
         }

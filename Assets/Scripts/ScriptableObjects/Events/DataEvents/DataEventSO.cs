@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.Events;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.ScriptableObjects.Events.DataEvents
 {
@@ -31,7 +32,7 @@ namespace Minimax.ScriptableObjects.Events.DataEvents
             Value = value;
             if (OnEventRaised != null) OnEventRaised.Invoke(value);
             else
-                DebugWrapper.LogWarning($"DataEventSO: " + name + " has no listeners!");
+                Debug.LogWarning($"DataEventSO: " + name + " has no listeners!");
         }
     }
 }

@@ -3,6 +3,7 @@ using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 using Random = UnityEngine.Random;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
@@ -35,7 +36,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         protected void ConnectClient()
         {
-            DebugWrapper.Log("Connecting client...");
+            Debug.Log("Connecting client...");
 
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
@@ -51,8 +52,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             }
             catch (Exception e)
             {
-                DebugWrapper.LogError("Error connecting client, see following exception");
-                DebugWrapper.LogException(e);
+                Debug.LogError("Error connecting client, see following exception");
+                Debug.LogException(e);
                 throw;
             }
         }
@@ -60,7 +61,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         private void StartingClientFailed()
         {
             var disconnectReason = m_connectionManager.NetworkManager.DisconnectReason;
-            DebugWrapper.Log("Client disconnected");
+            Debug.Log("Client disconnected");
 
             if (string.IsNullOrEmpty(disconnectReason))
             {

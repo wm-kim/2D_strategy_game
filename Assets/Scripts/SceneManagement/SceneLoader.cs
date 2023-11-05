@@ -5,6 +5,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.SceneManagement
 {
@@ -121,7 +122,7 @@ namespace Minimax.SceneManagement
 
             if (m_currentlyLoadedScene == sceneToLoad)
             {
-                Debug.LogWarning($"Trying to load scene {sceneToLoad} which is already loaded");
+                UnityEngine.Debug.LogWarning($"Trying to load scene {sceneToLoad} which is already loaded");
                 return;
             }
 
@@ -190,7 +191,7 @@ namespace Minimax.SceneManagement
                 case SceneEventType.LoadComplete:
                 {
                     if (NetworkManager.IsClient)
-                        DebugWrapper.Log($"Loaded the {sceneEvent.SceneName} scene on " +
+                        Debug.Log($"Loaded the {sceneEvent.SceneName} scene on " +
                                          $"{clientOrServer}-({sceneEvent.ClientId}).");
                     break;
                 }
@@ -199,7 +200,7 @@ namespace Minimax.SceneManagement
                 {
                     var load = sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted ? "Load" : "Unload";
                     if (NetworkManager.IsClient)
-                        DebugWrapper.Log($"{load} {sceneEvent.SceneName} event completed for the following client " +
+                        Debug.Log($"{load} {sceneEvent.SceneName} event completed for the following client " +
                                          $"identifiers : ({string.Join(",", sceneEvent.ClientsThatCompleted)})");
                     if (load == "Load") SceneLoadCompleted(sceneEvent.SceneName);
                     if (load == "Unload") m_unloadCompleted = true;
@@ -220,7 +221,7 @@ namespace Minimax.SceneManagement
         {
             var sceneEventAction = isLoading ? "load" : "unload";
             if (status != SceneEventProgressStatus.Started)
-                DebugWrapper.LogWarning($"Failed to {sceneEventAction} {targetScene} with" +
+                Debug.LogWarning($"Failed to {sceneEventAction} {targetScene} with" +
                                         $" a {nameof(SceneEventProgressStatus)}: {status}");
         }
     }

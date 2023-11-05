@@ -43,7 +43,7 @@ namespace Minimax.GamePlay.PlayerHand
                     return;
                 }
 
-            DebugWrapper.LogError($"Card with UID {cardUID} not found in player {playerNumber} hand");
+            Debug.LogError($"Card with UID {cardUID} not found in player {playerNumber} hand");
         }
 
 #if UNITY_EDITOR
@@ -52,9 +52,9 @@ namespace Minimax.GamePlay.PlayerHand
         {
             foreach (var player in m_plyersCardInHand)
             {
-                DebugWrapper.Log($"Player Number {player.Key} has {player.Value.Count} cards in hand");
+                Debug.Log($"Player Number {player.Key} has {player.Value.Count} cards in hand");
                 foreach (var cardUID in player.Value)
-                    DebugWrapper.Log(
+                    Debug.Log(
                         $"Card UID: {cardUID}, Card ID {ServerCard.CardsCreatedThisGame[cardUID].Data.CardId}");
             }
         }

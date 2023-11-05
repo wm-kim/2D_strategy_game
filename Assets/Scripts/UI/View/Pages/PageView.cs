@@ -2,6 +2,7 @@ using DG.Tweening;
 using Minimax.PropertyDrawer;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.UI.View.Pages
 {
@@ -33,7 +34,7 @@ namespace Minimax.UI.View.Pages
         private void SetTagIfNotSet()
         {
             if (gameObject.CompareTag("Page")) return;
-            DebugWrapper.LogWarning($"gameObject {gameObject.name} does not have tag Page, setting it now.");
+            Debug.LogWarning($"gameObject {gameObject.name} does not have tag Page, setting it now.");
             gameObject.tag = "Page";
         }
 

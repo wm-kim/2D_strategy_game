@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using Utilities;
+using Debug = Utilities.Debug;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
@@ -83,7 +84,7 @@ namespace Minimax.GamePlay
 
         public void SetCameraPositionAndBoundary(Vector3 center, Vector2 size)
         {
-            DebugWrapper.Log($"SetCameraPositionAndBoundary: center: {center}, size: {size}");
+            Debug.Log($"SetCameraPositionAndBoundary: center: {center}, size: {size}");
             m_camera.transform.position = center;
             m_currentFocusPosition      = center;
             m_targetPosition            = center;

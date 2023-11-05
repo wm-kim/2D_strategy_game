@@ -33,7 +33,7 @@ namespace Utilities
 
             s_instance = FindExistingInstance() ?? CreateNewInstance();
 
-            if (s_instance == null) Debug.LogError("Failed to create an instance of " + typeof(T).Name);
+            if (s_instance == null) UnityEngine.Debug.LogError("Failed to create an instance of " + typeof(T).Name);
         }
 
         // 존재하는 인스턴스 찾기
@@ -43,7 +43,7 @@ namespace Utilities
 
             // 둘 이상의 인스턴스가 존재할 경우 에러 로깅
             if (existingInstances.Length > 1)
-                Debug.LogError("There is more than one " + typeof(T).Name + " in the scene.");
+                UnityEngine.Debug.LogError("There is more than one " + typeof(T).Name + " in the scene.");
             // 여기서 게임을 중단하거나 추가 조치를 취할 수 있습니다.
             return existingInstances.Length > 0 ? existingInstances[0] : null;
         }

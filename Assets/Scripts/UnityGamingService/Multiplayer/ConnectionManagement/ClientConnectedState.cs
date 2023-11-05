@@ -3,6 +3,7 @@ using Minimax.SceneManagement;
 using Minimax.UI.View.Popups;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
@@ -28,7 +29,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         public override void OnClientDisconnect(ulong clientId)
         {
             var disconnectReason = m_connectionManager.NetworkManager.DisconnectReason;
-            DebugWrapper.Log($"Client {clientId} disconnected");
+            Debug.Log($"Client {clientId} disconnected");
 
             if (string.IsNullOrEmpty(disconnectReason))
             {
@@ -40,7 +41,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 var connectStatus = JsonUtility.FromJson<ConnectStatus>(disconnectReason);
                 m_connectionManager.ConnectStatusChannel.Publish(connectStatus);
 
-                DebugWrapper.Log($"Disconnected reason: {connectStatus.ToString()}");
+                Debug.Log($"Disconnected reason: {connectStatus.ToString()}");
                 m_connectionManager.ChangeState(m_connectionManager.Offline);
             }
         }

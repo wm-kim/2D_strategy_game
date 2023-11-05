@@ -4,6 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay
 {
@@ -88,7 +89,7 @@ namespace Minimax.GamePlay
         {
             if (!IsServer) return;
 
-            DebugWrapper.Log("EndTimerImmediately");
+            Debug.Log("EndTimerImmediately");
             TimeFinished();
         }
 

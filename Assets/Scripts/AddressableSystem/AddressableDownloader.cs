@@ -133,7 +133,7 @@ namespace Minimax.AddressableSystem
         /// </summary>
         private void OnException(AsyncOperationHandle handle, Exception exception)
         {
-            DebugWrapper.LogError(exception.Message);
+            Debug.LogError(exception.Message);
 
             if (exception is UnityEngine.ResourceManagement.Exceptions.RemoteProviderException)
             {

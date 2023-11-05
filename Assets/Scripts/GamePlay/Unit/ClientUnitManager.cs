@@ -6,6 +6,7 @@ using Minimax.GamePlay.GridSystem;
 using Minimax.GamePlay.Logic;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.Unit
 {
@@ -69,7 +70,7 @@ namespace Minimax.GamePlay.Unit
             var clientUnit = ClientUnit.UnitsCreatedThisGame[unitUID];
             if (!clientUnit.IsMine)
             {
-                DebugWrapper.Log("You don't own this unit");
+                Debug.Log("You don't own this unit");
                 return false;
             }
 
@@ -88,7 +89,7 @@ namespace Minimax.GamePlay.Unit
         private void OnTapUnit(ClientCell clientCell)
         {
             m_selectedUnitUID = clientCell.CurrentUnitUID;
-            DebugWrapper.Log($"Unit {m_selectedUnitUID} is tapped");
+            Debug.Log($"Unit {m_selectedUnitUID} is tapped");
             var clientUnit = ClientUnit.UnitsCreatedThisGame[m_selectedUnitUID];
             var moveRange  = clientUnit.MoveRange;
             m_clientMap.DisableHighlightCells();

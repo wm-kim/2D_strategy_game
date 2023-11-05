@@ -11,6 +11,7 @@ using Unity.Services.Matchmaker;
 using UnityEngine;
 using Utilities;
 using Utilities.PubSub;
+using Debug = Utilities.Debug;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
@@ -128,7 +129,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public void ChangeState(ConnectionState nextState)
         {
-            DebugWrapper.Log(
+            Debug.Log(
                 $"{name}: Changed connection state from {m_currentState.GetType().Name} to {nextState.GetType().Name}.");
 
             if (m_currentState != null) m_currentState.Exit();

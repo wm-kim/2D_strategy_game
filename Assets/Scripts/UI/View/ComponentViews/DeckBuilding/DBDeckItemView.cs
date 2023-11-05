@@ -8,6 +8,7 @@ using Unity.Services.CloudCode;
 using UnityEngine;
 using UnityEngine.UI;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
@@ -75,7 +76,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
                         new Dictionary<string, object> { { "value", m_deckId.ToString() } });
                 }
 
-                DebugWrapper.Log($"Deck Id : {m_deckId} is selected");
+                Debug.Log($"Deck Id : {m_deckId} is selected");
 
                 m_deckPageView.SetCurrentDeckName(m_deckNameText.text);
 
@@ -89,7 +90,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
             }
             catch (CloudCodeException exception)
             {
-                DebugWrapper.LogError(exception.Message);
+                Debug.LogError(exception.Message);
             }
         }
 
@@ -106,7 +107,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
                         new Dictionary<string, object> { { "value", m_deckId.ToString() } });
                 }
 
-                DebugWrapper.Log($"Deck Id : {m_deckId} is deleted");
+                Debug.Log($"Deck Id : {m_deckId} is deleted");
 
                 m_deckPageView.RemoveDeck(m_deckId);
 
@@ -122,7 +123,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
             }
             catch (CloudCodeException exception)
             {
-                DebugWrapper.LogError(exception.Message);
+                Debug.LogError(exception.Message);
             }
         }
     }

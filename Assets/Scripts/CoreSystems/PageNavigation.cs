@@ -3,6 +3,7 @@ using Minimax.ScriptableObjects;
 using Minimax.UI.View.Pages;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.CoreSystems
 {
@@ -39,7 +40,7 @@ namespace Minimax.CoreSystems
         private void SetTagIfNotSet()
         {
             if (gameObject.CompareTag("PageNavigation")) return;
-            DebugWrapper.LogWarning("PageNavigation object does not have the \"PageNavigation\" tag. Setting it now.");
+            Debug.LogWarning("PageNavigation object does not have the \"PageNavigation\" tag. Setting it now.");
             gameObject.tag = "PageNavigation";
         }
 

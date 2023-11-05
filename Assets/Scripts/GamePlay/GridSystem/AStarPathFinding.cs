@@ -12,7 +12,7 @@ namespace Minimax.GamePlay.GridSystem
             // h cost : 현재 cell에서 target cell까지의 추정 이동 비용 (휴리스틱, underestimate)
             // f cost : g cost + h cost, choose the lowest f cost than choose the lowest h cost
 
-            DebugWrapper.Log($"FindPath from {start.Coord} to {target.Coord}");
+            Debug.Log($"FindPath from {start.Coord} to {target.Coord}");
             var toSearch  = new List<T>();
             var processed = new HashSet<T>();
 
@@ -70,7 +70,7 @@ namespace Minimax.GamePlay.GridSystem
             }
 
             // 경로가 없을 경우 빈 리스트 반환
-            DebugWrapper.Log($"No path found from {start.Coord} to {target.Coord}");
+            Debug.Log($"No path found from {start.Coord} to {target.Coord}");
             return new List<T>();
         }
 

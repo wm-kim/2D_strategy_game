@@ -4,6 +4,7 @@ using Minimax.GamePlay.Unit;
 using Minimax.UnityGamingService.Multiplayer;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.GridSystem
 {
@@ -42,7 +43,7 @@ namespace Minimax.GamePlay.GridSystem
         {
             if (!IsPlaceable[playerNumber])
             {
-                DebugWrapper.LogError($"Cell {Coord} is not placeable by player {playerNumber}");
+                Debug.LogError($"Cell {Coord} is not placeable by player {playerNumber}");
                 return false;
             }
 

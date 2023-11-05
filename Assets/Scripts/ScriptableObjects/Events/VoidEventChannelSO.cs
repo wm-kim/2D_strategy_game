@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.ScriptableObjects.Events
 {
@@ -13,7 +14,7 @@ namespace Minimax.ScriptableObjects.Events
         {
             if (OnEventRaised != null)
             {
-                DebugWrapper.Log("VoidEventSO: " + name + " was raised.");
+                Debug.Log("VoidEventSO: " + name + " was raised.");
                 OnEventRaised.Invoke();
             }
         }

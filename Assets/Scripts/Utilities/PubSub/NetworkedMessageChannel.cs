@@ -17,7 +17,7 @@ namespace Utilities.PubSub
 
             if (m_NetworkManager == null)
             {
-                DebugWrapper.LogError("NetworkedMessageChannel must be created after NetworkManager is initialized.");
+                Debug.LogError("NetworkedMessageChannel must be created after NetworkManager is initialized.");
                 return;
             }
 
@@ -56,7 +56,7 @@ namespace Utilities.PubSub
             }
             else
             {
-                DebugWrapper.LogError("Only a server can publish in a NetworkedMessageChannel");
+                Debug.LogError("Only a server can publish in a NetworkedMessageChannel");
             }
         }
 
@@ -65,7 +65,7 @@ namespace Utilities.PubSub
             if (m_NetworkManager.IsServer)
                 SendMessageThroughNetwork(message, clientId);
             else
-                DebugWrapper.LogError("Only a server can publish in a NetworkedMessageChannel");
+                Debug.LogError("Only a server can publish in a NetworkedMessageChannel");
         }
 
 

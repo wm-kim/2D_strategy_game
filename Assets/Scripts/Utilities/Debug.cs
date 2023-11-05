@@ -9,13 +9,18 @@ namespace Utilities
         Debug,
         Normal
     }
-
-    public static class DebugWrapper
+    
+    /// <summary>
+    /// It overrides UnityEngine.Debug to mute debug messages completely on a platform-specific basis.
+    /// </summary>
+    public static class Debug
     {
         /// <summary>
         /// 현재 로그 레벨. 이 레벨보다 낮은 메시지는 출력되지 않습니다.
         /// </summary>
         private static LogLevel m_currentLogLevel = LogLevel.Normal;
+        
+        public static bool IsDebugBuild => UnityEngine.Debug.isDebugBuild;
 
         [Conditional("UNITY_EDITOR")]
         [Conditional("DEVELOPMENT_BUILD")]

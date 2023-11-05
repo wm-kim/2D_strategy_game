@@ -4,6 +4,7 @@ using Minimax.GamePlay.Logic;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utilities;
+using Debug = Utilities.Debug;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 
 namespace Minimax.GamePlay.PlayerHand
@@ -82,7 +83,7 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (!IsSelecting) return;
 
-            DebugWrapper.Log($"Release Selecting Card {m_selectedIndex}");
+            Debug.Log($"Release Selecting Card {m_selectedIndex}");
             m_clientMyHand[m_selectedIndex].HandCardView.StartFadeTween(1f, m_cardFadeDuration);
             m_selectedIndex = -1;
         }
@@ -113,7 +114,7 @@ namespace Minimax.GamePlay.PlayerHand
         public void RequestPlayCard(ClientCell clientCell)
         {
             var cardUID = m_clientMyHand.GetCardUID(m_selectedIndex);
-            DebugWrapper.Log($"Play Card UID {cardUID} on Cell {clientCell.Coord}");
+            Debug.Log($"Play Card UID {cardUID} on Cell {clientCell.Coord}");
             m_cardPlayingLogic.CommandPlayACardFromHandServerRpc(cardUID, clientCell.Coord);
         }
 

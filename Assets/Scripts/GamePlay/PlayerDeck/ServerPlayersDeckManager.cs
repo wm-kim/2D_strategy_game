@@ -9,6 +9,7 @@ using Unity.Netcode;
 using Unity.Services.CloudCode;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.PlayerDeck
 {
@@ -100,7 +101,7 @@ namespace Minimax.GamePlay.PlayerDeck
 
         private async UniTask<bool> FetchPlayerDeckListFromCloud()
         {
-            DebugWrapper.Log("Fetching player deck list from cloud...");
+            Debug.Log("Fetching player deck list from cloud...");
 
             // Get all connected player ids from session manager, need for fetching deck list from cloud
             var connectedPlayerIds = new List<string>();
@@ -130,7 +131,7 @@ namespace Minimax.GamePlay.PlayerDeck
                         { "playerIds", connectedPlayerIds }
                     });
 
-                DebugWrapper.Log($"Fetched player deck list from cloud: {playerDecks}");
+                Debug.Log($"Fetched player deck list from cloud: {playerDecks}");
                 var playerDeckLists = JsonConvert.DeserializeObject<List<DeckDTO>>(playerDecks);
 #endif
 
@@ -146,7 +147,7 @@ namespace Minimax.GamePlay.PlayerDeck
             }
             catch (CloudCodeException exception)
             {
-                DebugWrapper.LogError(exception.Message);
+                Debug.LogError(exception.Message);
                 return false;
             }
         }

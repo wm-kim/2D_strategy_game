@@ -4,6 +4,7 @@ using Minimax.UI.View.Popups;
 using Minimax.UnityGamingService.Multiplayer.ConnectionManagement;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay
 {
@@ -32,7 +33,7 @@ namespace Minimax.GamePlay
 
             if (message.ConnectStatus == ConnectStatus.GenericDisconnect)
             {
-                DebugWrapper.Log($"Generic disconnect: {message.PlayerName}");
+                Debug.Log($"Generic disconnect: {message.PlayerName}");
                 PopupManager.Instance.RegisterLoadingPopupToQueue(Define.PlayerLostConnectionPopup,
                     $"{message.PlayerName} lost connection. Waiting for reconnect...",
                     PopupCommandType.Unique, PopupPriority.Normal);

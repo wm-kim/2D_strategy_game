@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Minimax.ScriptableObjects.CardData;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.ScriptableObjects
 {
@@ -25,7 +26,7 @@ namespace Minimax.ScriptableObjects
         {
             if (!m_deckList.ContainsKey(cardData.CardId))
                 m_deckList.Add(cardData.CardId, cardData);
-            else DebugWrapper.LogError("DeckDataSO: " + name + " already contains card " + cardData.CardId + ".");
+            else Debug.LogError("DeckDataSO: " + name + " already contains card " + cardData.CardId + ".");
         }
 
         public void RemoveCard(int cardId)

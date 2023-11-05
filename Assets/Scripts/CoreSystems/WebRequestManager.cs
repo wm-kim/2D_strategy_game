@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.CoreSystems
 {
@@ -31,7 +32,7 @@ namespace Minimax.CoreSystems
         public static async UniTask<T> RequestAsync<T>(string url, SendType sendType,
             Dictionary<string, string> headers = null, string jsonBodyString = null)
         {
-            DebugWrapper.Log($"Request: {url}, Type: {sendType}");
+            Debug.Log($"Request: {url}, Type: {sendType}");
 
             await CheckNetwork();
 
@@ -46,7 +47,7 @@ namespace Minimax.CoreSystems
             request.downloadHandler = new DownloadHandlerBuffer();
             if (!string.IsNullOrEmpty(jsonBodyString))
             {
-                DebugWrapper.Log($"Request Body: {jsonBodyString}");
+                Debug.Log($"Request Body: {jsonBodyString}");
                 var bodyRaw = Encoding.UTF8.GetBytes(jsonBodyString);
                 request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             }
@@ -61,21 +62,21 @@ namespace Minimax.CoreSystems
                 var res = await request.SendWebRequest().WithCancellation(cts.Token);
                 if (request.result != UnityWebRequest.Result.Success)
                 {
-                    DebugWrapper.LogError($"Request Failed: {url}, Type: {sendType}, Error: {request.error}");
+                    Debug.LogError($"Request Failed: {url}, Type: {sendType}, Error: {request.error}");
                     return default;
                 }
                 else
                 {
                     var jsonResultString = request.downloadHandler.text;
-                    DebugWrapper.Log("Request Success");
+                    Debug.Log("Request Success");
 
                     if (string.IsNullOrEmpty(jsonResultString))
                     {
-                        DebugWrapper.Log($"Response is Empty: {url}, Type: {sendType}");
+                        Debug.Log($"Response is Empty: {url}, Type: {sendType}");
                         return default;
                     }
 
-                    DebugWrapper.Log($"Response: {jsonResultString}");
+                    Debug.Log($"Response: {jsonResultString}");
                     // JsonUtility를 사용하여 JSON 문자열을 제네릭 형식으로 변환합니다.
                     return JsonConvert.DeserializeObject<T>(jsonResultString);
                 }
@@ -83,7 +84,7 @@ namespace Minimax.CoreSystems
             catch (OperationCanceledException ex)
             {
                 if (ex.CancellationToken == cts.Token)
-                    DebugWrapper.LogError($"Request Time Out: {url}, Type: {sendType}");
+                    Debug.LogError($"Request Time Out: {url}, Type: {sendType}");
             }
 
             return default;
@@ -102,9 +103,9 @@ namespace Minimax.CoreSystems
         {
             if (Application.internetReachability == NetworkReachability.NotReachable)
             {
-                DebugWrapper.LogError("The network is not reachable.");
+                Debug.LogError("The network is not reachable.");
                 await UniTask.WaitUntil(() => Application.internetReachability != NetworkReachability.NotReachable);
-                DebugWrapper.Log("The network is connected.");
+                Debug.Log("The network is connected.");
             }
         }
 

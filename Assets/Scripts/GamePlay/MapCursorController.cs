@@ -1,9 +1,10 @@
 using DG.Tweening;
+using Minimax.GamePlay.GridSystem;
 using Minimax.GamePlay.PlayerHand;
 using Minimax.GamePlay.Unit;
 using UnityEngine;
 
-namespace Minimax.GamePlay.GridSystem
+namespace Minimax.GamePlay
 {
     public class MapCursorController : MonoBehaviour
     {

@@ -3,6 +3,7 @@ using Minimax.ScriptableObjects.CardData;
 using QFSW.QC;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.Card
 {
@@ -51,7 +52,7 @@ namespace Minimax.GamePlay.Card
         public static void PrintAllServerCards()
         {
             foreach (var card in CardsCreatedThisGame)
-                DebugWrapper.Log($"Card UID: {card.Key}, Card ID {card.Value.Data.CardId}");
+                Debug.Log($"Card UID: {card.Key}, Card ID {card.Value.Data.CardId}");
         }
 #endif
     }

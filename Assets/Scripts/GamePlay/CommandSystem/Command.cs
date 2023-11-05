@@ -20,7 +20,7 @@ namespace Minimax.GamePlay.CommandSystem
 
         public virtual void StartExecute()
         {
-            DebugWrapper.Log($"Start Execute Command {GetType().Name}");
+            Debug.Log($"Start Execute Command {GetType().Name}");
             // use tween sequence and call ExecutionComplete() in OnComplete()
         }
 

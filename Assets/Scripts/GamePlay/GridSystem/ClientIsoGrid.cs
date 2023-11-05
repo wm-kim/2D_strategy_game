@@ -98,7 +98,7 @@ namespace Minimax.GamePlay.GridSystem
             for (var y = 0; y < Cells.GetLength(1); y++)
                 Cells[x, y].transform.position = GetWorldPosFromCoord(x, y);
 
-            DebugWrapper.Log($"Grid Rotation Changed to {rotation}");
+            Utilities.Debug.Log($"Grid Rotation Changed to {rotation}");
             OnGridRotationChanged?.Invoke(rotation);
 
 #if UNITY_EDITOR
@@ -126,7 +126,7 @@ namespace Minimax.GamePlay.GridSystem
             for (var y = 0; y < Cells.GetLength(1); y++)
             {
                 // seems like cell unit is half of the unity unit
-                var text = DebugWrapper.CreateText($"{x}, {y}", parent,
+                var text = Utilities.Debug.CreateText($"{x}, {y}", parent,
                     GetWorldPosFromCoord(x, y), textScale, Define.MapOverlay);
                 text.name          = $"({x}, {y})";
                 m_debugTexts[x, y] = text;

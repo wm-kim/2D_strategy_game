@@ -12,6 +12,7 @@ using Unity.Services.Matchmaker.Models;
 using UnityEngine;
 using UnityEngine.UI;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.UI.Controller.PageControllers
 {
@@ -46,7 +47,7 @@ namespace Minimax.UI.Controller.PageControllers
 
         private async void FindMatch()
         {
-            DebugWrapper.Log("Find Match");
+            Debug.Log("Find Match");
 
             PopupManager.Instance.RegisterOneButtonPopupToQueue(Define.FindingMatchPopup,
                 "Finding Match...",
@@ -95,14 +96,14 @@ namespace Minimax.UI.Controller.PageControllers
 
         private async void PollMatchmakerTicket()
         {
-            DebugWrapper.Log("PollMatchmakerTicket");
+            Debug.Log("PollMatchmakerTicket");
             var ticketStatusResponse =
                 await MatchmakerService.Instance.GetTicketAsync(createTicketResponse.Id);
 
             if (ticketStatusResponse == null)
             {
                 // Null means no updates to this ticket, keep waiting
-                DebugWrapper.Log("Null means no updates to this ticket, keep waiting");
+                Debug.Log("Null means no updates to this ticket, keep waiting");
                 return;
             }
 
@@ -112,14 +113,14 @@ namespace Minimax.UI.Controller.PageControllers
                 // It's a Multiplay assignment
                 var multiplayAssignment = ticketStatusResponse.Value as MultiplayAssignment;
 
-                DebugWrapper.Log("multiplayAssignment.Status " + multiplayAssignment.Status);
+                Debug.Log("multiplayAssignment.Status " + multiplayAssignment.Status);
                 switch (multiplayAssignment.Status)
                 {
                     case MultiplayAssignment.StatusOptions.Found:
                         createTicketResponse = null;
                         PopupManager.Instance.HideCurrentPopup();
 
-                        DebugWrapper.Log(multiplayAssignment.Ip + " " + multiplayAssignment.Port);
+                        Debug.Log(multiplayAssignment.Ip + " " + multiplayAssignment.Port);
 
                         var ipv4Address = multiplayAssignment.Ip;
                         var port        = (ushort)multiplayAssignment.Port;
@@ -131,12 +132,12 @@ namespace Minimax.UI.Controller.PageControllers
                         break;
                     case MultiplayAssignment.StatusOptions.Failed:
                         createTicketResponse = null;
-                        DebugWrapper.Log("Failed to create Multiplay server!");
+                        Debug.Log("Failed to create Multiplay server!");
                         PopupManager.Instance.HideCurrentPopup();
                         break;
                     case MultiplayAssignment.StatusOptions.Timeout:
                         createTicketResponse = null;
-                        DebugWrapper.Log("Multiplay Timeout!");
+                        Debug.Log("Multiplay Timeout!");
                         PopupManager.Instance.HideCurrentPopup();
                         break;
                 }

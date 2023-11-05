@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using Utilities;
+using Debug = Utilities.Debug;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 namespace Minimax.GamePlay.GridSystem
@@ -182,7 +183,7 @@ namespace Minimax.GamePlay.GridSystem
 
             if (m_isoGrid.TryGetGridCellFromWorldIso(worldPos, out var cell))
             {
-                DebugWrapper.Log($"Selected Cell: {cell}");
+                Debug.Log($"Selected Cell: {cell}");
                 SelectedClientCell = cell;
                 OnTapMap?.Invoke(cell);
             }
@@ -192,7 +193,7 @@ namespace Minimax.GamePlay.GridSystem
         {
             if (!TurnManager.Instance.IsMyTurn) return;
             m_highlightedCells = m_isoGrid.GetReachableCells(cell, range);
-            DebugWrapper.Log($"Highlighting {m_highlightedCells.Count} cells, range: {range}");
+            Debug.Log($"Highlighting {m_highlightedCells.Count} cells, range: {range}");
             foreach (var clientCell in m_highlightedCells) clientCell.Highlight();
         }
 

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.EditorTools
 {
@@ -26,7 +27,7 @@ namespace Minimax.EditorTools
             }
             else
             {
-                DebugWrapper.Log("Persistent scene is already loaded.", LogLevel.Debug);
+                Debug.Log("Persistent scene is already loaded.", LogLevel.Debug);
             }
         }
 

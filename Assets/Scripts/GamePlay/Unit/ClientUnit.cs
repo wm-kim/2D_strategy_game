@@ -3,6 +3,7 @@ using Minimax.GamePlay.Card;
 using Minimax.ScriptableObjects.CardData;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.Unit
 {
@@ -56,7 +57,7 @@ namespace Minimax.GamePlay.Unit
 
             UnitsCreatedThisGame.Add(UID, this);
 
-            DebugWrapper.Log($"ClientUnit {UID} is created\n" +
+            Debug.Log($"ClientUnit {UID} is created\n" +
                              $"Health: {Health}\n" +
                              $"Attack: {Attack}\n" +
                              $"MoveRange: {MoveRange}\n" +
@@ -83,7 +84,7 @@ namespace Minimax.GamePlay.Unit
         {
             if (!IsMovable)
             {
-                DebugWrapper.LogError($"Unit {UID} is not movable");
+                Debug.LogError($"Unit {UID} is not movable");
                 return false;
             }
 

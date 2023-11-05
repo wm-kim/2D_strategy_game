@@ -22,7 +22,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             }
             catch (System.Exception ex)
             {
-                DebugWrapper.LogWarning($"Error creating Multiplay allocation service.\n{ex}");
+                Debug.LogWarning($"Error creating Multiplay allocation service.\n{ex}");
             }
         }
         

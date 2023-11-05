@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Assertions;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.CoreSystems
 {
@@ -153,7 +154,7 @@ namespace Minimax.CoreSystems
             {
                 if (m_currentPopupView as LoadingPopup)
                 {
-                    DebugWrapper.LogWarning("Loading popup is showing. Cannot hide loading popup.");
+                    Debug.LogWarning("Loading popup is showing. Cannot hide loading popup.");
                     return;
                 }
 
@@ -171,7 +172,7 @@ namespace Minimax.CoreSystems
         /// </summary>
         private void RegisterCommandToQueue(IPopupCommand command)
         {
-            DebugWrapper.Log($"Registering popup to queue. Key : {command.Key}, Type : {command.Type}, " +
+            Debug.Log($"Registering popup to queue. Key : {command.Key}, Type : {command.Type}, " +
                              $"CommandType : {command.CommandType}, Priority : {command.Priority}");
 
             switch (command.CommandType)
@@ -213,7 +214,7 @@ namespace Minimax.CoreSystems
 
             if (!string.IsNullOrEmpty(popupKey) && m_currentPopupKey != popupKey)
             {
-                DebugWrapper.LogWarning($"Current popup key is not matched with popup key to hide." +
+                Debug.LogWarning($"Current popup key is not matched with popup key to hide." +
                                         $" Current : {m_currentPopupKey}, Hide : {popupKey}");
                 return;
             }
@@ -235,7 +236,7 @@ namespace Minimax.CoreSystems
         {
             if (m_popupQueue.Count == 0)
             {
-                DebugWrapper.Log("No more popup to show.");
+                Debug.Log("No more popup to show.");
                 return;
             }
 

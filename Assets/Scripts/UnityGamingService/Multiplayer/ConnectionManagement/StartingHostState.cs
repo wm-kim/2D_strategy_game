@@ -2,6 +2,7 @@ using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
@@ -44,8 +45,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload);
                 var playerNumber      = 0;
 
-                DebugWrapper.Log("Approving self as host");
-                DebugWrapper.Log($"Player {connectionPayload.playerName} assigned to player number {playerNumber}");
+                Debug.Log("Approving self as host");
+                Debug.Log($"Player {connectionPayload.playerName} assigned to player number {playerNumber}");
 
                 SessionPlayerManager.Instance.SetupConnectingPlayerSessionData(clientId,
                     connectionPayload.playerId,
@@ -71,7 +72,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         private void StartHostFailed()
         {
-            DebugWrapper.LogError("Failed to start host");
+            Debug.LogError("Failed to start host");
             m_connectionManager.ConnectStatusChannel.Publish(ConnectStatus.StartHostFailed);
             m_connectionManager.ChangeState(m_connectionManager.Offline);
             m_connectionManager.ShutDownApplication();

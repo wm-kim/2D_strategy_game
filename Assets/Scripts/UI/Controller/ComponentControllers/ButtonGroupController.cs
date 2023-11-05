@@ -4,6 +4,7 @@ using Minimax.UI.View.ComponentViews;
 using Sirenix.OdinInspector;
 using UnityEngine;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.UI.Controller.ComponentControllers
 {
@@ -174,7 +175,7 @@ namespace Minimax.UI.Controller.ComponentControllers
         {
             if (!m_buttonList.Contains(buttonToRemove))
             {
-                DebugWrapper.LogWarning($"ButtonGroupController.RemoveButtonView: " +
+                Debug.LogWarning($"ButtonGroupController.RemoveButtonView: " +
                                         $"{buttonToRemove} is not in the list.");
                 return;
             }

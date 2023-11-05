@@ -8,6 +8,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
 using Utilities;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.Logic
 {
@@ -61,7 +62,7 @@ namespace Minimax.GamePlay.Logic
             var sessionPlayers = SessionPlayerManager.Instance;
             var playerNumber   = sessionPlayers.GetPlayerNumber(senderClientId);
             var isUnitOwner    = serverUnit.Owner == playerNumber;
-            if (!isUnitOwner) DebugWrapper.Log($"Player {playerNumber} is not the owner of unit {serverUnit.UID}");
+            if (!isUnitOwner) Debug.Log($"Player {playerNumber} is not the owner of unit {serverUnit.UID}");
             return isUnitOwner;
         }
 
