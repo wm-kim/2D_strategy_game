@@ -4,17 +4,17 @@ namespace Minimax.GamePlay.CommandSystem
 {
     public class DrawMyCardCmd : Command
     {
-        private int m_cardUID;
+        private int                 m_cardUID;
         private ClientMyHandManager _mClientMyHandData;
         private ClientMyDeckManager m_clientMyDeck;
-        
+
         public DrawMyCardCmd(int cardUID,
-            ClientMyHandManager clientMyHandData, 
+            ClientMyHandManager clientMyHandData,
             ClientMyDeckManager clientMyDeck)
         {
-            m_cardUID = cardUID;
+            m_cardUID          = cardUID;
             _mClientMyHandData = clientMyHandData;
-            m_clientMyDeck = clientMyDeck;
+            m_clientMyDeck     = clientMyDeck;
         }
 
         public override void StartExecute()

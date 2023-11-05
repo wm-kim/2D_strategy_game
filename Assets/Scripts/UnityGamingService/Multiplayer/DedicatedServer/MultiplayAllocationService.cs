@@ -75,7 +75,8 @@ namespace Minimax.UnityGamingService.Multiplayer
         
         private async UniTask<MatchmakingResults> GetMatchmakerAllocationPayloadAsync()
         {
-            var payloadAllocation = await MultiplayService.Instance.GetPayloadAllocationFromJsonAs<MatchmakingResults>();
+            var payloadAllocation =
+ await MultiplayService.Instance.GetPayloadAllocationFromJsonAs<MatchmakingResults>();
             var modelAsJson = JsonConvert.SerializeObject(payloadAllocation, Formatting.Indented);
             DebugWrapper.Log(nameof(GetMatchmakerAllocationPayloadAsync) + ":" + Environment.NewLine + modelAsJson);
             return payloadAllocation;

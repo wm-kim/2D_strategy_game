@@ -11,24 +11,30 @@ namespace Minimax.UI
         SlideIn,
         SlideOut,
         ScaleIn,
-        ScaleOut,
+        ScaleOut
     }
-    
+
     public class UIAnimationController : MonoBehaviour
     {
-        [SerializeField] private CanvasGroup m_canvasGroup = default;
-        [SerializeField, Range(0f, 10f)] private float m_animationDuration = 0.5f;
-        [SerializeField] private AnimationType m_animationType = AnimationType.FadeIn;
-        
+        [SerializeField]                  private CanvasGroup   m_canvasGroup       = default;
+        [SerializeField] [Range(0f, 10f)] private float         m_animationDuration = 0.5f;
+        [SerializeField]                  private AnimationType m_animationType     = AnimationType.FadeIn;
+
         [field: SerializeField] public bool AllowAnimationOverride { get; private set; } = false;
-        [field: SerializeField, ReadOnly] public bool IsAnimating { get; private set; } = false; 
-        
-        [Header("Broadcasting on")]
-        [SerializeField] private VoidEventSO m_OnAnimationComplete = default;
-        
+
+        [field: SerializeField]
+        [field: ReadOnly]
+        public bool IsAnimating { get; private set; } = false;
+
+        [Header("Broadcasting on")] [SerializeField]
+        private VoidEventSO m_OnAnimationComplete = default;
+
         private Tween m_tween;
-        
-        public void SetAnimationType(AnimationType animationType) => m_animationType = animationType;
+
+        public void SetAnimationType(AnimationType animationType)
+        {
+            m_animationType = animationType;
+        }
 
         private void FadeIn()
         {
@@ -40,7 +46,7 @@ namespace Minimax.UI
                 m_OnAnimationComplete.RaiseEvent();
             });
         }
-        
+
         private void FadeOut()
         {
             if (IsAnimating) return;
@@ -51,6 +57,5 @@ namespace Minimax.UI
                 m_OnAnimationComplete.RaiseEvent();
             });
         }
-        
     }
 }

@@ -11,10 +11,10 @@ namespace Minimax.ScriptableObjects
         public Dictionary<int, DeckDTO> Decks
         {
             get => m_decks;
-            set 
+            set
             {
                 m_decks?.Clear();
-                m_decks = value; 
+                m_decks = value;
             }
         }
 
@@ -25,19 +25,17 @@ namespace Minimax.ScriptableObjects
         public int GetRecentDeckId()
         {
             DeckDTO recentDeck = null;
-            
+
             foreach (var deck in m_decks.Values)
-            {
                 if (recentDeck == null || deck.DateModified > recentDeck.DateModified)
                     recentDeck = deck;
-            }
-            
+
             if (recentDeck == null)
             {
                 Debug.LogError("empty deck collection, so can not get recent deck id");
                 return -1;
             }
-            
+
             return recentDeck.Id;
         }
     }

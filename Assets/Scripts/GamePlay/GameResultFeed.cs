@@ -23,35 +23,31 @@ namespace Minimax.GamePlay
         private void OnDisable()
         {
             if (!GlobalManagers.IsAvailable) return;
-            
+
             if (GlobalManagers.Instance.Connection != null)
                 GlobalManagers.Instance.Connection.DisconnectRelay.BeforeDisconnectAll -= DisplayGameResult;
         }
-        
+
         private void DisplayGameResult(int loserPlayerNumber)
         {
             var sessionPlayers = SessionPlayerManager.Instance;
-            var playerNumbers = sessionPlayers.GetAllPlayerNumbers();
+            var playerNumbers  = sessionPlayers.GetAllPlayerNumbers();
             foreach (var playerNumber in playerNumbers)
             {
                 var isWinner = playerNumber != loserPlayerNumber;
                 DisplayGameResultClientRpc(isWinner, sessionPlayers.ClientRpcParams[playerNumber]);
             }
         }
-        
+
         [ClientRpc]
         private void DisplayGameResultClientRpc(bool isWinner, ClientRpcParams clientRpcParams = default)
         {
             if (isWinner)
-            {
-                PopupManager.Instance.RegisterPopupToQueue(PopupType.WinPopup, 
+                PopupManager.Instance.RegisterPopupToQueue(PopupType.WinPopup,
                     PopupCommandType.Unique, PopupPriority.Critical);
-            }
             else
-            {
-                PopupManager.Instance.RegisterPopupToQueue(PopupType.LosePopup, 
+                PopupManager.Instance.RegisterPopupToQueue(PopupType.LosePopup,
                     PopupCommandType.Unique, PopupPriority.Critical);
-            }
         }
     }
 }

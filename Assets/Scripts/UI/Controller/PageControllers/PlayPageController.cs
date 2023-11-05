@@ -16,8 +16,8 @@ namespace Minimax.UI.Controller.PageControllers
 {
     public class PlayPageController : MonoBehaviour
     {
-        [Header("References")]
-        [SerializeField] private Button m_startServerButton;
+        [Header("References")] [SerializeField]
+        private Button m_startServerButton;
 
         [SerializeField] private Button m_startHostButton;
         [SerializeField] private Button m_startClientButton;
@@ -26,8 +26,8 @@ namespace Minimax.UI.Controller.PageControllers
         [SerializeField] private Button m_findMatchButton;
 
         private CreateTicketResponse createTicketResponse;
-        private float pollTicketTimer;
-        private float pollTicketTimerMax = 1.1f;
+        private float                pollTicketTimer;
+        private float                pollTicketTimerMax = 1.1f;
 
         private void Awake()
         {
@@ -55,18 +55,18 @@ namespace Minimax.UI.Controller.PageControllers
                     PopupManager.Instance.HideCurrentPopup();
                     createTicketResponse = null;
                 });
-            
+
             // create ticket
             createTicketResponse = await MatchmakerService.Instance.CreateTicketAsync(
-                new List<Unity.Services.Matchmaker.Models.Player>
+                new List<Player>
                 {
-                    new Unity.Services.Matchmaker.Models.Player(AuthenticationService.Instance.PlayerId,
+                    new(AuthenticationService.Instance.PlayerId,
                         new MatchmakingPlayerData
                         {
-                            Skill = 100,
+                            Skill = 100
                         })
                 }, new CreateTicketOptions { QueueName = Define.MatchMakingQueueName });
-            
+
             // Wait a bit, don't poll right away
             pollTicketTimer = pollTicketTimerMax;
         }
@@ -95,7 +95,7 @@ namespace Minimax.UI.Controller.PageControllers
         private async void PollMatchmakerTicket()
         {
             DebugWrapper.Log("PollMatchmakerTicket");
-            TicketStatusResponse ticketStatusResponse =
+            var ticketStatusResponse =
                 await MatchmakerService.Instance.GetTicketAsync(createTicketResponse.Id);
 
             if (ticketStatusResponse == null)
@@ -109,7 +109,7 @@ namespace Minimax.UI.Controller.PageControllers
             if (ticketStatusResponse.Type == typeof(MultiplayAssignment))
             {
                 // It's a Multiplay assignment
-                MultiplayAssignment multiplayAssignment = ticketStatusResponse.Value as MultiplayAssignment;
+                var multiplayAssignment = ticketStatusResponse.Value as MultiplayAssignment;
 
                 DebugWrapper.Log("multiplayAssignment.Status " + multiplayAssignment.Status);
                 switch (multiplayAssignment.Status)
@@ -117,11 +117,11 @@ namespace Minimax.UI.Controller.PageControllers
                     case MultiplayAssignment.StatusOptions.Found:
                         createTicketResponse = null;
                         PopupManager.Instance.HideCurrentPopup();
-                        
+
                         DebugWrapper.Log(multiplayAssignment.Ip + " " + multiplayAssignment.Port);
 
-                        string ipv4Address = multiplayAssignment.Ip;
-                        ushort port = (ushort)multiplayAssignment.Port;
+                        var ipv4Address = multiplayAssignment.Ip;
+                        var port        = (ushort)multiplayAssignment.Port;
                         NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(ipv4Address, port);
                         GlobalManagers.Instance.Connection.StartClient();
                         break;

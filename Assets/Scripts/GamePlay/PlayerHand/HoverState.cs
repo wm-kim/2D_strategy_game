@@ -16,24 +16,24 @@ namespace Minimax.GamePlay.PlayerHand
 
         // caching variables
         private Camera m_camera;
-        private float m_frustumSize = 0;
-        private float m_zdepth = 0;
+        private float  m_frustumSize = 0;
+        private float  m_zdepth      = 0;
 
         public HoverState(HandCardSlot slot)
         {
             m_slot = slot;
-        } 
-        
+        }
+
         public override void Enter()
         {
             // Reset the first touch flag
             m_contactCount = 0;
             CalculateFrustum();
-            
+
             // Subscribe to the input events
             var inputManager = GlobalManagers.Instance.Input;
             inputManager.OnTouch += CheckForSecondTouch;
-            
+
             // If there is a card currently being hovered, then we need to stop hovering it
             m_slot.MyHandInteraction.HoverOffHoveringCard();
             m_slot.MyHandInteraction.HoverCard(m_slot.Index);
@@ -48,7 +48,7 @@ namespace Minimax.GamePlay.PlayerHand
             // Unsubscribe from the input events
             var inputManager = GlobalManagers.Instance.Input;
             inputManager.OnTouch -= CheckForSecondTouch;
-            
+
             // Reset the hovering index
             m_slot.MyHandInteraction.UnHoverCard();
         }
@@ -56,8 +56,8 @@ namespace Minimax.GamePlay.PlayerHand
         private void CheckForSecondTouch(EnhancedTouch.Touch touch)
         {
             var cardViewRect = m_slot.HandCardView.GetComponent<RectTransform>();
-            var camera = m_slot.MyHandInteraction.Canvas.worldCamera;
-            bool isInsideCardDisplayMenu =
+            var camera       = m_slot.MyHandInteraction.Canvas.worldCamera;
+            var isInsideCardDisplayMenu =
                 RectTransformUtility.RectangleContainsScreenPoint(cardViewRect, touch.screenPosition,
                     camera);
 
@@ -68,28 +68,25 @@ namespace Minimax.GamePlay.PlayerHand
             }
 
             var currentSection = GlobalManagers.Instance.ServiceLocator.GetService<SectionDivider>().CurrentSection;
-            
-            bool isTouchBegan = touch.phase == TouchPhase.Began;
-            bool isTouchMoved = touch.phase == TouchPhase.Moved;
-            bool isTouchEnded = touch.phase == TouchPhase.Ended;
-            bool isMyHandSection = currentSection == SectionDivider.Section.MyHand;
-            bool isMyTurn = TurnManager.Instance.IsMyTurn;
-            
+
+            var isTouchBegan    = touch.phase == TouchPhase.Began;
+            var isTouchMoved    = touch.phase == TouchPhase.Moved;
+            var isTouchEnded    = touch.phase == TouchPhase.Ended;
+            var isMyHandSection = currentSection == SectionDivider.Section.MyHand;
+            var isMyTurn        = TurnManager.Instance.IsMyTurn;
+
             if (isTouchBegan || isTouchEnded)
             {
                 m_contactCount++;
-                
-                if (m_contactCount >= 2 && isMyTurn)
-                {
-                    m_slot.ChangeState(m_slot.DraggingState);
-                }
+
+                if (m_contactCount >= 2 && isMyTurn) m_slot.ChangeState(m_slot.DraggingState);
             }
             else if (isTouchMoved && !isMyHandSection && isMyTurn)
             {
                 m_slot.ChangeState(m_slot.DraggingState);
             }
         }
-        
+
         /// <summary>
         /// Calculates the clipping size of the canvas
         /// </summary>
@@ -100,22 +97,22 @@ namespace Minimax.GamePlay.PlayerHand
                 var canvas = m_slot.MyHandInteraction.Canvas;
                 m_zdepth = canvas.transform.position.z;
                 m_camera = canvas.worldCamera;
-                var planeDistance =  canvas.planeDistance;
+                var planeDistance = canvas.planeDistance;
                 m_frustumSize = m_camera.CalculateFrustumSize(planeDistance).y * 0.5f;
             }
         }
-        
+
         public override void MoveCardView()
         {
             var cameraBottomY = m_camera.transform.position.y - m_frustumSize;
-            Vector3 targetPosition = new Vector3(m_slot.transform.position.x, cameraBottomY, m_zdepth) +
-                                     (Vector3)(m_slot.HandCardSlotSettings.HoverOffset * m_frustumSize);
-                                     
+            var targetPosition = new Vector3(m_slot.transform.position.x, cameraBottomY, m_zdepth) +
+                                 (Vector3)(m_slot.HandCardSlotSettings.HoverOffset * m_frustumSize);
+
             if (Vector3.Distance(m_slot.HandCardView.transform.position, targetPosition) > m_positionThreshold)
             {
-                Vector3 targetRotation = Vector3.zero;
-                float targetScale = m_slot.HandCardSlotSettings.HoverScale;
-                float duration = m_slot.HandCardSlotSettings.HoverDuration;
+                var targetRotation = Vector3.zero;
+                var targetScale    = m_slot.HandCardSlotSettings.HoverScale;
+                var duration       = m_slot.HandCardSlotSettings.HoverDuration;
 
                 m_slot.HandCardView.StartMoveTween(targetPosition, duration);
                 m_slot.HandCardView.StartRotTween(targetRotation, duration);
@@ -129,7 +126,6 @@ namespace Minimax.GamePlay.PlayerHand
 
         public override void OnPointerExit()
         {
-            
         }
 
         public override void OnPointerDown()

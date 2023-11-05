@@ -13,6 +13,6 @@ namespace Minimax.UI.View.Popups
         LoadingPopup,
         OneButtonPopup,
         WinPopup,
-        LosePopup,
+        LosePopup
     }
 }

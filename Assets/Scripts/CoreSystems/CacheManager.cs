@@ -15,9 +15,8 @@ namespace Minimax.CoreSystems
         public static CacheManager Instance { get; private set; }
 
         // 각 캐시 오브젝트를 관리하기 위한 딕셔너리
-        [SerializeField, ReadOnly]
-        private SerializedDictionary<string, CacheObject> cacheObjects = new SerializedDictionary<string, CacheObject>();
-        
+        [SerializeField] [ReadOnly] private SerializedDictionary<string, CacheObject> cacheObjects = new();
+
         /// <summary>
         /// 캐시 오브젝트가 등록되어 있는지 여부를 반환합니다.
         /// </summary>
@@ -25,8 +24,8 @@ namespace Minimax.CoreSystems
         /// <returns></returns>
         private bool CheckHasKey(string key)
         {
-            if (string.IsNullOrEmpty(key))  throw new ArgumentNullException(nameof(key), "키는 null일 수 없습니다.");
-            bool hasKey = cacheObjects.ContainsKey(key);
+            if (string.IsNullOrEmpty(key)) throw new ArgumentNullException(nameof(key), "키는 null일 수 없습니다.");
+            var hasKey = cacheObjects.ContainsKey(key);
             if (!hasKey) DebugWrapper.LogWarning($"캐시 오브젝트 키 {key}가 존재하지 않습니다.");
             return hasKey;
         }
@@ -45,7 +44,7 @@ namespace Minimax.CoreSystems
                 cacheObjects[key] = cacheObject;
             }
         }
-        
+
         /// <summary>
         /// 비동기 캐시 오브젝트를 등록합니다.
         /// </summary>
@@ -60,7 +59,7 @@ namespace Minimax.CoreSystems
                 cacheObjects[key] = cacheObject;
             }
         }
-        
+
         /// <summary>
         /// 등록된 캐시 오브젝트를 제거합니다.
         /// </summary>
@@ -69,7 +68,7 @@ namespace Minimax.CoreSystems
             if (CheckHasKey(key))
                 cacheObjects.Remove(key);
         }
-        
+
         /// <summary>
         /// 캐시 데이터를 로드하거나 로드가 완료된 경우 수행할 액션을 업데이트합니다.
         /// 보콩은 호출할 일이 없지만, multi-scene을 지원하기 위해 추가하였습니다.
@@ -79,27 +78,27 @@ namespace Minimax.CoreSystems
         public void UpdateLoadAction(string key, Action<bool> onLoadAction)
         {
             if (!CheckHasKey(key)) return;
-            
-            if (cacheObjects[key].IsLoaded) 
+
+            if (cacheObjects[key].IsLoaded)
                 cacheObjects[key].UpdateLoadAction(onLoadAction);
         }
-        
+
         public void UpdateLoadAction(string key, Func<bool, UniTask> onLoadAsyncAction)
         {
             if (!CheckHasKey(key)) return;
-            
-            if (cacheObjects[key].IsLoaded) 
+
+            if (cacheObjects[key].IsLoaded)
                 cacheObjects[key].UpdateLoadAction(onLoadAsyncAction);
         }
-        
+
         public void UpdateLoadCompletedAction(string key, Action onLoadCompleted)
         {
             if (!CheckHasKey(key)) return;
-            
-            if (cacheObjects[key].IsLoaded) 
+
+            if (cacheObjects[key].IsLoaded)
                 cacheObjects[key].UpdateLoadCompletedAction(onLoadCompleted);
         }
-        
+
         /// <summary>
         /// 특정 캐시 오브젝트를 로드합니다.
         /// </summary>
@@ -118,10 +117,7 @@ namespace Minimax.CoreSystems
         /// </summary>
         public void SetNeedUpdate(string key)
         {
-            if (CheckHasKey(key))
-            {
-                cacheObjects[key].SetNeedUpdate();
-            }
+            if (CheckHasKey(key)) cacheObjects[key].SetNeedUpdate();
         }
 
         /// <summary>
@@ -129,10 +125,7 @@ namespace Minimax.CoreSystems
         /// </summary>
         public void Reset(string key)
         {
-            if (CheckHasKey(key))
-            {
-                cacheObjects[key].Reset();
-            }
+            if (CheckHasKey(key)) cacheObjects[key].Reset();
         }
 
         /// <summary>
@@ -140,10 +133,7 @@ namespace Minimax.CoreSystems
         /// </summary>
         public void ResetAll()
         {
-            foreach (var cacheObject in cacheObjects.Values)
-            {
-                cacheObject.Reset();
-            }
+            foreach (var cacheObject in cacheObjects.Values) cacheObject.Reset();
         }
     }
 }

@@ -18,21 +18,21 @@ namespace Minimax.AddressableSystem
 
             Finished
         }
-        
+
         private AddressableDownloader m_downloader;
-        
+
         [SerializeField] private string m_labelToDownload;
         [SerializeField] private string m_downloadURL;
-        
-        public State CurrentState { get; private set; } = State.Idle;
+
+        public  State CurrentState { get; private set; } = State.Idle;
         private State m_lastValidState = State.Idle;
-        
+
         private Action<DownloadEvents> m_onEventObtained;
-        
+
         public IEnumerator StartDownloadRoutine(Action<DownloadEvents> onEventObtained)
         {
-            m_downloader = new AddressableDownloader();
-            m_onEventObtained = onEventObtained;	
+            m_downloader      = new AddressableDownloader();
+            m_onEventObtained = onEventObtained;
 
             m_lastValidState = CurrentState = State.Initialize;
 
@@ -42,36 +42,25 @@ namespace Minimax.AddressableSystem
                 yield return null;
             }
         }
-        
-        
+
+
         public void GoNext()
         {
             if (m_lastValidState == State.Initialize)
-            {
                 CurrentState = State.UpdateCatalog;
-            }
             else if (m_lastValidState == State.UpdateCatalog)
-            {
                 CurrentState = State.DownloadSize;
-            }
             else if (m_lastValidState == State.DownloadSize)
-            {
                 CurrentState = State.DownloadDependencies;
-            }
             else if (m_lastValidState == State.Downloading || m_lastValidState == State.DownloadDependencies)
-            {
                 CurrentState = State.Finished;
-            }
 
             m_lastValidState = CurrentState;
         }
-        
-        void OnExecute()
+
+        private void OnExecute()
         {
-            if (CurrentState == State.Idle)
-            {
-                return;
-            }
+            if (CurrentState == State.Idle) return;
 
             if (CurrentState == State.Initialize)
             {

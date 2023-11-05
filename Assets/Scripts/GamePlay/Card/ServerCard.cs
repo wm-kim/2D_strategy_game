@@ -18,12 +18,12 @@ namespace Minimax
         /// the owner of this card (PlayerNumber)
         /// </summary>
         public int Owner { get; set; } = -1;
-        
+
         /// <summary>
         /// a reference to the card asset, stores the copy of ScriptableObject CardBaseData
         /// </summary>
         public CardBaseData Data { get; private set; } = null;
-        
+
         /// <summary>
         /// an ID for this card instance, server and client share this ID to communicate
         /// </summary>
@@ -33,29 +33,27 @@ namespace Minimax
         /// a static dictionary of all the cards that have been created
         /// key: UniqueCardID, value: ServerCard
         /// </summary>
-        public static Dictionary<int, ServerCard> CardsCreatedThisGame = new Dictionary<int, ServerCard>();
-        
+        public static Dictionary<int, ServerCard> CardsCreatedThisGame = new();
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        static void Init()
+        private static void Init()
         {
             CardsCreatedThisGame.Clear();
         }
-        
+
         public ServerCard(CardBaseData data)
         {
             Data = data;
-            UID = IDFactory.GetUniqueID();
+            UID  = IDFactory.GetUniqueID();
             CardsCreatedThisGame.Add(UID, this);
         }
-        
+
 #if UNITY_EDITOR
         [Command("Server.Card.PrintAllCreated")]
         public static void PrintAllServerCards()
         {
             foreach (var card in CardsCreatedThisGame)
-            {
                 DebugWrapper.Log($"Card UID: {card.Key}, Card ID {card.Value.Data.CardId}");
-            }
         }
 #endif
     }

@@ -14,25 +14,25 @@ namespace Minimax.UI.View.Pages
 {
     public class DeckPageView : PageView
     {
-        [Header("Scriptable Object")]
-        [SerializeField] private DeckDtoCollectionSO m_deckCollectionSO;
-        
-        [Header("References")]
-        [Space(10f)]
-        [SerializeField] private DBDeckItemView m_dbDeckItemViewPrefab;
-        [SerializeField] private Transform m_contentTransform;
+        [Header("Scriptable Object")] [SerializeField]
+        private DeckDtoCollectionSO m_deckCollectionSO;
+
+        [Header("References")] [Space(10f)] [SerializeField]
+        private DBDeckItemView m_dbDeckItemViewPrefab;
+
+        [SerializeField] private Transform             m_contentTransform;
         [SerializeField] private ButtonGroupController m_deckButtonGroupController;
-        [SerializeField] private TextMeshProUGUI m_currentDeckNameText;
-        
-        private Dictionary<int, DBDeckItemView> m_deckItemViews = new Dictionary<int, DBDeckItemView>();
+        [SerializeField] private TextMeshProUGUI       m_currentDeckNameText;
+
+        private Dictionary<int, DBDeckItemView> m_deckItemViews = new();
 
         private void Start()
         {
             m_deckButtonGroupController.Init();
-            
+
             // Set current deck name
             SetCurrentDeckName();
-            
+
             var caches = GlobalManagers.Instance.Cache;
             caches.Register(Define.DeckDtoCollectionCache, FetchDecksFromCloud, InitializeDeckViewsOnLoad);
             caches.UpdateLoadCompletedAction(Define.DeckDtoCollectionCache, InitializeDeckViewsOnLoad);
@@ -42,16 +42,17 @@ namespace Minimax.UI.View.Pages
         private void InitializeDeckViewsOnLoad()
         {
             if (m_deckCollectionSO.Decks == null || m_deckCollectionSO.Decks.Count == 0) return;
-            
+
             InstantiateDeckItemView();
             DisableSelectedButton();
         }
-        
+
         // Set current deck name
         private void SetCurrentDeckName()
         {
-            m_currentDeckNameText.text = PlayerPrefs.HasKey(Define.CurrentDeckNameCache) 
-                ? PlayerPrefs.GetString(Define.CurrentDeckNameCache) : "None";
+            m_currentDeckNameText.text = PlayerPrefs.HasKey(Define.CurrentDeckNameCache)
+                ? PlayerPrefs.GetString(Define.CurrentDeckNameCache)
+                : "None";
         }
 
         private async UniTask FetchDecksFromCloud(bool isUpdate)
@@ -66,12 +67,12 @@ namespace Minimax.UI.View.Pages
             {
                 DebugWrapper.Log("Decks successfully fetched from cloud.");
                 m_deckCollectionSO.Decks = decks;
-                
+
                 // setting recent deck id in PlayerPrefs
                 if (isUpdate) PlayerPrefs.SetInt(Define.CurrentDeckIdCache, m_deckCollectionSO.GetRecentDeckId());
             }
         }
-        
+
         private void InstantiateDeckItemView()
         {
             foreach (var deck in m_deckCollectionSO.Decks)
@@ -82,27 +83,28 @@ namespace Minimax.UI.View.Pages
                 m_deckItemViews.Add(deck.Value.Id, deckItemView);
             }
         }
-        
+
         private void DisableSelectedButton()
         {
             if (!PlayerPrefs.HasKey(Define.CurrentDeckIdCache)) return;
-            
-            int selectedDeckId = PlayerPrefs.GetInt(Define.CurrentDeckIdCache);
-            
+
+            var selectedDeckId = PlayerPrefs.GetInt(Define.CurrentDeckIdCache);
+
             foreach (var deckItemView in m_deckItemViews)
-            {
                 if (deckItemView.Key == selectedDeckId)
                     deckItemView.Value.SelectButton.interactable = false;
-            }
         }
-        
+
         protected override void SetPageType()
         {
             m_pageType = PageType.DeckPage;
         }
 
-        public void SetCurrentDeckName(string deckName) => m_currentDeckNameText.text = deckName;
-        
+        public void SetCurrentDeckName(string deckName)
+        {
+            m_currentDeckNameText.text = deckName;
+        }
+
         public void RemoveDeck(int deckId)
         {
             m_deckButtonGroupController.RemoveButtonView(m_deckItemViews[deckId]);
@@ -110,9 +112,12 @@ namespace Minimax.UI.View.Pages
             m_deckItemViews.Remove(deckId);
             m_deckCollectionSO.Decks.Remove(deckId);
         }
-        
-        public void ResetDBDeckItem() => m_deckButtonGroupController.Reset();
-        
+
+        public void ResetDBDeckItem()
+        {
+            m_deckButtonGroupController.Reset();
+        }
+
         /// <summary>
         /// Set all selected button interactable into true
         /// </summary>

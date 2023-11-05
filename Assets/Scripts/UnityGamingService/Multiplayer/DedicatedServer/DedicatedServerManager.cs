@@ -78,7 +78,8 @@ namespace Minimax.UnityGamingService.Multiplayer
             
             // Try to get the matchmaker allocation payload from the multiplay services, and init the services if we do.
             var matchmakerPayloadTask = m_multiplayAllocationService.SubscribeAndAwaitMatchmakerAllocation();
-            (bool success, MatchmakingResults payload) = await UniTask.WhenAny( matchmakerPayloadTask, UniTask.Delay(timeout));
+            (bool success, MatchmakingResults payload) =
+ await UniTask.WhenAny( matchmakerPayloadTask, UniTask.Delay(timeout));
             if (success) return payload;
             return null;
         }

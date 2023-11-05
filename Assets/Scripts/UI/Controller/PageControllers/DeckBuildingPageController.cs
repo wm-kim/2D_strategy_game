@@ -12,11 +12,11 @@ namespace Minimax.UI.Controller.PageControllers
     public class DeckBuildingPageController : MonoBehaviour
     {
         [SerializeField] private DeckBuildingManager m_deckBuildingManager;
-        
-        [Header("References")]
-        [Space(10f)]
-        [SerializeField] private Button m_exitAndSaveButton;
-        [SerializeField] private Button m_exitWithoutSaveButton;
+
+        [Header("References")] [Space(10f)] [SerializeField]
+        private Button m_exitAndSaveButton;
+
+        [SerializeField] private Button         m_exitWithoutSaveButton;
         [SerializeField] private TMP_InputField m_deckNameInputField;
 
         private void Start()
@@ -31,17 +31,17 @@ namespace Minimax.UI.Controller.PageControllers
         {
             GlobalManagers.Instance.Input.OnBackButton += OnBackButtonPressed;
         }
-        
+
         private void OnDisable()
         {
             GlobalManagers.Instance.Input.OnBackButton -= OnBackButtonPressed;
         }
-        
+
         private void OnExitWithoutSavePressed()
         {
             OnBackButtonPressed();
         }
-        
+
         private void OnBackButtonPressed()
         {
             PopupManager.Instance.MobileBackTwoButtonPopup(
@@ -54,18 +54,15 @@ namespace Minimax.UI.Controller.PageControllers
                     GlobalManagers.Instance.Scene.LoadScene(SceneType.MenuScene);
                     PopupManager.Instance.HideCurrentPopup();
                 },
-                () =>
-                {
-                    PopupManager.Instance.HideCurrentPopup();
-                },
+                () => { PopupManager.Instance.HideCurrentPopup(); },
                 PopupCommandType.Unique);
         }
-        
+
         private void OnExitAndSavePressed()
         {
             m_deckBuildingManager.SaveDeckToCloud();
         }
-        
+
         private void OnDeckNameChanged(string deckName)
         {
             m_deckBuildingManager.DeckListSO.SetDeckName(deckName);

@@ -15,13 +15,13 @@ namespace Minimax.UnityGamingService.CloudSave
             var query = await Call(CloudSaveService.Instance.Data.LoadAsync(new HashSet<string> { key }));
             return query.TryGetValue(key, out var value) ? Deserialize<T>(value) : default;
         }
-        
+
         private static T Deserialize<T>(string input)
         {
             if (typeof(T) == typeof(string)) return (T)(object)input;
             return JsonConvert.DeserializeObject<T>(input);
         }
-        
+
         private static async UniTask Call(Task action)
         {
             try

@@ -20,48 +20,53 @@ namespace Minimax.GamePlay
     /// </summary>
     public class GameInitializer : NetworkBehaviour
     {
-#region Fields and Properties
-        [Header("References")]
-        [SerializeField] private CardDBManager m_cardDBManager;
+        #region Fields and Properties
+
+        [Header("References")] [SerializeField]
+        private CardDBManager m_cardDBManager;
+
         [SerializeField] private ServerPlayersDeckManager m_serverPlayersDeckManager;
-        [SerializeField] private TurnManager m_turnManager;
-        [SerializeField] private ProfileManager m_profileManager;
-        [SerializeField] private ServerManaManager m_manaManager;
-        [SerializeField] private ServerMap m_serverMap;
+        [SerializeField] private TurnManager              m_turnManager;
+        [SerializeField] private ProfileManager           m_profileManager;
+        [SerializeField] private ServerManaManager        m_manaManager;
+        [SerializeField] private ServerMap                m_serverMap;
 
         [Header("Game Logics")] [SerializeField]
         private CardDrawingLogic m_cardDrawingLogic;
-        
-        private NetworkManager m_networkManager => NetworkManager.Singleton;
-#endregion
 
-#region Unity Lifecycle Methods
+        private NetworkManager m_networkManager => NetworkManager.Singleton;
+
+        #endregion
+
+        #region Unity Lifecycle Methods
+
         private async void Start()
         {
             HandleStartForDedicatedServer();
         }
-        
+
         public override void OnNetworkSpawn()
         {
             HandleOnNetworkSpawn();
         }
-        
+
         public override void OnNetworkDespawn()
         {
             HandleOnNetworkDespawn();
         }
-#endregion
 
-#region Event Handlers
+        #endregion
+
+        #region Event Handlers
 
         private async void GameManager_OnSceneEvent(SceneEvent sceneEvent)
         {
             HandleSceneEvent(sceneEvent);
         }
 
-#endregion
+        #endregion
 
-#region Private Helper Methods
+        #region Private Helper Methods
 
         /// <summary>
         /// 서버 설정 시작
@@ -73,7 +78,7 @@ namespace Minimax.GamePlay
             Camera.main.enabled = false;  // just for clearing logs
 #endif
         }
-        
+
         private void HandleOnNetworkSpawn()
         {
             m_networkManager.SceneManager.OnSceneEvent += GameManager_OnSceneEvent;
@@ -86,14 +91,14 @@ namespace Minimax.GamePlay
 
             base.OnNetworkSpawn();
         }
-        
+
         private void HandleOnNetworkDespawn()
         {
             m_networkManager.SceneManager.OnSceneEvent -= GameManager_OnSceneEvent;
             ClearGameData();
             base.OnNetworkDespawn();
         }
-        
+
         private void ClearGameData()
         {
             if (IsServer)
@@ -115,16 +120,13 @@ namespace Minimax.GamePlay
         private async void HandleSceneEvent(SceneEvent sceneEvent)
         {
             if (sceneEvent.SceneEventType != SceneEventType.LoadEventCompleted) return;
-            
+
             // load card data from DB (server & client)
             await m_cardDBManager.LoadDBCardsAsync();
-            
-            if (IsServer)
-            {
-                InitializeServerGameData();
-            }
+
+            if (IsServer) InitializeServerGameData();
         }
-        
+
         private async void InitializeServerGameData()
         {
             await m_serverPlayersDeckManager.SetupPlayersDeck();
@@ -138,7 +140,7 @@ namespace Minimax.GamePlay
             var connection = GlobalManagers.Instance.Connection;
             connection.ChangeState(connection.GameStarted);
         }
-#endregion
-        
+
+        #endregion
     }
 }

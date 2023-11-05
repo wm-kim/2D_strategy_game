@@ -25,22 +25,20 @@ namespace Minimax
         private void OnDisable()
         {
             if (!GlobalManagers.IsAvailable) return;
-            
+
             if (GlobalManagers.Instance.Connection != null)
                 GlobalManagers.Instance.Connection.ConnectionEventChannel.Unsubscribe(OnConnectionEvent);
         }
-        
+
         private void OnConnectionEvent(ConnectionEventMessage message)
         {
             if (message.ConnectStatus == ConnectStatus.Success)
-            {
                 PopupManager.Instance.HideCurrentPopup(Define.PlayerLostConnectionPopup);
-            }
-            
+
             if (message.ConnectStatus == ConnectStatus.GenericDisconnect)
             {
                 DebugWrapper.Log($"Generic disconnect: {message.PlayerName}");
-                PopupManager.Instance.RegisterLoadingPopupToQueue(Define.PlayerLostConnectionPopup, 
+                PopupManager.Instance.RegisterLoadingPopupToQueue(Define.PlayerLostConnectionPopup,
                     $"{message.PlayerName} lost connection. Waiting for reconnect...",
                     PopupCommandType.Unique, PopupPriority.Normal);
             }

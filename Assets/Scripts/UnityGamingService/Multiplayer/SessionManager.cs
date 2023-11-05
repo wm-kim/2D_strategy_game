@@ -5,22 +5,22 @@ namespace Minimax.UnityGamingService.Multiplayer
 {
     public interface ISessionPlayerData
     {
-        bool IsConnected { get; set; }
-        ulong ClientID { get; set; }
-        void Reinitialize();
+        bool  IsConnected { get; set; }
+        ulong ClientID    { get; set; }
+        void  Reinitialize();
     }
-    
+
     public class SessionManager<T> where T : struct, ISessionPlayerData
     {
         protected SessionManager()
         {
-            m_ClientData = new Dictionary<string, T>();
+            m_ClientData         = new Dictionary<string, T>();
             m_ClientIDToPlayerId = new Dictionary<ulong, string>();
         }
-        
+
         public static SessionManager<T> Instance => s_Instance ??= new SessionManager<T>();
 
-        static SessionManager<T> s_Instance;
+        private static SessionManager<T> s_Instance;
 
         /// <summary>
         /// Maps a given client player id to the data for a given client player.
@@ -43,14 +43,12 @@ namespace Minimax.UnityGamingService.Multiplayer
             {
                 // Mark client as disconnected, but keep their data so they can reconnect.
                 if (m_ClientIDToPlayerId.TryGetValue(clientId, out var playerId))
-                {
                     if (GetPlayerData(playerId)?.ClientID == clientId)
                     {
                         var clientData = m_ClientData[playerId];
                         clientData.IsConnected = false;
                         m_ClientData[playerId] = clientData;
                     }
-                }
             }
             else
             {
@@ -58,10 +56,7 @@ namespace Minimax.UnityGamingService.Multiplayer
                 if (m_ClientIDToPlayerId.TryGetValue(clientId, out var playerId))
                 {
                     m_ClientIDToPlayerId.Remove(clientId);
-                    if (GetPlayerData(playerId)?.ClientID == clientId)
-                    {
-                        m_ClientData.Remove(playerId);
-                    }
+                    if (GetPlayerData(playerId)?.ClientID == clientId) m_ClientData.Remove(playerId);
                 }
             }
         }
@@ -89,35 +84,31 @@ namespace Minimax.UnityGamingService.Multiplayer
             // Test for duplicate connection
             if (IsDuplicateConnection(playerId))
             {
-                Debug.LogError($"Player ID {playerId} already exists. This is a duplicate connection. Rejecting this session data.");
+                Debug.LogError(
+                    $"Player ID {playerId} already exists. This is a duplicate connection. Rejecting this session data.");
                 return;
             }
 
             // If another client exists with the same playerId
             if (m_ClientData.ContainsKey(playerId))
-            {
                 if (!m_ClientData[playerId].IsConnected)
-                {
                     // If this connecting client has the same player Id as a disconnected client, this is a reconnection.
                     isReconnecting = true;
-                }
-
-            }
 
             // Reconnecting. Give data from old player to new player
             if (isReconnecting)
             {
                 Debug.Log($"Player ID {playerId} is reconnecting. Giving them their old data.");
                 // Update player session data
-                sessionPlayerData = m_ClientData[playerId];
-                sessionPlayerData.ClientID = clientId;
+                sessionPlayerData             = m_ClientData[playerId];
+                sessionPlayerData.ClientID    = clientId;
                 sessionPlayerData.IsConnected = true;
             }
 
             //Populate our dictionaries with the SessionPlayerData
             Debug.Log($"Adding player ID {playerId} and data to session");
             m_ClientIDToPlayerId[clientId] = playerId;
-            m_ClientData[playerId] = sessionPlayerData;
+            m_ClientData[playerId]         = sessionPlayerData;
         }
 
         /// <summary>
@@ -127,10 +118,7 @@ namespace Minimax.UnityGamingService.Multiplayer
         /// <returns>The Player ID matching the given client ID</returns>
         public string GetPlayerId(ulong clientId)
         {
-            if (m_ClientIDToPlayerId.TryGetValue(clientId, out string playerId))
-            {
-                return playerId;
-            }
+            if (m_ClientIDToPlayerId.TryGetValue(clientId, out var playerId)) return playerId;
 
             Debug.Log($"No client player ID found mapped to the given client ID: {clientId}");
             return null;
@@ -145,10 +133,7 @@ namespace Minimax.UnityGamingService.Multiplayer
         {
             //First see if we have a playerId matching the clientID given.
             var playerId = GetPlayerId(clientId);
-            if (playerId != null)
-            {
-                return GetPlayerData(playerId);
-            }
+            if (playerId != null) return GetPlayerData(playerId);
 
             Debug.Log($"No client player ID found mapped to the given client ID: {clientId}");
             return null;
@@ -161,10 +146,7 @@ namespace Minimax.UnityGamingService.Multiplayer
         /// <returns>Player data struct matching the given ID</returns>
         public T? GetPlayerData(string playerId)
         {
-            if (m_ClientData.TryGetValue(playerId, out T data))
-            {
-                return data;
-            }
+            if (m_ClientData.TryGetValue(playerId, out var data)) return data;
 
             Debug.Log($"No PlayerData of matching player ID found: {playerId}");
             return null;
@@ -177,14 +159,10 @@ namespace Minimax.UnityGamingService.Multiplayer
         /// <param name="sessionPlayerData"> new data to overwrite the old </param>
         public void SetPlayerData(ulong clientId, T sessionPlayerData)
         {
-            if (m_ClientIDToPlayerId.TryGetValue(clientId, out string playerId))
-            {
+            if (m_ClientIDToPlayerId.TryGetValue(clientId, out var playerId))
                 m_ClientData[playerId] = sessionPlayerData;
-            }
             else
-            {
                 Debug.LogError($"No client player ID found mapped to the given client ID: {clientId}");
-            }
         }
 
         /// <summary>
@@ -219,8 +197,8 @@ namespace Minimax.UnityGamingService.Multiplayer
         {
             foreach (var id in m_ClientIDToPlayerId.Keys)
             {
-                string playerId = m_ClientIDToPlayerId[id];
-                T sessionPlayerData = m_ClientData[playerId];
+                var playerId          = m_ClientIDToPlayerId[id];
+                var sessionPlayerData = m_ClientData[playerId];
                 sessionPlayerData.Reinitialize();
                 m_ClientData[playerId] = sessionPlayerData;
             }
@@ -228,23 +206,17 @@ namespace Minimax.UnityGamingService.Multiplayer
 
         private void ClearDisconnectedPlayersData()
         {
-            List<ulong> idsToClear = new List<ulong>();
+            var idsToClear = new List<ulong>();
             foreach (var id in m_ClientIDToPlayerId.Keys)
             {
                 var data = GetPlayerData(id);
-                if (data is { IsConnected: false })
-                {
-                    idsToClear.Add(id);
-                }
+                if (data is { IsConnected: false }) idsToClear.Add(id);
             }
 
             foreach (var id in idsToClear)
             {
-                string playerId = m_ClientIDToPlayerId[id];
-                if (GetPlayerData(playerId)?.ClientID == id)
-                {
-                    m_ClientData.Remove(playerId);
-                }
+                var playerId = m_ClientIDToPlayerId[id];
+                if (GetPlayerData(playerId)?.ClientID == id) m_ClientData.Remove(playerId);
 
                 m_ClientIDToPlayerId.Remove(id);
             }

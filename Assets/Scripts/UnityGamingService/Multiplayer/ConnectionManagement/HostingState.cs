@@ -12,8 +12,10 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
     public class HostingState : OnlineState
     {
-        public HostingState(ConnectionManager connectionManager) : base(connectionManager) { }
-        
+        public HostingState(ConnectionManager connectionManager) : base(connectionManager)
+        {
+        }
+
         public override void Enter()
         {
         }
@@ -40,7 +42,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             NetworkManager.ConnectionApprovalResponse response)
         {
             var connectionData = request.Payload;
-            var clientId = request.ClientNetworkId;
+            var clientId       = request.ClientNetworkId;
             if (connectionData.Length > Define.MaxConnectPayloadSize)
             {
                 // If connectionData too high, deny immediately to avoid wasting time on the server. This is intended as
@@ -48,31 +50,32 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 response.Approved = false;
                 return;
             }
-            
-            var payload = System.Text.Encoding.UTF8.GetString(connectionData);
+
+            var payload           = System.Text.Encoding.UTF8.GetString(connectionData);
             var connectionPayload = JsonConvert.DeserializeObject<ConnectionPayload>(payload);
-            var gameReturnStatus = m_connectionManager.GetConnectStatus(connectionPayload);
-            var sessionPlayers = SessionPlayerManager.Instance;
-            int playerNumber = sessionPlayers.GetAvailablePlayerNumber();
-            
-            bool isConnectSuccess = gameReturnStatus == ConnectStatus.Success;
-            bool isPlayerNumberAvailable = playerNumber != -1;
-            
+            var gameReturnStatus  = m_connectionManager.GetConnectStatus(connectionPayload);
+            var sessionPlayers    = SessionPlayerManager.Instance;
+            var playerNumber      = sessionPlayers.GetAvailablePlayerNumber();
+
+            var isConnectSuccess        = gameReturnStatus == ConnectStatus.Success;
+            var isPlayerNumberAvailable = playerNumber != -1;
+
             if (isConnectSuccess && isPlayerNumberAvailable)
             {
                 DebugWrapper.Log($"Client {clientId.ToString()} approved");
-                DebugWrapper.Log($"Player {connectionPayload.playerName} assigned to player number {playerNumber.ToString()}");
-                
+                DebugWrapper.Log(
+                    $"Player {connectionPayload.playerName} assigned to player number {playerNumber.ToString()}");
+
                 sessionPlayers.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
                     new SessionPlayerData(clientId, connectionPayload.playerName, playerNumber, true));
-                
+
                 response.Approved = true;
                 return;
             }
-            
+
             response.Approved = false;
             DebugWrapper.Log($"Client {clientId.ToString()} denied: {gameReturnStatus}");
-            
+
             // If response.Approved is false, you can provide a message that explains the reason why via ConnectionApprovalResponse.
             // On the client-side, NetworkManager.DisconnectReason will be populated with this message via DisconnectReasonMessage
             response.Reason = JsonUtility.ToJson(gameReturnStatus);

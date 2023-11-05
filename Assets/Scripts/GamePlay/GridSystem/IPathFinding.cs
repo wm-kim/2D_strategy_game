@@ -6,19 +6,19 @@ namespace Minimax.GamePlay.GridSystem
     /// Interface for path finding strategies
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IPathFinding<T>  where T : ICell
+    public interface IPathFinding<T> where T : ICell
     {
         List<T> FindPath(T start, T target, IGrid<T> grid);
     }
-    
+
     /// <summary>
     /// PathFinding strategies, for sending client which path finding strategy is being used in the game.
     /// </summary>
     public enum PathFinding
     {
-        AStar,
+        AStar
     }
-    
+
     /// <summary>
     /// Factory for creating path finding strategies
     /// </summary>

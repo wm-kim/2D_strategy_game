@@ -12,12 +12,13 @@ namespace Minimax.UI.View.DataViews
     public abstract class DataView<T> : MonoBehaviour where T : IEquatable<T>
     {
         [SerializeField] protected DataEventSO<T> m_data;
-   
+
         private void OnEnable()
         {
             m_data.OnValueChanged.AddListener(UpdateView);
             UpdateView(m_data.Value);
         }
+
         private void OnDisable()
         {
             m_data.OnValueChanged.RemoveListener(UpdateView);

@@ -10,35 +10,39 @@ namespace Minimax.GamePlay.Unit
 {
     public class UnitVisual : TweenableItem
     {
-        public enum UnitViewType { Front, Back }
-        
-        [Header("References")]
-        [SerializeField] private GameObject m_unitFront; 
+        public enum UnitViewType
+        {
+            Front,
+            Back
+        }
+
+        [Header("References")] [SerializeField]
+        private GameObject m_unitFront;
+
         [SerializeField] private GameObject m_unitBack;
-        
-        [Header("Settings")]
-        [SerializeField] private float m_moveDuration = 0.4f;
-        
+
+        [Header("Settings")] [SerializeField] private float m_moveDuration = 0.4f;
+
         #region Cached Properties
 
-        private int m_currentState;
+        private int      m_currentState;
         private Animator m_currentAnimator;
-        
+
         private Animator m_frontAnimator;
         private Animator m_backAnimator;
-        
+
         private readonly int FrontIdle = Animator.StringToHash("FrontIdle");
         private readonly int FrontMove = Animator.StringToHash("FrontMove");
-        private readonly int BackIdle = Animator.StringToHash("BackIdle");
-        private readonly int BackMove = Animator.StringToHash("BackMove");
-        
+        private readonly int BackIdle  = Animator.StringToHash("BackIdle");
+        private readonly int BackMove  = Animator.StringToHash("BackMove");
+
         #endregion
 
-        public void Init(GridRotation playerRotation)
+        public void Init(GridRotation playerRotation, GridRotation unitRotation)
         {
             m_frontAnimator = m_unitFront.GetComponent<Animator>();
-            m_backAnimator = m_unitBack.GetComponent<Animator>();
-            SetInitialUnitView(playerRotation);
+            m_backAnimator  = m_unitBack.GetComponent<Animator>();
+            SetInitialUnitView(playerRotation.GetRelativeRotation(unitRotation));
         }
 
         private void Update()
@@ -62,7 +66,7 @@ namespace Minimax.GamePlay.Unit
                 if (MoveTween != null && MoveTween.IsActive() && MoveTween.IsPlaying()) return BackMove;
                 else return BackIdle;
             }
-            
+
             return BackIdle;
         }
 
@@ -96,13 +100,13 @@ namespace Minimax.GamePlay.Unit
             m_unitFront.SetActive(viewType == UnitViewType.Front);
             m_unitBack.SetActive(viewType == UnitViewType.Back);
             m_currentAnimator = viewType == UnitViewType.Front ? m_frontAnimator : m_backAnimator;
-            m_currentState = viewType == UnitViewType.Front ? FrontIdle : BackIdle;
+            m_currentState    = viewType == UnitViewType.Front ? FrontIdle : BackIdle;
         }
 
         public Tweener AnimateMove(Vector2Int dir, GridRotation gridRotation, Vector3 destPos)
         {
             Vector2 rotatedDir = RotateDirection(dir, gridRotation);
-            
+
             switch (rotatedDir)
             {
                 case var v when v == Vector2Int.up:
@@ -122,9 +126,10 @@ namespace Minimax.GamePlay.Unit
                     gameObject.transform.localScale = new Vector3(-1, 1, 1);
                     break;
             }
+
             return StartMoveTween(destPos, m_moveDuration);
         }
-        
+
         private Vector2Int RotateDirection(Vector2Int dir, GridRotation gridRotation)
         {
             switch (gridRotation)

@@ -7,18 +7,22 @@ namespace Minimax
 {
     public class AudioPlayer : MonoBehaviour
     {
-        public enum AudioType { BGM, SFX }
-        
+        public enum AudioType
+        {
+            BGM,
+            SFX
+        }
+
         [SerializeField] private AudioType m_audioType;
-        [SerializeField] private AudioLib m_audioEnum;
-        
+        [SerializeField] private AudioLib  m_audioEnum;
+
         private AudioManager m_audioManager;
 
         private void Awake()
         {
             m_audioManager = AudioManager.Instance;
         }
-        
+
         public void Play()
         {
             switch (m_audioType)

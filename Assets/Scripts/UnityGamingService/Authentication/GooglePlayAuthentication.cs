@@ -12,12 +12,11 @@ namespace Minimax.UnityGamingService.Multiplayer
 {
     public class GooglePlayAuthentication : MonoBehaviour
     {
-
-        [SerializeField, ReadOnly] private string m_googlePlayToken;
-        [SerializeField, ReadOnly] private  string m_googlePlayError;
+        [SerializeField] [ReadOnly] private string m_googlePlayToken;
+        [SerializeField] [ReadOnly] private string m_googlePlayError;
 
         [SerializeField] private EnvironmentType m_environment = EnvironmentType.undefined;
-        
+
         private async void Start()
         {
             await InitializeAuthentication();
@@ -35,7 +34,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             if (UnityServices.State != ServicesInitializationState.Initialized)
             {
                 var options = new InitializationOptions();
-                
+
                 // Set the environment
                 switch (m_environment)
                 {
@@ -46,12 +45,12 @@ namespace Minimax.UnityGamingService.Multiplayer
                         options.SetEnvironmentName(EnvironmentType.production.ToString());
                         break;
                 }
-                
+
                 await UnityServices.InitializeAsync(options);
                 DebugWrapper.Log(UnityServices.State.ToString());
             }
         }
-        
+
         private void SetupEvents()
         {
             AuthenticationService.Instance.SignedIn += () =>
@@ -62,16 +61,13 @@ namespace Minimax.UnityGamingService.Multiplayer
                 // Shows how to get the access token
                 DebugWrapper.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
             };
-            
+
             AuthenticationService.Instance.SignInFailed += (exception) =>
             {
                 DebugWrapper.LogError($"Sign in failed: {exception.Message}");
             };
-            
-            AuthenticationService.Instance.SignedOut += () =>
-            {
-                DebugWrapper.Log("Player signed out.");
-            };
+
+            AuthenticationService.Instance.SignedOut += () => { DebugWrapper.Log("Player signed out."); };
         }
 
 
@@ -97,9 +93,8 @@ namespace Minimax.UnityGamingService.Multiplayer
                     DebugWrapper.Log("Login Unsuccessful");
                 }
             });
-            
         }
-        
+
         private async UniTask AuthenticateWithUnity(string authCode)
         {
             try

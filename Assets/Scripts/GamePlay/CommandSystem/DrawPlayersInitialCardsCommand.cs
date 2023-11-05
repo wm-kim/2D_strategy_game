@@ -5,25 +5,25 @@ namespace Minimax.GamePlay.CommandSystem
 {
     public class DrawAllPlayerInitialCardsCmd : Command
     {
-        private int[] m_myCardUIDs;
-        private int[] m_opponentCardUIDs;
-        private ClientMyHandManager _mClientMyHandData;
+        private int[]                     m_myCardUIDs;
+        private int[]                     m_opponentCardUIDs;
+        private ClientMyHandManager       _mClientMyHandData;
         private ClientOpponentHandManager m_clientOpponentHand;
-        private ClientMyDeckManager m_clientMyDeck;
+        private ClientMyDeckManager       m_clientMyDeck;
         private ClientOpponentDeckManager m_clientOpponentDeck;
-        
+
         public DrawAllPlayerInitialCardsCmd(int[] myCardUIDs,
             int[] opponentCardUIDs,
-            ClientMyHandManager clientMyHandData, 
+            ClientMyHandManager clientMyHandData,
             ClientOpponentHandManager clientOpponentHand,
             ClientMyDeckManager clientMyDeck,
             ClientOpponentDeckManager clientOpponentDeck)
         {
-            m_myCardUIDs = myCardUIDs;
-            m_opponentCardUIDs = opponentCardUIDs;
-            _mClientMyHandData = clientMyHandData;
+            m_myCardUIDs         = myCardUIDs;
+            m_opponentCardUIDs   = opponentCardUIDs;
+            _mClientMyHandData   = clientMyHandData;
             m_clientOpponentHand = clientOpponentHand;
-            m_clientMyDeck = clientMyDeck;
+            m_clientMyDeck       = clientMyDeck;
             m_clientOpponentDeck = clientOpponentDeck;
         }
 
@@ -32,7 +32,7 @@ namespace Minimax.GamePlay.CommandSystem
             base.StartExecute();
             foreach (var cardUID in m_myCardUIDs) m_clientMyDeck.RemoveCard(cardUID);
             foreach (var cardUID in m_opponentCardUIDs) m_clientOpponentDeck.RemoveCard(cardUID);
-            
+
             _mClientMyHandData.AddInitialCardsAndTween(m_myCardUIDs);
             m_clientOpponentHand.AddInitialCardsAndTween(m_opponentCardUIDs);
         }

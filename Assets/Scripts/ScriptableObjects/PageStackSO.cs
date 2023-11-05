@@ -7,6 +7,6 @@ namespace Minimax.ScriptableObjects
     [CreateAssetMenu(fileName = "PageStackSO", menuName = "ScriptableObjects/PageStackSO")]
     public class PageStackSO : ScriptableObject
     {
-        public Stack<PageType> PageStack = new Stack<PageType>();
+        public Stack<PageType> PageStack = new();
     }
 }

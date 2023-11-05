@@ -16,9 +16,10 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
     public class StartingServerState : OnlineState
     {
         public StartingServerState(ConnectionManager connectionManager) : base(connectionManager)
-        { }
+        {
+        }
 
-        public async override void Enter()
+        public override async void Enter()
         {
 #if !DEDICATED_SERVER
             StartServer();
@@ -33,7 +34,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         public override void Exit()
         {
         }
-        
+
         public override void OnServerStarted()
         {
             m_connectionManager.ChangeState(m_connectionManager.Server);
@@ -46,10 +47,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public override void StartServer()
         {
-            if (!m_connectionManager.NetworkManager.StartServer())
-            {
-                StartServerFailed();
-            }
+            if (!m_connectionManager.NetworkManager.StartServer()) StartServerFailed();
         }
 
         private void StartServerFailed()

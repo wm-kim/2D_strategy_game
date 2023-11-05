@@ -15,13 +15,11 @@ namespace Minimax.Utilities
         {
             return index >= 0 && index < collection.Count;
         }
-        
+
         public static void CheckIndexWithinRange<T>(this ICollection<T> collection, int index)
         {
             if (!IsIndexWithinRange(collection, index))
-            {
                 throw new System.IndexOutOfRangeException($"Index {index} is out of range of collection {collection}");
-            }
         }
     }
 }

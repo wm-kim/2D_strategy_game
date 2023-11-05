@@ -10,12 +10,12 @@ namespace Minimax
         {
             GlobalManagers.Instance.Input.OnBackButton += OnMobileBackButton;
         }
-        
+
         private void OnDisable()
         {
             GlobalManagers.Instance.Input.OnBackButton -= OnMobileBackButton;
         }
-        
+
         private void OnMobileBackButton()
         {
             AudioManager.Instance.PlaySFX(AudioLib.Popup);

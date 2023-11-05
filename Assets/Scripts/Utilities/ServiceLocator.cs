@@ -12,34 +12,26 @@ namespace Minimax.Utilities
     /// </summary>
     public class ServiceLocator
     {
-        private IDictionary<Type, MonoBehaviour> m_services = new Dictionary<Type, MonoBehaviour>();
+        private IDictionary<Type, MonoBehaviour>   m_services      = new Dictionary<Type, MonoBehaviour>();
         private IDictionary<string, MonoBehaviour> m_namedServices = new Dictionary<string, MonoBehaviour>();
 
         public void RegisterService<T>(T service, string serviceName) where T : MonoBehaviour
         {
             var type = typeof(T);
             if (!m_services.ContainsKey(type))
-            {
                 m_services[type] = service;
-            }
             else
-            {
                 DebugWrapper.LogWarning($"Service of type {type} is already registered.");
-            }
-            
+
             if (!string.IsNullOrEmpty(serviceName))
             {
                 if (!m_namedServices.ContainsKey(serviceName))
-                {
                     m_namedServices[serviceName] = service;
-                }
                 else
-                {
                     DebugWrapper.LogWarning($"Service of name {serviceName} is already registered.");
-                }
             }
         }
-        
+
         public T GetService<T>() where T : MonoBehaviour
         {
             var type = typeof(T);
@@ -53,7 +45,7 @@ namespace Minimax.Utilities
                 return null;
             }
         }
-        
+
         public MonoBehaviour GetService(string serviceName)
         {
             if (m_namedServices.TryGetValue(serviceName, out var service))
@@ -66,7 +58,7 @@ namespace Minimax.Utilities
                 return null;
             }
         }
-        
+
         public void UnregisterService(string serviceName)
         {
             if (m_namedServices.TryGetValue(serviceName, out var service))

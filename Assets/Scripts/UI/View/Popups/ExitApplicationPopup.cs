@@ -1,4 +1,4 @@
- using System;
+using System;
 using Minimax.CoreSystems;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,9 +10,12 @@ namespace Minimax.UI.View.Popups
         [SerializeField] private Button m_cancelButton;
         [SerializeField] private Button m_noButton;
         [SerializeField] private Button m_yesButton;
-        
-        protected override void SetPopupType() => Type = PopupType.ExitAppPopup;
-        
+
+        protected override void SetPopupType()
+        {
+            Type = PopupType.ExitAppPopup;
+        }
+
         private void Awake()
         {
             m_cancelButton.onClick.AddListener(OnCancelButtonClicked);
@@ -26,13 +29,13 @@ namespace Minimax.UI.View.Popups
             AudioManager.Instance.PlaySFX(AudioLib.Button);
             PopupManager.Instance.HideCurrentPopup();
         }
-        
+
         private void OnNoButtonClicked()
         {
             AudioManager.Instance.PlaySFX(AudioLib.Button);
             PopupManager.Instance.HideCurrentPopup();
         }
-        
+
         private void OnYesButtonClicked()
         {
             AudioManager.Instance.PlaySFX(AudioLib.Button);

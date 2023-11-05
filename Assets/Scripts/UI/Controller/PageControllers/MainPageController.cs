@@ -8,8 +8,8 @@ namespace Minimax.UI.Controller.PageControllers
 {
     public class MainPageController : MonoBehaviour
     {
-        [Header("References")]
-        [SerializeField] private Button m_startButton;
+        [Header("References")] [SerializeField]
+        private Button m_startButton;
 
         private void Awake()
         {

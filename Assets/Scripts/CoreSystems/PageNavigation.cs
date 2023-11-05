@@ -12,18 +12,21 @@ namespace Minimax.CoreSystems
         PlayNav,
         DeckNav,
         StoreNav,
-        ProfileNav,
+        ProfileNav
     }
-    
+
     public class PageNavigation : MonoBehaviour
     {
         [SerializeField] private PageManager m_pageManager;
-        [field: SerializeField] public PageNavigationType NavigationType { get; private set; } = PageNavigationType.Undefined;
+
+        [field: SerializeField]
+        public PageNavigationType NavigationType { get; private set; } = PageNavigationType.Undefined;
+
         [field: SerializeField] public PageType InitialPage { get; private set; } = PageType.Undefined;
 
-        [SerializeField] private PageStackSO m_pageStackSO;
-        private Stack<PageType> m_pageStack => m_pageStackSO.PageStack;
-        
+        [SerializeField] private PageStackSO     m_pageStackSO;
+        private                  Stack<PageType> m_pageStack => m_pageStackSO.PageStack;
+
         private void Awake()
         {
             SetTagIfNotSet();
@@ -39,35 +42,36 @@ namespace Minimax.CoreSystems
             DebugWrapper.LogWarning("PageNavigation object does not have the \"PageNavigation\" tag. Setting it now.");
             gameObject.tag = "PageNavigation";
         }
-        
+
         private void CheckIfNavigationTypeIsSet()
         {
-            UnityEngine.Assertions.Assert.IsTrue(NavigationType != PageNavigationType.Undefined, 
+            UnityEngine.Assertions.Assert.IsTrue(NavigationType != PageNavigationType.Undefined,
                 $"PageNavigationType is undefined in {gameObject.name}, please set it properly in inspector");
         }
-        
+
         private void CheckIfInitialPageIsSet()
         {
-            UnityEngine.Assertions.Assert.IsTrue(InitialPage != PageType.Undefined, 
+            UnityEngine.Assertions.Assert.IsTrue(InitialPage != PageType.Undefined,
                 $"InitialPage is undefined in {gameObject.name}, please set it properly in inspector");
         }
-        
+
         private void SetInitialPage()
         {
             if (m_pageStack.Count == 0) Push(InitialPage);
         }
-        
+
         // Don't use this method directly. Use the PushPage method of PageNavigationManager instead.
         public PageView Push(PageType page)
         {
             var view = m_pageManager.GetPageView(page);
-            
+
             // Hide the currently active view (if any)
             if (m_pageStack.Count > 0)
             {
-                PageView currentView =  m_pageManager.GetPageView(m_pageStack.Peek());
+                var currentView = m_pageManager.GetPageView(m_pageStack.Peek());
                 currentView.StartHide();
             }
+
             // Show the new view
             view.StartShow();
             m_pageStack.Push(page);
@@ -76,28 +80,29 @@ namespace Minimax.CoreSystems
 
         // Don't use this method directly. Use the PopPage method of PageNavigationManager instead.
         public bool Pop()
-        {   
+        {
             if (m_pageStack.Count > 1)
             {
                 // Hide the current view
-                PageView currentView =  m_pageManager.GetPageView(m_pageStack.Pop());
+                var currentView = m_pageManager.GetPageView(m_pageStack.Pop());
                 currentView.StartHide();
-                PageView previousView =  m_pageManager.GetPageView(m_pageStack.Peek());
+                var previousView = m_pageManager.GetPageView(m_pageStack.Peek());
                 previousView.StartShow();
                 return true;
             }
+
             return false;
         }
 
         public void Hide(float duration = 0.0f)
         {
-            PageView currentView = m_pageManager.GetPageView(m_pageStack.Peek());
+            var currentView = m_pageManager.GetPageView(m_pageStack.Peek());
             currentView.StartHide(duration);
         }
-        
+
         public void Show(float duration = 0.0f)
         {
-            PageView currentView = m_pageManager.GetPageView(m_pageStack.Peek());
+            var currentView = m_pageManager.GetPageView(m_pageStack.Peek());
             currentView.StartShow(duration);
         }
     }

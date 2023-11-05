@@ -14,22 +14,23 @@ namespace Minimax.GamePlay.INetworkSerialize
         public int Attack;
         public int Health;
         public int MoveRange;
+
         public int AttackRange;
         // TODO : add abilities as dictionary, but dictionary is not serializable, so use double array instead
-        
+
         public NetworkUnitCardData(UnitBaseData data)
         {
-            CardId = data.CardId;
-            Cost = data.Cost;
-            Attack = data.Attack;
-            Health = data.Health;
-            MoveRange = data.MoveRange;
+            CardId      = data.CardId;
+            Cost        = data.Cost;
+            Attack      = data.Attack;
+            Health      = data.Health;
+            MoveRange   = data.MoveRange;
             AttackRange = data.AttackRange;
         }
 
         public override string ToString()
         {
-            StringBuilder sb = new StringBuilder();
+            var sb = new StringBuilder();
             sb.AppendLine($"CardId: {CardId}");
             sb.AppendLine($"Cost: {Cost}");
             sb.AppendLine($"Attack: {Attack}");

@@ -7,6 +7,6 @@ namespace Minimax.UI.View.Pages
         PlayPage,
         DeckPage,
         StorePage,
-        ProfilePage,
+        ProfilePage
     }
 }

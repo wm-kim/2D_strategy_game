@@ -11,7 +11,7 @@ namespace Minimax.Utilities.PubSub
         public override void Publish(T message)
         {
             HasBufferedMessage = true;
-            BufferedMessage = message;
+            BufferedMessage    = message;
             base.Publish(message);
         }
 
@@ -19,18 +19,16 @@ namespace Minimax.Utilities.PubSub
         {
             var subscription = base.Subscribe(handler);
 
-            if (HasBufferedMessage)
-            {
-                handler?.Invoke(BufferedMessage);
-            }
+            if (HasBufferedMessage) handler?.Invoke(BufferedMessage);
 
             return subscription;
         }
-        
+
         /// <summary>
         /// 버퍼링된 메시지가 있는지 여부를 나타냅니다.
         /// </summary>
         public bool HasBufferedMessage { get; private set; } = false;
+
         public T BufferedMessage { get; private set; }
     }
 }

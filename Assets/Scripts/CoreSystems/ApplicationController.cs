@@ -5,8 +5,7 @@ namespace Minimax.CoreSystems
 {
     public class ApplicationController : MonoBehaviour
     {
-        [Header("Frame Rate Settings")]
-        public int targetFrameRate = 60;
+        [Header("Frame Rate Settings")] public int targetFrameRate = 60;
 
         private void Start()
         {

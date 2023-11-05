@@ -6,13 +6,13 @@ namespace Minimax.Utilities.PubSub
     {
         void Publish(T message);
     }
-    
+
     public interface ISubscriber<T>
     {
         IDisposable Subscribe(Action<T> handler);
-        void Unsubscribe(Action<T> handler);
+        void        Unsubscribe(Action<T> handler);
     }
-    
+
     public interface IMessageChannel<T> : IPublisher<T>, ISubscriber<T>, IDisposable
     {
         /// <summary>
@@ -20,13 +20,14 @@ namespace Minimax.Utilities.PubSub
         /// </summary>
         bool IsDisposed { get; }
     }
-    
+
     public interface IBufferedMessageChannel<T> : IMessageChannel<T>
     {
         /// <summary>
         /// Indicates whether there's a buffered message waiting.
         /// </summary>
         bool HasBufferedMessage { get; }
+
         /// <summary>
         /// Indicates whether there's a buffered message waiting.
         /// </summary>

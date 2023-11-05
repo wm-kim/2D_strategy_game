@@ -13,14 +13,12 @@ namespace Minimax.GamePlay
             MyHand,
             Map
         }
-        
-        [Header("Camera")]
-        [SerializeField] private Camera m_uiCamera;
-        
-        [Header("Sections")]
-        [SerializeField] private RectTransform m_myHandSection;
-        [SerializeField] private RectTransform m_mapSection;
-        
+
+        [Header("Camera")] [SerializeField] private Camera m_uiCamera;
+
+        [Header("Sections")] [SerializeField] private RectTransform m_myHandSection;
+        [SerializeField]                      private RectTransform m_mapSection;
+
         public Section CurrentSection { get; private set; } = Section.Default;
 
         private void OnEnable()
@@ -33,26 +31,23 @@ namespace Minimax.GamePlay
         private void OnDisable()
         {
             if (!GlobalManagers.IsAvailable) return;
-            
-            if (GlobalManagers.Instance.Input != null)
-            {
-                GlobalManagers.Instance.Input.OnTouch -= DivideSections;
-            }
-            
+
+            if (GlobalManagers.Instance.Input != null) GlobalManagers.Instance.Input.OnTouch -= DivideSections;
+
             if (GlobalManagers.Instance.ServiceLocator != null)
-            {
                 GlobalManagers.Instance.ServiceLocator.UnregisterService(nameof(SectionDivider));
-            }
         }
 
         private void DivideSections(EnhancedTouch.Touch touch)
         {
-            bool isInsideMyHandSection = RectTransformUtility.RectangleContainsScreenPoint(m_myHandSection, touch.screenPosition, m_uiCamera);
-            bool isInsideMapSection = RectTransformUtility.RectangleContainsScreenPoint(m_mapSection, touch.screenPosition, m_uiCamera);
-            
-            if (isInsideMapSection) CurrentSection = Section.Map;
+            var isInsideMyHandSection =
+                RectTransformUtility.RectangleContainsScreenPoint(m_myHandSection, touch.screenPosition, m_uiCamera);
+            var isInsideMapSection =
+                RectTransformUtility.RectangleContainsScreenPoint(m_mapSection, touch.screenPosition, m_uiCamera);
+
+            if (isInsideMapSection) CurrentSection         = Section.Map;
             else if (isInsideMyHandSection) CurrentSection = Section.MyHand;
-            else CurrentSection = Section.Default;
+            else CurrentSection                            = Section.Default;
         }
     }
 }

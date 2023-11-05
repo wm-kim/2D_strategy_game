@@ -9,7 +9,7 @@ namespace Minimax
     {
         [SerializeField] private Button m_settingsButton;
         [SerializeField] private Button m_exitButton;
-        
+
         private void Awake()
         {
             m_settingsButton.onClick.AddListener(OnSettingsButtonClicked);
@@ -22,12 +22,12 @@ namespace Minimax
             PopupManager.Instance.RegisterPopupToQueue(PopupType.AppSettingPopup, PopupCommandType.Unique);
             gameObject.SetActive(false);
         }
-        
+
         private void OnExitButtonClicked()
         {
             AudioManager.Instance.PlaySFX(AudioLib.Popup);
             PopupManager.Instance.RegisterPopupToQueue(PopupType.ExitAppPopup, PopupCommandType.Unique);
             gameObject.SetActive(false);
-        } 
+        }
     }
 }

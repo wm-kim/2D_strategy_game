@@ -8,14 +8,14 @@ namespace Minimax.ScriptableObjects
     [CreateAssetMenu(fileName = "New Deck Data", menuName = "ScriptableObjects/DeckListSO")]
     public class DeckListSO : ScriptableObject
     {
-        private string m_deckName = "New Deck Name";
-        private Dictionary<int, CardBaseData> m_deckList  = new Dictionary<int, CardBaseData>();
+        private string                        m_deckName = "New Deck Name";
+        private Dictionary<int, CardBaseData> m_deckList = new();
 
         public void Init()
         {
             m_deckList.Clear();
         }
-        
+
         public bool ContainsCard(int cardId)
         {
             return m_deckList.ContainsKey(cardId);
@@ -32,7 +32,7 @@ namespace Minimax.ScriptableObjects
         {
             m_deckList.Remove(cardId);
         }
-        
+
         public DeckDTO GetDeckDTO()
         {
             var deckDTO = new DeckDTO();
@@ -41,7 +41,10 @@ namespace Minimax.ScriptableObjects
                 deckDTO.CardIds.Add(cardData.CardId);
             return deckDTO;
         }
-        
-        public void SetDeckName(string deckName) => m_deckName = deckName;
+
+        public void SetDeckName(string deckName)
+        {
+            m_deckName = deckName;
+        }
     }
 }

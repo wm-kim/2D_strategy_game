@@ -9,17 +9,19 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DeckListItemMenuView : StatefulUIView
     {
-        [Header("References")]
-        [SerializeField] private Camera m_mainCamera;
+        [Header("References")] [SerializeField]
+        private Camera m_mainCamera;
+
         [SerializeField] private DeckBuildingManager m_deckBuildingManager;
-        
-        [Header("Inner References")]
-        [SerializeField] private RectTransform m_deckListItemMenu;
+
+        [Header("Inner References")] [SerializeField]
+        private RectTransform m_deckListItemMenu;
+
         [SerializeField] private Button m_deleteFromDeckButton;
-        
-        [SerializeField] private float m_xOffset = 30f;
-        private DeckListItemView m_deckListItemView;
-        
+
+        [SerializeField] private float            m_xOffset = 30f;
+        private                  DeckListItemView m_deckListItemView;
+
         private void Start()
         {
             m_deckListItemMenu.gameObject.SetActive(false);
@@ -31,13 +33,11 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
         {
             if (m_currentState == UIVisibleState.Appeared)
             {
-                bool isBeginOrMovedTouch = touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved;
-                bool isOutsideCardDisplayMenu = 
-                    !RectTransformUtility.RectangleContainsScreenPoint(m_deckListItemMenu, touch.screenPosition, m_mainCamera);
-                if (isBeginOrMovedTouch && isOutsideCardDisplayMenu)
-                {
-                    StartHide();
-                }
+                var isBeginOrMovedTouch = touch.phase == TouchPhase.Began || touch.phase == TouchPhase.Moved;
+                var isOutsideCardDisplayMenu =
+                    !RectTransformUtility.RectangleContainsScreenPoint(m_deckListItemMenu, touch.screenPosition,
+                        m_mainCamera);
+                if (isBeginOrMovedTouch && isOutsideCardDisplayMenu) StartHide();
             }
         }
 
@@ -45,34 +45,35 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
         {
             // Cache deckListItemView to be used later for removing from deck list
             m_deckListItemView = m_deckBuildingManager.SelectedDeckListItemView;
-            
+
             // Set Menu Position
             var deckListItemTransform = m_deckListItemView.GetComponent<RectTransform>();
 
             var boundaryRect = m_deckBuildingManager.DeckListView.GetComponent<RectTransform>().GetWorldRect();
-            var boundaryPos = m_deckBuildingManager.DeckListView.transform.position;
-            
-            var deckListItemPos = deckListItemTransform.position;
-            var deckListItemRect = deckListItemTransform.GetWorldRect();
+            var boundaryPos  = m_deckBuildingManager.DeckListView.transform.position;
+
+            var deckListItemPos      = deckListItemTransform.position;
+            var deckListItemRect     = deckListItemTransform.GetWorldRect();
             var deckListItemMenuRect = m_deckListItemMenu.GetWorldRect();
-            
+
             var dbCardItemMenuPosY = deckListItemPos.y;
-            
-            float clampPosY = Mathf.Clamp(dbCardItemMenuPosY, 
+
+            var clampPosY = Mathf.Clamp(dbCardItemMenuPosY,
                 boundaryPos.y - boundaryRect.height / 2f + deckListItemMenuRect.height / 2f,
                 boundaryPos.y + boundaryRect.height / 2f - deckListItemMenuRect.height / 2f);
-            
-            var deckListItemMenuPosX = deckListItemPos.x - (deckListItemRect.width + deckListItemMenuRect.width) / 2f - m_xOffset;
-            
+
+            var deckListItemMenuPosX = deckListItemPos.x - (deckListItemRect.width + deckListItemMenuRect.width) / 2f -
+                                       m_xOffset;
+
             m_deckListItemMenu.position = new Vector3(
                 deckListItemMenuPosX,
                 clampPosY,
                 0f);
-            
+
             m_deckListItemMenu.gameObject.SetActive(true);
             SetAppearedState();
         }
-        
+
         protected override void Hide(float transitionDuration = 0.0f)
         {
             m_deckListItemMenu.gameObject.SetActive(false);
@@ -84,7 +85,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
             var cardId = m_deckListItemView.CardData.CardId;
             m_deckBuildingManager.DeckListView.RemoveCardFromDeckList(cardId);
             StartHide();
-         
+
             m_deckBuildingManager.DBCardScrollView.SetDBCardItemViewInteractable(cardId, true);
         }
     }

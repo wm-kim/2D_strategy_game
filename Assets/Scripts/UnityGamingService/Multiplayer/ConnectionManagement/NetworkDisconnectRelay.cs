@@ -15,8 +15,8 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         /// <summary>
         /// key is playerNumber, value is the reason for disconnect
         /// </summary>
-        private Dictionary<int, ConnectStatus> m_disconnectReasons = new Dictionary<int, ConnectStatus>();
-        
+        private Dictionary<int, ConnectStatus> m_disconnectReasons = new();
+
         /// <summary>
         /// This event will be invoked before disconnecting all clients.
         /// int is the playerNumber of the client who trigger the disconnect all.
@@ -25,24 +25,26 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 
         public ConnectStatus GetDisconnectReason(int playerNumber)
         {
-            return m_disconnectReasons.TryGetValue(playerNumber, out var reason) ? reason :
+            return m_disconnectReasons.TryGetValue(playerNumber, out var reason)
+                ? reason
+                :
                 // if this disconnect reason is not recorded (unintentional), return generic disconnect
                 ConnectStatus.GenericDisconnect;
         }
-        
+
         public void DisconnectAll(int loserPlayerNumber, ConnectStatus disconnectReason)
         {
             BeforeDisconnectAll?.Invoke(loserPlayerNumber);
-            
+
             m_disconnectReasons.Clear();
 
             var netManager = NetworkManager.Singleton;
             for (var i = netManager.ConnectedClientsList.Count - 1; i >= 0; i--)
             {
-                var clientId = netManager.ConnectedClientsList[i].ClientId;
+                var clientId     = netManager.ConnectedClientsList[i].ClientId;
                 var playerNumber = SessionPlayerManager.Instance.GetPlayerNumber(clientId);
                 m_disconnectReasons[playerNumber] = disconnectReason;
-                
+
                 var reason = JsonUtility.ToJson(disconnectReason);
                 netManager.DisconnectClient(clientId, reason);
             }

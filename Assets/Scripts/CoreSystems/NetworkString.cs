@@ -8,7 +8,8 @@ namespace Minimax.Utilities
     /// </summary>
     public struct NetworkString : INetworkSerializable
     {
-        ForceNetworkSerializeByMemcpy<FixedString32Bytes> m_info;
+        private ForceNetworkSerializeByMemcpy<FixedString32Bytes> m_info;
+
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref m_info);
@@ -19,7 +20,14 @@ namespace Minimax.Utilities
             return m_info.Value.ToString();
         }
 
-        public static implicit operator string(NetworkString s) => s.ToString();
-        public static implicit operator NetworkString(string s) => new NetworkString() { m_info = new FixedString32Bytes(s) };
+        public static implicit operator string(NetworkString s)
+        {
+            return s.ToString();
+        }
+
+        public static implicit operator NetworkString(string s)
+        {
+            return new NetworkString { m_info = new FixedString32Bytes(s) };
+        }
     }
 }

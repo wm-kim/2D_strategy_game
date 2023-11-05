@@ -7,8 +7,10 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {
     public class StartingHostState : OnlineState
     {
-        public StartingHostState(ConnectionManager connectionManager) : base(connectionManager) { }
-        
+        public StartingHostState(ConnectionManager connectionManager) : base(connectionManager)
+        {
+        }
+
         public override void Enter()
         {
             StartHost();
@@ -29,18 +31,19 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
             StartHostFailed();
         }
 
-        public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
+        public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request,
+            NetworkManager.ConnectionApprovalResponse response)
         {
             var connectionData = request.Payload;
-            var clientId = request.ClientNetworkId;
-            
+            var clientId       = request.ClientNetworkId;
+
             // This happens when starting as a host, before the end of the StartHost call. In that case, we simply approve ourselves.
             if (clientId == m_connectionManager.NetworkManager.LocalClientId)
             {
-                var payload = System.Text.Encoding.UTF8.GetString(connectionData);
+                var payload           = System.Text.Encoding.UTF8.GetString(connectionData);
                 var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload);
-                int playerNumber = 0;
-                
+                var playerNumber      = 0;
+
                 DebugWrapper.Log("Approving self as host");
                 DebugWrapper.Log($"Player {connectionPayload.playerName} assigned to player number {playerNumber}");
 
@@ -51,24 +54,21 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
                 response.Approved = true;
             }
         }
-        
+
         public override void StartHost()
         {
             // Need to set connection payload for host as well, as host is a client too
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
-                playerId = AuthenticationService.Instance.PlayerId,
-                playerName = "PlayerName_" + Random.Range(0, 1000),
+                playerId   = AuthenticationService.Instance.PlayerId,
+                playerName = "PlayerName_" + Random.Range(0, 1000)
             });
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
             m_connectionManager.NetworkManager.NetworkConfig.ConnectionData = payloadBytes;
-            
-            if (!m_connectionManager.NetworkManager.StartHost())
-            {
-                StartHostFailed();
-            }
+
+            if (!m_connectionManager.NetworkManager.StartHost()) StartHostFailed();
         }
-        
+
         private void StartHostFailed()
         {
             DebugWrapper.LogError("Failed to start host");

@@ -16,52 +16,55 @@ namespace Minimax.GamePlay.Logic
     /// </summary>
     public class CardDrawingLogic : NetworkBehaviour
     {
-        [Header("Server References")]
-        [SerializeField] private ServerPlayersDeckManager m_serverPlayersDeck;
+        [Header("Server References")] [SerializeField]
+        private ServerPlayersDeckManager m_serverPlayersDeck;
+
         [SerializeField] private ServerPlayersHandManager m_serverPlayersHand;
-        
-        [Header("Client References")]
-        [SerializeField] private ClientMyDeckManager m_clientMyDeck;
+
+        [Header("Client References")] [SerializeField]
+        private ClientMyDeckManager m_clientMyDeck;
+
         [SerializeField] private ClientOpponentDeckManager m_clientOpponentDeck;
-        [SerializeField] private ClientMyHandManager m_clientMyHand;
+        [SerializeField] private ClientMyHandManager       m_clientMyHand;
         [SerializeField] private ClientOpponentHandManager m_clientOpponentHand;
-        
+
         public void CommandDrawAllPlayerInitialCards()
         {
             DebugWrapper.Log("Server is drawing initial cards for all players");
-            var sessionPlayers = SessionPlayerManager.Instance;
+            var sessionPlayers  = SessionPlayerManager.Instance;
             var clientRpcParams = sessionPlayers.ClientRpcParams;
-            
-            Dictionary<int, int[]> cardUIDs = new Dictionary<int, int[]>();
+
+            var cardUIDs      = new Dictionary<int, int[]>();
             var playerNumbers = sessionPlayers.GetAllPlayerNumbers();
-            
+
             foreach (var playerNumber in playerNumbers)
             {
                 cardUIDs.Add(playerNumber, new int[Define.InitialHandCardCount]);
-                for (int i = 0; i < Define.InitialHandCardCount; i++)
+                for (var i = 0; i < Define.InitialHandCardCount; i++)
                 {
                     var cardUID = DrawACard(playerNumber);
                     cardUIDs[playerNumber][i] = cardUID;
                 }
             }
-            
+
             foreach (var playerNumber in playerNumbers)
             {
                 var opponentNumber = sessionPlayers.GetOpponentPlayerNumber(playerNumber);
-                DrawAllPlayerInitialCardsClientRpc(cardUIDs[playerNumber], cardUIDs[opponentNumber], clientRpcParams[playerNumber]);
+                DrawAllPlayerInitialCardsClientRpc(cardUIDs[playerNumber], cardUIDs[opponentNumber],
+                    clientRpcParams[playerNumber]);
             }
         }
-        
+
         public void CommandDrawACardFromDeck(int playerNumber)
         {
             try
             {
                 DebugWrapper.Log($"Drawing a card for player {playerNumber}");
-                var sessionPlayers = SessionPlayerManager.Instance;
+                var sessionPlayers  = SessionPlayerManager.Instance;
                 var clientRpcParams = sessionPlayers.ClientRpcParams;
-                var opponentNumber = sessionPlayers.GetOpponentPlayerNumber(playerNumber);
-                var cardUID = DrawACard(playerNumber);
-                
+                var opponentNumber  = sessionPlayers.GetOpponentPlayerNumber(playerNumber);
+                var cardUID         = DrawACard(playerNumber);
+
                 DrawMyCardClientRpc(cardUID, clientRpcParams[playerNumber]);
                 DrawOpponentCardClientRpc(cardUID, clientRpcParams[opponentNumber]);
             }
@@ -75,9 +78,7 @@ namespace Minimax.GamePlay.Logic
         {
             var playerDeck = m_serverPlayersDeck.GetPlayerDeck(playerNumber);
             if (!m_serverPlayersDeck.IsCardLeftInDeck(playerNumber))
-            {
                 throw new Exception($"Player {playerNumber} has no more cards in deck.");
-            }
 
             var cardUID = playerDeck[0];
             m_serverPlayersHand.AddCardToHand(playerNumber, cardUID);
@@ -85,7 +86,7 @@ namespace Minimax.GamePlay.Logic
 
             return cardUID;
         }
-        
+
         /// <summary>
         /// need to pass on cardUID to client so that it can be removed from the deck
         /// since, client have no information about the order of the deck.
@@ -97,17 +98,19 @@ namespace Minimax.GamePlay.Logic
         {
             new DrawMyCardCmd(cardUID, m_clientMyHand, m_clientMyDeck).AddToQueue();
         }
-        
+
         [ClientRpc]
         private void DrawOpponentCardClientRpc(int cardUID, ClientRpcParams clientRpcParams = default)
         {
             new DrawOpponentCardCmd(cardUID, m_clientOpponentHand, m_clientOpponentDeck).AddToQueue();
         }
-        
+
         [ClientRpc]
-        private void DrawAllPlayerInitialCardsClientRpc(int[] myCardUIDs, int[] opponentCardUIDs, ClientRpcParams clientRpcParams = default)
+        private void DrawAllPlayerInitialCardsClientRpc(int[] myCardUIDs, int[] opponentCardUIDs,
+            ClientRpcParams clientRpcParams = default)
         {
-            new DrawAllPlayerInitialCardsCmd(myCardUIDs, opponentCardUIDs, m_clientMyHand, m_clientOpponentHand, m_clientMyDeck, m_clientOpponentDeck)
+            new DrawAllPlayerInitialCardsCmd(myCardUIDs, opponentCardUIDs, m_clientMyHand, m_clientOpponentHand,
+                    m_clientMyDeck, m_clientOpponentDeck)
                 .AddToQueue();
         }
     }

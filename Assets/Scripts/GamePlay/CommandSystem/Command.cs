@@ -8,22 +8,22 @@ namespace Minimax.GamePlay.CommandSystem
     /// </summary>
     public class Command
     {
-        public static Queue<Command> CommandQueue = new Queue<Command>();
-        public static bool IsExecuting = false;
-        
+        public static Queue<Command> CommandQueue = new();
+        public static bool           IsExecuting  = false;
+
         public void AddToQueue()
         {
             CommandQueue.Enqueue(this);
             if (!IsExecuting)
                 PlayFirstCommandFromQueue();
         }
-        
+
         public virtual void StartExecute()
         {
-            DebugWrapper.Log($"Start Execute Command {this.GetType().Name}");
+            DebugWrapper.Log($"Start Execute Command {GetType().Name}");
             // use tween sequence and call ExecutionComplete() in OnComplete()
         }
-        
+
         /// <summary>
         /// Call when the command is finished executing.
         /// If there are more commands in the queue, play the next one.
@@ -33,11 +33,9 @@ namespace Minimax.GamePlay.CommandSystem
             if (CommandQueue.Count > 0)
                 PlayFirstCommandFromQueue();
             else
-            {
                 IsExecuting = false;
-            }
         }
-        
+
         public static void PlayFirstCommandFromQueue()
         {
             IsExecuting = true;

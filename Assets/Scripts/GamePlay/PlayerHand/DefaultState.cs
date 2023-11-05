@@ -6,14 +6,19 @@ namespace Minimax.GamePlay.PlayerHand
 {
     public class DefaultState : HandCardSlotState
     {
-        public DefaultState(HandCardSlot slot) => m_slot = slot;
+        public DefaultState(HandCardSlot slot)
+        {
+            m_slot = slot;
+        }
 
         public override void Enter()
         {
             SetCardViewParent();
         }
-        
-        public override void Exit() { }
+
+        public override void Exit()
+        {
+        }
 
         private void SetCardViewParent()
         {
@@ -24,21 +29,21 @@ namespace Minimax.GamePlay.PlayerHand
         {
             if (IsAboveThresholdDistance()) TweenCardViewToSlotTransform();
         }
-        
+
         private bool IsAboveThresholdDistance()
         {
-            Vector3 targetPosition = m_slot.transform.position;
+            var targetPosition = m_slot.transform.position;
             return Vector3.Distance(m_slot.HandCardView.transform.position, targetPosition) > m_positionThreshold;
         }
-        
+
         private void TweenCardViewToSlotTransform()
         {
-            var slotTransform = m_slot.transform;
-            Vector3 targetPosition = slotTransform.position;
-            Vector3 targetRotation = slotTransform.eulerAngles;
-            float targetScale = 1f;
-            float duration = m_slot.HandCardSlotSettings.DropDownDuration;
-            
+            var slotTransform  = m_slot.transform;
+            var targetPosition = slotTransform.position;
+            var targetRotation = slotTransform.eulerAngles;
+            var targetScale    = 1f;
+            var duration       = m_slot.HandCardSlotSettings.DropDownDuration;
+
             m_slot.HandCardView.StartMoveTween(targetPosition, duration);
             m_slot.HandCardView.StartRotTween(targetRotation, duration);
             m_slot.HandCardView.StartScaleTween(targetScale, duration);
@@ -51,12 +56,16 @@ namespace Minimax.GamePlay.PlayerHand
                 m_slot.ChangeState(m_slot.HoverState);
         }
 
-        public override void OnPointerExit() { }
+        public override void OnPointerExit()
+        {
+        }
 
         public override void OnPointerDown()
         {
         }
-        
-        public override void OnPointerUp() { }
+
+        public override void OnPointerUp()
+        {
+        }
     }
 }

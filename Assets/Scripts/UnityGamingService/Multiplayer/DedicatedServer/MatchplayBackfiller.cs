@@ -22,7 +22,8 @@ namespace Minimax.UnityGamingService.Multiplayer
         public MatchplayBackfiller(string connection, string queueName, MatchProperties matchmakerPayloadProperties)
         {
             var backfillProperties = new BackfillTicketProperties(matchmakerPayloadProperties);
-            m_localBackfillTicket = new BackfillTicket { Id = matchmakerPayloadProperties.BackfillTicketId, Properties = backfillProperties };
+            m_localBackfillTicket = new BackfillTicket { Id = matchmakerPayloadProperties.BackfillTicketId, Properties =
+ backfillProperties };
 
             m_createBackfillOptions = new CreateBackfillTicketOptions
             {
@@ -115,7 +116,8 @@ namespace Minimax.UnityGamingService.Multiplayer
                 }
                 else
                 {
-                    m_localBackfillTicket = await MatchmakerService.Instance.ApproveBackfillTicketAsync(m_localBackfillTicket.Id);
+                    m_localBackfillTicket =
+ await MatchmakerService.Instance.ApproveBackfillTicketAsync(m_localBackfillTicket.Id);
                 }
 
                 if (!NeedsPlayers())

@@ -13,18 +13,19 @@ namespace Minimax
 {
     public class ClientOpponentHandManager : MonoBehaviour
     {
-        [Header("References")]
-        [SerializeField] private HandAnimationManager m_handAnimationManager;
+        [Header("References")] [SerializeField]
+        private HandAnimationManager m_handAnimationManager;
+
         [SerializeField] private HandCardView m_cardPrefab;
-        [SerializeField] private Transform m_cardParent;
-        
-        private List<HandCardView> m_handCards = new List<HandCardView>();
-        
+        [SerializeField] private Transform    m_cardParent;
+
+        private List<HandCardView> m_handCards = new();
+
         /// <summary>
         /// for keeping track of the index of card uids in the opponent's hand.
         /// </summary>
-        private List<int> m_cardUIDs = new List<int>();
-        
+        private List<int> m_cardUIDs = new();
+
         public int CardCount => m_handCards.Count;
 
         public void AddInitialCardsAndTween(int[] cardUIDs)
@@ -32,7 +33,7 @@ namespace Minimax
             foreach (var cardUID in cardUIDs) AddCard(cardUID);
             m_handAnimationManager.UpdateAndTweenHand(m_handCards);
         }
-        
+
         public void AddCardAndTween(int cardUID)
         {
             AddCard(cardUID);
@@ -41,7 +42,7 @@ namespace Minimax
 
         public void PlayCardAndTween(int cardUID)
         {
-            try 
+            try
             {
                 var card = RemoveCard(cardUID);
                 m_handAnimationManager.TweenOpponentCardReveal(cardUID, card);
@@ -54,9 +55,9 @@ namespace Minimax
         }
 
         private HandCardView RemoveCard(int cardUID)
-        { 
-            int index = FindIndexOfCardUID(cardUID);
-            var card = m_handCards[index];
+        {
+            var index = FindIndexOfCardUID(cardUID);
+            var card  = m_handCards[index];
             m_handCards.RemoveAt(index);
             m_cardUIDs.RemoveAt(index);
             return card;
@@ -64,29 +65,25 @@ namespace Minimax
 
         private int FindIndexOfCardUID(int cardUID)
         {
-            for (int i = 0; i < CardCount; i++)
-            {
+            for (var i = 0; i < CardCount; i++)
                 if (m_cardUIDs[i] == cardUID)
-                {
                     return i;
-                }
-            }
-            
+
             throw new Exception($"Cannot find card with UID {cardUID} in opponent's hand.");
         }
 
         private void AddCard(int cardUID)
         {
             if (!CheckMaxHandCardCount()) return;
-            
+
             var handCardView = Instantiate(m_cardPrefab, m_cardParent);
             m_handAnimationManager.SetInitialTransform(handCardView);
-            
+
             handCardView.CreateClientCardAndSetVisual(cardUID);
             m_cardUIDs.Add(cardUID);
             m_handCards.Add(handCardView);
         }
-        
+
         private bool CheckMaxHandCardCount()
         {
             if (CardCount >= Define.MaxHandCardCount)

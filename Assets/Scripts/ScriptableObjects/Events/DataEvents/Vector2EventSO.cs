@@ -4,5 +4,7 @@ using UnityEngine;
 namespace Minimax.ScriptableObjects.Events.Primitives
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/Events/Primitives/Vector2Event")]
-    public class Vector2EventSO : DataEventSO<Vector2> { }
+    public class Vector2EventSO : DataEventSO<Vector2>
+    {
+    }
 }

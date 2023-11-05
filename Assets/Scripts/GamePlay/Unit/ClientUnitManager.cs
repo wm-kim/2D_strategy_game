@@ -18,31 +18,33 @@ namespace Minimax
     /// </summary>
     public class ClientUnitManager : MonoBehaviour
     {
-        [Header("References")]
-        [SerializeField] private UnitVisual m_unitVisualPrefab;
-        [SerializeField] private ClientMap m_clientMap;
-        [SerializeField] private Transform m_unitContainer;
-        [SerializeField] private UnitLogic m_unitLogic;
+        [Header("References")] [SerializeField]
+        private UnitVisual m_unitVisualPrefab;
+
+        [SerializeField] private ClientMap   m_clientMap;
+        [SerializeField] private Transform   m_unitContainer;
+        [SerializeField] private UnitLogic   m_unitLogic;
         [SerializeField] private TurnManager m_turnManager;
-        
+
         public event Action<ClientCell> OnUnitSpawned;
-        
+
         /// <summary>
         /// Key is unit UID
         /// </summary>
-        private Dictionary<int, UnitVisual> m_unitVisuals = new ();
+        private Dictionary<int, UnitVisual> m_unitVisuals = new();
+
         private int m_selectedUnitUID = -1;
 
         private void OnEnable()
         {
             m_clientMap.OnTapMap += OnTabMap;
         }
-        
+
         private void OnDisable()
         {
             m_clientMap.OnTapMap -= OnTabMap;
-        }   
-        
+        }
+
         private void OnTabMap(ClientCell clientCell)
         {
             if (clientCell.IsOccupiedByUnit)
@@ -51,7 +53,7 @@ namespace Minimax
             }
             else
             {
-                bool isHighlightedCell = m_clientMap.IsHighlightedCell(clientCell);
+                var isHighlightedCell = m_clientMap.IsHighlightedCell(clientCell);
                 if (isHighlightedCell)
                 {
                     if (!m_turnManager.IsMyTurn) return;
@@ -65,7 +67,7 @@ namespace Minimax
                 }
             }
         }
-        
+
         private bool CheckIfIOwnUnit(int unitUID)
         {
             var clientUnit = ClientUnit.UnitsCreatedThisGame[unitUID];
@@ -77,7 +79,7 @@ namespace Minimax
 
             return true;
         }
-        
+
         /// <summary>
         /// Wrapper for checking if the unit is movable
         /// </summary>
@@ -86,18 +88,15 @@ namespace Minimax
             var clientUnit = ClientUnit.UnitsCreatedThisGame[unitUID];
             return clientUnit.CheckIfMovable();
         }
-        
+
         private void OnTapUnit(ClientCell clientCell)
         {
             m_selectedUnitUID = clientCell.CurrentUnitUID;
             DebugWrapper.Log($"Unit {m_selectedUnitUID} is tapped");
             var clientUnit = ClientUnit.UnitsCreatedThisGame[m_selectedUnitUID];
-            var moveRange = clientUnit.MoveRange;
+            var moveRange  = clientUnit.MoveRange;
             m_clientMap.DisableHighlightCells();
-            if (moveRange > 0)
-            {
-                m_clientMap.HighlightReachableCells(clientCell, moveRange);
-            }
+            if (moveRange > 0) m_clientMap.HighlightReachableCells(clientCell, moveRange);
         }
 
         public void SpawnUnit(int unitUID, int cardUID, Vector2Int coord)
@@ -106,39 +105,41 @@ namespace Minimax
 
             var clientUnit = new ClientUnit(unitUID, cardUID, coord);
             var clientCell = m_clientMap[coord];
-            
+
             m_clientMap.PlaceUnitOnMap(unitUID, coord);
-           
+
             // Instantiate unit visual
-            var unitVisual = Instantiate(m_unitVisualPrefab, clientCell.transform.position, 
+            var unitVisual = Instantiate(m_unitVisualPrefab, clientCell.transform.position,
                 Quaternion.identity, m_unitContainer);
             m_unitVisuals.Add(unitUID, unitVisual);
-            
-            // TODO : pass both player rotation and current rotation
-            unitVisual.Init(m_clientMap.GetMyPlayerRotation());
-            
+
+            // TODO : change GetMyPlayerRotation to GetMyCurrentRotation
+            var unitRotation = m_clientMap.GetPlayerRotation(clientUnit.Owner);
+            unitVisual.Init(m_clientMap.GetMyPlayerRotation(), unitRotation);
+
             if (clientUnit.IsMine)
             {
                 m_clientMap.DisableHighlightCells();
                 m_clientMap.HighlightReachableCells(clientCell, clientUnit.MoveRange);
             }
-            
+
             OnUnitSpawned?.Invoke(clientCell);
         }
-        
+
         public void MoveUnitOneCell(int unitUID, Vector2Int coord)
         {
             var clientUnit = ClientUnit.UnitsCreatedThisGame[unitUID];
             var clientCell = m_clientMap[clientUnit.Coord];
             clientCell.RemoveUnit();
-            
-            Vector2Int dir = coord - clientUnit.Coord;
+
+            var dir = coord - clientUnit.Coord;
             // TODO : Change it to current rotation
             var playerRotation = m_clientMap.GetMyPlayerRotation();
-            
-            m_unitVisuals[unitUID].AnimateMove(dir, playerRotation, m_clientMap[coord].transform.position).OnComplete(() =>
+
+            m_unitVisuals[unitUID].AnimateMove(dir, playerRotation, m_clientMap[coord].transform.position).OnComplete(
+                () =>
                 {
-                    clientUnit.Coord = coord;
+                    clientUnit.Coord     =  coord;
                     clientUnit.MoveRange -= 1;
                     m_clientMap.PlaceUnitOnMap(unitUID, coord);
                     Command.ExecutionComplete();

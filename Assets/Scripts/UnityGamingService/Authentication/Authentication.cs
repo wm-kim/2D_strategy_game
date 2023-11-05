@@ -2,7 +2,7 @@ using Cysharp.Threading.Tasks;
 using Minimax.Utilities;
 #if UNITY_EDITOR
 using ParrelSync;
-#endif 
+#endif
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Core.Environments;
@@ -17,11 +17,11 @@ namespace Minimax.UnityGamingService.Multiplayer
         development,
         production
     }
-    
+
     public class Authentication : MonoBehaviour
     {
         [SerializeField] private EnvironmentType m_environment = EnvironmentType.undefined;
-        
+
 #if !DEDICATED_SERVER
         private async void Start()
         {
@@ -36,7 +36,7 @@ namespace Minimax.UnityGamingService.Multiplayer
             if (UnityServices.State != ServicesInitializationState.Initialized)
             {
                 var options = new InitializationOptions();
-                
+
                 // Set the environment
                 switch (m_environment)
                 {
@@ -47,12 +47,12 @@ namespace Minimax.UnityGamingService.Multiplayer
                         options.SetEnvironmentName(EnvironmentType.production.ToString());
                         break;
                 }
-                
+
 #if UNITY_EDITOR
                 if (ClonesManager.IsClone())
                 {
                     // Get the custom argument for this clone project.  
-                    string customArgument = ClonesManager.GetArgument();
+                    var customArgument = ClonesManager.GetArgument();
                     options.SetProfile(customArgument);
                 }
 #endif
@@ -71,18 +71,15 @@ namespace Minimax.UnityGamingService.Multiplayer
                 // Shows how to get the access token
                 DebugWrapper.Log($"Access Token: {AuthenticationService.Instance.AccessToken}");
             };
-            
+
             AuthenticationService.Instance.SignInFailed += (exception) =>
             {
                 DebugWrapper.LogError($"Sign in failed: {exception.Message}");
             };
-            
-            AuthenticationService.Instance.SignedOut += () =>
-            {
-                DebugWrapper.Log("Player signed out.");
-            };
+
+            AuthenticationService.Instance.SignedOut += () => { DebugWrapper.Log("Player signed out."); };
         }
-        
+
         private async UniTask SignInAnonymously()
         {
             if (AuthenticationService.Instance.IsSignedIn)
@@ -90,7 +87,7 @@ namespace Minimax.UnityGamingService.Multiplayer
                 DebugWrapper.Log("Already signed in!");
                 return;
             }
-            
+
             try
             {
                 await AuthenticationService.Instance.SignInAnonymouslyAsync();

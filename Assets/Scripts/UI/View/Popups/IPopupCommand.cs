@@ -12,24 +12,24 @@ namespace Minimax.UI.View.Popups
         /// <summary>
         /// 이미 화면에 띄워져 있는 팝업이거나 대기열에 있는 팝업이면 무시
         /// </summary>
-        Unique,         
-        
+        Unique,
+
         /// <summary>
         /// 이미 화면에 띄워져 있는 팝업이거나 대기열에 있는 팝업이라도 대기열에 중복하여 넣음
         /// </summary>
-        Duplicate,      
+        Duplicate
     }
 
     public interface IPopupCommand
     {
-        public string Key { get; }
-        PopupType Type { get;}
+        public string Key  { get; }
+        PopupType     Type { get; }
 
-        PopupCommandType CommandType { get;}
+        PopupCommandType CommandType { get; }
 
         /// <summary>
         /// 팝업을 표시할 때 우선순위. 숫자가 클수록 우선순위가 높음
         /// </summary>
-        public PopupPriority Priority { get;}
+        public PopupPriority Priority { get; }
     }
 }

@@ -10,9 +10,9 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
     /// </summary>
     public class HandCardView : TweenableItem
     {
-        [SerializeField] private CardVisual m_cardVisual;
+        [SerializeField] private CardVisual  m_cardVisual;
         [SerializeField] private CanvasGroup m_canvasGroup;
-        
+
         public Tweener FadeTween { get; private set; }
 
         public override void KillAllTweens()
@@ -28,7 +28,7 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
             var cardData = card.Data;
             m_cardVisual.Init(cardData);
         }
-        
+
         public void UpdateCardVisual(int cardUID)
         {
             var card = ClientCard.CardsCreatedThisGame[cardUID];
@@ -36,15 +36,15 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
             var cardData = card.Data;
             m_cardVisual.Init(cardData);
         }
-        
+
         public Tweener StartFadeTween(float targetAlpha, float duration = 0.0f)
         {
             if (duration.Equals(0f))
             {
                 m_canvasGroup.alpha = targetAlpha;
-                return null; 
+                return null;
             }
-            
+
             FadeTween?.Kill();
             return FadeTween = m_canvasGroup.DOFade(targetAlpha, duration);
         }

@@ -21,10 +21,9 @@ namespace Minimax.Utilities
         public void OnPointerDown(PointerEventData eventData)
         {
             // ignore if button not interactable
-            if(!_button.interactable) return;
-            
+            if (!_button.interactable) return;
+
             onPointerDown?.Invoke();
-            
         }
 
         public void OnPointerUp(PointerEventData eventData)

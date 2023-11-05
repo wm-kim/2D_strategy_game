@@ -15,13 +15,13 @@ namespace Minimax
             m_settingsButton.onClick.AddListener(OnSettingsButtonClicked);
             m_surrenderButton.onClick.AddListener(OnSurrenderButtonClicked);
         }
-        
+
         private void OnSettingsButtonClicked()
         {
             AudioManager.Instance.PlaySFX(AudioLib.Popup);
             gameObject.SetActive(false);
         }
-        
+
         private void OnSurrenderButtonClicked()
         {
             AudioManager.Instance.PlaySFX(AudioLib.Popup);

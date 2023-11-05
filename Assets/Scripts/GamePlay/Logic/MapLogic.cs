@@ -10,15 +10,15 @@ namespace Minimax.GamePlay.Logic
     /// </summary>
     public class MapLogic : NetworkBehaviour
     {
-        [Header("Client References")]
-        [SerializeField] private ClientMap m_clientMap;
-        
-        [ClientRpc] 
+        [Header("Client References")] [SerializeField]
+        private ClientMap m_clientMap;
+
+        [ClientRpc]
         public void HighlightReachableCellsClientRpc(int unitUID, ClientRpcParams clientRpcParams = default)
         {
             new HighlightReachableCmd(unitUID, m_clientMap).AddToQueue();
         }
-        
+
         [ClientRpc]
         public void DisableAllHighlightsClientRpc()
         {

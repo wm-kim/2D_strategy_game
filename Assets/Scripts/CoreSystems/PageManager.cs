@@ -8,9 +8,8 @@ namespace Minimax.CoreSystems
     [DefaultExecutionOrder(-1)]
     public class PageManager : MonoBehaviour
     {
-        [SerializeField, ReadOnly]
-        private SerializedDictionary<PageType, PageView> m_pages = new SerializedDictionary<PageType, PageView>();
-        
+        [SerializeField] [ReadOnly] private SerializedDictionary<PageType, PageView> m_pages = new();
+
         private void Awake()
         {
             ResetPageCache();
@@ -31,15 +30,13 @@ namespace Minimax.CoreSystems
 
         private void HideAllPages()
         {
-            foreach (var page in m_pages)
-            {
-                page.Value.gameObject.GetComponent<PageView>().StartHide();
-            }
+            foreach (var page in m_pages) page.Value.gameObject.GetComponent<PageView>().StartHide();
         }
-        
+
         public PageView GetPageView(PageType pageType)
         {
-            UnityEngine.Assertions.Assert.IsTrue(m_pages.ContainsKey(pageType), $"Page {pageType} not found in the scene.");
+            UnityEngine.Assertions.Assert.IsTrue(m_pages.ContainsKey(pageType),
+                $"Page {pageType} not found in the scene.");
             return m_pages[pageType];
         }
     }

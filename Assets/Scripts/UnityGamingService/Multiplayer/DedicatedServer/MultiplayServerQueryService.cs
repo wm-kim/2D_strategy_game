@@ -31,7 +31,8 @@ namespace Minimax.UnityGamingService.Multiplayer
             if (m_multiplayService == null)
                 return;
 
-            m_serverQueryHandler = await m_multiplayService.StartServerQueryHandlerAsync((ushort)Define.MaxConnectedPlayers,
+            m_serverQueryHandler =
+ await m_multiplayService.StartServerQueryHandlerAsync((ushort)Define.MaxConnectedPlayers,
                 "MyServerName", "CardWars", "1.0", "Default");
             
             ServerQueryLoop(m_serverCheckCancel.Token).Forget();

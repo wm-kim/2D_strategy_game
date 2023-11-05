@@ -7,13 +7,14 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DeckListItemView : MonoBehaviour
     {
-        [Header("Inner References")]
-        [SerializeField] private Button m_button;
+        [Header("Inner References")] [SerializeField]
+        private Button m_button;
+
         [SerializeField] private TextMeshProUGUI m_cardDataText;
-        
+
         private DeckBuildingManager m_deckBuildingManager;
-        private CardBaseData m_cardData;
-        
+        private CardBaseData        m_cardData;
+
         public CardBaseData CardData => m_cardData;
 
         private void Start()
@@ -24,10 +25,10 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
         public void Init(CardBaseData cardData, DeckBuildingManager deckBuildingManager)
         {
             m_deckBuildingManager = deckBuildingManager;
-            m_cardData = cardData;
+            m_cardData            = cardData;
             SetView(cardData.CardId);
         }
-        
+
         private void SetView(int cardId)
         {
             m_cardDataText.text = $"Card ID : {cardId.ToString()}";
