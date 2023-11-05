@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using Minimax.ScriptableObjects;
-using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Utilities;
 
 namespace Minimax.GamePlay.GridSystem
 {

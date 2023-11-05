@@ -1,6 +1,6 @@
 using System;
 
-namespace Minimax.Utilities.PubSub
+namespace Utilities.PubSub
 {
     /// <summary>
     /// 마지막으로 발행된 메시지를 저장하고(버퍼링하고) 새로운 구독자가 등록될 때 그 메시지를 즉시 수신하게 합니다.

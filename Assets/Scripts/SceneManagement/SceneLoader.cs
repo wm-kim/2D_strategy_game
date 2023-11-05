@@ -1,10 +1,10 @@
 using BrunoMikoski.AnimationSequencer;
 using Cysharp.Threading.Tasks;
 using Minimax.PropertyDrawer;
-using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Utilities;
 
 namespace Minimax.SceneManagement
 {

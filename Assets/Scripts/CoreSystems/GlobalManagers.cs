@@ -1,9 +1,9 @@
 using Minimax.GamePlay;
 using Minimax.SceneManagement;
 using Minimax.UnityGamingService.Multiplayer.ConnectionManagement;
-using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Utilities;
 
 namespace Minimax.CoreSystems
 {

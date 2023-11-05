@@ -1,10 +1,8 @@
 using System;
 using System.Diagnostics;
-using Minimax.CoreSystems;
-using Unity.Netcode;
 using UnityEngine;
 
-namespace Minimax.Utilities
+namespace Utilities
 {
     public enum LogLevel
     {

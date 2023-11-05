@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Minimax.Utilities
+namespace Utilities
 {
     public static class CameraEx
     {

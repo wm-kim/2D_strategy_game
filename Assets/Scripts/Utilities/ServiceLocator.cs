@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Minimax.Utilities
+namespace Utilities
 {
     /// <summary>
     /// For locating and referencing services.

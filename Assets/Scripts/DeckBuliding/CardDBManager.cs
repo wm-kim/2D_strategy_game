@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Minimax.ScriptableObjects.CardData;
-using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using Utilities;
 
 namespace Minimax.DeckBuliding
 {

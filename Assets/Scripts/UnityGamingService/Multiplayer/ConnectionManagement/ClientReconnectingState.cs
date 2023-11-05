@@ -4,9 +4,9 @@ using Minimax.CoreSystems;
 using Minimax.Definitions;
 using Minimax.SceneManagement;
 using Minimax.UI.View.Popups;
-using Minimax.Utilities;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {

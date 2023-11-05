@@ -2,7 +2,6 @@ using System;
 using Minimax.CoreSystems;
 using Minimax.UI.View.Popups;
 using Minimax.UnityGamingService.Multiplayer;
-using Minimax.Utilities;
 using Unity.Netcode;
 using Unity.Networking.Transport.Error;
 using UnityEngine;

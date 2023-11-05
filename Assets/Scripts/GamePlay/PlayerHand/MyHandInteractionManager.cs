@@ -1,9 +1,9 @@
 using System;
 using Minimax.GamePlay.GridSystem;
 using Minimax.GamePlay.Logic;
-using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Utilities;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 
 namespace Minimax.GamePlay.PlayerHand

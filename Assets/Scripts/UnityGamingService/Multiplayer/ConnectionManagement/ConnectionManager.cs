@@ -6,11 +6,11 @@ using Minimax.GamePlay;
 using Minimax.SceneManagement;
 using Minimax.ScriptableObjects.Events;
 using Minimax.UI.View.Popups;
-using Minimax.Utilities;
-using Minimax.Utilities.PubSub;
 using Unity.Netcode;
 using Unity.Services.Matchmaker;
 using UnityEngine;
+using Utilities;
+using Utilities.PubSub;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {

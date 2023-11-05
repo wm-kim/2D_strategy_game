@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Minimax.Definitions;
-using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.UnityGamingService.Multiplayer
 {

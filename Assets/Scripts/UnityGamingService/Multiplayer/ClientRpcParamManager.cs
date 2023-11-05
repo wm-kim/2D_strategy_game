@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Minimax.Utilities;
 using Unity.Netcode;
 
 namespace Minimax.UnityGamingService.Multiplayer

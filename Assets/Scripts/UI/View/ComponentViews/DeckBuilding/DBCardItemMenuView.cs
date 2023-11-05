@@ -1,9 +1,9 @@
 using Minimax.CoreSystems;
 using Minimax.DeckBuliding;
-using Minimax.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using Utilities;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 

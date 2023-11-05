@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Minimax.UI.View.ComponentViews;
-using Minimax.Utilities;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.UI.Controller.ComponentControllers
 {

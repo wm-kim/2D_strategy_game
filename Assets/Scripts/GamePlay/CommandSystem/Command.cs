@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Minimax.Utilities;
+using Utilities;
 
 namespace Minimax.GamePlay.CommandSystem
 {

@@ -1,7 +1,7 @@
-using Minimax.Utilities;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {

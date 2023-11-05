@@ -1,10 +1,10 @@
 using Cysharp.Threading.Tasks;
-using Minimax.Utilities;
 using ParrelSync;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Core.Environments;
 using UnityEngine;
+using Utilities;
 #if UNITY_EDITOR
 #endif
 

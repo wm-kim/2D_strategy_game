@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using Minimax.CoreSystems;
 using Minimax.UnityGamingService.Multiplayer;
-using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Utilities;
 
 namespace Minimax.GamePlay.GridSystem
 {

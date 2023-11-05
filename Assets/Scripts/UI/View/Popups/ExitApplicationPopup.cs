@@ -1,6 +1,6 @@
 using System;
 using Minimax.CoreSystems;
-using Minimax.Utilities;
+using Minimax.Definitions;
 using UnityEngine;
 using UnityEngine.UI;
 

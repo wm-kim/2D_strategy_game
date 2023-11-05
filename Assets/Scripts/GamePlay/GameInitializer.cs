@@ -8,9 +8,9 @@ using Minimax.GamePlay.Logic;
 using Minimax.GamePlay.PlayerDeck;
 using Minimax.GamePlay.Unit;
 using Minimax.UnityGamingService.Multiplayer;
-using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using Utilities;
 #if DEDICATED_SERVER
 using Unity.Services.Multiplay;
 using UnityEngine.Serialization;

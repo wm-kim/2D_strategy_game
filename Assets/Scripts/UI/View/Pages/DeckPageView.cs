@@ -8,9 +8,9 @@ using Minimax.UI.Controller;
 using Minimax.UI.Controller.ComponentControllers;
 using Minimax.UI.View.ComponentViews.DeckBuilding;
 using Minimax.UnityGamingService.CloudSave;
-using Minimax.Utilities;
 using UnityEngine;
 using TMPro;
+using Utilities;
 
 namespace Minimax.UI.View.Pages
 {

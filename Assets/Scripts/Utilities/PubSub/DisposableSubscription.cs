@@ -1,6 +1,6 @@
 using System;
 
-namespace Minimax.Utilities.PubSub
+namespace Utilities.PubSub
 {
     /// <summary>
     /// This class is a handle to an active Message Channel subscription and when disposed it unsubscribes from said channel.

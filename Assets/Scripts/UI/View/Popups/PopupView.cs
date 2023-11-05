@@ -1,7 +1,6 @@
 using System;
 using BrunoMikoski.AnimationSequencer;
 using Minimax.PropertyDrawer;
-using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.UI.View.Popups

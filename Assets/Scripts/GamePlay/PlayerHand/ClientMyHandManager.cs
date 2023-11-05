@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using Minimax.Definitions;
 using Minimax.GamePlay.Card;
-using Minimax.Utilities;
 using QFSW.QC;
 using UnityEngine;
 using UnityEngine.Pool;
+using Utilities;
 
 namespace Minimax.GamePlay.PlayerHand
 {

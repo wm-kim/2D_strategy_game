@@ -1,9 +1,9 @@
 using System;
-using Minimax.Utilities;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Utilities;
 
 namespace Minimax.GamePlay
 {

@@ -1,8 +1,8 @@
 using Minimax.CoreSystems;
 using Minimax.SceneManagement;
 using Minimax.UI.View.Popups;
-using Minimax.Utilities;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {

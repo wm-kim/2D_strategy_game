@@ -1,9 +1,9 @@
 using System.Collections;
 using Minimax.ScriptableObjects;
-using Minimax.Utilities;
 using Unity.EditorCoroutines.Editor;
 using UnityEditor;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax
 {

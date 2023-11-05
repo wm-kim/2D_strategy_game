@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Minimax.CoreSystems;
 using Minimax.GamePlay.Card;
 using Minimax.UnityGamingService.Multiplayer;
-using Minimax.Utilities;
 using QFSW.QC;
 using Unity.Netcode;
+using Utilities;
 
 namespace Minimax.GamePlay.PlayerHand
 {

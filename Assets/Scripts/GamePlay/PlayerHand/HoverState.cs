@@ -1,7 +1,7 @@
 using DG.Tweening;
 using Minimax.CoreSystems;
-using Minimax.Utilities;
 using UnityEngine;
+using Utilities;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 

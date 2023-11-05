@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 
-namespace Minimax.Utilities.PubSub
+namespace Utilities.PubSub
 {
     public class MessageChannel<T> : IMessageChannel<T>
     {

@@ -1,4 +1,4 @@
-using Minimax.Utilities;
+using Utilities;
 #if DEDICATED_SERVER
 using System;
 using Cysharp.Threading.Tasks;

@@ -1,7 +1,6 @@
 using DG.Tweening;
 using Minimax.GamePlay;
 using Minimax.GamePlay.Card;
-using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.UI.View.ComponentViews.GamePlay

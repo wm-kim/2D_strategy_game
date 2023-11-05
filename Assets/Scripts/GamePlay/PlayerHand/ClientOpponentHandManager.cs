@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using Minimax.Definitions;
 using Minimax.UI.View.ComponentViews.GamePlay;
-using Minimax.Utilities;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.GamePlay.PlayerHand
 {

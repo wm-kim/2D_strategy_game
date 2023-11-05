@@ -2,12 +2,12 @@ using System;
 using Minimax.CoreSystems;
 using Minimax.Definitions;
 using Minimax.UnityGamingService.Multiplayer;
-using Minimax.Utilities;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
+using Utilities;
 using Random = UnityEngine.Random;
 
 namespace Minimax.GamePlay

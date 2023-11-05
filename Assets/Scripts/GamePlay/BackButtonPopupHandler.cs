@@ -1,6 +1,6 @@
 using Minimax.CoreSystems;
+using Minimax.Definitions;
 using Minimax.UI.View.Popups;
-using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.GamePlay

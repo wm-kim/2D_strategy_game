@@ -2,8 +2,8 @@ using System;
 using AYellowpaper.SerializedCollections;
 using Cysharp.Threading.Tasks;
 using Minimax.PropertyDrawer;
-using Minimax.Utilities;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.CoreSystems
 {

@@ -4,7 +4,6 @@ using Minimax.DeckBuliding;
 using Minimax.Definitions;
 using Minimax.SceneManagement;
 using Minimax.UI.View.Popups;
-using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;

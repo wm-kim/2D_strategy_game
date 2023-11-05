@@ -3,11 +3,11 @@ using BrunoMikoski.AnimationSequencer;
 using Minimax.Definitions;
 using Minimax.UI.View.Pages;
 using Minimax.UI.View.Popups;
-using Minimax.Utilities;
 using TMPro;
 using Unity.Services.CloudCode;
 using UnityEngine;
 using UnityEngine.UI;
+using Utilities;
 
 namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {

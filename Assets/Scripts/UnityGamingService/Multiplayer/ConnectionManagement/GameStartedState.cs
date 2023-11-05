@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using Minimax.Definitions;
-using Minimax.Utilities;
 using Newtonsoft.Json;
 using Unity.Netcode;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
 {

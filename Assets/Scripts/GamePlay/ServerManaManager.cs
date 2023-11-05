@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Minimax.GamePlay;
 using Minimax.UnityGamingService.Multiplayer;
-using Minimax.Utilities;
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.GamePlay
 {

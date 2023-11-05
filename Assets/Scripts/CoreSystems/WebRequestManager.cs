@@ -4,10 +4,10 @@ using System.Text;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using Minimax.Definitions;
-using Minimax.Utilities;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
+using Utilities;
 
 namespace Minimax.CoreSystems
 {

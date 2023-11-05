@@ -1,10 +1,10 @@
 using System;
 using Minimax.CoreSystems;
 using Minimax.GamePlay.PlayerHand;
-using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
+using Utilities;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 

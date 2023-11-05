@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Minimax.Utilities;
 using UnityEngine.AddressableAssets;
 using UnityEngine.AddressableAssets.ResourceLocators;
 using UnityEngine.ResourceManagement;
 using UnityEngine.ResourceManagement.AsyncOperations;
+using Utilities;
 
 namespace Minimax.AddressableSystem
 {

@@ -1,8 +1,7 @@
 using Unity.Collections;
 using Unity.Netcode;
-using UnityEngine;
 
-namespace Minimax.Utilities.PubSub
+namespace Utilities.PubSub
 {
     // 서버에서 메시지를 보내면 그 메시지가 클라이언트들에게도 전달되고 동시에 서버 내부에서도 공유되는 채널입니다.
     // 클라이언트와 서버 모두 이 채널을 구독해서 메시지를 받을 수 있습니다.

@@ -3,11 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using Minimax.CoreSystems;
 using Minimax.GamePlay.Unit;
-using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
+using Utilities;
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 
 namespace Minimax.GamePlay.GridSystem

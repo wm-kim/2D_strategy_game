@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Minimax.ScriptableObjects.CardData;
-using Minimax.Utilities;
 using QFSW.QC;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.GamePlay.Card
 {

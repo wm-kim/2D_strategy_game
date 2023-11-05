@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using AYellowpaper.SerializedCollections;
+using Minimax.Definitions;
 using Minimax.PropertyDrawer;
 using Minimax.ScriptableObjects;
 using Minimax.UI.Controller;
 using Minimax.UI.Controller.ComponentControllers;
 using Minimax.UI.View.Pages;
 using Minimax.UI.View.Popups;
-using Minimax.Utilities;
 using UnityEngine;
 
 namespace Minimax.CoreSystems

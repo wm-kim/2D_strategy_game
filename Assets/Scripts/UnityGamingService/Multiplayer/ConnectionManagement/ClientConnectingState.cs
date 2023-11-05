@@ -1,8 +1,8 @@
 using System;
-using Minimax.Utilities;
 using Unity.Netcode;
 using Unity.Services.Authentication;
 using UnityEngine;
+using Utilities;
 using Random = UnityEngine.Random;
 
 namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement

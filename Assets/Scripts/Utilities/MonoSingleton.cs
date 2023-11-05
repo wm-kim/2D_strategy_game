@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace Minimax.Utilities
+namespace Utilities
 {
     public class MonoSingleton<T> : MonoBehaviour where T : Component
     {

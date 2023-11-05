@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Minimax.CoreSystems;
 using Minimax.Definitions;
 using Minimax.SceneManagement;
-using Minimax.Utilities;
 using TMPro;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -12,6 +11,7 @@ using Unity.Services.Matchmaker;
 using Unity.Services.Matchmaker.Models;
 using UnityEngine;
 using UnityEngine.UI;
+using Utilities;
 
 namespace Minimax.UI.Controller.PageControllers
 {

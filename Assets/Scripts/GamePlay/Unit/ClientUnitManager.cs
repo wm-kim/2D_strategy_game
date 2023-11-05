@@ -4,8 +4,8 @@ using DG.Tweening;
 using Minimax.GamePlay.CommandSystem;
 using Minimax.GamePlay.GridSystem;
 using Minimax.GamePlay.Logic;
-using Minimax.Utilities;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.GamePlay.Unit
 {

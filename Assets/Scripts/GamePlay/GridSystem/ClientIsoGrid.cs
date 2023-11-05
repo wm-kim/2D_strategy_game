@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using Minimax.Definitions;
-using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.Diagnostics;
+using Utilities;
 using Debug = UnityEngine.Debug;
 
 namespace Minimax.GamePlay.GridSystem

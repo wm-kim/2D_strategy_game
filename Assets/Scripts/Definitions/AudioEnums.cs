@@ -1,4 +1,4 @@
-namespace Minimax.Utilities
+namespace Minimax.Definitions
 {
     public enum AudioLib
     {

@@ -2,8 +2,8 @@ using Minimax.CoreSystems;
 using Minimax.Definitions;
 using Minimax.UI.View.Popups;
 using Minimax.UnityGamingService.Multiplayer.ConnectionManagement;
-using Minimax.Utilities;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.GamePlay
 {

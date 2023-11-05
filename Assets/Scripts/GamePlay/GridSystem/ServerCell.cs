@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using Minimax.GamePlay.Unit;
 using Minimax.UnityGamingService.Multiplayer;
-using Minimax.Utilities;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.GamePlay.GridSystem
 {

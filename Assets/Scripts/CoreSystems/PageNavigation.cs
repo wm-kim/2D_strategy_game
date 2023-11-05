@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Minimax.ScriptableObjects;
 using Minimax.UI.View.Pages;
-using Minimax.Utilities;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.CoreSystems
 {

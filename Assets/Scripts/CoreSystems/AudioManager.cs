@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Minimax.Definitions;
 using Minimax.ScriptableObjects;
-using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.Pool;
+using Utilities;
 
 namespace Minimax.CoreSystems
 {

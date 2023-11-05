@@ -4,11 +4,11 @@ using Cysharp.Threading.Tasks;
 using Minimax.DeckBuliding;
 using Minimax.GamePlay.Card;
 using Minimax.UnityGamingService.Multiplayer;
-using Minimax.Utilities;
 using Newtonsoft.Json;
 using Unity.Netcode;
 using Unity.Services.CloudCode;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.GamePlay.PlayerDeck
 {

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Minimax.Utilities;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.ScriptableObjects
 {

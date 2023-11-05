@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Minimax.Utilities
+namespace Utilities
 {
     public static class ShufflingEx
     {

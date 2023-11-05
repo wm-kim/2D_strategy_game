@@ -4,7 +4,6 @@ using System.IO;
 using System.Text;
 using Minimax.CoreSystems;
 using Minimax.ScriptableObjects;
-using Minimax.Utilities;
 using UnityEditor;
 using UnityEngine;
 
@@ -44,7 +43,7 @@ namespace Minimax
             builder.AppendLine("}");
             
             // Save to file (adapt the path to fit your project structure)
-            string path = "Assets/Scripts/Utilities/AudioEnums.cs";
+            string path = "Assets/Scripts/Definitions/AudioEnums.cs";
             System.IO.File.WriteAllText(path, builder.ToString());
             UnityEditor.AssetDatabase.Refresh();
         }

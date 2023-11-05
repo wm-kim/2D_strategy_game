@@ -1,5 +1,5 @@
-using Minimax.Utilities;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.ScriptableObjects
 {

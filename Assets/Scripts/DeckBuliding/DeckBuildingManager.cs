@@ -5,9 +5,9 @@ using Minimax.SceneManagement;
 using Minimax.ScriptableObjects;
 using Minimax.UI.View.ComponentViews.DeckBuilding;
 using Minimax.UI.View.Popups;
-using Minimax.Utilities;
 using Unity.Services.CloudCode;
 using UnityEngine;
+using Utilities;
 
 namespace Minimax.DeckBuliding
 {

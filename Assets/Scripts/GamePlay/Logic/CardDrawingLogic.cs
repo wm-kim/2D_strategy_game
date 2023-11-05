@@ -6,10 +6,10 @@ using Minimax.GamePlay.CommandSystem;
 using Minimax.GamePlay.PlayerDeck;
 using Minimax.GamePlay.PlayerHand;
 using Minimax.UnityGamingService.Multiplayer;
-using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Utilities;
 
 namespace Minimax.GamePlay.Logic
 {

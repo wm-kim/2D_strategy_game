@@ -1,6 +1,6 @@
 using System;
 
-namespace Minimax.Utilities.PubSub
+namespace Utilities.PubSub
 {
     public interface IPublisher<T>
     {

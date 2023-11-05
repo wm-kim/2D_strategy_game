@@ -1,4 +1,4 @@
-using Minimax.Utilities;
+using Minimax.Definitions;
 using UnityEngine;
 
 namespace Minimax.CoreSystems
