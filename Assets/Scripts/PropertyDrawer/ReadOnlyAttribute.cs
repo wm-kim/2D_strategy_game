@@ -1,11 +1,12 @@
-using UnityEngine;
 using System;
+using UnityEditor;
+using UnityEngine;
 
-#if UNITY_EDITOR
-namespace UnityEditor
+namespace Minimax.PropertyDrawer
 {
+#if UNITY_EDITOR
     [CustomPropertyDrawer(typeof(ReadOnlyAttribute), true)]
-    public class ReadOnlyAttributeDrawer : PropertyDrawer
+    public class ReadOnlyAttributeDrawer : UnityEditor.PropertyDrawer
     {
         // Necessary since some properties tend to collapse smaller than their content
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -21,16 +22,17 @@ namespace UnityEditor
             GUI.enabled = true;
         }
     }
-}
+
 #endif
 
-[AttributeUsage(AttributeTargets.Field)]
-public class ReadOnlyAttribute : PropertyAttribute
-{
-    public readonly bool runtimeOnly;
-
-    public ReadOnlyAttribute(bool runtimeOnly = false)
+    [AttributeUsage(AttributeTargets.Field)]
+    public class ReadOnlyAttribute : PropertyAttribute
     {
-        this.runtimeOnly = runtimeOnly;
+        public readonly bool runtimeOnly;
+
+        public ReadOnlyAttribute(bool runtimeOnly = false)
+        {
+            this.runtimeOnly = runtimeOnly;
+        }
     }
 }

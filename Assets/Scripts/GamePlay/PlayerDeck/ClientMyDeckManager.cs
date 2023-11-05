@@ -1,16 +1,15 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
 using LeTai.Asset.TranslucentImage;
-using Minimax.GamePlay;
-using Minimax.Utilities;
-using Newtonsoft.Json;
+using Minimax.DeckBuliding;
+using Minimax.GamePlay.Card;
+using Minimax.UI.View.ComponentViews.GamePlay;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Minimax
+namespace Minimax.GamePlay.PlayerDeck
 {
     /// <summary>
     /// This class is responsible for visualizing the client player's deck.

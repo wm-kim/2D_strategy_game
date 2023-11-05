@@ -1,12 +1,10 @@
-using System.Collections;
 using System.Collections.Generic;
-using Minimax.ScriptableObjects.CardDatas;
+using Minimax.ScriptableObjects.CardData;
 using Minimax.Utilities;
 using QFSW.QC;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Minimax
+namespace Minimax.GamePlay.Card
 {
     /// <summary>
     /// Holds the data of a card and related information for server

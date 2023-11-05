@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Minimax.Definitions;
 using Minimax.Utilities;
 using Newtonsoft.Json;
 using Unity.Netcode;

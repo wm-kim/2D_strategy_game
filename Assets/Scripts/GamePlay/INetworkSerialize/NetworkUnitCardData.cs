@@ -1,5 +1,5 @@
 using System.Text;
-using Minimax.ScriptableObjects.CardDatas;
+using Minimax.ScriptableObjects.CardData;
 using Unity.Netcode;
 
 namespace Minimax.GamePlay.INetworkSerialize

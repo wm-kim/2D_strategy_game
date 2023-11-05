@@ -1,8 +1,6 @@
-using System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Minimax.Utilities
+namespace Minimax.CoreSystems
 {
     [RequireComponent(typeof(Camera))]
     public class FixedAspectRatio : MonoBehaviour

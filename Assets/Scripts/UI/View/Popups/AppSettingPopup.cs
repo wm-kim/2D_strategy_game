@@ -1,9 +1,9 @@
 using Minimax.CoreSystems;
-using Minimax.UI.View.Popups;
+using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Minimax
+namespace Minimax.UI.View.Popups
 {
     public class AppSettingPopup : PopupView
     {

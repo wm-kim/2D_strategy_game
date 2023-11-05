@@ -1,9 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+using Minimax.Utilities;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.CoreSystems
 {
     public class AudioPlayer : MonoBehaviour
     {

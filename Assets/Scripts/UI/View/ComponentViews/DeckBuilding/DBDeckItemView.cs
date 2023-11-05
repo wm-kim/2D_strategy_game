@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using BrunoMikoski.AnimationSequencer;
+using Minimax.Definitions;
 using Minimax.UI.View.Pages;
 using Minimax.UI.View.Popups;
 using Minimax.Utilities;

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Minimax.ScriptableObjects.CardDatas
+namespace Minimax.ScriptableObjects.CardData
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/Cards/UnitBaseData")]
     public class SpecialBaseData : CardBaseData

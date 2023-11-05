@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 
-namespace Minimax
+namespace Minimax.EditorTools
 {
     [DefaultExecutionOrder(-1)]
     public class EditorColdStartup : MonoBehaviour

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Minimax.DeckBuliding;
 using Minimax.ScriptableObjects;
-using Minimax.ScriptableObjects.CardDatas;
+using Minimax.ScriptableObjects.CardData;
 using UnityEngine;
 
 namespace Minimax.UI.View.ComponentViews.DeckBuilding

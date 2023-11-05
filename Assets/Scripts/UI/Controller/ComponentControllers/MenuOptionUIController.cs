@@ -1,9 +1,10 @@
 using Minimax.CoreSystems;
 using Minimax.UI.View.Popups;
+using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Minimax
+namespace Minimax.UI.Controller.ComponentControllers
 {
     public class MenuOptionUIController : MonoBehaviour
     {

@@ -5,9 +5,8 @@ using Minimax.ScriptableObjects;
 using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.Pool;
-using UnityEngine.Serialization;
 
-namespace Minimax
+namespace Minimax.CoreSystems
 {
     public class AudioManager : MonoBehaviour
     {

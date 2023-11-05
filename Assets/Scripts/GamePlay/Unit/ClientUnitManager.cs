@@ -1,17 +1,13 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using DG.Tweening;
-using Minimax.GamePlay;
 using Minimax.GamePlay.CommandSystem;
 using Minimax.GamePlay.GridSystem;
 using Minimax.GamePlay.Logic;
-using Minimax.GamePlay.Unit;
 using Minimax.Utilities;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Minimax
+namespace Minimax.GamePlay.Unit
 {
     /// <summary>
     /// Responsible for spawning units and visualizing them, cache client unit based on player number

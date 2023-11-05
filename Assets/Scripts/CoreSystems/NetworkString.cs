@@ -1,7 +1,7 @@
 using Unity.Collections;
 using Unity.Netcode;
 
-namespace Minimax.Utilities
+namespace Minimax.CoreSystems
 {
     /// <summary>
     /// Wrapping FixedString so that if we want to change string max size in the future, we only do it once here

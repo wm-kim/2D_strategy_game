@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.GamePlay
 {
     public abstract class TweenableItem : MonoBehaviour
     {

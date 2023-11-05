@@ -1,14 +1,11 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
-using Minimax.ScriptableObjects.CardDatas;
-using Minimax.ScriptableObjects.Events;
+using Minimax.ScriptableObjects.CardData;
 using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
-namespace Minimax
+namespace Minimax.DeckBuliding
 {
     /// <summary>
     /// CardDBManager는 카드 데이터베이스를 관리합니다.

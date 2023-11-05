@@ -1,5 +1,7 @@
 using System;
 using Minimax.CoreSystems;
+using Minimax.DeckBuliding;
+using Minimax.Definitions;
 using Minimax.SceneManagement;
 using Minimax.UI.View.Popups;
 using Minimax.Utilities;

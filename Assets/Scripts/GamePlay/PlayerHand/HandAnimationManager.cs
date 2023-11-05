@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using DG.Tweening;
+using Minimax.Definitions;
 using Minimax.GamePlay.CommandSystem;
 using Minimax.UI.View.ComponentViews.GamePlay;
 using Minimax.Utilities;

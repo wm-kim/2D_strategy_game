@@ -1,7 +1,11 @@
 using System;
 using Minimax.CoreSystems;
+using Minimax.DeckBuliding;
+using Minimax.Definitions;
+using Minimax.GamePlay.Card;
 using Minimax.GamePlay.GridSystem;
 using Minimax.GamePlay.Logic;
+using Minimax.GamePlay.PlayerDeck;
 using Minimax.GamePlay.Unit;
 using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;

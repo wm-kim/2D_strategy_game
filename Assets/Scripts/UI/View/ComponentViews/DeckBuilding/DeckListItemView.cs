@@ -1,4 +1,5 @@
-using Minimax.ScriptableObjects.CardDatas;
+using Minimax.DeckBuliding;
+using Minimax.ScriptableObjects.CardData;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

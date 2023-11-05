@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Minimax.CoreSystems;
+using Minimax.Definitions;
 using Minimax.SceneManagement;
 using Minimax.UI.View.Popups;
 using Minimax.Utilities;

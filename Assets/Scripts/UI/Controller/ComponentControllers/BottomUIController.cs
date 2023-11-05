@@ -1,9 +1,8 @@
-using System;
 using Minimax.CoreSystems;
 using Minimax.Utilities;
 using UnityEngine;
 
-namespace Minimax.UI.Controller
+namespace Minimax.UI.Controller.ComponentControllers
 {
     public class BottomUIController : MonoBehaviour
     {

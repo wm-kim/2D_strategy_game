@@ -1,17 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
 using Minimax.CoreSystems;
+using Minimax.Definitions;
 using Minimax.SceneManagement;
 using Minimax.ScriptableObjects;
-using Minimax.UI.View.ComponentViews;
 using Minimax.UI.View.ComponentViews.DeckBuilding;
 using Minimax.UI.View.Popups;
 using Minimax.Utilities;
 using Unity.Services.CloudCode;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Minimax
+namespace Minimax.DeckBuliding
 {
     /// <summary>
     /// Stores references to all the views in the deck building scene.

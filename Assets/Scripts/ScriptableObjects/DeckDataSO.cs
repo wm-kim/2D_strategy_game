@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Minimax.ScriptableObjects.CardDatas;
+using Minimax.ScriptableObjects.CardData;
 using Minimax.Utilities;
 using UnityEngine;
 

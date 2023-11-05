@@ -1,5 +1,6 @@
 using System;
 using Minimax.CoreSystems;
+using Minimax.Definitions;
 using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;
 using TMPro;

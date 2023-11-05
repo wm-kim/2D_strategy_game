@@ -2,13 +2,14 @@
 using Cysharp.Threading.Tasks;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
+using Minimax.PropertyDrawer;
 using Minimax.Utilities;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Core.Environments;
 using UnityEngine;
 
-namespace Minimax.UnityGamingService.Multiplayer
+namespace Minimax.UnityGamingService.Authentication
 {
     public class GooglePlayAuthentication : MonoBehaviour
     {

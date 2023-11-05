@@ -1,10 +1,11 @@
 using System;
+using Minimax.GamePlay.Card;
 using Minimax.GamePlay.CommandSystem;
 using Minimax.GamePlay.GridSystem;
 using Minimax.GamePlay.INetworkSerialize;
 using Minimax.GamePlay.PlayerHand;
 using Minimax.GamePlay.Unit;
-using Minimax.ScriptableObjects.CardDatas;
+using Minimax.ScriptableObjects.CardData;
 using Minimax.UnityGamingService.Multiplayer;
 using Unity.Netcode;
 using UnityEngine;

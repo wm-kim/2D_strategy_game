@@ -1,8 +1,7 @@
 using Minimax.GamePlay.INetworkSerialize;
 using UnityEngine;
-using UnityEngine.Serialization;
 
-namespace Minimax.ScriptableObjects.CardDatas
+namespace Minimax.ScriptableObjects.CardData
 {
     [CreateAssetMenu(menuName = "ScriptableObjects/Cards/UnitBaseData")]
     public class UnitBaseData : CardBaseData

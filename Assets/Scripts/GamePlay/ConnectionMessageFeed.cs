@@ -1,16 +1,11 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
 using Minimax.CoreSystems;
-using Minimax.GamePlay;
+using Minimax.Definitions;
 using Minimax.UI.View.Popups;
-using Minimax.UnityGamingService.Multiplayer;
 using Minimax.UnityGamingService.Multiplayer.ConnectionManagement;
 using Minimax.Utilities;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.GamePlay
 {
     /// <summary>
     /// Handles the display of players connection message

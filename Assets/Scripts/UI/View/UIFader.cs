@@ -1,11 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using DG.Tweening;
-using Minimax.UI.View;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.UI.View
 {
     public class UIFader : StatefulUIView
     {

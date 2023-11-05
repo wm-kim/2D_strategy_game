@@ -1,15 +1,11 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using DG.Tweening;
-using Minimax.GamePlay.CommandSystem;
-using Minimax.GamePlay.PlayerHand;
+using Minimax.Definitions;
 using Minimax.UI.View.ComponentViews.GamePlay;
 using Minimax.Utilities;
-using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.GamePlay.PlayerHand
 {
     public class ClientOpponentHandManager : MonoBehaviour
     {

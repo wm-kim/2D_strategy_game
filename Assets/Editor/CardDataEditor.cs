@@ -1,5 +1,5 @@
+using Minimax.ScriptableObjects.CardData;
 using Sirenix.OdinInspector.Editor;
-using Minimax.ScriptableObjects.CardDatas;
 using Sirenix.OdinInspector;
 using UnityEditor;
 using UnityEngine;

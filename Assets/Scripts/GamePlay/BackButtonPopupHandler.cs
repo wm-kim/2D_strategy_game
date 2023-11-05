@@ -1,8 +1,9 @@
 using Minimax.CoreSystems;
 using Minimax.UI.View.Popups;
+using Minimax.Utilities;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.GamePlay
 {
     public class BackButtonPopupHandler : MonoBehaviour
     {

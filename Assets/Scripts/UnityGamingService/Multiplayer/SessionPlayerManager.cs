@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Minimax.Definitions;
 using Minimax.Utilities;
 using Unity.Netcode;
 using UnityEngine;

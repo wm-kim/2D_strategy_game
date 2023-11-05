@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using Minimax.ScriptableObjects.CardDatas;
+using Minimax.ScriptableObjects.CardData;
 using Minimax.Utilities;
 using QFSW.QC;
 using UnityEngine;
 
-namespace Minimax.GamePlay
+namespace Minimax.GamePlay.Card
 {
     /// <summary>
     /// The Sole purpose of this class is to store the data of a card for visualization

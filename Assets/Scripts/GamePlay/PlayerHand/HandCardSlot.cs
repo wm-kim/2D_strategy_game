@@ -1,5 +1,6 @@
 using System;
 using DG.Tweening;
+using Minimax.PropertyDrawer;
 using Minimax.ScriptableObjects.Settings;
 using Minimax.UI.View.ComponentViews.GamePlay;
 using Minimax.Utilities;

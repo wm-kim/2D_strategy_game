@@ -1,10 +1,9 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using Minimax.GamePlay;
+using Minimax.GamePlay.Card;
+using Minimax.GamePlay.PlayerDeck;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.UI.View.ComponentViews.GamePlay
 {
     public class CardListView : UIFader
     {

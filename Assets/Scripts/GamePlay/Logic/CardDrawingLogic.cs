@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Minimax.CoreSystems;
+using Minimax.Definitions;
 using Minimax.GamePlay.CommandSystem;
+using Minimax.GamePlay.PlayerDeck;
 using Minimax.GamePlay.PlayerHand;
 using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;

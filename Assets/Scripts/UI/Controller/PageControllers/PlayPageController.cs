@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Minimax.CoreSystems;
+using Minimax.Definitions;
 using Minimax.SceneManagement;
 using Minimax.Utilities;
 using TMPro;

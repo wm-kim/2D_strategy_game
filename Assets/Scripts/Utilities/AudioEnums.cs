@@ -1,5 +1,8 @@
-public enum AudioLib
+namespace Minimax.Utilities
 {
-    Button,
-    Popup
+    public enum AudioLib
+    {
+        Button,
+        Popup
+    }
 }

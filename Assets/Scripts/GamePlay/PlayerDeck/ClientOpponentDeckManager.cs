@@ -1,10 +1,8 @@
-using System.Collections;
 using System.Collections.Generic;
-using Minimax.GamePlay;
+using Minimax.GamePlay.Card;
 using Unity.Netcode;
-using UnityEngine;
 
-namespace Minimax
+namespace Minimax.GamePlay.PlayerDeck
 {
     public class ClientOpponentDeckManager : NetworkBehaviour
     {

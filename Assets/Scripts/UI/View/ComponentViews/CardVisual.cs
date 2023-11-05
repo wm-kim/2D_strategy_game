@@ -1,10 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using Minimax.ScriptableObjects.CardDatas;
+using Minimax.ScriptableObjects.CardData;
 using TMPro;
 using UnityEngine;
 
-namespace Minimax
+namespace Minimax.UI.View.ComponentViews
 {
     public class CardVisual : MonoBehaviour
     {

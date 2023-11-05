@@ -3,7 +3,7 @@ using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Minimax.ScriptableObjects.Events.Primitives
+namespace Minimax.ScriptableObjects.Events.DataEvents
 {
     public abstract class DataEventSO<T> : ScriptableObject where T : IEquatable<T>
     {

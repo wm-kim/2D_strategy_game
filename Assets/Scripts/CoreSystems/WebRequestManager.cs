@@ -1,16 +1,15 @@
 using System;
-using System.Collections;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using Minimax.CoreSystems;
+using Minimax.Definitions;
 using Minimax.Utilities;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace Minimax
+namespace Minimax.CoreSystems
 {
     public enum SendType
     {

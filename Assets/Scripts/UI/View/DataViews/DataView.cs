@@ -1,5 +1,5 @@
 using System;
-using Minimax.ScriptableObjects.Events.Primitives;
+using Minimax.ScriptableObjects.Events.DataEvents;
 using UnityEngine;
 
 namespace Minimax.UI.View.DataViews

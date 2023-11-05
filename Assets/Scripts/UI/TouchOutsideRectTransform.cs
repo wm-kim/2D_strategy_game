@@ -1,11 +1,10 @@
 using Minimax.CoreSystems;
-using Minimax.Utilities;
 using UnityEngine;
 using UnityEngine.Events;
 using EnhancedTouch = UnityEngine.InputSystem.EnhancedTouch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
-namespace Minimax
+namespace Minimax.UI
 {
     public class TouchOutsideRectTransform : MonoBehaviour
     {

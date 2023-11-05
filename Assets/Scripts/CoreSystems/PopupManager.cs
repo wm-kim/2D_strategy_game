@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using Minimax.Definitions;
+using Minimax.PropertyDrawer;
+using Minimax.UI.View;
 using Minimax.UI.View.Popups;
 using Minimax.Utilities;
 using UnityEngine;

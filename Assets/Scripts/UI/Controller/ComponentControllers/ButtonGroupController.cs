@@ -5,7 +5,7 @@ using Minimax.Utilities;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace Minimax.UI.Controller
+namespace Minimax.UI.Controller.ComponentControllers
 {
     public class ButtonGroupController : MonoBehaviour
     {
@@ -23,7 +23,7 @@ namespace Minimax.UI.Controller
 
         [SerializeField] private List<ButtonView> m_buttonList = new();
 
-        [SerializeField] [ReadOnly] private List<int> m_activeIndices = new();
+        [SerializeField] [PropertyDrawer.ReadOnly] private List<int> m_activeIndices = new();
 
         /// <summary>
         /// 첫 번째 버튼이 클릭된 상태인지 나타냅니다.

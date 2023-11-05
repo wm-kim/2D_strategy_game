@@ -3,7 +3,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Minimax.Utilities
+namespace Minimax.UI
 {
     [RequireComponent(typeof(Button))]
     public class ButtonPointerHandler : MonoBehaviour, IPointerDownHandler, IPointerUpHandler

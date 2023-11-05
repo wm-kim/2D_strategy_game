@@ -1,19 +1,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using Minimax.CoreSystems;
-using Minimax.GamePlay.PlayerHand;
-using Minimax.ScriptableObjects.CardDatas;
+using Minimax.DeckBuliding;
+using Minimax.GamePlay.Card;
 using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;
 using Newtonsoft.Json;
 using Unity.Netcode;
 using Unity.Services.CloudCode;
 using UnityEngine;
-using UnityEngine.Rendering;
-using UnityEngine.Serialization;
 
-namespace Minimax.GamePlay
+namespace Minimax.GamePlay.PlayerDeck
 {
     public class ServerPlayersDeckManager : NetworkBehaviour
     {

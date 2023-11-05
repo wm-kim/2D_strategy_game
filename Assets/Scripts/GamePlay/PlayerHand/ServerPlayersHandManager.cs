@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Minimax.CoreSystems;
-using Minimax.ScriptableObjects.CardDatas;
+using Minimax.GamePlay.Card;
 using Minimax.UnityGamingService.Multiplayer;
 using Minimax.Utilities;
 using QFSW.QC;
