@@ -6,9 +6,14 @@ namespace Minimax.UI.View.ComponentViews
 {
     public class CardVisual : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI m_costText;
-        [SerializeField] private TextMeshProUGUI m_cardIDText;
-        [SerializeField] private TextMeshProUGUI m_cardTypeText;
+        [SerializeField]
+        private TextMeshProUGUI m_costText;
+
+        [SerializeField]
+        private TextMeshProUGUI m_cardIDText;
+
+        [SerializeField]
+        private TextMeshProUGUI m_cardTypeText;
 
         public void Init(CardBaseData cardData)
         {

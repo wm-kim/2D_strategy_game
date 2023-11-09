@@ -11,7 +11,8 @@ namespace Minimax.UI.View.DataViews
     /// <typeparam name="T"></typeparam>
     public abstract class DataView<T> : MonoBehaviour where T : IEquatable<T>
     {
-        [SerializeField] protected DataEventSO<T> m_data;
+        [SerializeField]
+        protected DataEventSO<T> m_data;
 
         private void OnEnable()
         {

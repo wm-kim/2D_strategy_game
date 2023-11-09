@@ -1,25 +1,26 @@
-using System.Collections;
 using System.Collections.Generic;
-using Minimax.GamePlay;
 using Minimax.UnityGamingService.Multiplayer;
-using TMPro;
 using Unity.Netcode;
 using UnityEngine;
-using Utilities;
 using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay
 {
     public class ServerManaManager : NetworkBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private ClientManaManager m_clientManager;
 
-        [Header("Mana Configuration")] [SerializeField]
+        [Header("Mana Configuration")]
+        [SerializeField]
         private int m_initialManaCapacity = 3;
 
-        [SerializeField] private int m_maxManaCapacity         = 10;
-        [SerializeField] private int m_incrementCapacityAmount = 1;
+        [SerializeField]
+        private int m_maxManaCapacity = 10;
+
+        [SerializeField]
+        private int m_incrementCapacityAmount = 1;
 
         /// <summary>
         /// key is playerNumber value is mana
@@ -74,18 +75,7 @@ namespace Minimax.GamePlay
         {
             if (!IsServer) return false;
             if (m_playerCurrentMana.TryGetValue(playerNumber, out var value))
-            {
-                if (value >= cost)
-                {
-                    return true;
-                }
-                else
-                {
-                    Debug.LogError($"Player {playerNumber} does not have enough mana");
-                    return false;
-                }
-            }
-
+                return Debug.CheckIfTrueLogError(value >= cost, $"Player {playerNumber} does not have enough mana");
             return false;
         }
 

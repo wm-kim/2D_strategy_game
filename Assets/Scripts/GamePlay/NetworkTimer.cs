@@ -16,7 +16,8 @@ namespace Minimax.GamePlay
 
     public class NetworkTimer : NetworkBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private TextMeshProUGUI m_timerText;
 
         private NetworkVariable<float> m_time = new(0f);

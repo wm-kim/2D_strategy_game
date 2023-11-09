@@ -10,11 +10,15 @@ namespace Minimax.GamePlay.PlayerHand
 {
     public class ClientOpponentHandManager : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private HandAnimationManager m_handAnimationManager;
 
-        [SerializeField] private HandCardView m_cardPrefab;
-        [SerializeField] private Transform    m_cardParent;
+        [SerializeField]
+        private HandCardView m_cardPrefab;
+
+        [SerializeField]
+        private Transform m_cardParent;
 
         private List<HandCardView> m_handCards = new();
 

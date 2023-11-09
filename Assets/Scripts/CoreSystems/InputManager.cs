@@ -9,16 +9,22 @@ namespace Minimax.CoreSystems
 {
     public class InputManager : MonoBehaviour
     {
-        [SerializeField] private Image m_touchImage;
+        [SerializeField]
+        private Image m_touchImage;
 
-        [SerializeField] [Range(0f, 1f)] private float m_doubleTouchDelay   = 0.5f;
-        [SerializeField] [Range(0f, 3f)] private float m_longTouchThreshold = 1f;
+        [SerializeField]
+        [Range(0f, 1f)]
+        private float m_doubleTouchDelay = 0.5f;
+
+        [SerializeField]
+        [Range(0f, 3f)]
+        private float m_longTouchThreshold = 1f;
 
         // 이벤트를 public으로 열고 event 키워드를 사용합니다.
         public event Action<EnhancedTouch.Touch> OnTouch;
         public event Action<Vector2>             OnDoubleTouch;
         public event Action<Vector2>             OnLongTouch;
-        public event Action<Vector2>             OnTap;
+        public event Action<EnhancedTouch.Touch> OnTap;
         public event Action                      OnBackButton;
 
         private float m_lastTouchTime;
@@ -101,7 +107,7 @@ namespace Minimax.CoreSystems
         private void OnTouchEnded(EnhancedTouch.Touch activeTouch)
         {
             m_lastTouchTime = Time.time;
-            if (activeTouch.isTap) OnTap?.Invoke(activeTouch.screenPosition);
+            if (activeTouch.isTap) OnTap?.Invoke(activeTouch);
         }
 
         // 롱 터치를 체크하는 메소드

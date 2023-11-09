@@ -8,9 +8,13 @@ namespace Minimax.UI
 {
     public class TouchOutsideRectTransform : MonoBehaviour
     {
-        [SerializeField] private Camera        m_camera;
-        [SerializeField] private RectTransform m_targetRectTransform;
-        public                   UnityEvent    OnClickOutside;
+        [SerializeField]
+        private Camera m_camera;
+
+        [SerializeField]
+        private RectTransform m_targetRectTransform;
+
+        public UnityEvent OnClickOutside;
 
         private void OnEnable()
         {

@@ -8,9 +8,14 @@ namespace Minimax.UI.View.Popups
 {
     public class ExitApplicationPopup : PopupView
     {
-        [SerializeField] private Button m_cancelButton;
-        [SerializeField] private Button m_noButton;
-        [SerializeField] private Button m_yesButton;
+        [SerializeField]
+        private Button m_cancelButton;
+
+        [SerializeField]
+        private Button m_noButton;
+
+        [SerializeField]
+        private Button m_yesButton;
 
         protected override void SetPopupType()
         {

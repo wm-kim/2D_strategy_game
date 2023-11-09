@@ -18,14 +18,21 @@ namespace Minimax.UI.Controller.PageControllers
 {
     public class PlayPageController : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private Button m_startServerButton;
 
-        [SerializeField] private Button m_startHostButton;
-        [SerializeField] private Button m_startClientButton;
-        [SerializeField] private Button m_startGameButton;
+        [SerializeField]
+        private Button m_startHostButton;
 
-        [SerializeField] private Button m_findMatchButton;
+        [SerializeField]
+        private Button m_startClientButton;
+
+        [SerializeField]
+        private Button m_startGameButton;
+
+        [SerializeField]
+        private Button m_findMatchButton;
 
         private CreateTicketResponse createTicketResponse;
         private float                pollTicketTimer;

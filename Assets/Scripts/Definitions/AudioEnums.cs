@@ -1,8 +1,6 @@
-namespace Minimax.Definitions
+public enum AudioLib
 {
-    public enum AudioLib
-    {
-        Button,
-        Popup
-    }
+    Button,
+    Popup,
+    TurnNotification
 }

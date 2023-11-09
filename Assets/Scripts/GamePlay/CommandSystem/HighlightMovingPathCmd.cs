@@ -20,7 +20,8 @@ namespace Minimax.GamePlay.CommandSystem
         public override void StartExecute()
         {
             base.StartExecute();
-            m_clientMap.HighlightMovingPath(m_pothCoords);
+            var unitOwner = ClientUnit.UnitsCreatedThisGame[m_unitUID].Owner;
+            m_clientMap.HighlightMovingPath(m_pothCoords, unitOwner);
             ExecutionComplete();
         }
     }

@@ -8,13 +8,18 @@ namespace Minimax.ScriptableObjects
     [CreateAssetMenu(fileName = "New Audio File", menuName = "ScriptableObjects/AudioFileSO")]
     public class AudioFileSO : ScriptableObject
     {
-        [Header("Audio Settings")] [Range(0, 1)]
+        [Header("Audio Settings")]
+        [Range(0, 1)]
         public float Volume = 1f; // 추가한 볼륨 컨트롤
+
+        [Range(0, 3)]
+        public float Pitch = 1f;
 
         public bool Loop       = false;
         public bool PlayRandom = false;
 
-        [Header("Audio Clips")] public List<AudioClip> Clips;
+        [Header("Audio Clips")]
+        public List<AudioClip> Clips;
 
         /// <summary>
         /// Play audio clip from audio source.
@@ -27,6 +32,7 @@ namespace Minimax.ScriptableObjects
                 Debug.LogWarning("AudioFileSO: " + name + " has no audio clips.");
 
             audioSource.loop   = Loop;
+            audioSource.pitch  = Pitch;
             audioSource.volume = Volume * volumeFactor;
 
             // 랜덤 재생 여부에 따라 클립 선택 및 재생

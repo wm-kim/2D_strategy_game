@@ -12,8 +12,7 @@ namespace Minimax.GamePlay.GridSystem
     public enum OverlayType
     {
         Highlight,
-        MyPlaceable,
-        OpponentPlaceable
+        Placeable
     }
 
     /// <summary>
@@ -21,16 +20,29 @@ namespace Minimax.GamePlay.GridSystem
     /// </summary>
     public class ClientCell : MonoBehaviour, IEquatable<ClientCell>, ICell
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private SpriteRenderer m_highlightOverlayPrefab;
 
-        [SerializeField] private OverlayColorSO                          m_overlayColorSO;
-        private                  Dictionary<OverlayType, SpriteRenderer> m_overlays = new();
+        private Dictionary<OverlayType, SpriteRenderer> m_overlays = new();
 
-        [Header("Settings")] [SerializeField] [Range(0, 1)]
+        [SerializeField]
+        private Color m_baseOverlayColor = Color.white;
+
+        [SerializeField]
+        private Color m_myHighlightColor = Color.green;
+
+        [SerializeField]
+        private Color m_opponentHighlightColor = Color.red;
+
+        [Header("Settings")]
+        [SerializeField]
+        [Range(0, 1)]
         private float m_overlayAlpha = 0.30f;
 
-        [SerializeField] [Range(0, 1)] private float m_overlayFadeDuration = 0.2f;
+        [SerializeField]
+        [Range(0, 1)]
+        private float m_overlayFadeDuration = 0.2f;
 
         private int m_hash = -1;
 
@@ -75,11 +87,22 @@ namespace Minimax.GamePlay.GridSystem
             gameObject.name = $"Cell[{x},{y}]";
         }
 
-        public void CreateOverlay(OverlayType overlayType)
+        public void CreateOverlay(OverlayType overlayType, int? playerNumber = null)
         {
-            var overlay = Instantiate(m_highlightOverlayPrefab, transform);
-            overlay.color = m_overlayColorSO.GetInitialColor(overlayType);
+            var overlay      = Instantiate(m_highlightOverlayPrefab, transform);
+            var overlayColor = GetOverlayColor(playerNumber);
+            overlay.color = overlayColor;
             m_overlays.Add(overlayType, overlay);
+        }
+
+        private Color GetOverlayColor(int? playerNumber)
+        {
+            var overlayColor = playerNumber == null
+                ? m_baseOverlayColor
+                : playerNumber == TurnManager.Instance.MyPlayerNumber
+                    ? m_myHighlightColor
+                    : m_opponentHighlightColor;
+            return overlayColor;
         }
 
         /// <summary>
@@ -88,13 +111,7 @@ namespace Minimax.GamePlay.GridSystem
         /// <returns></returns>
         public bool CheckIfPlaceable()
         {
-            if (!IsPlaceable)
-            {
-                Debug.LogError($"Cell {Coord} is not placeable");
-                return false;
-            }
-
-            return true;
+            return Debug.CheckIfTrueLogError(IsPlaceable, $"Cell {Coord} is not placeable");
         }
 
         public void PlaceUnit(int unitUID)
@@ -109,9 +126,10 @@ namespace Minimax.GamePlay.GridSystem
             IsWalkable     = true;
         }
 
-        public void Highlight()
+        public void Highlight(int unitOwner)
         {
             m_overlayFadeTween?.Kill();
+            m_overlays[OverlayType.Highlight].color = GetOverlayColor(unitOwner);
             m_overlayFadeTween = m_overlays[OverlayType.Highlight].DOFade(m_overlayAlpha, m_overlayFadeDuration);
         }
 

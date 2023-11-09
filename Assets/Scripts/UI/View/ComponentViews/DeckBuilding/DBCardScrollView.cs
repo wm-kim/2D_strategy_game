@@ -7,11 +7,16 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DBCardScrollView : MonoBehaviour
     {
-        [SerializeField] private DeckBuildingManager m_deckBuildingManager;
-        [SerializeField] private CardDBManager       m_cardDBManager;
+        [SerializeField]
+        private DeckBuildingManager m_deckBuildingManager;
 
-        [Header("Card Prefab")] public GameObject m_dbCardItemPrefab;
-        public                         Transform  m_dbCardItemParent;
+        [SerializeField]
+        private CardDBManager m_cardDBManager;
+
+        [Header("Card Prefab")]
+        public GameObject m_dbCardItemPrefab;
+
+        public Transform m_dbCardItemParent;
 
         private Dictionary<int, DBCardItemView> m_dbCardItems = new();
 

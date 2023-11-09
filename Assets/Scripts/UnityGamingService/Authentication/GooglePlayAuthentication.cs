@@ -14,10 +14,16 @@ namespace Minimax.UnityGamingService.Authentication
 {
     public class GooglePlayAuthentication : MonoBehaviour
     {
-        [SerializeField] [ReadOnly] private string m_googlePlayToken;
-        [SerializeField] [ReadOnly] private string m_googlePlayError;
+        [SerializeField]
+        [ReadOnly]
+        private string m_googlePlayToken;
 
-        [SerializeField] private EnvironmentType m_environment = EnvironmentType.undefined;
+        [SerializeField]
+        [ReadOnly]
+        private string m_googlePlayError;
+
+        [SerializeField]
+        private EnvironmentType m_environment = EnvironmentType.undefined;
 
         private async void Start()
         {

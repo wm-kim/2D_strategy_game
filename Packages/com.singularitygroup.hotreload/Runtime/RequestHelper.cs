@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
@@ -53,12 +54,19 @@ namespace SingularityGroup.HotReload {
         static string cachedUrl;
         static string url => cachedUrl ?? (cachedUrl = CreateUrl(serverInfo));
 
-        static readonly HttpClient client = new HttpClient();
+        static readonly HttpClient client = CreateHttpClient();
         // separate client for each long polling request
-        static readonly HttpClient clientPollPatches = new HttpClient();
-        static readonly HttpClient clientPollAssets = new HttpClient();
-        static readonly HttpClient clientPollStatus = new HttpClient();
-        
+        static readonly HttpClient clientPollPatches = CreateHttpClient();
+        static readonly HttpClient clientPollAssets = CreateHttpClient();
+        static readonly HttpClient clientPollStatus = CreateHttpClient();
+
+        public static HttpClient CreateHttpClient() {
+            var handler = new HttpClientHandler {
+                // Without this flag HttpClients don't work for PCs with double-byte characters in the name
+                UseCookies = false
+            };
+            return new HttpClient(handler);
+        }
         /// <summary>
         /// Create url for a hostname and port
         /// </summary>

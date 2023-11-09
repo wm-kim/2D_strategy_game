@@ -30,10 +30,12 @@ namespace Minimax.GamePlay.PlayerHand
         public MyHandInteractionManager MyHandInteraction { get; set; }
 
         // States
-        [ReadOnly] private HandCardSlotState m_currentState;
-        public             DefaultState      DefaultState  { get; private set; }
-        public             HoverState        HoverState    { get; private set; }
-        public             DraggingState     DraggingState { get; private set; }
+        [ReadOnly]
+        private HandCardSlotState m_currentState;
+
+        public DefaultState  DefaultState  { get; private set; }
+        public HoverState    HoverState    { get; private set; }
+        public DraggingState DraggingState { get; private set; }
 
         /// <summary>
         /// Initializes all configurations for HandCardSlot.

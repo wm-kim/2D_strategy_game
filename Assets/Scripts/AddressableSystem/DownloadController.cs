@@ -21,8 +21,11 @@ namespace Minimax.AddressableSystem
 
         private AddressableDownloader m_downloader;
 
-        [SerializeField] private string m_labelToDownload;
-        [SerializeField] private string m_downloadURL;
+        [SerializeField]
+        private string m_labelToDownload;
+
+        [SerializeField]
+        private string m_downloadURL;
 
         public  State CurrentState { get; private set; } = State.Idle;
         private State m_lastValidState = State.Idle;

@@ -13,7 +13,7 @@ namespace SingularityGroup.HotReload.Editor {
         public static async Task<DownloadResult> DownloadFile(string url, string targetFilePath, IProgress<float> progress, CancellationToken cancellationToken) {
             var tmpDir = Path.GetDirectoryName(targetFilePath);
             Directory.CreateDirectory(tmpDir);
-            using(var client = new HttpClient()) {
+            using(var client = RequestHelper.CreateHttpClient()) {
                 client.Timeout = TimeSpan.FromMinutes(10);
                 return await client.DownloadAsync(url, targetFilePath, progress, cancellationToken).ConfigureAwait(false);
             }

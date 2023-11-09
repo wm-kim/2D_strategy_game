@@ -7,10 +7,12 @@ namespace Minimax.UI.View.Popups
 {
     public class OneButtonPopup : PopupView
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private TextMeshProUGUI m_messageText;
 
-        [SerializeField] private Button m_Button;
+        [SerializeField]
+        private Button m_Button;
 
         protected override void SetPopupType()
         {

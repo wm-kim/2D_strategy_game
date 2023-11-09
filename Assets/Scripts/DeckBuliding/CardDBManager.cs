@@ -13,7 +13,8 @@ namespace Minimax.DeckBuliding
     /// </summary>
     public class CardDBManager : MonoBehaviour
     {
-        [Header("Addressable Assets")] public AssetLabelReference m_dbCardAssetsLabel;
+        [Header("Addressable Assets")]
+        public AssetLabelReference m_dbCardAssetsLabel;
 
         private Dictionary<int, CardBaseData> m_cardDB = new();
         public  Dictionary<int, CardBaseData> CardDB => m_cardDB;

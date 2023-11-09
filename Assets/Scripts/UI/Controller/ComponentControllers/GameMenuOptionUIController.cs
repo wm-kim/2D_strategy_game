@@ -8,8 +8,11 @@ namespace Minimax.UI.Controller.ComponentControllers
 {
     public class GameMenuOptionUIController : MonoBehaviour
     {
-        [SerializeField] private Button m_settingsButton;
-        [SerializeField] private Button m_surrenderButton;
+        [SerializeField]
+        private Button m_settingsButton;
+
+        [SerializeField]
+        private Button m_surrenderButton;
 
         private void Awake()
         {

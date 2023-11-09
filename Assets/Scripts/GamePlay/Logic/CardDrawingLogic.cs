@@ -19,17 +19,25 @@ namespace Minimax.GamePlay.Logic
     /// </summary>
     public class CardDrawingLogic : NetworkBehaviour
     {
-        [Header("Server References")] [SerializeField]
+        [Header("Server References")]
+        [SerializeField]
         private ServerPlayersDeckManager m_serverPlayersDeck;
 
-        [SerializeField] private ServerPlayersHandManager m_serverPlayersHand;
+        [SerializeField]
+        private ServerPlayersHandManager m_serverPlayersHand;
 
-        [Header("Client References")] [SerializeField]
+        [Header("Client References")]
+        [SerializeField]
         private ClientMyDeckManager m_clientMyDeck;
 
-        [SerializeField] private ClientOpponentDeckManager m_clientOpponentDeck;
-        [SerializeField] private ClientMyHandManager       m_clientMyHand;
-        [SerializeField] private ClientOpponentHandManager m_clientOpponentHand;
+        [SerializeField]
+        private ClientOpponentDeckManager m_clientOpponentDeck;
+
+        [SerializeField]
+        private ClientMyHandManager m_clientMyHand;
+
+        [SerializeField]
+        private ClientOpponentHandManager m_clientOpponentHand;
 
         public void CommandDrawAllPlayerInitialCards()
         {

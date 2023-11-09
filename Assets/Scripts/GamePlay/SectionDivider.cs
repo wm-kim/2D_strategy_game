@@ -14,10 +14,16 @@ namespace Minimax.GamePlay
             Map
         }
 
-        [Header("Camera")] [SerializeField] private Camera m_uiCamera;
+        [Header("Camera")]
+        [SerializeField]
+        private Camera m_uiCamera;
 
-        [Header("Sections")] [SerializeField] private RectTransform m_myHandSection;
-        [SerializeField]                      private RectTransform m_mapSection;
+        [Header("Sections")]
+        [SerializeField]
+        private RectTransform m_myHandSection;
+
+        [SerializeField]
+        private RectTransform m_mapSection;
 
         public Section CurrentSection { get; private set; } = Section.Default;
 

@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_highlightOverlayPrefab: {fileID: 2228684350455969512, guid: b65292ddebed09a4291e1129848add5e, type: 3}
-  m_overlayColorSO: {fileID: 11400000, guid: d8b747788e172dd4ab7654b1ec31293e, type: 2}
-  m_overlayAlpha: 0.3
-  m_overlayFadeDuration: 0.15
+  m_baseOverlayColor: {r: 1, g: 1, b: 1, a: 0}
+  m_myHighlightColor: {r: 0, g: 0.38769865, b: 1, a: 0.39215687}
+  m_opponentHighlightColor: {r: 0.7169812, g: 0, b: 0, a: 0.39215687}
+  m_overlayAlpha: 0.6
+  m_overlayFadeDuration: 0.12

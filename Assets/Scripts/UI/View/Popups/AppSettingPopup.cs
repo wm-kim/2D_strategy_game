@@ -12,7 +12,8 @@ namespace Minimax.UI.View.Popups
             Type = PopupType.AppSettingPopup;
         }
 
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private Button m_exitButton;
 
         private void Awake()

@@ -7,10 +7,12 @@ namespace Minimax.SceneManagement
 {
     public class InitializationLoader : MonoBehaviour
     {
-        [Header("Client Start Scene")] [SerializeField]
+        [Header("Client Start Scene")]
+        [SerializeField]
         private SceneType m_clientStartScene = default;
 
-        [Header("Server Start Scene")] [SerializeField]
+        [Header("Server Start Scene")]
+        [SerializeField]
         private SceneType m_serverStartScene = default;
 
         private async void Start()

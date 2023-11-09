@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Minimax.GamePlay.Card;
 using Minimax.ScriptableObjects.CardData;
 using UnityEngine;
-using Utilities;
+using System.Linq;
 using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.Unit
@@ -13,8 +13,18 @@ namespace Minimax.GamePlay.Unit
     public class ClientUnit : IIdentifiable
     {
         public int Owner { get; set; }
-
+        
         public bool IsMine => Owner == TurnManager.Instance.MyPlayerNumber;
+
+        public static bool IsMyUnit(int unitUID)
+        {
+            return UnitsCreatedThisGame[unitUID].IsMine;
+        }
+        public static bool CheckIfMyUnit(int unitUID)
+        {
+            return Debug.CheckIfTrueLogWarning(UnitsCreatedThisGame[unitUID].IsMine, $"Unit {unitUID} is not mine");
+        }
+
 
         /// <summary>
         /// for referencing to the card that this unit is created from
@@ -27,6 +37,8 @@ namespace Minimax.GamePlay.Unit
         public int UID { get; private set; }
 
         public Vector2Int Coord { get; set; }
+
+        private UnitBaseData m_unitData;
 
         /// <summary>
         /// a static dictionary of all the cards that have been created
@@ -45,26 +57,27 @@ namespace Minimax.GamePlay.Unit
             UID       = unitUID;
             m_cardUID = cardUID;
             var clientCard = ClientCard.CardsCreatedThisGame[m_cardUID];
-            Owner = clientCard.Owner;
-            var unitData = clientCard.Data as UnitBaseData;
+            Owner      = clientCard.Owner;
+            m_unitData = clientCard.Data as UnitBaseData;
 
-            Health      = unitData.Health;
-            Attack      = unitData.Attack;
-            MoveRange   = unitData.MoveRange;
-            AttackRange = unitData.AttackRange;
+            Health      = m_unitData.Health;
+            Attack      = m_unitData.Attack;
+            MoveRange   = m_unitData.MoveRange;
+            AttackRange = m_unitData.AttackRange;
 
             Coord = coord;
 
             UnitsCreatedThisGame.Add(UID, this);
 
             Debug.Log($"ClientUnit {UID} is created\n" +
-                             $"Health: {Health}\n" +
-                             $"Attack: {Attack}\n" +
-                             $"MoveRange: {MoveRange}\n" +
-                             $"AttackRange: {AttackRange}\n");
+                      $"Health: {Health}\n" +
+                      $"Attack: {Attack}\n" +
+                      $"MoveRange: {MoveRange}\n" +
+                      $"AttackRange: {AttackRange}\n");
         }
 
-        public int Health { get; set; }
+        public int   Health           { get; set; }
+        public float HealthPercentage => (float)Health / m_unitData.Health;
 
         public int Attack { get; set; }
 
@@ -82,13 +95,23 @@ namespace Minimax.GamePlay.Unit
         /// </summary>
         public bool CheckIfMovable()
         {
-            if (!IsMovable)
-            {
-                Debug.LogError($"Unit {UID} is not movable");
-                return false;
-            }
+            return Debug.CheckIfTrueLogWarning(IsMovable, $"Unit {UID} is not movable");
+        }
 
-            return true;
+        public static bool CheckIfMovable(int unitUID)
+        {
+            return UnitsCreatedThisGame[unitUID].CheckIfMovable();
+        }
+
+        public static List<ClientUnit> GetAllUnitsByOwner(int playerNumber)
+        {
+            return UnitsCreatedThisGame.Values.Where(unit => unit.Owner == playerNumber).ToList();
+        }
+
+        public void ResetOnTurnStart()
+        {
+            MoveRange = m_unitData.MoveRange;
+            IsMovable = true;
         }
     }
 }

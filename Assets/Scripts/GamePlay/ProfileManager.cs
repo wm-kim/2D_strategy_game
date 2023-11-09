@@ -7,8 +7,11 @@ namespace Minimax.GamePlay
 {
     public class ProfileManager : NetworkBehaviour
     {
-        [SerializeField] private TextMeshProUGUI m_myPlayerNameText;
-        [SerializeField] private TextMeshProUGUI m_opponentPlayerNameText;
+        [SerializeField]
+        private TextMeshProUGUI m_myPlayerNameText;
+
+        [SerializeField]
+        private TextMeshProUGUI m_opponentPlayerNameText;
 
         private NetworkManager m_networkManager = NetworkManager.Singleton;
 

@@ -22,7 +22,6 @@ namespace Minimax.PropertyDrawer
             GUI.enabled = true;
         }
     }
-
 #endif
 
     [AttributeUsage(AttributeTargets.Field)]

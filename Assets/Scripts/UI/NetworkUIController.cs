@@ -6,9 +6,14 @@ namespace Minimax.UI
 {
     public class NetworkUIController : MonoBehaviour
     {
-        [SerializeField] private Button m_serverBtn;
-        [SerializeField] private Button m_hostBtn;
-        [SerializeField] private Button m_clientBtn;
+        [SerializeField]
+        private Button m_serverBtn;
+
+        [SerializeField]
+        private Button m_hostBtn;
+
+        [SerializeField]
+        private Button m_clientBtn;
 
         private void Awake()
         {

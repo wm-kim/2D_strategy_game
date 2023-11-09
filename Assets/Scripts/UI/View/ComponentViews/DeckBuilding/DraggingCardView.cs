@@ -5,13 +5,17 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DraggingCardView : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private GameObject m_draggingCardPrefab = default;
 
-        [Header("Listening To")] [SerializeField]
+        [Header("Listening To")]
+        [SerializeField]
         private Vector2EventSO m_touchPositionEvent = default;
 
-        [Header("Settings")] [SerializeField] [Range(0f, 20f)]
+        [Header("Settings")]
+        [SerializeField]
+        [Range(0f, 20f)]
         private float m_moveSpeed = 10f;
 
         private void Awake()

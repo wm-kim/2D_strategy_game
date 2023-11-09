@@ -35,6 +35,7 @@ namespace Minimax
                 }
 
                 m_audioSource.volume = audioFile.Volume;
+                m_audioSource.pitch = audioFile.Pitch;
                 m_audioSource.loop = audioFile.Loop;
                 audioFile.Play(m_audioSource);
 

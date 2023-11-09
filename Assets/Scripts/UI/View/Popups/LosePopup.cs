@@ -7,7 +7,9 @@ namespace Minimax.UI.View.Popups
 {
     public class LosePopup : PopupView
     {
-        [Header("References")] [Space(10f)] [SerializeField]
+        [Header("References")]
+        [Space(10f)]
+        [SerializeField]
         private Button m_confirmButton;
 
         protected override void SetPopupType()

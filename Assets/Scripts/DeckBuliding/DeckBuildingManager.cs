@@ -17,18 +17,27 @@ namespace Minimax.DeckBuliding
     /// </summary>
     public class DeckBuildingManager : MonoBehaviour
     {
-        [Header("Model References")] [SerializeField]
+        [Header("Model References")]
+        [SerializeField]
         private DeckListSO m_deckListSO;
 
         public DeckListSO DeckListSO => m_deckListSO;
 
-        [Header("View References")] [SerializeField]
+        [Header("View References")]
+        [SerializeField]
         private DeckListPanelView m_deckListPanelView;
 
-        [SerializeField] private DeckListView         m_deckListView;
-        [SerializeField] private DBCardScrollView     m_dbCardScrollView;
-        [SerializeField] private DBCardItemMenuView   m_dbCardItemMenuView;
-        [SerializeField] private DeckListItemMenuView m_deckListItemMenuView;
+        [SerializeField]
+        private DeckListView m_deckListView;
+
+        [SerializeField]
+        private DBCardScrollView m_dbCardScrollView;
+
+        [SerializeField]
+        private DBCardItemMenuView m_dbCardItemMenuView;
+
+        [SerializeField]
+        private DeckListItemMenuView m_deckListItemMenuView;
 
         public DeckListPanelView    DeckListPanelView    => m_deckListPanelView;
         public DeckListView         DeckListView         => m_deckListView;

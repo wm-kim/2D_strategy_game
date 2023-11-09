@@ -18,15 +18,18 @@ namespace Minimax.CoreSystems
 
     public class PageNavigation : MonoBehaviour
     {
-        [SerializeField] private PageManager m_pageManager;
+        [SerializeField]
+        private PageManager m_pageManager;
 
         [field: SerializeField]
         public PageNavigationType NavigationType { get; private set; } = PageNavigationType.Undefined;
 
         [field: SerializeField] public PageType InitialPage { get; private set; } = PageType.Undefined;
 
-        [SerializeField] private PageStackSO     m_pageStackSO;
-        private                  Stack<PageType> m_pageStack => m_pageStackSO.PageStack;
+        [SerializeField]
+        private PageStackSO m_pageStackSO;
+
+        private Stack<PageType> m_pageStack => m_pageStackSO.PageStack;
 
         private void Awake()
         {

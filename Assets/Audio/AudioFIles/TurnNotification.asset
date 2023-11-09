@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b38e1784c6516b64abf02ee0c1a447f2, type: 3}
+  m_Name: TurnNotification
+  m_EditorClassIdentifier: 
+  Volume: 0.158
+  Pitch: 1
+  Loop: 0
+  PlayRandom: 0
+  Clips:
+  - {fileID: 8300000, guid: 37221920234e75a418c707c23d9816f3, type: 3}

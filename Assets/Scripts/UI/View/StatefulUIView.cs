@@ -5,7 +5,9 @@ namespace Minimax.UI.View
 {
     public abstract class StatefulUIView : MonoBehaviour
     {
-        [SerializeField] [ReadOnly] protected UIVisibleState m_currentState = UIVisibleState.Undefined;
+        [SerializeField]
+        [ReadOnly]
+        protected UIVisibleState m_currentState = UIVisibleState.Undefined;
 
         public UIVisibleState CurrentState => m_currentState;
 

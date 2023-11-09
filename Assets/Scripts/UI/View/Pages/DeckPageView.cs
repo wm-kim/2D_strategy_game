@@ -17,15 +17,23 @@ namespace Minimax.UI.View.Pages
 {
     public class DeckPageView : PageView
     {
-        [Header("Scriptable Object")] [SerializeField]
+        [Header("Scriptable Object")]
+        [SerializeField]
         private DeckDtoCollectionSO m_deckCollectionSO;
 
-        [Header("References")] [Space(10f)] [SerializeField]
+        [Header("References")]
+        [Space(10f)]
+        [SerializeField]
         private DBDeckItemView m_dbDeckItemViewPrefab;
 
-        [SerializeField] private Transform             m_contentTransform;
-        [SerializeField] private ButtonGroupController m_deckButtonGroupController;
-        [SerializeField] private TextMeshProUGUI       m_currentDeckNameText;
+        [SerializeField]
+        private Transform m_contentTransform;
+
+        [SerializeField]
+        private ButtonGroupController m_deckButtonGroupController;
+
+        [SerializeField]
+        private TextMeshProUGUI m_currentDeckNameText;
 
         private Dictionary<int, DBDeckItemView> m_deckItemViews = new();
 

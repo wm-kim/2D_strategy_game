@@ -18,11 +18,20 @@ namespace Minimax.GamePlay
     {
         public static TurnManager Instance { get; private set; }
 
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private NetworkTimer m_networkTimer;
 
-        [SerializeField] private Button          m_endTurnButton;
-        [SerializeField] private TextMeshProUGUI m_turnText;
+        [Header("Settings")]
+        [SerializeField]
+        [Range(0, 300)]
+        private readonly float m_turnTimeLimit = 60f;
+
+        [SerializeField]
+        private Button m_endTurnButton;
+
+        [SerializeField]
+        private TextMeshProUGUI m_turnText;
 
         /// <summary>
         /// 서버에서 턴이 시작될 때 호출됩니다. 인자는 플레이어 번호입니다.
@@ -99,7 +108,7 @@ namespace Minimax.GamePlay
             if (!IsServer) return;
 
             DecideWhoGoesFirst();
-            m_networkTimer.ConFig(Define.TurnTimeLimit, StartNewTurn);
+            m_networkTimer.ConFig(m_turnTimeLimit, StartNewTurn);
             OnServerTurnStart?.Invoke(m_whosTurn.Value);
             m_networkTimer.StartTimer();
         }
@@ -155,14 +164,8 @@ namespace Minimax.GamePlay
         /// </summary>
         public bool CheckIfMyTurn(string logMessage = "")
         {
-            if (!IsMyTurn)
-            {
-                Debug.LogError(
-                    $"Player {MyPlayerNumber} request denied to {logMessage} because it's not their turn");
-                return false;
-            }
-
-            return true;
+            return Debug.CheckIfTrueLogError(IsMyTurn,
+                $"Player {MyPlayerNumber} request denied to {logMessage} because it's not their turn");
         }
 
         /// <summary>
@@ -181,13 +184,8 @@ namespace Minimax.GamePlay
         {
             if (!IsServer) return false;
 
-            if (playerNumber != m_whosTurn.Value)
-            {
-                Debug.LogError($"Player {playerNumber} request denied because it's not their turn");
-                return false;
-            }
-
-            return true;
+            return Debug.CheckIfTrueLogError(playerNumber == m_whosTurn.Value,
+                $"Player {playerNumber} request denied because it's not their turn");
         }
     }
 }

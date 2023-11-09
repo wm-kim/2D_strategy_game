@@ -103,7 +103,7 @@ namespace Minimax.UnityGamingService.Multiplayer.ConnectionManagement
         private IEnumerator WaitClientReconnection(int playerNumber)
         {
             Debug.Log($"Wait for player {playerNumber.ToString()} reconnection...\n" +
-                             $"Remain time : {m_remainTimeForClientReconnect[playerNumber].ToString("F1")}");
+                      $"Remain time : {m_remainTimeForClientReconnect[playerNumber].ToString("F1")}");
 
             while (m_remainTimeForClientReconnect[playerNumber] > 0)
             {

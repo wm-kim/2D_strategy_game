@@ -5,6 +5,7 @@ using Minimax.CoreSystems;
 using Minimax.GamePlay.Unit;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using Utilities;
@@ -16,18 +17,28 @@ namespace Minimax.GamePlay.GridSystem
     public class ClientMap : NetworkBehaviour
     {
 #if UNITY_EDITOR
-        [Header("Debug")] [SerializeField] private Transform m_coordTexts;
-        [SerializeField] [Tooltip("Debug Text Scale, Relative to Cell Size")]
+        [Header("Debug")]
+        [SerializeField]
+        private Transform m_coordTexts;
+
+        [SerializeField]
+        [Tooltip("Debug Text Scale, Relative to Cell Size")]
         private float m_debugTextScale = 0.1f;
 #endif
 
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private ClientCell m_clientCellPrefab;
 
-        [SerializeField] private Tilemap          m_tilemap;
-        [SerializeField] private CameraController m_cameraController;
+        [SerializeField]
+        private Tilemap m_tilemap;
 
-        [Header("Settings")] [SerializeField] private bool m_displayDebugCoords = false;
+        [SerializeField]
+        private CameraController m_cameraController;
+
+        [Header("Settings")]
+        [SerializeField]
+        private bool m_displayDebugCoords = false;
 
         public ClientCell SelectedClientCell { get; private set; }
 
@@ -108,32 +119,25 @@ namespace Minimax.GamePlay.GridSystem
         [ClientRpc]
         public void SetPlayersInitialPlaceableAreaClientRpc()
         {
-            var myPlayerNumber = TurnManager.Instance.MyPlayerNumber;
-            var mapWidth       = m_isoGrid.Width;
-            var mapHeight      = m_isoGrid.Height;
+            var myPlayerNumber       = TurnManager.Instance.MyPlayerNumber;
+            var opponentPlayerNumber = TurnManager.Instance.OpponentPlayerNumber;
+            var mapWidth             = m_isoGrid.Width;
+            var mapHeight            = m_isoGrid.Height;
 
             if (myPlayerNumber == 0)
-            {
                 for (var y = 0; y < mapHeight; y++)
                 {
                     m_isoGrid.Cells[0, y].IsPlaceable = true;
-                    m_isoGrid.Cells[0, y].CreateOverlay(OverlayType.MyPlaceable);
+                    m_isoGrid.Cells[0, y].CreateOverlay(OverlayType.Placeable, myPlayerNumber);
+                    m_isoGrid.Cells[mapWidth - 1, y].CreateOverlay(OverlayType.Placeable, opponentPlayerNumber);
                 }
-
-                for (var y = 0; y < mapHeight; y++)
-                    m_isoGrid.Cells[mapWidth - 1, y].CreateOverlay(OverlayType.OpponentPlaceable);
-            }
             else if (myPlayerNumber == 1)
-            {
                 for (var y = 0; y < mapHeight; y++)
                 {
                     m_isoGrid.Cells[mapWidth - 1, y].IsPlaceable = true;
-                    m_isoGrid.Cells[mapWidth - 1, y].CreateOverlay(OverlayType.MyPlaceable);
+                    m_isoGrid.Cells[mapWidth - 1, y].CreateOverlay(OverlayType.Placeable, myPlayerNumber);
+                    m_isoGrid.Cells[0, y].CreateOverlay(OverlayType.Placeable, opponentPlayerNumber);
                 }
-
-                for (var y = 0; y < mapHeight; y++)
-                    m_isoGrid.Cells[0, y].CreateOverlay(OverlayType.OpponentPlaceable);
-            }
         }
 
         private void SetRotation(GridRotation rotation)
@@ -153,6 +157,9 @@ namespace Minimax.GamePlay.GridSystem
 
         private void HoverCell(Touch touch)
         {
+            if (EventSystem.current.IsPointerOverGameObject(touch.touchId))
+                return;
+
             var worldPos = m_cameraController.Camera.ScreenToWorldPoint(touch.screenPosition);
 
             if (m_isoGrid.TryGetGridCellFromWorldIso(worldPos, out var cell))
@@ -177,9 +184,12 @@ namespace Minimax.GamePlay.GridSystem
         /// <summary>
         /// Selects the cell that is touched.
         /// </summary>
-        private void SelectCell(Vector2 touchPosition)
+        private void SelectCell(Touch touch)
         {
-            var worldPos = m_cameraController.Camera.ScreenToWorldPoint(touchPosition);
+            if (EventSystem.current.IsPointerOverGameObject(touch.touchId))
+                return;
+
+            var worldPos = m_cameraController.Camera.ScreenToWorldPoint(touch.screenPosition);
 
             if (m_isoGrid.TryGetGridCellFromWorldIso(worldPos, out var cell))
             {
@@ -189,21 +199,33 @@ namespace Minimax.GamePlay.GridSystem
             }
         }
 
-        public void HighlightReachableCells(ClientCell cell, int range)
+        public void HighlightMovableCells(ClientCell cell, int range)
         {
+            if (range <= 0) return;
             if (!TurnManager.Instance.IsMyTurn) return;
-            m_highlightedCells = m_isoGrid.GetReachableCells(cell, range);
-            Debug.Log($"Highlighting {m_highlightedCells.Count} cells, range: {range}");
-            foreach (var clientCell in m_highlightedCells) clientCell.Highlight();
+
+            var unitOwner = ClientUnit.UnitsCreatedThisGame[cell.CurrentUnitUID].Owner;
+            m_highlightedCells = m_isoGrid.GetMovableCells(cell, range);
+            foreach (var clientCell in m_highlightedCells) clientCell.Highlight(unitOwner);
         }
 
-        public void HighlightMovingPath(Vector2Int[] pathCoords)
+        public void HighlightAttackableCells(ClientCell cell, int range)
+        {
+            if (range <= 0) return;
+            if (!TurnManager.Instance.IsMyTurn) return;
+
+            var unitOwner = ClientUnit.UnitsCreatedThisGame[cell.CurrentUnitUID].Owner;
+            m_highlightedCells = m_isoGrid.GetAttackableCells(cell, range);
+            foreach (var clientCell in m_highlightedCells) clientCell.Highlight(unitOwner);
+        }
+
+        public void HighlightMovingPath(Vector2Int[] pathCoords, int unitOwner)
         {
             for (var i = 0; i < pathCoords.Length; i++)
             {
                 var coord      = pathCoords[i];
                 var clientCell = m_isoGrid.Cells[coord.x, coord.y];
-                clientCell.Highlight();
+                clientCell.Highlight(unitOwner);
                 m_highlightedCells.Add(clientCell);
             }
         }

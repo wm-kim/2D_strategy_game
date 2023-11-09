@@ -17,9 +17,15 @@ namespace Minimax.UI
 
     public class UIAnimationController : MonoBehaviour
     {
-        [SerializeField]                  private CanvasGroup   m_canvasGroup       = default;
-        [SerializeField] [Range(0f, 10f)] private float         m_animationDuration = 0.5f;
-        [SerializeField]                  private AnimationType m_animationType     = AnimationType.FadeIn;
+        [SerializeField]
+        private CanvasGroup m_canvasGroup = default;
+
+        [SerializeField]
+        [Range(0f, 10f)]
+        private float m_animationDuration = 0.5f;
+
+        [SerializeField]
+        private AnimationType m_animationType = AnimationType.FadeIn;
 
         [field: SerializeField] public bool AllowAnimationOverride { get; private set; } = false;
 
@@ -27,7 +33,8 @@ namespace Minimax.UI
         [field: ReadOnly]
         public bool IsAnimating { get; private set; } = false;
 
-        [Header("Broadcasting on")] [SerializeField]
+        [Header("Broadcasting on")]
+        [SerializeField]
         private VoidEventSO m_OnAnimationComplete = default;
 
         private Tween m_tween;

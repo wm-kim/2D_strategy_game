@@ -21,7 +21,7 @@ namespace SingularityGroup.HotReload.Editor {
         private static TimeSpan RetryInterval => TimeSpan.FromSeconds(30);
         private static TimeSpan CheckInterval => TimeSpan.FromHours(1);
         
-        private static readonly HttpClient client = new HttpClient();
+        private static readonly HttpClient client = RequestHelper.CreateHttpClient();
 
         private static string _lastRemotePackageVersion;
 

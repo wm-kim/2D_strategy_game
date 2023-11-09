@@ -10,18 +10,24 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DeckListItemMenuView : StatefulUIView
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private Camera m_mainCamera;
 
-        [SerializeField] private DeckBuildingManager m_deckBuildingManager;
+        [SerializeField]
+        private DeckBuildingManager m_deckBuildingManager;
 
-        [Header("Inner References")] [SerializeField]
+        [Header("Inner References")]
+        [SerializeField]
         private RectTransform m_deckListItemMenu;
 
-        [SerializeField] private Button m_deleteFromDeckButton;
+        [SerializeField]
+        private Button m_deleteFromDeckButton;
 
-        [SerializeField] private float            m_xOffset = 30f;
-        private                  DeckListItemView m_deckListItemView;
+        [SerializeField]
+        private float m_xOffset = 30f;
+
+        private DeckListItemView m_deckListItemView;
 
         private void Start()
         {

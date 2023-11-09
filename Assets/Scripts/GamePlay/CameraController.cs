@@ -13,21 +13,30 @@ namespace Minimax.GamePlay
 {
     public class CameraController : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private Camera m_camera;
 
-        [SerializeField] private MyHandInteractionManager m_handInteraction;
+        [SerializeField]
+        private MyHandInteractionManager m_handInteraction;
 
-        [Header("Settings")] [SerializeField] [Range(0, 2)]
+        [Header("Settings")]
+        [SerializeField]
+        [Range(0, 2)]
         private float m_panSpeed = 1f;
 
-        [SerializeField] [Tooltip("The time it takes for the camera to reach the target position")]
+        [SerializeField]
+        [Tooltip("The time it takes for the camera to reach the target position")]
         private float m_panSmoothTime = 0.1f;
 
-        [SerializeField] [Range(1, 2)] [Tooltip("The scale of the camera boundary relative to the map size")]
+        [SerializeField]
+        [Range(1, 2)]
+        [Tooltip("The scale of the camera boundary relative to the map size")]
         private float m_bounadryScaleX = 1.2f;
 
-        [SerializeField] [Range(1, 2)] [Tooltip("The scale of the camera boundary relative to the map size")]
+        [SerializeField]
+        [Range(1, 2)]
+        [Tooltip("The scale of the camera boundary relative to the map size")]
         private float m_bounadryScaleY = 1.5f;
 
         public Camera Camera => m_camera;
@@ -63,7 +72,6 @@ namespace Minimax.GamePlay
 
             // Check if touch is over a UI element
             if (EventSystem.current.IsPointerOverGameObject(touch.touchId))
-                // If the touch is over UI, do not proceed with camera movement
                 return;
 
             if (m_handInteraction.IsHovering && !m_handInteraction.IsSelecting) return;

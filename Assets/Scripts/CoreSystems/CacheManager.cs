@@ -17,7 +17,9 @@ namespace Minimax.CoreSystems
         public static CacheManager Instance { get; private set; }
 
         // 각 캐시 오브젝트를 관리하기 위한 딕셔너리
-        [SerializeField] [ReadOnly] private SerializedDictionary<string, CacheObject> cacheObjects = new();
+        [SerializeField]
+        [ReadOnly]
+        private SerializedDictionary<string, CacheObject> cacheObjects = new();
 
         /// <summary>
         /// 캐시 오브젝트가 등록되어 있는지 여부를 반환합니다.

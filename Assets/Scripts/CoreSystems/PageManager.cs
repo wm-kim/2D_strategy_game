@@ -9,7 +9,9 @@ namespace Minimax.CoreSystems
     [DefaultExecutionOrder(-1)]
     public class PageManager : MonoBehaviour
     {
-        [SerializeField] [ReadOnly] private SerializedDictionary<PageType, PageView> m_pages = new();
+        [SerializeField]
+        [ReadOnly]
+        private SerializedDictionary<PageType, PageView> m_pages = new();
 
         private void Awake()
         {

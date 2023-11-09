@@ -52,7 +52,6 @@ namespace Minimax.Definitions
         #region GamePlay
 
         public static readonly int MapSize              = 11;
-        public static readonly int TurnTimeLimit        = 30;
         public static readonly int MaxHandCardCount     = 10;
         public static readonly int InitialHandCardCount = 3;
 

@@ -12,10 +12,17 @@ namespace Minimax.CoreSystems
     /// </summary>
     public class GlobalManagers : MonoSingleton<GlobalManagers>
     {
-        [SerializeField] private InputManager      m_inputManager;
-        [SerializeField] private SceneLoader       m_sceneLoader;
-        [SerializeField] private CacheManager      m_cacheManager;
-        [SerializeField] private ConnectionManager m_connectonManager;
+        [SerializeField]
+        private InputManager m_inputManager;
+
+        [SerializeField]
+        private SceneLoader m_sceneLoader;
+
+        [SerializeField]
+        private CacheManager m_cacheManager;
+
+        [SerializeField]
+        private ConnectionManager m_connectonManager;
 
         public InputManager      Input          => m_inputManager;
         public SceneLoader       Scene          => m_sceneLoader;

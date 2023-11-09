@@ -15,11 +15,15 @@ namespace Minimax.GamePlay.PlayerDeck
 {
     public class ServerPlayersDeckManager : NetworkBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private CardDBManager m_cardDBManager;
 
-        [SerializeField] private ClientMyDeckManager       m_clientMyDeckManager;
-        [SerializeField] private ClientOpponentDeckManager m_clientOpponentDeckManager;
+        [SerializeField]
+        private ClientMyDeckManager m_clientMyDeckManager;
+
+        [SerializeField]
+        private ClientOpponentDeckManager m_clientOpponentDeckManager;
 
         private NetworkManager m_networkManager => NetworkManager.Singleton;
 

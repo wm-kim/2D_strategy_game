@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Minimax.GamePlay.Card;
 using Minimax.ScriptableObjects.CardData;
 using UnityEngine;
-using Utilities;
+using System.Linq;
 using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.Unit
@@ -55,10 +55,10 @@ namespace Minimax.GamePlay.Unit
             UnitsCreatedThisGame.Add(UID, this);
 
             Debug.Log($"ServerUnit {UID} is created\n" +
-                             $"Health: {Health}\n" +
-                             $"Attack: {Attack}\n" +
-                             $"MoveRange: {MoveRange}" +
-                             $"AttackRange: {AttackRange}");
+                      $"Health: {Health}\n" +
+                      $"Attack: {Attack}\n" +
+                      $"MoveRange: {MoveRange}" +
+                      $"AttackRange: {AttackRange}");
         }
 
         public int Health { get; set; }
@@ -69,10 +69,9 @@ namespace Minimax.GamePlay.Unit
 
         public int AttackRange { get; set; }
 
-        public void ResetOnNewTurn()
+        public void ResetOnTurnStart()
         {
-            var unitData = ServerCard.CardsCreatedThisGame[m_cardUID].Data as UnitBaseData;
-            MoveRange = unitData.MoveRange;
+            MoveRange = ((UnitBaseData)ServerCard.CardsCreatedThisGame[m_cardUID].Data).MoveRange;
         }
 
         /// <summary>
@@ -80,13 +79,12 @@ namespace Minimax.GamePlay.Unit
         /// </summary>
         public bool CheckIfMovable()
         {
-            if (MoveRange <= 0)
-            {
-                Debug.LogError($"Unit {UID} is not movable");
-                return false;
-            }
+            return Debug.CheckIfTrueLog(MoveRange > 0, $"Unit {UID} is not movable");
+        }
 
-            return true;
+        public static List<ServerUnit> GetAllUnitsByOwner(int playerNumber)
+        {
+            return UnitsCreatedThisGame.Values.Where(unit => unit.Owner == playerNumber).ToList();
         }
     }
 }

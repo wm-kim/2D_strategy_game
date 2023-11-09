@@ -2,15 +2,23 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;
+using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay
 {
     public class ClientManaManager : NetworkBehaviour
     {
-        [SerializeField] private TextMeshProUGUI m_myCurrentManaText;
-        [SerializeField] private TextMeshProUGUI m_myManaCapText;
-        [SerializeField] private TextMeshProUGUI m_opponentCurrentManaText;
-        [SerializeField] private TextMeshProUGUI m_opponentManaCapText;
+        [SerializeField]
+        private TextMeshProUGUI m_myCurrentManaText;
+
+        [SerializeField]
+        private TextMeshProUGUI m_myManaCapText;
+
+        [SerializeField]
+        private TextMeshProUGUI m_opponentCurrentManaText;
+
+        [SerializeField]
+        private TextMeshProUGUI m_opponentManaCapText;
 
         private int m_myCurrentMana;
         private int m_myManaCap;
@@ -50,7 +58,7 @@ namespace Minimax.GamePlay
         // For client to check if it has enough mana to play a card
         public bool CheckIfMyManaIsEnough(int cost)
         {
-            return m_myCurrentMana >= cost;
+            return Debug.CheckIfTrueLog(m_myCurrentMana >= cost, "Not enough mana to play this card");
         }
     }
 }

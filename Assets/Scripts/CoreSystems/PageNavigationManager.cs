@@ -13,15 +13,24 @@ namespace Minimax.CoreSystems
 {
     public class PageNavigationManager : MonoBehaviour
     {
-        [SerializeField] [ReadOnly] private PageNavigation       m_currentNavigation;
-        [SerializeField]            private PageNavigationTypeSO m_currentPageNavigationTypeSO;
+        [SerializeField]
+        [ReadOnly]
+        private PageNavigation m_currentNavigation;
 
-        [SerializeField] [ReadOnly] private SerializedDictionary<PageNavigationType, PageNavigation> m_pageNavigations =
+        [SerializeField]
+        private PageNavigationTypeSO m_currentPageNavigationTypeSO;
+
+        [SerializeField]
+        [ReadOnly]
+        private SerializedDictionary<PageNavigationType, PageNavigation> m_pageNavigations =
             new();
 
-        [SerializeField] private BottomUIController m_bottomUIController;
+        [SerializeField]
+        private BottomUIController m_bottomUIController;
 
-        [Header("Animation Settings")] [SerializeField] [Range(0, 1)]
+        [Header("Animation Settings")]
+        [SerializeField]
+        [Range(0, 1)]
         private float m_pageTransitionDuration = 0.15f;
 
         private List<PageNavigationType> m_navigationTypeOrder = new()

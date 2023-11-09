@@ -41,13 +41,8 @@ namespace Minimax.GamePlay.GridSystem
         /// <returns></returns>
         public bool CheckIfPlaceableBy(int playerNumber)
         {
-            if (!IsPlaceable[playerNumber])
-            {
-                Debug.LogError($"Cell {Coord} is not placeable by player {playerNumber}");
-                return false;
-            }
-
-            return true;
+            return Debug.CheckIfTrueLogError(IsPlaceable.ContainsKey(playerNumber),
+                $"Cell {Coord} does not have player {playerNumber} in IsPlaceable dictionary");
         }
 
         public int GetDistance(ICell other)

@@ -6,10 +6,12 @@ namespace Minimax.ScriptableObjects.CardData
     [CreateAssetMenu(menuName = "ScriptableObjects/Cards/UnitBaseData")]
     public class UnitBaseData : CardBaseData
     {
-        [Header("Unit Info")] public int Attack;
-        public                       int Health;
-        public                       int MoveRange;
-        public                       int AttackRange;
+        [Header("Unit Info")]
+        public int Attack;
+
+        public int Health;
+        public int MoveRange;
+        public int AttackRange;
 
         public UnitBaseData()
         {

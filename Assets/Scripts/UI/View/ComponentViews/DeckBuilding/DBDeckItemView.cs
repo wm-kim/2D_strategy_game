@@ -12,23 +12,30 @@ using Debug = Utilities.Debug;
 
 namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
-    [RequireComponent(typeof(Button))]
     public class DBDeckItemView : ButtonView
     {
-        [Header("Inner References")] [SerializeField]
+        [Header("Inner References")]
+        [SerializeField]
         private TextMeshProUGUI m_deckNameText;
 
-        [SerializeField] private CanvasGroup m_menuCanvasGroup;
-        [SerializeField] private Button      m_selectButton;
-        [SerializeField] private Button      m_deleteButton;
+        [SerializeField]
+        private CanvasGroup m_menuCanvasGroup;
+
+        [SerializeField]
+        private Button m_selectButton;
+
+        [SerializeField]
+        private Button m_deleteButton;
 
         // Needs for setting selected button interactable into true in DeckPageView
         public Button SelectButton => m_selectButton;
 
-        [Header("Animations")] [SerializeField]
+        [Header("Animations")]
+        [SerializeField]
         private AnimationSequencerController m_showAnimationSequencer;
 
-        [SerializeField] private AnimationSequencerController m_hideAnimationSequencer;
+        [SerializeField]
+        private AnimationSequencerController m_hideAnimationSequencer;
 
         // Caching Deck Page View Reference for setting current deck name
         private DeckPageView m_deckPageView;
@@ -44,8 +51,6 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
             m_selectButton.onClick.AddListener(OnSelectButtonClicked);
             m_deleteButton.onClick.AddListener(OnDeleteButtonClicked);
         }
-
-        public override Button Button => GetComponent<Button>();
 
         public override void SetVisualActive(bool active, bool isImmediate = false)
         {

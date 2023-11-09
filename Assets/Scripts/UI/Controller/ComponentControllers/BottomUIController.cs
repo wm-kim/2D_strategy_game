@@ -6,9 +6,13 @@ namespace Minimax.UI.Controller.ComponentControllers
 {
     public class BottomUIController : MonoBehaviour
     {
-        [SerializeField] private PageNavigationManager m_pageNavigationManager;
-        [SerializeField] private ButtonGroupController m_bottomButtonGroupController;
-        private                  bool                  m_initialButtonClicked = false;
+        [SerializeField]
+        private PageNavigationManager m_pageNavigationManager;
+
+        [SerializeField]
+        private ButtonGroupController m_bottomButtonGroupController;
+
+        private bool m_initialButtonClicked = false;
 
         public void Init(int initialIndexToClick = 0)
         {

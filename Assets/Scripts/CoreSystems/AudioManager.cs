@@ -14,20 +14,31 @@ namespace Minimax.CoreSystems
     {
         public static AudioManager Instance { get; private set; }
 
-        [Header("Volume Controls")] [SerializeField] [Range(0, 1)]
+        [Header("Volume Controls")]
+        [SerializeField]
+        [Range(0, 1)]
         private float m_masterVolume = 1f;
 
-        [SerializeField] [Range(0, 1)] private float m_bgmVolume = 1f;
-        [SerializeField] [Range(0, 1)] private float m_sfxVolume = 1f;
+        [SerializeField]
+        [Range(0, 1)]
+        private float m_bgmVolume = 1f;
 
-        [SerializeField] private List<AudioFileSO> m_audioFiles;
-        public                   List<AudioFileSO> AudioFiles => m_audioFiles;
+        [SerializeField]
+        [Range(0, 1)]
+        private float m_sfxVolume = 1f;
+
+        [SerializeField]
+        private List<AudioFileSO> m_audioFiles;
+
+        public List<AudioFileSO> AudioFiles => m_audioFiles;
 
         // 빠른 접근을 위한 저장소
         private Dictionary<AudioLib, AudioFileSO> m_audioFileDict;
 
-        [SerializeField] private int                      m_audioPoolSize = 10;
-        private                  IObjectPool<AudioSource> m_audioSourcePool;
+        [SerializeField]
+        private int m_audioPoolSize = 10;
+
+        private IObjectPool<AudioSource> m_audioSourcePool;
 
         private AudioSource       m_currentBGMSource;
         private List<AudioSource> m_activeAudioSources = new();

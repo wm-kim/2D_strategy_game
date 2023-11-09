@@ -1,9 +1,10 @@
 using System;
 using DG.Tweening;
-using Minimax.GamePlay.CommandSystem;
+using JoshH.UI;
 using Minimax.GamePlay.GridSystem;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.UI.ProceduralImage;
 
 namespace Minimax.GamePlay.Unit
 {
@@ -15,12 +16,43 @@ namespace Minimax.GamePlay.Unit
             Back
         }
 
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private GameObject m_unitFront;
 
-        [SerializeField] private GameObject m_unitBack;
+        [SerializeField]
+        private GameObject m_unitBack;
 
-        [Header("Settings")] [SerializeField] private float m_moveDuration = 0.4f;
+        [SerializeField]
+        private ProceduralImage m_healthBarShadow;
+
+        [SerializeField]
+        private UIGradient m_healthBarFillGradient;
+
+        [SerializeField]
+        private ProceduralImage m_healthBarFill;
+
+        [Header("Settings")]
+        [SerializeField]
+        private float m_moveDuration = 0.4f;
+
+        [SerializeField]
+        private Color m_myHealthShadowColor;
+
+        [SerializeField]
+        private Color m_myHealthFillGradientColor0;
+
+        [SerializeField]
+        private Color m_myHealthFillGradientColor1;
+
+        [SerializeField]
+        private Color m_opponentHealthShadowColor;
+
+        [SerializeField]
+        private Color m_opponentHealthFillGradientColor0;
+
+        [SerializeField]
+        private Color m_opponentHealthFillGradientColor1;
 
         #region Cached Properties
 
@@ -37,11 +69,12 @@ namespace Minimax.GamePlay.Unit
 
         #endregion
 
-        public void Init(GridRotation playerRotation, GridRotation unitRotation)
+        public void Init(GridRotation relativeRotation, int unitOwner)
         {
             m_frontAnimator = m_unitFront.GetComponent<Animator>();
             m_backAnimator  = m_unitBack.GetComponent<Animator>();
-            SetInitialUnitView(playerRotation.GetRelativeRotation(unitRotation));
+            SetInitialUnitView(relativeRotation);
+            SetHealthBarColor(unitOwner);
         }
 
         private void Update()
@@ -69,6 +102,11 @@ namespace Minimax.GamePlay.Unit
             return BackIdle;
         }
 
+        public void SetHealthBarFill(float fillAmount)
+        {
+            m_healthBarFill.fillAmount = Mathf.Clamp01(fillAmount);
+        }
+
         private void SetInitialUnitView(GridRotation gridRotation)
         {
             switch (gridRotation)
@@ -91,6 +129,22 @@ namespace Minimax.GamePlay.Unit
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(gridRotation), gridRotation, null);
+            }
+        }
+
+        private void SetHealthBarColor(int unitOwner)
+        {
+            if (unitOwner == TurnManager.Instance.MyPlayerNumber)
+            {
+                m_healthBarShadow.color              = m_myHealthShadowColor;
+                m_healthBarFillGradient.LinearColor1 = m_myHealthFillGradientColor0;
+                m_healthBarFillGradient.LinearColor2 = m_myHealthFillGradientColor1;
+            }
+            else
+            {
+                m_healthBarShadow.color              = m_opponentHealthShadowColor;
+                m_healthBarFillGradient.LinearColor1 = m_opponentHealthFillGradientColor0;
+                m_healthBarFillGradient.LinearColor2 = m_opponentHealthFillGradientColor1;
             }
         }
 

@@ -7,16 +7,23 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DeckListPanelView : StatefulUIView
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private CanvasGroup m_deckListBackground = default;
 
-        [SerializeField] private RectTransform   m_deckListPanel = default;
-        [SerializeField] private TextMeshProUGUI m_deckNameText;
+        [SerializeField]
+        private RectTransform m_deckListPanel = default;
 
-        [Header("Animation")] [SerializeField] [Range(0f, 1f)]
+        [SerializeField]
+        private TextMeshProUGUI m_deckNameText;
+
+        [Header("Animation")]
+        [SerializeField]
+        [Range(0f, 1f)]
         private float m_animationDuration = 0.5f;
 
-        [SerializeField] private float m_slideOffset = 420f;
+        [SerializeField]
+        private float m_slideOffset = 420f;
 
         private Tween  m_deckListBackgroundTween;
         private Tween  m_deckListPanelTween;

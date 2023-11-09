@@ -9,7 +9,7 @@ namespace Utilities
         Debug,
         Normal
     }
-    
+
     /// <summary>
     /// It overrides UnityEngine.Debug to mute debug messages completely on a platform-specific basis.
     /// </summary>
@@ -19,7 +19,7 @@ namespace Utilities
         /// 현재 로그 레벨. 이 레벨보다 낮은 메시지는 출력되지 않습니다.
         /// </summary>
         private static LogLevel m_currentLogLevel = LogLevel.Normal;
-        
+
         public static bool IsDebugBuild => UnityEngine.Debug.isDebugBuild;
 
         [Conditional("UNITY_EDITOR")]
@@ -56,6 +56,27 @@ namespace Utilities
         {
             if (m_currentLogLevel > logLevel) return;
             UnityEngine.Debug.LogException(exception);
+        }
+
+        public static bool CheckIfTrueLog(bool condition, string message, LogLevel logLevel = LogLevel.Normal)
+        {
+            if (m_currentLogLevel > logLevel) return false;
+            if (!condition) Log(message, logLevel);
+            return condition;
+        }
+
+        public static bool CheckIfTrueLogWarning(bool condition, string message, LogLevel logLevel = LogLevel.Normal)
+        {
+            if (m_currentLogLevel > logLevel) return false;
+            if (!condition) LogWarning(message, logLevel);
+            return condition;
+        }
+
+        public static bool CheckIfTrueLogError(bool condition, string message, LogLevel logLevel = LogLevel.Normal)
+        {
+            if (m_currentLogLevel > logLevel) return false;
+            if (!condition) LogError(message, logLevel);
+            return condition;
         }
 
         public static TextMesh CreateText(string text, Transform parent = null, Vector3 localPosition = default,

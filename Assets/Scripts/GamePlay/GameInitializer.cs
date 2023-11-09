@@ -27,16 +27,27 @@ namespace Minimax.GamePlay
     {
         #region Fields and Properties
 
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private CardDBManager m_cardDBManager;
 
-        [SerializeField] private ServerPlayersDeckManager m_serverPlayersDeckManager;
-        [SerializeField] private TurnManager              m_turnManager;
-        [SerializeField] private ProfileManager           m_profileManager;
-        [SerializeField] private ServerManaManager        m_manaManager;
-        [SerializeField] private ServerMap                m_serverMap;
+        [SerializeField]
+        private ServerPlayersDeckManager m_serverPlayersDeckManager;
 
-        [Header("Game Logics")] [SerializeField]
+        [SerializeField]
+        private TurnManager m_turnManager;
+
+        [SerializeField]
+        private ProfileManager m_profileManager;
+
+        [SerializeField]
+        private ServerManaManager m_manaManager;
+
+        [SerializeField]
+        private ServerMap m_serverMap;
+
+        [Header("Game Logics")]
+        [SerializeField]
         private CardDrawingLogic m_cardDrawingLogic;
 
         private NetworkManager m_networkManager => NetworkManager.Singleton;
@@ -94,6 +105,7 @@ namespace Minimax.GamePlay
                 Debug.Log("Session started");
             }
 
+            ClearGameData();
             base.OnNetworkSpawn();
         }
 

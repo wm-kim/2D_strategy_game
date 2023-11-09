@@ -16,15 +16,25 @@ namespace Minimax.GamePlay.PlayerDeck
     /// </summary>
     public class ClientMyDeckManager : NetworkBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private CardDBManager m_cardDBManager;
 
-        [SerializeField] private Button                 m_myDeckButton;
-        [SerializeField] private TranslucentImageSource m_playerPanelBlurSource;
-        [SerializeField] private CardListView           m_deckViewFader;
-        [SerializeField] private Button                 m_closeMyDeckViewButton;
+        [SerializeField]
+        private Button m_myDeckButton;
 
-        [Header("Settings")] [SerializeField] [Range(0, 1)]
+        [SerializeField]
+        private TranslucentImageSource m_playerPanelBlurSource;
+
+        [SerializeField]
+        private CardListView m_deckViewFader;
+
+        [SerializeField]
+        private Button m_closeMyDeckViewButton;
+
+        [Header("Settings")]
+        [SerializeField]
+        [Range(0, 1)]
         private float m_deckViewFadeDuration = 0.2f;
 
         private Tween m_deckViewFadeTween;

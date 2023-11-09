@@ -7,7 +7,8 @@ namespace Minimax.UI.Controller.PageControllers
 {
     public class DeckPageController : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private Button m_buildNewDeckButton;
 
         private void Start()

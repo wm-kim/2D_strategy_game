@@ -6,8 +6,10 @@ namespace Minimax.UI.View
 {
     public class UIFader : StatefulUIView
     {
-        [SerializeField] private CanvasGroup m_canvasGroup = null;
-        private                  Tween       m_fadeTween   = null;
+        [SerializeField]
+        private CanvasGroup m_canvasGroup = null;
+
+        private Tween m_fadeTween = null;
 
         public event Action OnFadeInComplete;
         public event Action OnFadeOutComplete;

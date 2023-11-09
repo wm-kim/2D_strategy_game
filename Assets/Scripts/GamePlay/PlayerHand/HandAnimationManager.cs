@@ -10,33 +10,57 @@ namespace Minimax.GamePlay.PlayerHand
 {
     public class HandAnimationManager : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private Transform m_deckTransform;
 
-        [SerializeField] private Transform m_cardRevealTransform;
+        [SerializeField]
+        private Transform m_cardRevealTransform;
 
-        [Header("Hand Curve Settings")] [SerializeField] [Tooltip("카드가 놓일 곡선의 반지름")] [Range(0, 10000)]
+        [Header("Hand Curve Settings")]
+        [SerializeField]
+        [Tooltip("카드가 놓일 곡선의 반지름")]
+        [Range(0, 10000)]
         private float m_curvRadius = 2000f;
 
-        [SerializeField] [Tooltip("카드가 놓일 곡선의 각도")] [Range(0, 360)]
+        [SerializeField]
+        [Tooltip("카드가 놓일 곡선의 각도")]
+        [Range(0, 360)]
         private float m_curvAngle = 30f;
 
-        [SerializeField] [Tooltip("카드가 놓일 곡선의 중심, m_cardParent를 기준으로 한다.")]
+        [SerializeField]
+        [Tooltip("카드가 놓일 곡선의 중심, m_cardParent를 기준으로 한다.")]
         private Vector2 m_curvCenter = new(0, -200);
 
-        [SerializeField] [Tooltip("카드가 놓일 곡선의 각도")] [Range(0, 360)]
+        [SerializeField]
+        [Tooltip("카드가 놓일 곡선의 각도")]
+        [Range(0, 360)]
         private float m_baseRotation = 0f;
 
-        [SerializeField] [Tooltip("카드 사이의 최대 각도")] [Range(0, 30)]
+        [SerializeField]
+        [Tooltip("카드 사이의 최대 각도")]
+        [Range(0, 30)]
         private float m_maxBetweenAngle = 3f;
 
-        [Header("Animation Settings")] [SerializeField] [Range(0, 1)]
+        [Header("Animation Settings")]
+        [SerializeField]
+        [Range(0, 1)]
         private float m_handTweenDuration = 0.5f;
 
-        [SerializeField]               private Vector3 m_cardInitialRotation    = new(0, 0, 0);
-        [SerializeField] [Range(0, 1)] private float   m_cardRevealMoveDuration = 0.5f;
-        [SerializeField] [Range(0, 1)] private float   m_cardFlipDuration       = 0.5f;
-        [SerializeField] [Range(0, 1)] private float   m_cardfadeDuration       = 0.5f;
+        [SerializeField]
+        private Vector3 m_cardInitialRotation = new(0, 0, 0);
+
+        [SerializeField]
+        [Range(0, 1)]
+        private float m_cardRevealMoveDuration = 0.5f;
+
+        [SerializeField]
+        [Range(0, 1)]
+        private float m_cardFlipDuration = 0.5f;
+
+        [SerializeField]
+        [Range(0, 1)]
+        private float m_cardfadeDuration = 0.5f;
 
         private List<Vector3>    m_slotPositionList = new();
         private List<Quaternion> m_slotRotationList = new();

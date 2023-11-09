@@ -10,8 +10,11 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
     /// </summary>
     public class HandCardView : TweenableItem
     {
-        [SerializeField] private CardVisual  m_cardVisual;
-        [SerializeField] private CanvasGroup m_canvasGroup;
+        [SerializeField]
+        private CardVisual m_cardVisual;
+
+        [SerializeField]
+        private CanvasGroup m_canvasGroup;
 
         public Tweener FadeTween { get; private set; }
 

@@ -8,19 +8,31 @@ namespace Minimax.GamePlay
 {
     public class MapCursorController : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private MyHandInteractionManager m_handInteraction;
 
-        [SerializeField] private ClientMap         m_clientMap;
-        [SerializeField] private ClientUnitManager m_clientUnitManager;
+        [SerializeField]
+        private ClientMap m_clientMap;
 
-        [Header("Visuals")] [SerializeField] private SpriteRenderer m_hoverOverlay;
-        [SerializeField]                     private SpriteRenderer m_selectOverlay;
+        [SerializeField]
+        private ClientUnitManager m_clientUnitManager;
 
-        [Header("Settings")] [SerializeField] [Range(0, 1)]
+        [Header("Visuals")]
+        [SerializeField]
+        private SpriteRenderer m_hoverOverlay;
+
+        [SerializeField]
+        private SpriteRenderer m_selectOverlay;
+
+        [Header("Settings")]
+        [SerializeField]
+        [Range(0, 1)]
         private float m_hoverOverlayFadeDuration = 0.2f;
 
-        [SerializeField] [Range(0, 1)] private float m_targetAlpha = 0.20f;
+        [SerializeField]
+        [Range(0, 1)]
+        private float m_targetAlpha = 0.20f;
 
         private void Awake()
         {
@@ -78,9 +90,8 @@ namespace Minimax.GamePlay
 
         private void OnUnitSpawned(ClientCell clientCell)
         {
-            var unitUID    = m_clientMap[clientCell.Coord].CurrentUnitUID;
-            var clientUnit = ClientUnit.UnitsCreatedThisGame[unitUID];
-            if (clientUnit.IsMine) ShowSelectOverlay(clientCell.transform.position);
+            var unitUID = m_clientMap[clientCell.Coord].CurrentUnitUID;
+            if (ClientUnit.IsMyUnit(unitUID)) ShowSelectOverlay(clientCell.transform.position);
         }
 
         private void HideHoverOverlay()

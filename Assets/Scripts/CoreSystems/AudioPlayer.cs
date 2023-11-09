@@ -11,8 +11,11 @@ namespace Minimax.CoreSystems
             SFX
         }
 
-        [SerializeField] private AudioType m_audioType;
-        [SerializeField] private AudioLib  m_audioEnum;
+        [SerializeField]
+        private AudioType m_audioType;
+
+        [SerializeField]
+        private AudioLib m_audioEnum;
 
         private AudioManager m_audioManager;
 

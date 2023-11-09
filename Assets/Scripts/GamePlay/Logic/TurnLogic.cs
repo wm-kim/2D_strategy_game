@@ -8,18 +8,31 @@ namespace Minimax.GamePlay.Logic
 {
     public class TurnLogic : NetworkBehaviour
     {
-        [Header("Server References")] [SerializeField]
+        [Header("Server References")]
+        [SerializeField]
         private TurnManager m_turnManager;
 
-        [SerializeField] private ServerPlayersDeckManager m_serverPlayersDeck;
-        [SerializeField] private ServerManaManager        m_serverManaManager;
+        [SerializeField]
+        private ServerPlayersDeckManager m_serverPlayersDeck;
 
-        [Header("Client References")] [SerializeField]
+        [SerializeField]
+        private ServerManaManager m_serverManaManager;
+
+        [Header("Client References")]
+        [SerializeField]
+        private ClientUnitManager m_clientUnitManager;
+
+        [SerializeField]
+        private UnitControlPanelController m_unitControlPanelController;
+
+        [SerializeField]
+        private TurnNotifyView m_turnNotifyView;
+
+        [SerializeField]
         private ClientMap m_clientMap;
 
-        [SerializeField] private ClientUnitManager m_clientUnitManager;
-
-        [Header("Other Logic References")] [SerializeField]
+        [Header("Other Logic References")]
+        [SerializeField]
         private CardDrawingLogic m_cardDrawingLogic;
 
         public override void OnNetworkSpawn()
@@ -41,20 +54,37 @@ namespace Minimax.GamePlay.Logic
             m_serverManaManager.IncrementManaCapacity(playerNumber);
             m_serverManaManager.RefillMana(playerNumber);
 
+            ServerResetUnitOnTurnStart(playerNumber);
+
             if (m_serverPlayersDeck.IsCardLeftInDeck(playerNumber))
                 m_cardDrawingLogic.CommandDrawACardFromDeck(playerNumber);
         }
 
         private void OnClientTurnStart(int playerNumber)
         {
-            if (m_turnManager.MyPlayerNumber != playerNumber) m_clientMap.DisableHighlightCells();
+            m_clientMap.DisableHighlightCells();
+
+            if (playerNumber == m_turnManager.MyPlayerNumber)
+            {
+                if (m_clientUnitManager.IsUnitSelected())
+                {
+                    var unitUID = m_clientUnitManager.CurrentUnitUID;
+                    m_unitControlPanelController.ResetAndShowIfMyUnit(unitUID);
+                }
+            }
+            else
+            {
+                m_unitControlPanelController.ResetAndHide();
+            }
+            
+            m_clientUnitManager.ResetAllUnitsOnTurnStart();
+            m_turnNotifyView.Notify(TurnManager.Instance.IsMyTurn ? "Your Turn" : "Opponent's Turn");
         }
 
         private void ServerResetUnitOnTurnStart(int playerNumber)
         {
-            foreach (var serverUnit in ServerUnit.UnitsCreatedThisGame.Values)
-            {
-            }
+            var units = ServerUnit.GetAllUnitsByOwner(playerNumber);
+            foreach (var unit in units) unit.ResetOnTurnStart();
         }
     }
 }

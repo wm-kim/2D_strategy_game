@@ -27,20 +27,34 @@ namespace Minimax.GamePlay.Logic
     /// </summary>
     public class CardPlayingLogic : NetworkBehaviour
     {
-        [Header("Server References")] [SerializeField]
+        [Header("Server References")]
+        [SerializeField]
         private ServerPlayersHandManager m_serverPlayersHand;
 
-        [SerializeField] private ServerMap         m_serverMap;
-        [SerializeField] private ServerManaManager m_serverManaManager;
-        [SerializeField] private TurnManager       m_turnManager;
+        [SerializeField]
+        private ServerMap m_serverMap;
 
-        [Header("Client References")] [SerializeField]
+        [SerializeField]
+        private ServerManaManager m_serverManaManager;
+
+        [SerializeField]
+        private TurnManager m_turnManager;
+
+        [Header("Client References")]
+        [SerializeField]
         private ClientMap m_clientMap;
 
-        [SerializeField] private MyHandInteractionManager  m_myHandInteraction;
-        [SerializeField] private ClientOpponentHandManager m_clientOpponentHand;
-        [SerializeField] private ClientUnitManager         m_clientUnitManager;
-        [SerializeField] private ClientManaManager         m_clientManaManager;
+        [SerializeField]
+        private MyHandInteractionManager m_myHandInteraction;
+
+        [SerializeField]
+        private ClientOpponentHandManager m_clientOpponentHand;
+
+        [SerializeField]
+        private ClientUnitManager m_clientUnitManager;
+
+        [SerializeField]
+        private ClientManaManager m_clientManaManager;
 
         [ServerRpc(RequireOwnership = false)]
         public void CommandPlayACardFromHandServerRpc(int cardUID, Vector2Int coord,

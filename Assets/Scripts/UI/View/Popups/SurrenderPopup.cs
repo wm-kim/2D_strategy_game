@@ -10,11 +10,16 @@ namespace Minimax.UI.View.Popups
 {
     public class SurrenderPopup : PopupView
     {
-        [Header("References")] [Space(10f)] [SerializeField]
+        [Header("References")]
+        [Space(10f)]
+        [SerializeField]
         private Button m_yesButton;
 
-        [SerializeField] private Button m_noButton;
-        [SerializeField] private Button m_exitButton;
+        [SerializeField]
+        private Button m_noButton;
+
+        [SerializeField]
+        private Button m_exitButton;
 
         protected override void SetPopupType()
         {

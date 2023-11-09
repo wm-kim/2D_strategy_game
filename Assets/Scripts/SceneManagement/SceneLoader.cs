@@ -18,12 +18,21 @@ namespace Minimax.SceneManagement
         private bool m_isLoading = false;
 
         // 아래 두 개의 변수는 로딩 화면 애니메이션을 담당하는 컨트롤러입니다.
-        [SerializeField] private AnimationSequencerController m_showLoadingScreenAnimation;
-        [SerializeField] private AnimationSequencerController m_hideLoadingScreenAnimation;
+        [SerializeField]
+        private AnimationSequencerController m_showLoadingScreenAnimation;
 
-        [SerializeField] [ReadOnly] private string m_sceneToLoad;
-        [SerializeField] [ReadOnly] private string m_currentlyLoadedScene;
-        public                              string CurrentlyLoadedScene => m_currentlyLoadedScene;
+        [SerializeField]
+        private AnimationSequencerController m_hideLoadingScreenAnimation;
+
+        [SerializeField]
+        [ReadOnly]
+        private string m_sceneToLoad;
+
+        [SerializeField]
+        [ReadOnly]
+        private string m_currentlyLoadedScene;
+
+        public string CurrentlyLoadedScene => m_currentlyLoadedScene;
 
         private NetworkManager m_netManager => NetworkManager.Singleton;
         private bool           m_isInitialized   = false;
@@ -192,7 +201,7 @@ namespace Minimax.SceneManagement
                 {
                     if (NetworkManager.IsClient)
                         Debug.Log($"Loaded the {sceneEvent.SceneName} scene on " +
-                                         $"{clientOrServer}-({sceneEvent.ClientId}).");
+                                  $"{clientOrServer}-({sceneEvent.ClientId}).");
                     break;
                 }
                 case SceneEventType.LoadEventCompleted: // Server told client that all clients finished loading a scene
@@ -201,7 +210,7 @@ namespace Minimax.SceneManagement
                     var load = sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted ? "Load" : "Unload";
                     if (NetworkManager.IsClient)
                         Debug.Log($"{load} {sceneEvent.SceneName} event completed for the following client " +
-                                         $"identifiers : ({string.Join(",", sceneEvent.ClientsThatCompleted)})");
+                                  $"identifiers : ({string.Join(",", sceneEvent.ClientsThatCompleted)})");
                     if (load == "Load") SceneLoadCompleted(sceneEvent.SceneName);
                     if (load == "Unload") m_unloadCompleted = true;
                     break;
@@ -222,7 +231,7 @@ namespace Minimax.SceneManagement
             var sceneEventAction = isLoading ? "load" : "unload";
             if (status != SceneEventProgressStatus.Started)
                 Debug.LogWarning($"Failed to {sceneEventAction} {targetScene} with" +
-                                        $" a {nameof(SceneEventProgressStatus)}: {status}");
+                                 $" a {nameof(SceneEventProgressStatus)}: {status}");
         }
     }
 }

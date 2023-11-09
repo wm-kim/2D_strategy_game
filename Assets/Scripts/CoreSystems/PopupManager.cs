@@ -16,30 +16,43 @@ namespace Minimax.CoreSystems
     {
         public static PopupManager Instance { get; private set; }
 
-        [Header("Addressable")] [SerializeField]
+        [Header("Addressable")]
+        [SerializeField]
         private AssetLabelReference m_popupAssetLabel;
 
-        [SerializeField] private AssetLabelReference m_commonPopupAssetLabel;
+        [SerializeField]
+        private AssetLabelReference m_commonPopupAssetLabel;
 
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private Canvas m_popupCanvas;
 
-        [SerializeField] private UIFader m_popupBackgroundFader;
+        [SerializeField]
+        private UIFader m_popupBackgroundFader;
 
         // popup의 대기열을 관리하는 Queue, First come first serve로 popup을 표시한다.
         private List<IPopupCommand> m_popupQueue = new();
 
         // 현재 표시되고 있는 popup
-        [SerializeField] [ReadOnly] private PopupView     m_currentPopupView     = null;
-        private                             string        m_currentPopupKey      = string.Empty;
-        private                             PopupPriority m_currentPopupPriority = PopupPriority.Low;
+        [SerializeField]
+        [ReadOnly]
+        private PopupView m_currentPopupView = null;
 
-        [Header("Settings")] [SerializeField] [Range(0.0f, 1f)]
+        private string        m_currentPopupKey      = string.Empty;
+        private PopupPriority m_currentPopupPriority = PopupPriority.Low;
+
+        [Header("Settings")]
+        [SerializeField]
+        [Range(0.0f, 1f)]
         private float m_fadeInDuration = 0.2f;
 
-        [SerializeField] [Range(0.0f, 1f)] private float m_fadeOutDuration = 0.2f;
+        [SerializeField]
+        [Range(0.0f, 1f)]
+        private float m_fadeOutDuration = 0.2f;
 
-        [Space(10f)] [SerializeField] [ReadOnly]
+        [Space(10f)]
+        [SerializeField]
+        [ReadOnly]
         private AYellowpaper.SerializedCollections.SerializedDictionary<PopupType, PopupView> m_loadedPopups = new();
 
         private void Awake()
@@ -173,7 +186,7 @@ namespace Minimax.CoreSystems
         private void RegisterCommandToQueue(IPopupCommand command)
         {
             Debug.Log($"Registering popup to queue. Key : {command.Key}, Type : {command.Type}, " +
-                             $"CommandType : {command.CommandType}, Priority : {command.Priority}");
+                      $"CommandType : {command.CommandType}, Priority : {command.Priority}");
 
             switch (command.CommandType)
             {
@@ -215,7 +228,7 @@ namespace Minimax.CoreSystems
             if (!string.IsNullOrEmpty(popupKey) && m_currentPopupKey != popupKey)
             {
                 Debug.LogWarning($"Current popup key is not matched with popup key to hide." +
-                                        $" Current : {m_currentPopupKey}, Hide : {popupKey}");
+                                 $" Current : {m_currentPopupKey}, Hide : {popupKey}");
                 return;
             }
 

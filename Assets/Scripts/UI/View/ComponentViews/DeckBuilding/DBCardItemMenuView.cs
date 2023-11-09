@@ -11,19 +11,27 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DBCardItemMenuView : StatefulUIView
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private Camera m_mainCamera;
 
-        [SerializeField] private DeckBuildingManager m_deckBuildingManager;
+        [SerializeField]
+        private DeckBuildingManager m_deckBuildingManager;
 
-        [Header("Inner References")] [SerializeField]
+        [Header("Inner References")]
+        [SerializeField]
         private RectTransform m_dbCardItemMenu = default;
 
-        [SerializeField] private TextMeshProUGUI m_cardNameText    = default;
-        [SerializeField] private Button          m_addToDeckButton = default;
+        [SerializeField]
+        private TextMeshProUGUI m_cardNameText = default;
 
-        [SerializeField] private float          m_xOffset = 2f;
-        private                  DBCardItemView m_dbCardItem;
+        [SerializeField]
+        private Button m_addToDeckButton = default;
+
+        [SerializeField]
+        private float m_xOffset = 2f;
+
+        private DBCardItemView m_dbCardItem;
 
         private void Start()
         {

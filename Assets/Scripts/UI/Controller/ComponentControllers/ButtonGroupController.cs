@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Minimax.UI.View.ComponentViews;
-using Sirenix.OdinInspector;
 using UnityEngine;
 using Utilities;
 using Debug = Utilities.Debug;
@@ -10,21 +9,30 @@ namespace Minimax.UI.Controller.ComponentControllers
 {
     public class ButtonGroupController : MonoBehaviour
     {
-        [SerializeField] [Tooltip("다중 선택 모드 여부")]
+        [SerializeField]
+        [Tooltip("다중 선택 모드 여부")]
         private bool m_isMultipleSelection = false;
 
-        [ShowIf("m_isMultipleSelection")] [SerializeField] [Tooltip("다중 선택 모드에서 최대 선택 가능한 버튼 수")]
+        [SerializeField]
+        [Tooltip("다중 선택 모드에서 최대 선택 가능한 버튼 수")]
         private int m_maxSelectNum = 0;
 
-        [HideIf("m_isMultipleSelection")] [SerializeField] [Tooltip("단일 선택 모드에서 모든 선택지를 선택 해제 가능한지 여부")]
+        [SerializeField]
+        [Tooltip("단일 선택 모드에서 모든 선택지를 선택 해제 가능한지 여부")]
         private bool m_isDeselectable = false;
 
-        [SerializeField] [Tooltip("Start()에서 첫 번째 버튼을 선택할지 여부")]
+        [SerializeField]
+        [Tooltip("Start()에서 첫 번째 버튼을 선택할지 여부")]
         private bool m_selectButtonOnStart = true;
 
-        [SerializeField] private List<ButtonView> m_buttonList = new();
+        [SerializeField]
+        private List<ButtonView> m_buttonList = new();
 
-        [SerializeField] [PropertyDrawer.ReadOnly] private List<int> m_activeIndices = new();
+        [SerializeField]
+        [PropertyDrawer.ReadOnly]
+        private List<int> m_activeIndices = new();
+
+        public IReadOnlyList<int> ActiveIndices => m_activeIndices;
 
         /// <summary>
         /// 첫 번째 버튼이 클릭된 상태인지 나타냅니다.
@@ -73,6 +81,12 @@ namespace Minimax.UI.Controller.ComponentControllers
                 var temp_i = i;
                 m_buttonList[i].Button.onClick.AddListener(() => ToggleActiveState(temp_i));
             }
+        }
+
+        public void SelectButton(int index)
+        {
+            m_buttonList.CheckIndexWithinRange(index);
+            m_buttonList[index].Button.onClick.Invoke();
         }
 
         private void Start()
@@ -176,7 +190,7 @@ namespace Minimax.UI.Controller.ComponentControllers
             if (!m_buttonList.Contains(buttonToRemove))
             {
                 Debug.LogWarning($"ButtonGroupController.RemoveButtonView: " +
-                                        $"{buttonToRemove} is not in the list.");
+                                 $"{buttonToRemove} is not in the list.");
                 return;
             }
 
@@ -205,7 +219,7 @@ namespace Minimax.UI.Controller.ComponentControllers
         public void Reset()
         {
             m_activeIndices.Clear();
-            for (var i = 0; i < m_buttonList.Count; i++) m_buttonList[i].SetVisualActive(false, true);
+            m_buttonList.ForEach(button => button.SetVisualActive(false, true));
         }
 
         public void Clear()

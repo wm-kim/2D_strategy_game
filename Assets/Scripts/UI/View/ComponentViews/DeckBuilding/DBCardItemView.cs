@@ -8,10 +8,13 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DBCardItemView : MonoBehaviour
     {
-        [Header("Inner References")] [Space(10f)] [SerializeField]
+        [Header("Inner References")]
+        [Space(10f)]
+        [SerializeField]
         private Button m_button;
 
-        [SerializeField] private TextMeshProUGUI m_cardDataText;
+        [SerializeField]
+        private TextMeshProUGUI m_cardDataText;
 
         private DeckBuildingManager m_deckBuildingManager;
         private CardBaseData        m_cardData;

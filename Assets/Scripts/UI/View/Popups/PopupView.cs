@@ -11,10 +11,13 @@ namespace Minimax.UI.View.Popups
         [field: ReadOnly]
         public PopupType Type { get; protected set; } = PopupType.Undefined;
 
-        [Header("Animations")] [Space(10f)] [SerializeField]
+        [Header("Animations")]
+        [Space(10f)]
+        [SerializeField]
         private AnimationSequencerController m_showAnimationSequencer;
 
-        [SerializeField] private AnimationSequencerController m_hideAnimationSequencer;
+        [SerializeField]
+        private AnimationSequencerController m_hideAnimationSequencer;
 
         public void SetPopupTypeAndCheck()
         {

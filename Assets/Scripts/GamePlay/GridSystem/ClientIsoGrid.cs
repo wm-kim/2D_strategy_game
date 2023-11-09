@@ -304,7 +304,7 @@ namespace Minimax.GamePlay.GridSystem
             return m_pathFinding.FindPath(Cells[start.x, start.y], Cells[target.x, target.y], this);
         }
 
-        public List<ClientCell> GetReachableCells(ClientCell startCell, int range)
+        public List<ClientCell> GetMovableCells(ClientCell startCell, int range)
         {
             // BFS를 위한 큐와 거리 맵을 초기화합니다.
             var queue = new Queue<ClientCell>();
@@ -313,7 +313,7 @@ namespace Minimax.GamePlay.GridSystem
             distances[startCell] = 0;
 
             // 결과를 담을 리스트를 초기화합니다.
-            var reachableCells = new List<ClientCell>();
+            var movableCells = new List<ClientCell>();
 
             while (queue.Count > 0)
             {
@@ -328,11 +328,27 @@ namespace Minimax.GamePlay.GridSystem
                         distances[neighbor] = distances[currentCell] + 1;
 
                         // 최대 이동 거리 내에 있는 경우 결과 목록에 추가합니다.
-                        if (distances[neighbor] <= range) reachableCells.Add(neighbor);
+                        if (distances[neighbor] <= range) movableCells.Add(neighbor);
                     }
             }
 
-            return reachableCells;
+            return movableCells;
+        }
+
+        public List<ClientCell> GetAttackableCells(ClientCell startCell, int range)
+        {
+            var cells = new List<ClientCell>();
+
+            Vector2Int[] directions = { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+
+            for (var i = 1; i <= range; i++)
+                foreach (var direction in directions)
+                {
+                    var coord = startCell.Coord + direction * i;
+                    if (IsWithinGridBounds(coord.x, coord.y)) cells.Add(Cells[coord.x, coord.y]);
+                }
+
+            return cells;
         }
     }
 }

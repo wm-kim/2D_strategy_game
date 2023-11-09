@@ -9,7 +9,9 @@ namespace Minimax.UI.View.Pages
     [RequireComponent(typeof(CanvasGroup))]
     public abstract class PageView : StatefulUIView
     {
-        [SerializeField] [ReadOnly] protected PageType m_pageType = PageType.Undefined;
+        [SerializeField]
+        [ReadOnly]
+        protected PageType m_pageType = PageType.Undefined;
 
         public  PageType    PageType => m_pageType;
         private CanvasGroup m_canvasGroup;

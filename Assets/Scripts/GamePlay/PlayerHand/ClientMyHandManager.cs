@@ -15,12 +15,18 @@ namespace Minimax.GamePlay.PlayerHand
     /// </summary>
     public class ClientMyHandManager : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private HandAnimationManager m_handAnimation;
 
-        [SerializeField] private MyHandInteractionManager m_myHandInteraction;
-        [SerializeField] private HandCardSlot             m_handCardSlotPrefab;
-        [SerializeField] private Transform                m_cardParent;
+        [SerializeField]
+        private MyHandInteractionManager m_myHandInteraction;
+
+        [SerializeField]
+        private HandCardSlot m_handCardSlotPrefab;
+
+        [SerializeField]
+        private Transform m_cardParent;
 
         // Object Pooling HandCardSlot
         private IObjectPool<HandCardSlot> m_cardSlotPool;

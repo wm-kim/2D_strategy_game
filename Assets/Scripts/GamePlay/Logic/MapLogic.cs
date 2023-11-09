@@ -10,7 +10,8 @@ namespace Minimax.GamePlay.Logic
     /// </summary>
     public class MapLogic : NetworkBehaviour
     {
-        [Header("Client References")] [SerializeField]
+        [Header("Client References")]
+        [SerializeField]
         private ClientMap m_clientMap;
 
         [ClientRpc]

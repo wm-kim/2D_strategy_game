@@ -5,7 +5,8 @@ namespace Minimax.UI.View.Popups
 {
     public class LoadingPopup : PopupView
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private TextMeshProUGUI m_messageText;
 
         protected override void SetPopupType()

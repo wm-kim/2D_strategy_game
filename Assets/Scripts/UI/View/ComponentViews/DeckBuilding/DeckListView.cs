@@ -8,12 +8,15 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
 {
     public class DeckListView : MonoBehaviour
     {
-        [SerializeField] private DeckBuildingManager m_deckBuildingManager;
+        [SerializeField]
+        private DeckBuildingManager m_deckBuildingManager;
 
         private DeckListSO m_deckListSO;
 
-        [SerializeField] private DeckListItemView m_deckListItemPrefab;
-        public                   Transform        m_deckListItemParent;
+        [SerializeField]
+        private DeckListItemView m_deckListItemPrefab;
+
+        public Transform m_deckListItemParent;
 
         private Dictionary<int, DeckListItemView> m_deckListItemViews = new();
 

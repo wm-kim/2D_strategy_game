@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Linq;
 using Minimax.GamePlay.CommandSystem;
 using Minimax.GamePlay.GridSystem;
@@ -6,8 +5,6 @@ using Minimax.GamePlay.Unit;
 using Minimax.UnityGamingService.Multiplayer;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Serialization;
-using Utilities;
 using Debug = Utilities.Debug;
 
 namespace Minimax.GamePlay.Logic
@@ -17,15 +14,19 @@ namespace Minimax.GamePlay.Logic
     /// </summary>
     public class UnitLogic : NetworkBehaviour
     {
-        [Header("Server References")] [SerializeField]
+        [Header("Server References")]
+        [SerializeField]
         private ServerMap m_serverMap;
 
-        [SerializeField] private TurnManager m_turnManager;
+        [SerializeField]
+        private TurnManager m_turnManager;
 
-        [Header("Client References")] [SerializeField]
+        [Header("Client References")]
+        [SerializeField]
         private ClientUnitManager m_clientUnit;
 
-        [SerializeField] private ClientMap m_clientMap;
+        [SerializeField]
+        private ClientMap m_clientMap;
 
         [ServerRpc(RequireOwnership = false)]
         public void CommandMoveUnitServerRpc(int unitUID, Vector2Int destCoord,
@@ -52,9 +53,26 @@ namespace Minimax.GamePlay.Logic
             serverUnit.MoveRange -= path.Count;
             m_serverMap[destCoord].PlaceUnit(unitUID);
 
-            // send the command to the clients
             var pathCoords = path.Select(t => t.Coord).ToList();
             MoveUnitClientRpc(unitUID, pathCoords.ToArray());
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        public void CommandAttackUnitServerRpc(int attackerUID, int targetUntiUID,
+            ServerRpcParams serverRpcParams = default)
+        {
+            Debug.Log("Server received CommandAttackUnitServerRpc");
+            var senderClientId = serverRpcParams.Receive.SenderClientId;
+            m_turnManager.CheckIfPlayerTurn(senderClientId);
+
+            var attackerUnit = ServerUnit.UnitsCreatedThisGame[attackerUID];
+            if (!CheckIsUnitOwner(attackerUnit, senderClientId)) return;
+
+            // TODO : add checking if unit has ability to attack
+
+            var targetUnit = ServerUnit.UnitsCreatedThisGame[targetUntiUID];
+            targetUnit.Health -= attackerUnit.Attack;
+            AttackUnitClientRpc(attackerUID, targetUntiUID);
         }
 
         private bool CheckIsUnitOwner(ServerUnit serverUnit, ulong senderClientId)
@@ -70,6 +88,12 @@ namespace Minimax.GamePlay.Logic
         private void MoveUnitClientRpc(int unitUID, Vector2Int[] path)
         {
             new MoveUnitCmd(unitUID, path, m_clientUnit, m_clientMap).AddToQueue();
+        }
+
+        [ClientRpc]
+        private void AttackUnitClientRpc(int attackerUID, int targetUnitUID)
+        {
+            new AttackUnitCmd(attackerUID, targetUnitUID, m_clientUnit).AddToQueue();
         }
     }
 }

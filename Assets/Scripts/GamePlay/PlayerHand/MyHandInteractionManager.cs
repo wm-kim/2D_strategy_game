@@ -14,19 +14,28 @@ namespace Minimax.GamePlay.PlayerHand
     /// </summary>
     public class MyHandInteractionManager : MonoBehaviour
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private ClientMyHandManager m_clientMyHand;
 
-        [SerializeField] private Canvas    m_canvas;
-        [SerializeField] private ClientMap m_clientMap;
+        [SerializeField]
+        private Canvas m_canvas;
 
-        [Header("Game Logics")] [SerializeField]
+        [SerializeField]
+        private ClientMap m_clientMap;
+
+        [Header("Game Logics")]
+        [SerializeField]
         private CardPlayingLogic m_cardPlayingLogic;
 
-        [Header("Animation Settings")] [SerializeField] [Range(0, 1)]
+        [Header("Animation Settings")]
+        [SerializeField]
+        [Range(0, 1)]
         private float m_cardFadeDuration = 0.2f;
 
-        [SerializeField] [Range(0, 1)] private float m_cardFadeAlpha = 0.20f;
+        [SerializeField]
+        [Range(0, 1)]
+        private float m_cardFadeAlpha = 0.20f;
 
         public Canvas Canvas => m_canvas;
 

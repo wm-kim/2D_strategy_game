@@ -19,7 +19,7 @@ namespace Minimax.GamePlay.CommandSystem
             base.StartExecute();
             var clientUnit = ClientUnit.UnitsCreatedThisGame[m_unitUID];
             var unitCell   = m_clientMap[clientUnit.Coord];
-            m_clientMap.HighlightReachableCells(unitCell, clientUnit.MoveRange);
+            m_clientMap.HighlightMovableCells(unitCell, clientUnit.MoveRange);
             ExecutionComplete();
         }
     }

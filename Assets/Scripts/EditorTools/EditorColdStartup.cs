@@ -13,7 +13,8 @@ namespace Minimax.EditorTools
     public class EditorColdStartup : MonoBehaviour
     {
 #if UNITY_EDITOR
-        [Tooltip("The name of the persistent scene.")] [SerializeField]
+        [Tooltip("The name of the persistent scene.")]
+        [SerializeField]
         private SceneType m_thisScene = default;
 
         private async void Awake()

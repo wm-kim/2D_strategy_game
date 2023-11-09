@@ -12,13 +12,19 @@ namespace Minimax.UI.Controller.PageControllers
 {
     public class DeckBuildingPageController : MonoBehaviour
     {
-        [SerializeField] private DeckBuildingManager m_deckBuildingManager;
+        [SerializeField]
+        private DeckBuildingManager m_deckBuildingManager;
 
-        [Header("References")] [Space(10f)] [SerializeField]
+        [Header("References")]
+        [Space(10f)]
+        [SerializeField]
         private Button m_exitAndSaveButton;
 
-        [SerializeField] private Button         m_exitWithoutSaveButton;
-        [SerializeField] private TMP_InputField m_deckNameInputField;
+        [SerializeField]
+        private Button m_exitWithoutSaveButton;
+
+        [SerializeField]
+        private TMP_InputField m_deckNameInputField;
 
         private void Start()
         {

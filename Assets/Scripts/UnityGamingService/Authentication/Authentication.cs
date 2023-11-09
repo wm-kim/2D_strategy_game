@@ -21,7 +21,8 @@ namespace Minimax.UnityGamingService.Authentication
 
     public class Authentication : MonoBehaviour
     {
-        [SerializeField] private EnvironmentType m_environment = EnvironmentType.undefined;
+        [SerializeField]
+        private EnvironmentType m_environment = EnvironmentType.undefined;
 
 #if !DEDICATED_SERVER
         private async void Start()

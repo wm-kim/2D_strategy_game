@@ -324,7 +324,7 @@ namespace SingularityGroup.HotReload {
                 var assemblies = AppDomain.CurrentDomain.GetAssemblies();
                 var assembliesByName = new Dictionary<string, List<Assembly>>();
                 for (var i = 0; i < assemblies.Length; i++) {
-                    var name = assemblies[i].GetName().Name;
+                    var name = assemblies[i].GetNameSafe();
                     List<Assembly> list;
                     if (!assembliesByName.TryGetValue(name, out list)) {
                         assembliesByName.Add(name, list = new List<Assembly>());

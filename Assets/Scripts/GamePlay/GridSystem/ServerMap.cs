@@ -8,8 +8,11 @@ namespace Minimax.GamePlay.GridSystem
 {
     public class ServerMap : NetworkBehaviour
     {
-        [SerializeField] private ClientMap   m_clientMap;
-        [SerializeField] private PathFinding m_pathFinding;
+        [SerializeField]
+        private ClientMap m_clientMap;
+
+        [SerializeField]
+        private PathFinding m_pathFinding;
 
         private ServerGrid m_serverGrid;
 

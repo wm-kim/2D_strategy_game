@@ -5,7 +5,8 @@ namespace Minimax.UI.View.Pages
 {
     public class MainPageView : PageView
     {
-        [SerializeField] private MenuPageSO m_model;
+        [SerializeField]
+        private MenuPageSO m_model;
 
         protected override void SetPageType()
         {

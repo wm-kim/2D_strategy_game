@@ -11,11 +11,13 @@ namespace Minimax.CoreSystems
     public class CacheObject
     {
         // 캐시 데이터의 로드 상태를 나타냅니다.
-        [SerializeField] [Tooltip("캐시 데이터가 현재 로드되어 있는지 여부")]
+        [SerializeField]
+        [Tooltip("캐시 데이터가 현재 로드되어 있는지 여부")]
         private bool m_isLoaded = false;
 
         // 캐시 데이터 업데이트 필요 여부를 나타냅니다.
-        [SerializeField] [Tooltip("캐시 데이터를 업데이트해야 하는지 여부")]
+        [SerializeField]
+        [Tooltip("캐시 데이터를 업데이트해야 하는지 여부")]
         private bool m_needUpdate = false;
 
         /// <summary>

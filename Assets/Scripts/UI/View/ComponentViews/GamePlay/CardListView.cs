@@ -7,11 +7,15 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
 {
     public class CardListView : UIFader
     {
-        [Header("References")] [SerializeField]
+        [Header("References")]
+        [SerializeField]
         private ClientMyDeckManager m_clientPlayerDeckManager;
 
-        [SerializeField] private CardVisual m_cardListItemViewPrefab;
-        [SerializeField] private Transform  m_parentTransform;
+        [SerializeField]
+        private CardVisual m_cardListItemViewPrefab;
+
+        [SerializeField]
+        private Transform m_parentTransform;
 
         private Dictionary<int, CardVisual> m_cardVisuals = new();
 
