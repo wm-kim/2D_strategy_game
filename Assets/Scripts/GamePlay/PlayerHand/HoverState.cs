@@ -57,11 +57,11 @@ namespace Minimax.GamePlay.PlayerHand
         {
             var cardViewRect = m_slot.HandCardView.GetComponent<RectTransform>();
             var camera       = m_slot.MyHandInteraction.Canvas.worldCamera;
-            var isInsideCardDisplayMenu =
+            var isInsideCardViewRect =
                 RectTransformUtility.RectangleContainsScreenPoint(cardViewRect, touch.screenPosition,
                     camera);
 
-            if (!isInsideCardDisplayMenu)
+            if (!isInsideCardViewRect)
             {
                 m_slot.ChangeState(m_slot.DefaultState);
                 return;
@@ -71,11 +71,10 @@ namespace Minimax.GamePlay.PlayerHand
 
             var isTouchBegan    = touch.phase == TouchPhase.Began;
             var isTouchMoved    = touch.phase == TouchPhase.Moved;
-            var isTouchEnded    = touch.phase == TouchPhase.Ended;
             var isMyHandSection = currentSection == SectionDivider.Section.MyHand;
             var isMyTurn        = TurnManager.Instance.IsMyTurn;
 
-            if (isTouchBegan || isTouchEnded)
+            if (isTouchBegan)
             {
                 m_contactCount++;
 

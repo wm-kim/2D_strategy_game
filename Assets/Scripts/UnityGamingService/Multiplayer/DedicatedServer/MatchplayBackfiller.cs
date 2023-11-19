@@ -2,7 +2,8 @@
 using System;
 using System.Linq;
 using Cysharp.Threading.Tasks;
-using Minimax.Utilities;
+using Minimax.Definitions;
+using Utilities;
 using Unity.Services.Matchmaker;
 using Unity.Services.Matchmaker.Models;
 

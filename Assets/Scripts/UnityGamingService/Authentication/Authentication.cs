@@ -1,5 +1,4 @@
 using Cysharp.Threading.Tasks;
-using ParrelSync;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Core.Environments;
@@ -7,6 +6,7 @@ using UnityEngine;
 using Utilities;
 using Debug = Utilities.Debug;
 #if UNITY_EDITOR
+using ParrelSync;
 #endif
 
 namespace Minimax.UnityGamingService.Authentication

@@ -1,3 +1,4 @@
+using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using UnityEngine;
@@ -24,6 +25,16 @@ namespace Minimax.ScriptableObjects.CardData
         public CardType GetCardType()
         {
             return CardType;
+        }
+        
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"CardId: {CardId}\n");
+            sb.Append($"CardName: {CardName}\n");
+            sb.Append($"Description: {Description}\n");
+            sb.Append($"Cost: {Cost}\n");
+            return sb.ToString();
         }
     }
 

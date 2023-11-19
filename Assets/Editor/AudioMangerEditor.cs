@@ -12,10 +12,13 @@ namespace Minimax
     [CustomEditor(typeof(AudioManager))]
     public class AudioMangerEditor : Editor
     {
+        private string m_audioLibPath = string.Empty;
+        
         public override void OnInspectorGUI()
         {
             DrawDefaultInspector();
             AudioManager audioManager = (AudioManager)target;
+            m_audioLibPath = audioManager.AudioLibPath;
             if (GUILayout.Button("Generate Audio Enums"))
             {
                 GenerateEnums(audioManager.AudioFiles, "AudioLib");
@@ -43,8 +46,7 @@ namespace Minimax
             builder.AppendLine("}");
             
             // Save to file (adapt the path to fit your project structure)
-            string path = "Assets/Scripts/Definitions/AudioEnums.cs";
-            System.IO.File.WriteAllText(path, builder.ToString());
+            System.IO.File.WriteAllText(m_audioLibPath, builder.ToString());
             UnityEditor.AssetDatabase.Refresh();
         }
     }

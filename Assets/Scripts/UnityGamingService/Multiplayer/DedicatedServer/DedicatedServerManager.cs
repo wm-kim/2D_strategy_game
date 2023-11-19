@@ -2,12 +2,12 @@
 using System;
 using Cysharp.Threading.Tasks;
 using Minimax.CoreSystems;
-using Minimax.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Matchmaker.Models;
 using Unity.Services.Multiplay;
 using UnityEngine;
+using Debug = Utilities.Debug;
 
 namespace Minimax.UnityGamingService.Multiplayer
 {

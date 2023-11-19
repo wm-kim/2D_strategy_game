@@ -30,7 +30,7 @@ namespace Minimax.UI.View.ComponentViews.DeckBuilding
 
         private void SetView(int cardId)
         {
-            m_cardDataText.text = $"Card ID : {cardId.ToString()}";
+            m_cardDataText.text = m_cardData.ToString();
         }
 
         public void SetButtonInteractable(bool interactable)

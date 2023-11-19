@@ -13,6 +13,9 @@ namespace Minimax.CoreSystems
     public class AudioManager : MonoBehaviour
     {
         public static AudioManager Instance { get; private set; }
+        
+        [field: SerializeField]
+        public string AudioLibPath { get; private set; } = "Assets/Scripts/CommonCore/Definitions/AudioLib.cs";
 
         [Header("Volume Controls")]
         [SerializeField]

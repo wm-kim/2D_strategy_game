@@ -1,7 +1,7 @@
 #if DEDICATED_SERVER
 using System;
 using Cysharp.Threading.Tasks;
-using Minimax.Utilities;
+using Utilities;
 using Newtonsoft.Json;
 using Unity.Services.Matchmaker.Models;
 using Unity.Services.Multiplay;

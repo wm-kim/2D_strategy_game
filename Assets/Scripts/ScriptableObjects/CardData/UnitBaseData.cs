@@ -30,5 +30,15 @@ namespace Minimax.ScriptableObjects.CardData
             instance.AttackRange = data.AttackRange;
             return instance;
         }
+        
+        public override string ToString()
+        {
+            var sb = base.ToString();
+            sb += $"Attack: {Attack}\n";
+            sb += $"Health: {Health}\n";
+            sb += $"MoveRange: {MoveRange}\n";
+            sb += $"AttackRange: {AttackRange}\n";
+            return sb;
+        }
     }
 }
