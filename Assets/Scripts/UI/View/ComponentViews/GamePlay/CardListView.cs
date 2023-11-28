@@ -37,6 +37,7 @@ namespace Minimax.UI.View.ComponentViews.GamePlay
 
         private void OnCardRemovedFromDeck(int cardUID)
         {
+            Debug.Log("CardListView: OnCardRemovedFromDeck: " + cardUID);
             // remove the card from the list and destroy it
             var cardVisual = m_cardVisuals[cardUID];
             m_cardVisuals.Remove(cardUID);

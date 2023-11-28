@@ -73,6 +73,7 @@ namespace Minimax.GamePlay.PlayerDeck
         {
             if (m_cardsInDeck.Contains(cardUID))
             {
+                Debug.Log($"Removing card {cardUID} from deck");
                 m_cardsInDeck.Remove(cardUID);
                 OnCardRemovedFromDeck?.Invoke(cardUID);
             }

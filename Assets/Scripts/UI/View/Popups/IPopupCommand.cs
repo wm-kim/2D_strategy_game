@@ -24,9 +24,7 @@ namespace Minimax.UI.View.Popups
     {
         public string Key  { get; }
         PopupType     Type { get; }
-
         PopupCommandType CommandType { get; }
-
         /// <summary>
         /// 팝업을 표시할 때 우선순위. 숫자가 클수록 우선순위가 높음
         /// </summary>
